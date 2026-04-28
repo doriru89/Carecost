@@ -7,6 +7,26 @@ on:
     branches: [main, master]
 
 jobs:
+  architecture-boundaries:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Backend boundary checks (strict)
+        run: python scripts/check_backend_boundaries.py --strict
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Frontend boundary lint (strict)
+        run: |
+          cd frontend
+          npm ci
+          npx eslint "src/features/**/*.{ts,tsx}" --max-warnings=0
+
   backend:
     runs-on: ubuntu-latest
     defaults:
@@ -24,10 +44,26 @@ jobs:
           python -m venv .venv-prod
           .venv-prod/bin/pip install -r requirements.txt
           .venv-prod/bin/python -c "import app.main"
-      - name: Pytest
-        run: pytest
+      - name: Pytest + coverage
+        run: |
+          pytest \
+            --cov=app.config \
+            --cov=app.services.intake \
+            --cov=app.services.jwt_auth \
+            --cov=app.services.plan_rules \
+            --cov=app.services.pricing \
+            --cov=app.services.safety_crisis \
+            --cov=app.services.scenario_to_bundle \
+            --cov-report=term-missing \
+            --cov-report=json:coverage-backend.json \
+            --cov-fail-under=75
       - name: Docker build API image
         run: docker build -t yhack-api:ci .
+      - name: Upload backend coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend/coverage-backend.json
 
   frontend:
     runs-on: ubuntu-latest
@@ -43,5 +79,47 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - name: Install
         run: npm ci
-      - name: Test
-        run: npm test
+      - name: Test + coverage
+        run: npm run test:coverage
+      - name: Upload frontend coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend/coverage/coverage-summary.json
+
+  quality-artifact:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: backend-coverage
+          path: backend
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend-coverage
+          path: frontend/coverage
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Generate quality status JSON
+        run: |
+          python scripts/generate_quality_status.py \
+            --status=passed \
+            --sha=${{ github.sha }} \
+            --backend-coverage=backend/coverage-backend.json \
+            --frontend-coverage=frontend/coverage/coverage-summary.json \
+            --output=test-results/quality-status.json
+      - name: Coverage thresholds (strict)
+        run: |
+          python scripts/check_coverage_thresholds.py \
+            --backend-json=backend/coverage-backend.json \
+            --frontend-json=frontend/coverage/coverage-summary.json \
+            --threshold=75 \
+            --strict
+      - name: Upload quality status artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-status
+          path: test-results/quality-status.json

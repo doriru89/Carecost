@@ -25,7 +25,7 @@ const Signup = () => {
     setLoading(true);
     try {
       await signup(email, password);
-      navigate('/map');
+      navigate('/onboarding');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Signup failed');
     } finally {

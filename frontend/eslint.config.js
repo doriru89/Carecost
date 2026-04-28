@@ -23,4 +23,22 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
     },
   },
+  {
+    files: ["src/features/**/*.{ts,tsx}"],
+    rules: {
+      // Fail-only scaffolding phase: warn on broad cross-feature imports.
+      "no-restricted-imports": [
+        "warn",
+        {
+          patterns: [
+            {
+              group: ["@/features/*/*"],
+              message:
+                "Import from your own feature or shared modules only; avoid cross-feature coupling.",
+            },
+          ],
+        },
+      ],
+    },
+  },
 );

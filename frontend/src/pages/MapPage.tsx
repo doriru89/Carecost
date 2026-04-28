@@ -23,7 +23,11 @@ import { computeOop } from '@/lib/oopRules';
 import { PLAN_CONFIGS, type PlanConfig } from '@/lib/hospitalRatesCsv';
 import { buildEstimateFallback } from '@/lib/estimateFallback';
 import { loadCrt, saveCrt, type SelectedCrt } from '@/lib/crtPersistence';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+type MapRouteState = {
+  openSymptoms?: boolean;
+};
 
 function toProvider(p: ProviderApi): Provider {
   return {
@@ -67,6 +71,7 @@ function payerDisplayLabel(carrier: string): string {
 
 const MapPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { intakePayload, insurance, user, profile } = useAuth();
   const insuranceCarrierLabel =
     (typeof intakePayload?.insurance_carrier === 'string' && intakePayload.insurance_carrier) ||
@@ -85,6 +90,7 @@ const MapPage = () => {
   const [insuranceDialogOpen, setInsuranceDialogOpen] = useState(false);
   const [aiDialogOpen, setAiDialogOpen] = useState(false);
   const [procPickerOpen, setProcPickerOpen] = useState(false);
+  const [crtDialogOpen, setCrtDialogOpen] = useState(() => selectedCrt === null);
 
   // --- Filter / search state ---
   const [searchQuery, setSearchQuery] = useState('');
@@ -260,6 +266,16 @@ const MapPage = () => {
   };
 
   useEffect(() => {
+    const routeState = (location.state ?? null) as MapRouteState | null;
+    if (!routeState?.openSymptoms) return;
+    setAiDialogOpen(true);
+    navigate(`${location.pathname}${location.search}`, {
+      replace: true,
+      state: { ...routeState, openSymptoms: false },
+    });
+  }, [location.pathname, location.search, location.state, navigate]);
+
+  useEffect(() => {
     if (!mapContainerRef.current) return;
     const container = mapContainerRef.current;
 
@@ -337,11 +353,15 @@ const MapPage = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      {/* CRT Selection Popup — only for GI when no procedure pre-selected */}
+      {/* GI procedure dialog — can auto-open first time and be reopened from header */}
       {selectedSpecialty === 'Gastroenterology' && (
         <CrtSelectionDialog
-          open={selectedCrt === null}
-          onSelect={(cpt, label, bundleId) => setSelectedCrt({ cpt, label, bundleId })}
+          open={crtDialogOpen}
+          onOpenChange={setCrtDialogOpen}
+          onSelect={(cpt, label, bundleId) => {
+            setSelectedCrt({ cpt, label, bundleId });
+            setCrtDialogOpen(false);
+          }}
         />
       )}
 
@@ -375,6 +395,18 @@ const MapPage = () => {
                 <code className="text-xs">127.0.0.1:8000</code>.
               </p>
             )}
+            <div className="flex flex-wrap items-center gap-2">
+              {selectedSpecialty === 'Gastroenterology' && (
+                <>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setCrtDialogOpen(true)}>
+                    {selectedCrt ? 'Change procedure' : 'Choose procedure'}
+                  </Button>
+                  <Button type="button" variant="outline" size="sm" onClick={() => setAiDialogOpen(true)}>
+                    Symptom guidance
+                  </Button>
+                </>
+              )}
+            </div>
             {/* Calculate OOP CTA — shown at top when no insurance */}
             {!hasFullPlanData && (
               <button
@@ -400,7 +432,7 @@ const MapPage = () => {
                     className="shrink-0 flex items-center gap-1.5 rounded-full bg-primary/10 hover:bg-primary/20 px-3 py-1.5 transition-colors mt-1"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-primary" />
-                    <span className="text-xs font-medium text-primary whitespace-nowrap">Not sure your symptom?</span>
+                    <span className="text-xs font-medium text-primary whitespace-nowrap">Update symptom guidance</span>
                   </button>
                 )}
               </div>

@@ -16,7 +16,7 @@ from app.db.tables import Base
 from app.main import create_app
 from app.services.csv_import import import_az_directory
 
-AZ_DATA = Path(__file__).resolve().parent.parent.parent / "data" / "az-data"
+AZ_DATA = Path(__file__).resolve().parent.parent.parent / "sample-data"
 
 
 def _test_database_url() -> str:

@@ -77,7 +77,7 @@ Settings are loaded from **`backend/.env`** (see `backend/app/config.py`). Names
 | `LLM_API_KEY` | Optional; if unset, `/api/confirm` uses a deterministic fake LLM |
 | `LLM_MODEL` | OpenAI-compatible model name when using a live key (default `gpt-4o-mini`) |
 | `CORS_ORIGINS` | Comma-separated browser origins (**no trailing slash**); must include your Vite dev origin (`http://localhost:8080`) and production frontend URL |
-| `SAMPLES_DIR` / `AZ_DATA_DIR` | Optional overrides for CSV paths (defaults: `../data/samples`, `../data/az-data` relative to `backend/`) |
+| `SAMPLES_DIR` / `AZ_DATA_DIR` | Optional overrides for CSV paths (defaults: `../sample-data` relative to `backend/`) |
 | `TEST_DATABASE_URL` | **Tests only:** PostgreSQL URL for pytest (default `…/carecost_test`); see `backend/tests/conftest.py` |
 
 ### GI assistant — Lava API key (Gemini)
@@ -115,13 +115,16 @@ Set `VITE_*` variables **before** `npm run build` on Railway so Vite embeds them
 
 ## Local development
 
-### Data and docs in Git
+### Data sources and safety guardrails
 
-The repo-root **`data/`** (sample + AZ CSVs) and **`docs/`** are listed in **`.gitignore`** so they are not committed. Keep those folders locally (or sync them outside Git) before running the import script.
+Use **`sample-data/`** as the canonical local seed set. The import script defaults to local data paths and now includes production safety checks:
 
-**Automated tests** do not rely on `data/`: pytest uses tracked CSV copies under **`backend/tests/fixtures/`** (see `backend/tests/fixture_paths.py`).
+- Refuses to run when `APP_ENV` is `production`/`prod`.
+- Refuses non-local or likely managed/prod `DATABASE_URL` values unless you explicitly pass `--allow-unsafe-db`.
 
-The import CLI also accepts **`DATA_DIR`** (sample CSV folder) and **`AZ_DATA_DIR`** (AZ bundle) if you store files outside the default paths—see `scripts/import_csv_to_postgres.py`.
+**Automated tests** do not rely on `sample-data/`: pytest seeds from deterministic test fixtures.
+
+The import CLI supports overrides via **`DATA_DIR`** and **`AZ_DATA_DIR`** (or CLI flags) when you keep local files outside defaults.
 
 ### 1. Create schema and seed PostgreSQL from sample CSVs
 
@@ -136,7 +139,7 @@ cd ..
 python scripts/import_csv_to_postgres.py
 ```
 
-Arizona MVP bundle (expects `data/az-data` with `providers.csv` and `hospital_rates_clean.csv`, plus seed `procedures.csv` / `insurers.csv` from samples unless you pass `--seed-dir`):
+Arizona MVP bundle (expects `sample-data/` with `providers.csv` and `hospital_rates_clean.csv`, plus seed `procedures.csv` / `insurers.csv` unless you pass `--seed-dir`):
 
 ```powershell
 python scripts/import_csv_to_postgres.py --az-mvp
@@ -147,7 +150,7 @@ python scripts/import_csv_to_postgres.py --az-mvp
 ```powershell
 cd backend
 pip install -r requirements-dev.txt
-uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 Health: `GET http://127.0.0.1:8000/api/health` returns `status` **`ok`** when PostgreSQL is reachable, **`degraded`** otherwise; also includes `database_connected`, `database` (`postgresql`), and `lava_configured` (true when `LAVA_API_KEY` is set).
@@ -168,19 +171,42 @@ The Vite dev server defaults to **`http://localhost:8080`** and **proxies** `/ap
 
 ```powershell
 cd backend
-pytest
+pytest --cov=app.config --cov=app.services.intake --cov=app.services.jwt_auth --cov=app.services.plan_rules --cov=app.services.pricing --cov=app.services.safety_crisis --cov=app.services.scenario_to_bundle --cov-report=term-missing --cov-report=json:coverage-backend.json --cov-fail-under=75
 ```
 
 - **Frontend:**
 
 ```powershell
 cd frontend
-npm test
+npm run test:coverage
+```
+
+Optional relaxed local coverage run (skip hard frontend threshold):
+
+```powershell
+$env:RELAXED_COVERAGE=1
+npm run test:coverage
+```
+
+Architecture boundary checks:
+
+```powershell
+python scripts/check_backend_boundaries.py
+cd frontend
+npm run lint
 ```
 
 ### 5. Continuous integration
 
-**`.github/workflows/ci.yml`** runs on push and pull requests to `main` / `master`: backend `pytest`, production-requirements smoke import, Docker image build from `backend/`, and frontend `npm ci` + `npm test`.
+**`.github/workflows/ci.yml`** runs on push and pull requests to `main` / `master`: backend and frontend boundary checks, backend/ frontend tests with 75% coverage gates, backend production-requirements smoke import, backend Docker build, and quality-status artifact generation.
+
+### 6. Quality dashboard
+
+`/quality` shows the latest test/coverage status payload.
+
+- Frontend reads `frontend/public/quality-status.json` first.
+- If unavailable, it falls back to backend `GET /api/quality`.
+- CI generates `test-results/quality-status.json` via `scripts/generate_quality_status.py`.
 
 ## API overview
 

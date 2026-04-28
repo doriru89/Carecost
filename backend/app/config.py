@@ -1,4 +1,5 @@
 from pathlib import Path
+from functools import lru_cache
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -27,8 +28,10 @@ class Settings(BaseSettings):
         "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080"
     )
 
-    samples_dir: str = "../data/samples"
-    az_data_dir: str = "../data/az-data"
+    samples_dir: str = "../sample-data"
+    az_data_dir: str = "../sample-data"
+    latency_metrics_window_size: int = 200
+    latency_metrics_log_every_n_requests: int = 50
 
     model_config = SettingsConfigDict(
         env_file=_BACKEND_DIR / ".env",
@@ -47,5 +50,6 @@ class Settings(BaseSettings):
         return [o.strip() for o in self.cors_origins.split(",") if o.strip()]
 
 
+@lru_cache(maxsize=1)
 def get_settings() -> Settings:
     return Settings()

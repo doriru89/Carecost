@@ -248,6 +248,11 @@ const Onboarding = () => {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <div className="flex-1 container mx-auto px-4 py-10 max-w-lg animate-fade-in">
+        <div className="mb-4 flex justify-end">
+          <Button variant="ghost" size="sm" onClick={() => navigate('/map')}>
+            Skip for now
+          </Button>
+        </div>
         <Stepper steps={STEPS} currentStep={step} />
 
         {step === 0 && (

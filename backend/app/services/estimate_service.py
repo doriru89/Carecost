@@ -54,6 +54,19 @@ def _price_to_dict(p: Price) -> dict[str, Any]:
     }
 
 
+def _select_docs_for_payer(
+    all_price_docs: list[dict[str, Any]], wanted_payer: str | None
+) -> tuple[list[dict[str, Any]], str | None]:
+    selected_docs = [x for x in all_price_docs if x.get("payer") == wanted_payer]
+    if not selected_docs:
+        selected_docs = [x for x in all_price_docs if x.get("payer") == "BCBS_MA"]
+    if not selected_docs and all_price_docs:
+        first_payer = sorted({str(x.get("payer", "")) for x in all_price_docs})[0]
+        selected_docs = [x for x in all_price_docs if x.get("payer") == first_payer]
+    payer_used = selected_docs[0].get("payer") if selected_docs else wanted_payer
+    return selected_docs, payer_used
+
+
 def build_estimate_response(
     db: Session,
     intake_raw: dict[str, Any],
@@ -108,15 +121,7 @@ def build_estimate_response(
     for p in provider_rows:
         npi = p.npi
         all_price_docs = prices_by_npi.get(npi, [])
-
-        selected_docs = [x for x in all_price_docs if x.get("payer") == wanted_payer]
-        if not selected_docs:
-            selected_docs = [x for x in all_price_docs if x.get("payer") == "BCBS_MA"]
-        if not selected_docs and all_price_docs:
-            first_payer = sorted({str(x.get("payer", "")) for x in all_price_docs})[0]
-            selected_docs = [x for x in all_price_docs if x.get("payer") == first_payer]
-
-        payer_used = selected_docs[0].get("payer") if selected_docs else wanted_payer
+        selected_docs, payer_used = _select_docs_for_payer(all_price_docs, wanted_payer)
 
         amin, amax = min_max_allowed_for_provider_prices(selected_docs)
         src = pick_primary_source(selected_docs) if selected_docs else "none"

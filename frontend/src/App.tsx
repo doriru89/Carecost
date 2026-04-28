@@ -9,16 +9,16 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 // AuthCallback removed (JWT auth, no OAuth redirect)
-import Onboarding from "./pages/Onboarding";
-import MapPage from "./pages/MapPage";
-import Saved from "./pages/Saved";
-import Settings from "./pages/Settings";
+import OnboardingPage from "@/features/onboarding/pages/OnboardingPage";
+import MapPage from "@/features/map/pages/MapPage";
+import SettingsPage from "@/features/profile/pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 import WhyItMatters from "./pages/WhyItMatters";
 import Team from "./pages/Team";
 import OurData from "./pages/OurData";
 import ProductVision from "./pages/ProductVision";
-import RequireAuth from "@/components/RequireAuth";
+import QualityPage from "@/features/estimate/pages/QualityPage";
+import RequireAuth from "@/features/auth/components/RequireAuth";
 
 const queryClient = new QueryClient();
 
@@ -36,13 +36,14 @@ const App = () => (
             <Route path="/team" element={<Team />} />
             <Route path="/our-data" element={<OurData />} />
             <Route path="/our-approach" element={<ProductVision />} />
+            <Route path="/quality" element={<QualityPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             {/* /callback removed — JWT auth, no redirect */}
-            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/map" element={<RequireAuth><MapPage /></RequireAuth>} />
-            <Route path="/saved" element={<RequireAuth><Saved /></RequireAuth>} />
-            <Route path="/settings" element={<RequireAuth><Settings /></RequireAuth>} />
+            <Route path="/settings" element={<RequireAuth><SettingsPage /></RequireAuth>} />
+            <Route path="/profile" element={<RequireAuth><SettingsPage /></RequireAuth>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -352,3 +352,22 @@ export async function postGiSymptomRefine(body: {
     body: JSON.stringify(body),
   });
 }
+
+export type QualityStatusApi = {
+  status: string;
+  backendCoveragePct: number | null;
+  frontendCoveragePct: number | null;
+  failingTests: string[];
+  sha: string;
+  generatedAt: string;
+  source?: string;
+};
+
+export async function fetchQualityStatus(): Promise<QualityStatusApi> {
+  // Prefer backend status in local/full-stack runs; fallback to static for frontend-only deploys.
+  try {
+    return await json<QualityStatusApi>('/api/quality', { cache: 'no-store' });
+  } catch {
+    return json<QualityStatusApi>('/quality-status.json', { cache: 'no-store' });
+  }
+}

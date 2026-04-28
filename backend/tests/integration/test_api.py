@@ -60,3 +60,11 @@ def test_confirm_apply_ready(client: TestClient) -> None:
     )
     assert r.status_code == 200
     assert r.json()["ready_for_estimate"] is True
+
+
+def test_quality_endpoint_returns_payload(client: TestClient) -> None:
+    r = client.get("/api/quality")
+    assert r.status_code == 200
+    body = r.json()
+    assert "status" in body
+    assert "generatedAt" in body

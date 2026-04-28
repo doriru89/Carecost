@@ -3,8 +3,9 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from app.services.gi_symptom_refinement import GiSymptomRefineResponse, refine_symptom_session
-from app.services.gi_tree_assistant import GiNextSuggestion, suggest_gi_next_step
+from app.modules.assistant.application.use_cases import run_gi_suggest_next, run_gi_symptom_refine
+from app.services.gi_symptom_refinement import GiSymptomRefineResponse
+from app.services.gi_tree_assistant import GiNextSuggestion
 
 router = APIRouter()
 
@@ -23,7 +24,7 @@ def symptom_refine(body: GiSymptomRefineBody) -> GiSymptomRefineResponse:
     Symptom-first interview: AI asks clarifying questions, then proposes a validated tree leaf id.
     """
     try:
-        return refine_symptom_session(
+        return run_gi_symptom_refine(
             messages=body.messages,
             symptom_notes=body.symptom_notes,
         )
@@ -55,7 +56,7 @@ def suggest_next(body: GiAssistantSuggestBody) -> GiNextSuggestion:
     allowed nextIds from the current question.
     """
     try:
-        return suggest_gi_next_step(
+        return run_gi_suggest_next(
             current_node_id=body.current_node_id,
             question_prompt=body.question_prompt,
             hint=body.hint,

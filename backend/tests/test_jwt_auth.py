@@ -5,12 +5,14 @@ import uuid
 import jwt
 import pytest
 
+from app.config import get_settings
 from app.services.jwt_auth import create_access_token, decode_access_token
 
 
 def test_create_and_decode_roundtrip(monkeypatch) -> None:
     monkeypatch.setenv("JWT_SECRET_KEY", "test-secret-key-for-jwt")
     monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg2://x/x")
+    get_settings.cache_clear()
     uid = str(uuid.uuid4())
     token = create_access_token(user_id=uid, email="u@example.com")
     out = decode_access_token(token)
@@ -21,7 +23,9 @@ def test_create_and_decode_roundtrip(monkeypatch) -> None:
 def test_decode_rejects_wrong_secret(monkeypatch) -> None:
     monkeypatch.setenv("JWT_SECRET_KEY", "secret-a")
     monkeypatch.setenv("DATABASE_URL", "postgresql+psycopg2://x/x")
+    get_settings.cache_clear()
     token = create_access_token(user_id=str(uuid.uuid4()), email=None)
     monkeypatch.setenv("JWT_SECRET_KEY", "secret-b")
+    get_settings.cache_clear()
     with pytest.raises(jwt.PyJWTError):
         decode_access_token(token)

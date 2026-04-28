@@ -15,3 +15,7 @@ coverage/
 dist/
 *.sqlite*
 logs/
+agent-plans/
+test-results/*.json
+backend/coverage-backend.json
+frontend/coverage/

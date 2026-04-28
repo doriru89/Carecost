@@ -1,4 +1,4 @@
-"""Import pipeline tests against az-data fixtures (PostgreSQL)."""
+"""Import pipeline tests against sample-data fixtures (PostgreSQL)."""
 
 from pathlib import Path
 
@@ -7,12 +7,12 @@ import pytest
 from app.db.tables import HospitalRate, Provider
 from app.services.csv_import import import_az_directory
 
-AZ_DATA = Path(__file__).resolve().parent.parent.parent / "data" / "az-data"
+AZ_DATA = Path(__file__).resolve().parent.parent.parent / "sample-data"
 
 
 def test_import_az_providers_and_prices(db_session):
     if not AZ_DATA.exists():
-        pytest.skip("az-data directory not available")
+        pytest.skip("sample-data directory not available")
     counts = import_az_directory(db_session, AZ_DATA, price_hospital_id="bmc")
     db_session.commit()
     assert counts.get("providers_gi", 0) > 0
@@ -26,7 +26,7 @@ def test_import_az_providers_and_prices(db_session):
 
 def test_import_az_idempotent(db_session):
     if not AZ_DATA.exists():
-        pytest.skip("az-data directory not available")
+        pytest.skip("sample-data directory not available")
     counts1 = import_az_directory(db_session, AZ_DATA, price_hospital_id="bmc")
     db_session.commit()
     counts2 = import_az_directory(db_session, AZ_DATA, price_hospital_id="bmc")
@@ -39,7 +39,7 @@ def test_import_az_idempotent(db_session):
 
 def test_import_az_hospital_rates_content(db_session):
     if not AZ_DATA.exists():
-        pytest.skip("az-data directory not available")
+        pytest.skip("sample-data directory not available")
     import_az_directory(db_session, AZ_DATA, price_hospital_id="bmc")
     db_session.commit()
 

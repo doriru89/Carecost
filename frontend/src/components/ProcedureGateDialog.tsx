@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { X } from 'lucide-react';
 import { DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ import { useAuth } from '@/context/AuthContext';
 
 interface ProcedureGateDialogProps {
   open: boolean;
+  onOpenChange: (open: boolean) => void;
   onComplete: (sel: { cpt: string; label: string; bundleId: string }) => void;
 }
 
@@ -25,7 +27,7 @@ const GATE_BACKDROP_TOP =
  * Map entry gate: specialty (Gastro vs Dermatology coming soon) → symptom + AI GI wizard → CPT/bundle for estimates.
  * Non-modal + inset backdrop: map stays gated, but Navbar (team, profile, etc.) stays clickable (Radix modal dialogs block all outside pointers).
  */
-const ProcedureGateDialog = ({ open, onComplete }: ProcedureGateDialogProps) => {
+const ProcedureGateDialog = ({ open, onOpenChange, onComplete }: ProcedureGateDialogProps) => {
   const { user } = useAuth();
   const [step, setStep] = useState<1 | 2>(1);
   const [specialty, setSpecialty] = useState('');
@@ -67,11 +69,8 @@ const ProcedureGateDialog = ({ open, onComplete }: ProcedureGateDialogProps) => 
     }
   };
 
-  const allowChromePointer = (target: EventTarget | null) =>
-    target instanceof Element && Boolean(target.closest('nav'));
-
   return (
-    <DialogPrimitive.Root open={open} onOpenChange={() => {}} modal={false}>
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange} modal={false}>
       <DialogPrimitive.Portal>
         <div
           className={cn('pointer-events-auto fixed inset-x-0 bottom-0 z-50 bg-black/80', GATE_BACKDROP_TOP)}
@@ -84,16 +83,11 @@ const ProcedureGateDialog = ({ open, onComplete }: ProcedureGateDialogProps) => 
             'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',
             'data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:max-w-2xl sm:rounded-lg',
           )}
-          onPointerDownOutside={e => {
-            if (allowChromePointer(e.target)) return;
-            e.preventDefault();
-          }}
-          onInteractOutside={e => {
-            if (allowChromePointer(e.target)) return;
-            e.preventDefault();
-          }}
-          onEscapeKeyDown={e => e.preventDefault()}
         >
+          <DialogPrimitive.Close className="absolute right-4 top-4 z-10 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </DialogPrimitive.Close>
           <div className="px-6 pt-6 pb-4 border-b border-border shrink-0">
             <DialogHeader>
               <DialogTitle className="text-xl">

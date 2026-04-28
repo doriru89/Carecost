@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { fetchProviders, setApiAccessTokenGetter } from './client';
+import { fetchProviders, fetchQualityStatus, setApiAccessTokenGetter } from './client';
 
 describe('api client Authorization', () => {
   const originalFetch = globalThis.fetch;
@@ -34,5 +34,30 @@ describe('api client Authorization', () => {
     const init = fetchMock.mock.calls[0][1] as RequestInit;
     const headers = init.headers as Record<string, string>;
     expect(headers.Authorization).toBe('Bearer test-access-token');
+  });
+
+  it('falls back to static quality JSON when /api/quality is unavailable', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(new Response('not found', { status: 404 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({
+            status: 'passed',
+            backendCoveragePct: 80,
+            frontendCoveragePct: 78,
+            failingTests: [],
+            sha: 'abc123',
+            generatedAt: '2026-04-28T00:00:00Z',
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } },
+        ),
+      );
+
+    globalThis.fetch = fetchMock;
+    const data = await fetchQualityStatus();
+    expect(data.status).toBe('passed');
+    expect(fetchMock.mock.calls[0][0]).toContain('/api/quality');
+    expect(fetchMock.mock.calls[1][0]).toContain('/quality-status.json');
   });
 });

@@ -20,7 +20,7 @@ const Login = () => {
     setLoading(true);
     try {
       await login(email, password);
-      navigate('/map');
+      navigate('/map', { state: { openSymptoms: true } });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Login failed');
     } finally {

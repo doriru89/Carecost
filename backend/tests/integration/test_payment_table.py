@@ -1,8 +1,4 @@
-"""Integration tests for pre-computed payment table JSON.
-
-These verify the generated plan_payment_table.json without needing MongoDB.
-Run generate_payment_table.py first.
-"""
+"""Integration tests for pre-computed payment table JSON."""
 
 import json
 from pathlib import Path
@@ -11,8 +7,7 @@ import pytest
 
 DATA_PATH = (
     Path(__file__).resolve().parent.parent.parent.parent
-    / "data"
-    / "az-data"
+    / "sample-data"
     / "plan_payment_table.json"
 )
 
@@ -20,7 +15,7 @@ DATA_PATH = (
 @pytest.fixture
 def payment_table() -> list[dict]:
     if not DATA_PATH.exists():
-        pytest.skip(f"Payment table not found at {DATA_PATH} — run generate_payment_table.py first")
+        pytest.skip(f"Payment table not found at {DATA_PATH}")
     return json.loads(DATA_PATH.read_text())
 
 

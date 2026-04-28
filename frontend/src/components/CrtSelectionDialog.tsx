@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -25,20 +25,22 @@ export const EGD_PROCEDURES: CrtOption[] = [
 
 interface CrtSelectionDialogProps {
   open: boolean;
+  onOpenChange: (open: boolean) => void;
   onSelect: (cpt: string, label: string, bundleId: string) => void;
 }
 
-const CrtSelectionDialog = ({ open, onSelect }: CrtSelectionDialogProps) => {
+const CrtSelectionDialog = ({ open, onOpenChange, onSelect }: CrtSelectionDialogProps) => {
   const [selected, setSelected] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (!open) {
+      setSelected(null);
+    }
+  }, [open]);
+
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent
-        className="sm:max-w-lg"
-        onInteractOutside={(e) => e.preventDefault()}
-        onEscapeKeyDown={(e) => e.preventDefault()}
-        hideClose
-      >
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-xl">What procedure do you need?</DialogTitle>
           <DialogDescription>
@@ -72,6 +74,7 @@ const CrtSelectionDialog = ({ open, onSelect }: CrtSelectionDialogProps) => {
             if (selected !== null) {
               const proc = EGD_PROCEDURES[selected];
               onSelect(proc.cpt, proc.label, proc.bundleId);
+              onOpenChange(false);
             }
           }}
         >

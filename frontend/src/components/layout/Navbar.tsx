@@ -59,9 +59,6 @@ const Navbar = () => {
 
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-2 lg:gap-3">
-          <Link to="/">
-            <Button variant="ghost" size="sm">Home</Button>
-          </Link>
           <Link to="/why-it-matters">
             <Button variant="ghost" size="sm">Why it matters</Button>
           </Link>
@@ -71,13 +68,13 @@ const Navbar = () => {
           <Link to="/our-data">
             <Button variant="ghost" size="sm">Our Data</Button>
           </Link>
-          <Link to="/map">
-            <Button variant="ghost" size="sm">Map</Button>
-          </Link>
           {isAuthenticated ? (
             <>
-              <Link to="/saved">
-                <Button variant="ghost" size="sm">Saved</Button>
+              <Link to="/map">
+                <Button variant="ghost" size="sm">Map</Button>
+              </Link>
+              <Link to="/profile">
+                <Button variant="ghost" size="sm">Profile</Button>
               </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -139,9 +136,6 @@ const Navbar = () => {
                 <SheetTitle className="text-base">Menu</SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-1 py-2 overflow-y-auto flex-1">
-                <Link to="/" onClick={closeMobile}>
-                  <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Home</Button>
-                </Link>
                 <Link to="/why-it-matters" onClick={closeMobile}>
                   <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Why it matters</Button>
                 </Link>
@@ -151,13 +145,13 @@ const Navbar = () => {
                 <Link to="/our-data" onClick={closeMobile}>
                   <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Our Data</Button>
                 </Link>
-                <Link to="/map" onClick={closeMobile}>
-                  <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Map</Button>
-                </Link>
                 {isAuthenticated ? (
                   <>
-                    <Link to="/saved" onClick={closeMobile}>
-                      <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Saved</Button>
+                    <Link to="/map" onClick={closeMobile}>
+                      <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Map</Button>
+                    </Link>
+                    <Link to="/profile" onClick={closeMobile}>
+                      <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Profile</Button>
                     </Link>
                     <Link to="/settings" onClick={closeMobile}>
                       <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Settings</Button>

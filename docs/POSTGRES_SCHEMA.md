@@ -1,6 +1,6 @@
 # PostgreSQL schema (CareCost)
 
-ORM definitions live in `backend/app/db/tables.py`. At runtime, `get_engine()` runs `Base.metadata.create_all` so missing tables are created (no Alembic).
+ORM definitions live in `backend/app/db/tables.py`. Schema evolution is managed through Alembic migrations in `backend/alembic/versions/`; import scripts initialize engine connectivity but do not replace migration workflows.
 
 | Table | Purpose |
 |-------|---------|

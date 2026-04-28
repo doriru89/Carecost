@@ -9,6 +9,7 @@ from app.routes import (
     hospitals,
     intake,
     providers,
+    quality,
     users,
 )
 
@@ -22,3 +23,4 @@ api_router.include_router(providers.router, prefix="/providers", tags=["provider
 api_router.include_router(hospitals.router, prefix="/hospitals", tags=["hospitals"])
 api_router.include_router(gi_assistant.router, tags=["gi-assistant"])
 api_router.include_router(users.router, prefix="/users", tags=["users"])
+api_router.include_router(quality.router, tags=["quality"])

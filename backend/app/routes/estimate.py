@@ -2,17 +2,17 @@ from fastapi import APIRouter
 
 from app.api.deps import DbDep
 from app.models.api import EstimateRequest, EstimateResponse
-from app.services.estimate_service import build_estimate_response
+from app.modules.pricing.application.use_cases import estimate_from_intake
 
 router = APIRouter()
 
 
 @router.post("", response_model=EstimateResponse)
 def post_estimate(body: EstimateRequest, db: DbDep) -> EstimateResponse:
-    return build_estimate_response(
+    return estimate_from_intake(
         db,
-        body.intake,
-        body.confirmed,
-        body.bundle_id,
-        body.scenario_id,
+        intake=body.intake,
+        confirmed=body.confirmed,
+        bundle_id=body.bundle_id,
+        scenario_id=body.scenario_id,
     )
