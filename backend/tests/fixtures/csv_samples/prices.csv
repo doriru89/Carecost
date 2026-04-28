@@ -1,0 +1,5 @@
+provider_id,bundle_id,min_rate_cents,max_rate_cents,payer,source,confidence,effective_date
+1234567890,colonoscopy_screening,500000,850000,BCBS_MA,mrf_sample,0.85,2025-01-01
+1234567890,colonoscopy_diagnostic,550000,900000,BCBS_MA,mrf_sample,0.80,2025-01-01
+1234567891,colonoscopy_screening,480000,820000,BCBS_MA,turquoise_cache,0.75,2025-01-01
+1234567892,colonoscopy_screening,520000,880000,BCBS_MA,mrf_sample,0.85,2025-01-01

@@ -1,0 +1,5 @@
+# Watch patterns are relative to the Git repo root. With service root `frontend/`, this
+# avoids redeploying the static site on unrelated pushes (e.g. README at repo root).
+# Mirror under Deploy → Watch Paths in the Railway UI if needed.
+[build]
+watchPatterns = ["frontend/**"]

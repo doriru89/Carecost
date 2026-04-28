@@ -1,0 +1,3 @@
+plan_id,carrier,deductible_cents,oop_max_cents,coinsurance_pct,copay_cents,source
+bcbs_ma_ppo_demo,Blue Cross Blue Shield of Massachusetts,200000,800000,20,2500,sample_seed
+bcbs_ma_hdhp_demo,Blue Cross Blue Shield of Massachusetts,350000,700000,10,0,sample_seed

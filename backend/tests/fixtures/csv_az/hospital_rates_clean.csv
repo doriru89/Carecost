@@ -1,0 +1,117 @@
+hospital_id,hospital_name,neighborhood,system,data_completeness,cpt,cpt_desc,gross_charge,discounted_cash,de_identified_min,de_identified_max,bcbs_price,bcbs_source,bcbs_plan,aetna_price,aetna_source,harvard_pilgrim_price,uhc_price,bcbs_tic_rate
+bmc,Boston Medical Center,South End,Independent,full,43235,EGD diagnostic/biopsy,1222.5,305.62,1010.64,3264.67,1278.93,negotiated_dollar,BLUE CROSS  OUT OF STATE HMO,1349.55,negotiated_dollar,1644.19,1644.19,
+bmc,Boston Medical Center,South End,Independent,full,43244,EGD band ligation,2267.0,566.75,1010.64,7703.8,2491.1,negotiated_dollar,BLUE CROSS-INDEMNITY,1500.85,negotiated_dollar,2882.31,2882.31,
+bmc,Boston Medical Center,South End,Independent,full,43249,EGD with dilation,1743.0,435.75,1010.64,3264.67,2491.1,negotiated_dollar,BLUE CROSS  OUT OF STATE HMO,1500.85,negotiated_dollar,2882.31,2882.31,
+bmc,Boston Medical Center,South End,Independent,full,43255,EGD bleeding control,2170.0,542.5,1010.64,7703.8,2491.1,negotiated_dollar,BLUE CROSS-PPO,1500.85,negotiated_dollar,2882.31,2882.31,
+bmc,Boston Medical Center,South End,Independent,full,43259,EGD with ultrasound,2333.0,583.25,1010.64,7703.8,2491.1,negotiated_dollar,BLUE CROSS OUT OF STATE INDEMNIT,1990.62,negotiated_dollar,2882.31,2882.31,
+bmc,Boston Medical Center,South End,Independent,full,45378,Colonoscopy diagnostic,1672.0,418.0,1020.59,3264.67,1250.94,negotiated_dollar,BLUE CROSS OUT OF STATE INDEMNIT,1500.85,negotiated_dollar,1608.22,1608.22,
+bmc,Boston Medical Center,South End,Independent,full,45380,Colonoscopy with biopsy,2000.0,500.0,1020.59,3264.67,1645.44,negotiated_dollar,BLUE CROSS-HMO BLUE,1500.85,negotiated_dollar,2115.37,2115.37,
+bmc,Boston Medical Center,South End,Independent,full,45385,Colonoscopy polyp removal,2228.5,557.12,1020.59,3264.67,1645.44,negotiated_dollar,BLUE CROSS  OUT OF STATE HMO,1500.85,negotiated_dollar,2115.37,2115.37,
+bmc,Boston Medical Center,South End,Independent,full,45388,Colonoscopy ablation,1378.0,344.5,1098.98,3264.67,1645.44,negotiated_dollar,BLUE CROSS  OUT OF STATE HMO,1500.85,negotiated_dollar,2115.37,2115.37,
+bmc,Boston Medical Center,South End,Independent,full,74176,CT Abd/Pelvis w/o contrast,2117.0,529.25,396.79,2562.57,660.39,negotiated_dollar,BLUE CROSS-PPO,,,396.79,396.79,
+bmc,Boston Medical Center,South End,Independent,full,74177,CT Abd/Pelvis w/ contrast,3344.0,836.0,639.2,4115.74,1105.27,negotiated_dollar,BLUE CROSS OUT OF STATE INDEMNIT,,,664.1,664.1,
+bmc,Boston Medical Center,South End,Independent,full,74178,CT Abd/Pelvis w/ and w/o contrast,4248.0,1062.0,639.2,4115.74,1105.27,negotiated_dollar,BLUE CROSS OUT OF STATE INDEMNIT,,,664.1,664.1,
+bmc,Boston Medical Center,South End,Independent,full,76700,Abdominal US complete,1334.0,333.5,147.96,1521.83,147.96,negotiated_dollar,BLUE CROSS-HMO BLUE,,,193.63,193.63,
+bmc,Boston Medical Center,South End,Independent,full,76705,Abdominal US limited,1024.0,256.0,147.96,1333.33,147.96,negotiated_dollar,BLUE CROSS OUT OF STATE INDEMNIT,,,193.63,193.63,
+bmc,Boston Medical Center,South End,Independent,full,91110,GI tract capsule endoscopy,4594.0,1148.5,1278.93,7945.14,1278.93,negotiated_dollar,BLUE CROSS-HMO BLUE,,,1644.19,1644.19,
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,43235,EGD diagnostic/biopsy,1994.52,897.53,475.07,1929.98,1086.97,negotiated_dollar,BMCB HB MEDICARE - NO IME,1458.79,negotiated_dollar,1086.97,1086.97,270.67
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,43244,EGD band ligation,4505.62,2027.529,475.07,4600.37,2299.71,negotiated_dollar,BMCB HB MEDICARE - NO IME,3295.41,negotiated_dollar,2299.71,2299.71,
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,43249,EGD with dilation,2816.0,1267.2,475.07,2989.62,2299.71,negotiated_dollar,BMCB HB MEDICARE - NO IME,2299.71,negotiated_dollar,2299.71,2299.71,227.02
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,43255,EGD bleeding control,2816.0,1267.2,475.07,4600.37,2299.71,negotiated_dollar,BMCB HB MEDICARE - NO IME,2299.71,negotiated_dollar,2299.71,2299.71,295.62
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,43259,EGD with ultrasound,2816.0,1267.2,475.07,4600.37,2299.71,negotiated_dollar,BMCB HB MEDICARE - NO IME,2299.71,negotiated_dollar,2299.71,2299.71,
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,45378,Colonoscopy diagnostic,1354.0,609.3,475.07,2658.0,1114.51,negotiated_dollar,BMCB HB MEDICARE - NO IME,1114.51,negotiated_dollar,1114.51,1114.51,330.48
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,45380,Colonoscopy with biopsy,1751.0,787.95,475.07,1929.98,1434.11,negotiated_dollar,BMCB HB MEDICARE - NO IME,1434.11,negotiated_dollar,1434.11,1434.11,384.14
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,45385,Colonoscopy polyp removal,1751.0,787.95,475.07,1929.98,933.64,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),1434.11,negotiated_dollar,1434.11,1434.11,446.77
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,45388,Colonoscopy ablation,1751.0,787.95,475.07,4308.0,1434.11,negotiated_dollar,BMCB HB MEDICARE - NO IME,1434.11,negotiated_dollar,1434.11,1434.11,396.82
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,74176,CT Abd/Pelvis w/o contrast,836.8,376.56,285.95,1108.0,574.25,negotiated_dollar,BMCB HB BLUE CROSS INDEMNITY & PPO,361.08,negotiated_dollar,360.9,285.95,516.77
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,74177,CT Abd/Pelvis w/ contrast,1421.95,639.878,418.11,1348.0,961.11,negotiated_dollar,BMCB HB BLUE CROSS INDEMNITY & PPO,757.85,negotiated_dollar,653.71,418.11,864.91
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,74178,CT Abd/Pelvis w/ and w/o contrast,1421.95,639.878,418.11,1348.0,961.11,negotiated_dollar,BMCB HB BLUE CROSS INDEMNITY & PPO,858.22,negotiated_dollar,653.71,418.11,864.91
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,76700,Abdominal US complete,621.18,279.531,125.29,475.07,128.66,negotiated_dollar,BMCB HB BLUE CROSS INDEMNITY & PPO,268.6,negotiated_dollar,288.73,125.29,160.83
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,76705,Abdominal US limited,523.84,235.728,125.29,475.07,128.66,negotiated_dollar,BMCB HB BLUE CROSS INDEMNITY & PPO,205.71,negotiated_dollar,288.73,125.29,160.83
+bmc_brighton,BMC Brighton (Formerly St. Elizabeth's),Brighton,BMC Health System,full,91110,GI tract capsule endoscopy,1392.0,626.4,475.07,3012.8,1505.75,negotiated_dollar,BMCB HB BLUE CROSS INDEMNITY & PPO,1086.97,negotiated_dollar,1086.97,1086.97,1268.0
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,43235,EGD diagnostic/biopsy,3056.5,2292.38,756.03,2700.59,2089.81,estimated_amount,HB BWH MEDICAID,,,,,547.56
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,43244,EGD band ligation,3611.0,2708.25,1119.41,5545.35,1516.96,estimated_amount,HB BWH MEDICAID,,,,,
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,43249,EGD with dilation,3643.0,2732.25,1129.33,2977.06,1264.13,estimated_amount,HB BWH MEDICAID,,,,,459.25
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,43255,EGD bleeding control,3692.0,2769.0,1144.52,5545.35,598.03,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,598.03
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,43259,EGD with ultrasound,3576.0,2682.0,1108.56,5545.35,1966.05,estimated_amount,HB BWH MEDICAID,,,,,
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,45378,Colonoscopy diagnostic,3883.0,2912.25,744.89,3173.19,2962.84,estimated_amount,HB BWH MEDICAID,,,,,668.55
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,45380,Colonoscopy with biopsy,2621.0,1965.75,812.51,2384.07,2042.32,estimated_amount,HB BWH MEDICAID,,,,,777.11
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,45385,Colonoscopy polyp removal,2618.0,1963.5,811.58,2453.74,1341.38,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,903.8
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,45388,Colonoscopy ablation,,,,,802.76,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,74176,CT Abd/Pelvis w/o contrast,1765.0,1323.75,230.56,1419.06,199.96,estimated_amount,HB BWH MEDICAID,,,,,983.45
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,74177,CT Abd/Pelvis w/ contrast,2840.0,2130.0,385.88,2283.36,829.55,estimated_amount,HB BWH MEDICAID,,,,,1645.97
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,74178,CT Abd/Pelvis w/ and w/o contrast,3598.0,2698.5,385.88,2892.79,677.27,estimated_amount,HB BWH MEDICAID,,,,,1645.97
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,76700,Abdominal US complete,987.0,740.25,112.51,806.58,398.81,estimated_amount,HB BWH MEDICAID,,,,,231.59
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,76705,Abdominal US limited,121.0,90.75,37.51,513.1,350.42,estimated_amount,HB BWH MEDICAID,,,,,231.59
+brigham,Brigham and Women's Hospital,Longwood,Mass General Brigham,full,91110,GI tract capsule endoscopy,4350.0,3262.5,761.55,5010.16,2210.67,estimated_amount,HB BWH MEDICAID,,,,,1811.43
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,43235,EGD diagnostic/biopsy,2746.5,2746.5,1345.78,2609.18,208.53,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,208.53
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,43244,EGD band ligation,5154.0,5154.0,2525.46,4896.3,,,,,,,,
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,43249,EGD with dilation,3227.0,3227.0,1581.23,3579.19,174.9,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,174.9
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,43255,EGD bleeding control,4219.0,4219.0,2067.31,4008.05,227.75,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,227.75
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,43259,EGD with ultrasound,4741.0,4741.0,2323.09,4503.95,59.66,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,59.66
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,45378,Colonoscopy diagnostic,1947.0,1947.0,954.03,1849.65,254.61,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,254.61
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,45380,Colonoscopy with biopsy,2778.0,2778.0,1361.22,2639.1,295.95,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,295.95
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,45385,Colonoscopy polyp removal,3803.0,3803.0,1862.68,3612.85,338.96,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,338.96
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,45388,Colonoscopy ablation,5695.0,5695.0,2364.15,5410.25,305.72,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,305.72
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,74176,CT Abd/Pelvis w/o contrast,2468.0,2468.0,890.45,2344.6,1377.62,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,1377.62
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,74177,CT Abd/Pelvis w/ contrast,5195.0,5195.0,1436.74,4935.25,2305.69,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,2305.69
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,74178,CT Abd/Pelvis w/ and w/o contrast,5864.0,5864.0,1436.74,5570.8,2305.69,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,2305.69
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,76700,Abdominal US complete,1005.0,1005.0,231.59,954.75,231.59,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,231.59
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,76705,Abdominal US limited,766.0,766.0,231.59,727.7,231.59,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,231.59
+childrens,Boston Children's Hospital,Longwood,Boston Children's,full,91110,GI tract capsule endoscopy,6018.0,6018.0,1837.56,5717.1,1837.56,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,1837.56
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,43235,EGD diagnostic/biopsy,2824.5,2118.38,,,60.09,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,60.09
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,43249,EGD with dilation,3128.0,2346.0,,,60.09,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,60.09
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,43255,EGD bleeding control,3128.0,2346.0,,,,,,,,,,
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,43259,EGD with ultrasound,3128.0,2346.0,,,60.09,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,60.09
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,45378,Colonoscopy diagnostic,3359.0,2519.25,,,60.09,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,60.09
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,45380,Colonoscopy with biopsy,2276.0,1707.0,,,60.09,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,60.09
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,45385,Colonoscopy polyp removal,2276.0,1707.0,,,60.09,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,60.09
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,74176,CT Abd/Pelvis w/o contrast,3111.0,2333.25,,,60.09,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,60.09
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,74177,CT Abd/Pelvis w/ contrast,4041.0,3030.75,,,60.09,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,60.09
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,74178,CT Abd/Pelvis w/ and w/o contrast,4443.0,3332.25,,,60.09,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,60.09
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,76700,Abdominal US complete,833.0,624.75,,,,,,,,,,
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,76705,Abdominal US limited,801.0,600.75,,,60.09,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,60.09
+dana_farber,Dana-Farber Cancer Institute,Longwood,Dana-Farber,full,91110,GI tract capsule endoscopy,4841.0,3630.75,,,60.09,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,60.09
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,43235,EGD diagnostic/biopsy,2178.0,1633.5,761.55,2130.0,1625.88,estimated_amount,HB BWF MEDICAID,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,43244,EGD band ligation,3206.0,2404.5,1335.02,4472.66,1516.96,estimated_amount,HB BWF MEDICAID,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,43249,EGD with dilation,2577.0,1932.75,1145.48,2906.42,,,,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,43255,EGD bleeding control,3179.0,2384.25,1335.02,4472.66,,,,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,43259,EGD with ultrasound,3382.0,2536.5,1335.02,4472.66,2698.32,estimated_amount,HB BWF MEDICAID,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,45378,Colonoscopy diagnostic,3629.0,2721.75,744.89,2846.95,3017.46,estimated_amount,HB BWF MEDICAID,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,45380,Colonoscopy with biopsy,2353.0,1764.75,979.79,2216.0,1895.58,estimated_amount,HB BWF MEDICAID,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,45385,Colonoscopy polyp removal,2538.0,1903.5,979.79,2216.0,2061.8,estimated_amount,HB BWF MEDICAID,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,74176,CT Abd/Pelvis w/o contrast,1464.0,1098.0,520.31,1068.72,305.88,estimated_amount,HB BWF MEDICAID,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,74177,CT Abd/Pelvis w/ contrast,2339.0,1754.25,385.88,1730.92,618.71,estimated_amount,HB BWF MEDICAID,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,74178,CT Abd/Pelvis w/ and w/o contrast,3016.0,2262.0,385.88,2201.68,204.11,estimated_amount,HB BWF MEDICAID,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,76700,Abdominal US complete,826.0,619.5,112.51,648.0,503.23,estimated_amount,HB BWF MEDICAID,,,,,
+faulkner,Brigham and Women's Faulkner Hospital,Jamaica Plain,Mass General Brigham,full,76705,Abdominal US limited,667.0,500.25,112.51,523.26,324.19,estimated_amount,HB BWF MEDICAID,,,,,
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,43235,EGD diagnostic/biopsy,3056.5,2292.38,900.08,2470.9,1873.7,estimated_amount,HB MGH MEDICAID,,,,,547.56
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,43244,EGD band ligation,3611.0,2708.25,1119.41,5545.35,2585.83,estimated_amount,HB MGH MEDICAID,,,,,
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,43249,EGD with dilation,3643.0,2732.25,1129.33,2977.06,1516.96,estimated_amount,HB MGH MEDICAID,,,,,459.25
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,43255,EGD bleeding control,,,,,598.03,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,43259,EGD with ultrasound,3576.0,2682.0,1108.56,5545.35,2910.56,estimated_amount,HB MGH MEDICAID,,,,,
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,45378,Colonoscopy diagnostic,3883.0,2912.25,744.89,3173.19,3410.76,estimated_amount,HB MGH MEDICAID,,,,,668.55
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,45380,Colonoscopy with biopsy,2621.0,1965.75,812.51,2384.07,2124.02,estimated_amount,HB MGH MEDICAID,,,,,777.11
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,45385,Colonoscopy polyp removal,2618.0,1963.5,811.58,2453.74,1428.97,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,903.8
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,45388,Colonoscopy ablation,,,,,802.76,bcbs_tic_insurer_mrf,HMO Blue Fully Insured (TiC),,,,,
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,74176,CT Abd/Pelvis w/o contrast,1765.0,1323.75,230.56,1419.06,395.78,estimated_amount,HB MGH MEDICAID,,,,,983.45
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,74177,CT Abd/Pelvis w/ contrast,2840.0,2130.0,385.88,2283.36,1357.97,estimated_amount,HB MGH MEDICAID,,,,,1645.97
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,74178,CT Abd/Pelvis w/ and w/o contrast,3598.0,2698.5,385.88,2892.79,721.2,estimated_amount,HB MGH MEDICAID,,,,,1645.97
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,76700,Abdominal US complete,987.0,740.25,112.51,806.58,383.05,estimated_amount,HB MGH MEDICAID,,,,,231.59
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,76705,Abdominal US limited,121.0,90.75,37.51,513.1,711.63,estimated_amount,HB MGH MEDICAID,,,,,231.59
+mgh,Massachusetts General Hospital,West End,Mass General Brigham,full,91110,GI tract capsule endoscopy,4350.0,3262.5,761.55,5010.16,2647.33,estimated_amount,HB MGH MEDICAID,,,,,1811.43
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,43235,EGD diagnostic/biopsy,2002.0,1401.4,979.38,1958.77,1811.2,estimated_amount,BLUE CROSS HMO BLUE SENIORS [10027410],1251.45,estimated_amount,1101.1,2002.0,314.68
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,43244,EGD band ligation,4497.0,3147.9,4668.99,4668.99,4068.44,estimated_amount,BLUE CROSS HMO BLUE SENIORS [10027410],2811.07,estimated_amount,2473.35,4497.0,
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,43249,EGD with dilation,2460.0,1722.0,1958.77,1958.77,2225.56,estimated_amount,BLUE CROSS HMO BLUE SENIORS [10027410],1537.75,estimated_amount,1353.0,2460.0,263.92
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,43255,EGD bleeding control,4497.0,3147.9,4668.99,4668.99,4068.44,estimated_amount,BLUE CROSS HMO BLUE SENIORS [10027410],2811.07,estimated_amount,2473.35,4497.0,343.67
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,43259,EGD with ultrasound,4497.0,3147.9,4668.99,4668.99,4068.44,estimated_amount,BLUE CROSS HMO BLUE SENIORS [10027410],2811.07,estimated_amount,2473.35,4497.0,
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,45378,Colonoscopy diagnostic,2587.0,1810.9,361.17,1958.77,1640.61,negotiated_dollar,BLUE CROSS BLUE SELECT [10027411],1617.13,estimated_amount,744.89,2587.0,384.21
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,45380,Colonoscopy with biopsy,2490.0,1743.0,979.38,1958.77,2252.7,estimated_amount,BLUE CROSS HMO BLUE SENIORS [10027410],1556.5,estimated_amount,1369.5,2490.0,446.59
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,45385,Colonoscopy polyp removal,2646.0,1852.2,1224.34,2058.38,2346.48,estimated_amount,BLUE CROSS HMO BLUE SENIORS [10027410],1654.01,estimated_amount,1260.44,2646.0,511.49
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,45388,Colonoscopy ablation,4164.0,2914.8,1958.77,1958.77,3767.17,estimated_amount,BLUE CROSS HMO BLUE SENIORS [10027410],2602.92,estimated_amount,2290.2,4164.0,461.33
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,74176,CT Abd/Pelvis w/o contrast,1338.0,936.6,230.56,1223.13,891.43,negotiated_dollar,BLUE CROSS BLUE SELECT [10027411],836.38,estimated_amount,230.56,1338.0,891.43
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,74177,CT Abd/Pelvis w/ contrast,2158.0,1510.6,192.94,1925.86,1491.97,negotiated_dollar,BLUE CROSS BLUE SELECT [10027411],1348.97,estimated_amount,385.88,2158.0,1491.97
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,74178,CT Abd/Pelvis w/ and w/o contrast,2158.0,1510.6,192.94,1925.86,1491.97,negotiated_dollar,BLUE CROSS BLUE SELECT [10027411],1348.97,estimated_amount,385.88,2158.0,1491.97
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,76700,Abdominal US complete,917.0,641.9,112.51,560.99,199.42,negotiated_dollar,BLUE CROSS BLUE SELECT [10027411],573.22,estimated_amount,112.51,917.0,231.59
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,76705,Abdominal US limited,584.0,408.8,112.51,559.77,199.42,negotiated_dollar,BLUE CROSS BLUE SELECT [10027411],365.06,estimated_amount,112.51,584.0,231.59
+tufts,Tufts Medical Center,Downtown/Chinatown,Tufts Medicine,full,91110,GI tract capsule endoscopy,3784.0,2648.8,380.78,4095.71,1677.31,negotiated_dollar,BLUE CROSS BLUE SELECT [10027411],2365.38,estimated_amount,761.55,3784.0,1610.26

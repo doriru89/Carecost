@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-sans: 'DM Sans', system-ui, sans-serif;
+
+    --background: 350 60% 98%;
+    --foreground: 340 6% 17%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 340 6% 17%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 340 6% 17%;
+
+    --primary: 345 50% 77%;
+    --primary-foreground: 0 0% 100%;
+
+    --primary-hover: 345 42% 69%;
+
+    --secondary: 320 18% 70%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 340 30% 95%;
+    --muted-foreground: 300 6% 42%;
+
+    --accent: 345 50% 77%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 340 40% 90%;
+    --input: 340 30% 92%;
+    --ring: 345 50% 77%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 350 60% 98%;
+    --sidebar-foreground: 340 6% 17%;
+    --sidebar-primary: 345 50% 77%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 340 30% 95%;
+    --sidebar-accent-foreground: 340 6% 17%;
+    --sidebar-border: 340 40% 90%;
+    --sidebar-ring: 345 50% 77%;
+
+    --shadow-card: 0 4px 24px -4px rgba(236, 72, 153, 0.08);
+    --shadow-elevated: 0 8px 40px -8px rgba(236, 72, 153, 0.12);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    @apply tracking-tight;
+  }
+}
+
+@layer utilities {
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+}

@@ -1,0 +1,4 @@
+bundle_id,label,cpt_codes,tags,source
+colonoscopy_screening,Screening colonoscopy,45378,screening,sample_seed
+colonoscopy_diagnostic,Diagnostic colonoscopy,45378|45380,diagnostic,sample_seed
+egd_with_biopsy,EGD with biopsy,43239,biopsy,sample_seed
