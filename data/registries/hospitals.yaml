@@ -139,6 +139,7 @@ hospitals:
     lat: 42.3667
     lng: -71.1050
     npi: "1275839649"
+    alternate_npis: ["1487603585"]
     address_patterns: ["1493 CAMBRIDGE", "CHA CAMBRIDGE"]
     source_name_aliases:
       tic: "CHA Cambridge Hospital"

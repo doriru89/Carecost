@@ -68,6 +68,63 @@ etl:
       - "96920"  # Laser treatment <250 sq cm
       - "96922"  # Laser treatment >500 sq cm
 
+  # Hospital-to-format mapping: which format handler + container for each hospital's MRF
+  hospital_mrf_sources:
+    mgh:
+      format: standard_csv
+      encoding: latin-1
+      container: zip
+      skip_header_rows: 2
+    brigham:
+      format: standard_csv
+      encoding: latin-1
+      container: zip
+      skip_header_rows: 2
+    faulkner:
+      format: standard_csv
+      encoding: latin-1
+      container: zip
+      skip_header_rows: 2
+    bidmc:
+      format: cms_json
+      encoding: utf-8
+      container: plain
+    childrens:
+      format: cms_json
+      encoding: utf-8
+      container: zip
+    dana_farber:
+      format: cms_json
+      encoding: utf-8
+      container: plain
+    mtauburn:
+      format: cms_json
+      encoding: utf-8
+      container: plain
+    bmc:
+      format: xlsx
+      encoding: utf-8
+      container: plain
+    bmc_brighton:
+      format: cms_v3_csv
+      encoding: utf-8
+      container: zip
+      skip_header_rows: 3
+    cha:
+      format: cms_v3_csv
+      encoding: utf-8
+      container: zip
+      skip_header_rows: 3
+    tufts:
+      format: cms_v3_csv
+      encoding: utf-8
+      container: zip
+      skip_header_rows: 3
+    franciscan:
+      format: csv_wide
+      encoding: utf-8
+      container: plain
+
   # Non-canonical payers the ETL encounters but aren't in payers.yaml
   non_canonical_payers:
     "Cigna": { map_to: null, include_in_output: false }

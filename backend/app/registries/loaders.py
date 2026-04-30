@@ -31,6 +31,7 @@ class HospitalEntry(BaseModel):
     lat: float
     lng: float
     npi: str | None = None
+    alternate_npis: list[str] = []
     address_patterns: list[str] = []
     source_name_aliases: dict[str, str] | None = None
 
@@ -178,6 +179,7 @@ def all_specialty_names() -> list[str]:
 class EtlConfig(BaseModel):
     mrf_formats: dict[str, dict]
     cpt_extraction_sets: dict[str, list[str]]
+    hospital_mrf_sources: dict[str, dict] = {}
     non_canonical_payers: dict[str, dict]
 
 
@@ -193,6 +195,17 @@ def load_etl_config() -> EtlConfig:
 
 def hospital_npi_map() -> dict[str, str]:
     return {hid: h.npi for hid, h in _load_hospitals().items() if h.npi}
+
+
+def hospital_all_npis() -> dict[str, str]:
+    """Map NPI -> hospital_id for primary and alternate NPIs."""
+    result: dict[str, str] = {}
+    for hid, h in _load_hospitals().items():
+        if h.npi:
+            result[h.npi] = hid
+        for alt in h.alternate_npis:
+            result[alt] = hid
+    return result
 
 
 def hospital_name_for_source(hospital_id: str, source: str) -> str | None:
