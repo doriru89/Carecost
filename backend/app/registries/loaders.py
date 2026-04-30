@@ -40,9 +40,6 @@ class PayerEntry(BaseModel):
     slug: str
     label: str
     carrier_patterns: list[str]
-    price_column: str
-    plan_column: str
-    source_column: str
     is_default: bool = False
     normalization_patterns: list[str] | None = None
     tic_portal: str | None = None

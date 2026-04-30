@@ -1,4 +1,4 @@
-"""Derive onboarding insurance dropdowns from hospital_rates (PostgreSQL)."""
+"""Derive onboarding insurance dropdowns from normalized payer rates."""
 
 from __future__ import annotations
 
@@ -7,41 +7,41 @@ from typing import Any
 from sqlalchemy import distinct
 from sqlalchemy.orm import Session
 
-from app.db.tables import HospitalRate
+from app.db.tables import HospitalPayerRate
 from app.registries import all_payers
 
 _payers = all_payers()
 
 INSURER_LABELS: dict[str, str] = {p.slug: p.label for p in _payers.values()}
-
-PRICE_COLUMNS: tuple[tuple[str, str], ...] = tuple(
-    (p.price_column, p.slug) for p in _payers.values()
-)
-
-PLAN_FIELD_BY_INSURER_KEY: dict[str, str] = {p.slug: p.plan_column for p in _payers.values()}
+PAYER_ID_TO_SLUG: dict[str, str] = {pid: p.slug for pid, p in _payers.items()}
 
 
 def build_insurance_options(db: Session) -> dict[str, Any]:
     insurers: list[dict[str, str]] = []
-    for col_name, key in PRICE_COLUMNS:
-        col_attr = getattr(HospitalRate, col_name)
-        has_rate = db.query(HospitalRate).filter(col_attr > 0).first()
-        if not has_rate:
+
+    available_payers = (
+        db.query(distinct(HospitalPayerRate.payer_id))
+        .filter(HospitalPayerRate.negotiated_rate > 0)
+        .filter(HospitalPayerRate.source_origin == "mrf")
+        .all()
+    )
+    for (payer_id,) in available_payers:
+        slug = PAYER_ID_TO_SLUG.get(payer_id)
+        if not slug:
             continue
-        label = INSURER_LABELS.get(key, key.replace("_", " ").title())
-        insurers.append({"key": key, "label": label, "price_column": col_name})
+        label = INSURER_LABELS.get(slug, slug.replace("_", " ").title())
+        insurers.append({"key": slug, "label": label, "payer_id": payer_id})
 
     plan_options_by_insurer: dict[str, list[str]] = {}
     for ins in insurers:
-        key = ins["key"]
-        field = PLAN_FIELD_BY_INSURER_KEY.get(key)
-        if not field:
-            continue
-        col_attr = getattr(HospitalRate, field, None)
-        if col_attr is None:
-            continue
-        raw = [r[0] for r in db.query(distinct(col_attr)).all()]
-        plan_options_by_insurer[key] = sorted(
+        payer_id = ins["payer_id"]
+        raw = [
+            r[0] for r in
+            db.query(distinct(HospitalPayerRate.plan_name))
+            .filter(HospitalPayerRate.payer_id == payer_id)
+            .all()
+        ]
+        plan_options_by_insurer[ins["key"]] = sorted(
             {str(p).strip() for p in raw if p is not None and str(p).strip()}
         )
 

@@ -20,28 +20,28 @@ def test_rate_quality_enum_values():
 
 
 def test_derive_rate_quality_negotiated():
-    from app.services.csv_import import _derive_rate_quality
+    from app.etl.data_qualifier import derive_rate_quality_from_csv_row
 
     row = {"bcbs_price": "1234.56", "gross_charge": "5000"}
-    assert _derive_rate_quality(row) == "negotiated"
+    assert derive_rate_quality_from_csv_row(row) == "negotiated"
 
 
 def test_derive_rate_quality_gross_only():
-    from app.services.csv_import import _derive_rate_quality
+    from app.etl.data_qualifier import derive_rate_quality_from_csv_row
 
     row = {"bcbs_price": "", "aetna_price": "", "gross_charge": "5000"}
-    assert _derive_rate_quality(row) == "gross_only"
+    assert derive_rate_quality_from_csv_row(row) == "gross_only"
 
 
 def test_derive_rate_quality_benchmark_only():
-    from app.services.csv_import import _derive_rate_quality
+    from app.etl.data_qualifier import derive_rate_quality_from_csv_row
 
     row = {"gross_charge": "", "turquoise_bundled_price": "2500"}
-    assert _derive_rate_quality(row) == "benchmark_only"
+    assert derive_rate_quality_from_csv_row(row) == "benchmark_only"
 
 
 def test_derive_rate_quality_unknown():
-    from app.services.csv_import import _derive_rate_quality
+    from app.etl.data_qualifier import derive_rate_quality_from_csv_row
 
     row = {}
-    assert _derive_rate_quality(row) == "unknown"
+    assert derive_rate_quality_from_csv_row(row) == "unknown"

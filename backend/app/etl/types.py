@@ -84,6 +84,65 @@ class QualifiedRecord(NormalizedRecord):
 
 
 @dataclass
+class ProcedureRecord:
+    """Base facts for one (hospital_id, cpt), payer-independent."""
+
+    hospital_id: str
+    cpt: str
+    cpt_desc: str
+    gross_charge: float | None
+    discounted_cash: float | None
+    de_identified_min: float | None
+    de_identified_max: float | None
+    billing_class: str = "unknown"
+    setting: str = ""
+    rate_methodology: str = ""
+    data_completeness: str = ""
+    compliance_score: str = "unknown"
+    price_granularity: str = "itemized"
+    null_reason: str | None = None
+    source_type: str = "mrf"
+    rate_quality: str = "unknown"
+
+
+@dataclass
+class PayerRateRecord:
+    """One negotiated rate for a (hospital, CPT, payer, source_origin) combination."""
+
+    hospital_id: str
+    cpt: str
+    payer_id: str
+    negotiated_rate: float | None
+    plan_name: str = ""
+    source: str = ""
+    source_origin: str = "mrf"
+    billing_class: str = ""
+    price_source: str = ""
+
+
+@dataclass
+class BenchmarkRecord:
+    """One benchmark data point for a (hospital, CPT, source, component)."""
+
+    hospital_id: str
+    cpt: str
+    benchmark_source: str
+    component: str = "total"
+    price: float | None = None
+    quality_rating: float | None = None
+
+
+@dataclass
+class MergeResult:
+    """Output of the merger — 3 normalized record sets."""
+
+    procedures: list[ProcedureRecord] = field(default_factory=list)
+    payer_rates: list[PayerRateRecord] = field(default_factory=list)
+    benchmarks: list[BenchmarkRecord] = field(default_factory=list)
+
+
+# DEPRECATED — used only by legacy csv_import path (build_legacy_wide_csv).
+@dataclass
 class MergedRecord:
     """One row per (hospital_id, cpt) with all payer rates + benchmarks."""
 

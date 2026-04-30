@@ -1,7 +1,6 @@
 # Payer identity registry.
-# id (key) = stable key used in prices table `payer` column (uppercase, regional).
-# slug = frontend-friendly key used in hospital_rates column names and UI (lowercase).
-# price_column / plan_column = column names in the hospital_rates table.
+# id (key) = stable key used in payer_rates table `payer_id` column (uppercase, regional).
+# slug = frontend-friendly key used in UI routing (lowercase).
 # normalization_patterns = raw payer name patterns from MRF/TiC files that map to this payer.
 # tic_portal = CMS Transparency in Coverage data URL.
 
@@ -10,9 +9,6 @@ payers:
     slug: "bcbs"
     label: "Blue Cross Blue Shield (BCBS)"
     carrier_patterns: ["blue cross", "bcbs"]
-    price_column: "bcbs_price"
-    plan_column: "bcbs_plan"
-    source_column: "bcbs_source"
     is_default: true
     normalization_patterns: ["BLUE CROSS", "BCBS"]
     tic_portal: "https://transparency-in-coverage.bluecrossma.com/"
@@ -22,9 +18,6 @@ payers:
     slug: "aetna"
     label: "Aetna"
     carrier_patterns: ["aetna"]
-    price_column: "aetna_price"
-    plan_column: "aetna_plan"
-    source_column: "aetna_source"
     is_default: false
     normalization_patterns: ["AETNA"]
     tic_portal: "https://health1.aetna.com/app/public/#/one/insurerCode=AETNA_I&brandCode=ALICSI"
@@ -34,9 +27,6 @@ payers:
     slug: "harvard_pilgrim"
     label: "Harvard Pilgrim"
     carrier_patterns: ["harvard", "pilgrim"]
-    price_column: "harvard_pilgrim_price"
-    plan_column: "hp_plan_name"
-    source_column: "hp_source"
     is_default: false
     normalization_patterns: ["HARVARD PILGRIM", "HPHC"]
     tic_portal: "https://www.point32health.org/transparency-in-coverage/"
@@ -46,9 +36,6 @@ payers:
     slug: "uhc"
     label: "UnitedHealthcare (UHC)"
     carrier_patterns: ["united", "uhc", "unitedhealth"]
-    price_column: "uhc_price"
-    plan_column: "uhc_source"
-    source_column: "uhc_source"
     is_default: false
     normalization_patterns: ["UNITED", "UHC"]
     tic_portal: "https://transparency-in-coverage.uhc.com/"

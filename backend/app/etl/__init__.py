@@ -4,10 +4,34 @@ All monetary values are USD dollar amounts (float). Conversion to cents
 happens downstream in csv_import.py when populating the Price table.
 """
 
-from app.etl.types import EtlResult, RawMrfRecord, RawTicRecord
+from app.etl.csv_builder import build_csvs, build_legacy_wide_csv
+from app.etl.data_qualifier import qualify_batch
+from app.etl.data_validator import validate_etl_output
+from app.etl.merger import load_benchmarks, merge_records
+from app.etl.pipeline import run_etl
+from app.etl.types import (
+    BenchmarkRecord,
+    EtlResult,
+    MergeResult,
+    PayerRateRecord,
+    ProcedureRecord,
+    RawMrfRecord,
+    RawTicRecord,
+)
 
 __all__ = [
+    "BenchmarkRecord",
     "EtlResult",
+    "MergeResult",
+    "PayerRateRecord",
+    "ProcedureRecord",
     "RawMrfRecord",
     "RawTicRecord",
+    "build_csvs",
+    "build_legacy_wide_csv",
+    "load_benchmarks",
+    "merge_records",
+    "qualify_batch",
+    "run_etl",
+    "validate_etl_output",
 ]
