@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Query
 
 from app.api.deps import DbDep
 from app.models.api import ProviderListItem
@@ -18,21 +18,15 @@ def list_providers(
     hospital: str | None = Query(None),
 ) -> list[ProviderListItem]:
     _ = in_network_only
-    try:
-        return list_providers_use_case(
-            db,
-            bbox=bbox,
-            zip_code=zip,
-            specialty=specialty,
-            hospital=hospital,
-        )
-    except HTTPException:
-        raise
+    return list_providers_use_case(
+        db,
+        bbox=bbox,
+        zip_code=zip,
+        specialty=specialty,
+        hospital=hospital,
+    )
 
 
 @router.get("/{provider_id}", response_model=ProviderListItem)
 def get_provider(provider_id: str, db: DbDep) -> ProviderListItem:
-    try:
-        return get_provider_use_case(db, provider_id)
-    except HTTPException:
-        raise
+    return get_provider_use_case(db, provider_id)

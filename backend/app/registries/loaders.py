@@ -30,7 +30,9 @@ class HospitalEntry(BaseModel):
     neighborhood: str
     lat: float
     lng: float
+    npi: str | None = None
     address_patterns: list[str] = []
+    source_name_aliases: dict[str, str] | None = None
 
 
 class PayerEntry(BaseModel):
@@ -41,6 +43,9 @@ class PayerEntry(BaseModel):
     plan_column: str
     source_column: str
     is_default: bool = False
+    normalization_patterns: list[str] | None = None
+    tic_portal: str | None = None
+    legal_basis: str | None = None
 
 
 class SpecialtyEntry(BaseModel):
@@ -170,6 +175,33 @@ def all_specialty_names() -> list[str]:
     return list(_load_specialties().keys())
 
 
+class EtlConfig(BaseModel):
+    mrf_formats: dict[str, dict]
+    cpt_extraction_sets: dict[str, list[str]]
+    non_canonical_payers: dict[str, dict]
+
+
+@functools.lru_cache(maxsize=1)
+def _load_etl_config() -> EtlConfig:
+    raw = yaml.safe_load((_DATA_DIR / "etl_config.yaml").read_text())
+    return EtlConfig(**raw["etl"])
+
+
+def load_etl_config() -> EtlConfig:
+    return _load_etl_config()
+
+
+def hospital_npi_map() -> dict[str, str]:
+    return {hid: h.npi for hid, h in _load_hospitals().items() if h.npi}
+
+
+def hospital_name_for_source(hospital_id: str, source: str) -> str | None:
+    h = _load_hospitals().get(hospital_id)
+    if not h or not h.source_name_aliases:
+        return None
+    return h.source_name_aliases.get(source)
+
+
 def validate_all_registries() -> dict[str, int]:
     """Load and validate all registries. Returns counts. Raises on any error."""
     bundles = _load_bundles()
@@ -182,6 +214,18 @@ def validate_all_registries() -> dict[str, int]:
             raise ValueError(f"Bundle '{bid}' references unknown specialty '{b.specialty}'")
         if b.aliases_to and b.aliases_to not in bundles:
             raise ValueError(f"Bundle '{bid}' aliases_to unknown bundle '{b.aliases_to}'")
+
+    npis = [h.npi for h in hospitals.values() if h.npi]
+    if len(npis) != len(set(npis)):
+        dupes = [n for n in npis if npis.count(n) > 1]
+        raise ValueError(f"Duplicate hospital NPIs: {set(dupes)}")
+
+    valid_sources = {"tic", "turquoise", "masscomparecare", "mrf"}
+    for hid, h in hospitals.items():
+        if h.source_name_aliases:
+            for key in h.source_name_aliases:
+                if key not in valid_sources:
+                    raise ValueError(f"Hospital '{hid}' has unknown source alias key: {key}")
 
     defaults = [pid for pid, p in payers.items() if p.is_default]
     if len(defaults) != 1:

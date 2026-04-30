@@ -21,7 +21,7 @@ from app.registries import (
 
 def test_validate_all_registries():
     counts = validate_all_registries()
-    assert counts["bundles"] >= 30
+    assert counts["bundles"] >= 29
     assert counts["hospitals"] >= 12
     assert counts["payers"] >= 4
     assert counts["specialties"] >= 2
@@ -86,11 +86,61 @@ def test_carrier_to_payer():
 def test_specialty_config():
     gi = get_specialty("Gastroenterology")
     assert gi.taxonomy == "207RG0100X"
-    assert gi.default_scenario == "gi_general"
+    assert gi.default_scenario == "colonoscopy_screening"
 
 
 def test_all_bundle_ids():
     ids = all_bundle_ids()
-    assert len(ids) >= 30
+    assert len(ids) >= 29
     assert "egd_with_biopsy" in ids
     assert "skin_biopsy_punch" in ids
+
+
+def test_no_gi_general_bundle():
+    ids = all_bundle_ids()
+    assert "gi_general" not in ids
+
+
+def test_no_gi_general_in_payment_table():
+    import json
+    from pathlib import Path
+
+    table = json.loads(
+        (Path(__file__).resolve().parent.parent.parent / "data" / "seed" / "plan_payment_table.json").read_text()
+    )
+    gi_general_rows = [r for r in table if r.get("scenario_id") == "gi_general"]
+    assert len(gi_general_rows) == 0, f"Found {len(gi_general_rows)} orphaned gi_general rows"
+
+
+def test_hospital_npi_uniqueness():
+    from app.registries import hospital_npi_map
+
+    npi_map = hospital_npi_map()
+    npis = list(npi_map.values())
+    assert len(npis) == len(set(npis)), "Duplicate NPIs found"
+    assert len(npis) >= 10
+
+
+def test_source_name_aliases_valid_keys():
+    valid_sources = {"tic", "turquoise", "masscomparecare", "mrf"}
+    for hid, h in all_hospitals().items():
+        if h.source_name_aliases:
+            for key in h.source_name_aliases:
+                assert key in valid_sources, f"{hid} has unknown source alias key: {key}"
+
+
+def test_hospital_name_for_source():
+    from app.registries import hospital_name_for_source
+
+    assert hospital_name_for_source("mgh", "tic") == "Massachusetts General Hospital"
+    assert hospital_name_for_source("mgh", "masscomparecare") == "Mass General Brigham Hospital"
+    assert hospital_name_for_source("mgh", "nonexistent") is None
+
+
+def test_etl_config_loads():
+    from app.registries import load_etl_config
+
+    config = load_etl_config()
+    assert "gi" in config.cpt_extraction_sets
+    assert len(config.cpt_extraction_sets["gi"]) >= 17
+    assert "standard_csv" in config.mrf_formats

@@ -1,6 +1,8 @@
 # Hospital identity registry.
 # Key = stable hospital_id used in database and API.
 # address_patterns used by CSV import to match provider addresses to hospitals.
+# npi = primary facility NPI (from CMS NPPES registry).
+# source_name_aliases = how each data source refers to this hospital.
 
 hospitals:
   mgh:
@@ -9,7 +11,12 @@ hospitals:
     neighborhood: "West End"
     lat: 42.3632
     lng: -71.0686
+    npi: "1023049236"
     address_patterns: ["55 FRUIT ST", "MASSACHUSETTS GENERAL", "MASS GENERAL", "15 PARKMAN"]
+    source_name_aliases:
+      tic: "Massachusetts General Hospital"
+      turquoise: "Massachusetts General Hospital"
+      masscomparecare: "Mass General Brigham Hospital"
 
   brigham:
     name: "Brigham and Women's Hospital"
@@ -17,7 +24,12 @@ hospitals:
     neighborhood: "Longwood"
     lat: 42.3358
     lng: -71.1065
+    npi: "1790717650"
     address_patterns: ["221 LONGWOOD", "75 FRANCIS", "45 FRANCIS", "BRIGHAM AND WOMEN", "111 CYPRESS"]
+    source_name_aliases:
+      tic: "Brigham and Women's Hospital"
+      turquoise: "Brigham and Womens Hospital"
+      masscomparecare: "Brigham & Womens Hospital, Inc."
 
   bidmc:
     name: "Beth Israel Deaconess Medical Center"
@@ -25,7 +37,12 @@ hospitals:
     neighborhood: "Longwood"
     lat: 42.3389
     lng: -71.1063
+    npi: "1598922205"
     address_patterns: ["330 BROOKLINE AVE", "BIDMC", "BETH ISRAEL", "SHAPIRO"]
+    source_name_aliases:
+      tic: "Beth Israel Deaconess Medical Center"
+      turquoise: "Beth Israel Deaconess Medical Center"
+      masscomparecare: "Beth Israel Deaconess Medical Center, Inc."
 
   bmc:
     name: "Boston Medical Center"
@@ -33,7 +50,12 @@ hospitals:
     neighborhood: "South End"
     lat: 42.3346
     lng: -71.0721
+    npi: "1689892457"
     address_patterns: ["72 EAST CONCORD", "725 ALBANY", "609 ALBANY", "715 ALBANY", "850 HARRISON"]
+    source_name_aliases:
+      tic: "Boston Medical Center"
+      turquoise: "Boston Medical Center"
+      masscomparecare: "Boston Medical Center Corporation"
 
   tufts:
     name: "Tufts Medical Center"
@@ -41,7 +63,12 @@ hospitals:
     neighborhood: "Chinatown"
     lat: 42.3495
     lng: -71.0636
+    npi: "1730132515"
     address_patterns: ["800 WASHINGTON", "750 WASHINGTON", "TUFTS MEDICAL", "NEW ENGLAND MED"]
+    source_name_aliases:
+      tic: "Tufts Medical Center"
+      turquoise: "Tufts Medical Center"
+      masscomparecare: "Tufts Medical Center"
 
   faulkner:
     name: "Brigham and Women's Faulkner"
@@ -49,7 +76,12 @@ hospitals:
     neighborhood: "Jamaica Plain"
     lat: 42.3082
     lng: -71.1271
+    npi: "1649254491"
     address_patterns: ["1153 CENTRE", "FAULKNER"]
+    source_name_aliases:
+      tic: "Brigham and Women's Faulkner Hospital"
+      turquoise: "Brigham and Womens Faulkner Hospital"
+      masscomparecare: "Brigham And Women's Faulkner Hospital, Inc"
 
   childrens:
     name: "Boston Children's Hospital"
@@ -57,7 +89,11 @@ hospitals:
     neighborhood: "Longwood"
     lat: 42.3375
     lng: -71.1064
+    npi: "1710087127"
     address_patterns: ["300 LONGWOOD", "CHILDRENS", "CHILDREN'S"]
+    source_name_aliases:
+      tic: "Boston Children's Hospital"
+      turquoise: "Boston Children's Hospital"
 
   dana_farber:
     name: "Dana-Farber Cancer Institute"
@@ -65,7 +101,11 @@ hospitals:
     neighborhood: "Longwood"
     lat: 42.3382
     lng: -71.1068
+    npi: "1851333686"
     address_patterns: ["DANA FARBER", "DANA-FARBER", "44 BINNEY", "450 BROOKLINE"]
+    source_name_aliases:
+      tic: "Dana-Farber Cancer Institute"
+      turquoise: "Dana-Farber Cancer Institute"
 
   bmc_brighton:
     name: "BMC Brighton (Formerly St. Elizabeth's)"
@@ -73,7 +113,11 @@ hospitals:
     neighborhood: "Brighton"
     lat: 42.3545
     lng: -71.1525
+    npi: "1720814072"
     address_patterns: ["736 CAMBRIDGE ST", "ST ELIZABETH", "ST. ELIZABETH"]
+    source_name_aliases:
+      tic: "BMC Brighton"
+      masscomparecare: "Steward St. Elizabeth's Medical Center of Boston, Inc."
 
   mtauburn:
     name: "Mount Auburn Hospital"
@@ -81,7 +125,12 @@ hospitals:
     neighborhood: "Cambridge"
     lat: 42.3738
     lng: -71.1284
+    npi: "1710360292"
     address_patterns: ["MOUNT AUBURN", "MT AUBURN", "330 MOUNT AUBURN"]
+    source_name_aliases:
+      tic: "Mount Auburn Hospital"
+      turquoise: "Mount Auburn Hospital"
+      masscomparecare: "Mount Auburn Hospital, Inc."
 
   cha:
     name: "CHA Cambridge Hospital"
@@ -89,7 +138,11 @@ hospitals:
     neighborhood: "Cambridge"
     lat: 42.3667
     lng: -71.1050
+    npi: "1275839649"
     address_patterns: ["1493 CAMBRIDGE", "CHA CAMBRIDGE"]
+    source_name_aliases:
+      tic: "CHA Cambridge Hospital"
+      masscomparecare: "Cambridge Health Alliance"
 
   franciscan:
     name: "Franciscan Childrens"
@@ -97,4 +150,7 @@ hospitals:
     neighborhood: "Brighton"
     lat: 42.3540
     lng: -71.1530
+    npi: "1710910427"
     address_patterns: []
+    source_name_aliases:
+      tic: "Franciscan Childrens"

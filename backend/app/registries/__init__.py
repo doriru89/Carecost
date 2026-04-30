@@ -2,6 +2,7 @@
 
 from app.registries.loaders import (
     BundleEntry,
+    EtlConfig,
     HospitalEntry,
     PayerEntry,
     SpecialtyEntry,
@@ -18,7 +19,10 @@ from app.registries.loaders import (
     get_payer,
     get_specialty,
     hospital_id_by_name,
+    hospital_name_for_source,
+    hospital_npi_map,
     infer_hospital_from_address,
+    load_etl_config,
     payer_id_to_slug,
     slug_to_payer_id,
     validate_all_registries,
@@ -26,6 +30,7 @@ from app.registries.loaders import (
 
 __all__ = [
     "BundleEntry",
+    "EtlConfig",
     "HospitalEntry",
     "PayerEntry",
     "SpecialtyEntry",
@@ -42,7 +47,10 @@ __all__ = [
     "get_payer",
     "get_specialty",
     "hospital_id_by_name",
+    "hospital_name_for_source",
+    "hospital_npi_map",
     "infer_hospital_from_address",
+    "load_etl_config",
     "payer_id_to_slug",
     "slug_to_payer_id",
     "validate_all_registries",

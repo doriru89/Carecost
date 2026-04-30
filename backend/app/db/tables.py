@@ -137,6 +137,9 @@ class HospitalRate(Base):
     fh_facility_hosp_in_network: Mapped[float | None] = mapped_column(Float, nullable=True)
     fh_pathology_in_network: Mapped[float | None] = mapped_column(Float, nullable=True)
     source: Mapped[str] = mapped_column(Text, nullable=False)
+    # Structured provenance
+    source_type: Mapped[str] = mapped_column(String(32), nullable=False, default="mrf")
+    rate_quality: Mapped[str] = mapped_column(String(32), nullable=False, default="unknown")
 
 
 class User(Base):

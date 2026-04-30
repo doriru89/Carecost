@@ -53,7 +53,7 @@ def _infer_gi_scenario(text: str, merged: dict[str, Any]) -> str:
         return "egd_with_biopsy"
     if merged.get("care_focus") and "gastro" in str(merged.get("care_focus")).lower():
         return "colonoscopy_screening"
-    return "gi_general"
+    return "colonoscopy_diagnostic"
 
 
 def _infer_derm_scenario(text: str) -> str:
@@ -77,8 +77,6 @@ def _infer_derm_scenario(text: str) -> str:
 
 
 def scenario_to_bundle_id(scenario_id: str) -> str:
-    if scenario_id == "gi_general":
-        return "colonoscopy_screening"
     if scenario_id in SCENARIO_IDS:
         return scenario_id
     return "colonoscopy_screening"

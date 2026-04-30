@@ -25,7 +25,7 @@ Thanks for your interest. This guide covers the basics for getting a dev environ
    cp frontend/.env.example frontend/.env
    ```
 
-4. **Seed data** — run the import script to populate the database from CSVs in `sample-data/`:
+4. **Seed data** — run the import script to populate the database from CSVs in `data/seed/`:
 
    ```bash
    python scripts/import_csv_to_postgres.py --az-mvp

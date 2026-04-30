@@ -2,6 +2,8 @@
 # id (key) = stable key used in prices table `payer` column (uppercase, regional).
 # slug = frontend-friendly key used in hospital_rates column names and UI (lowercase).
 # price_column / plan_column = column names in the hospital_rates table.
+# normalization_patterns = raw payer name patterns from MRF/TiC files that map to this payer.
+# tic_portal = CMS Transparency in Coverage data URL.
 
 payers:
   BCBS_MA:
@@ -12,6 +14,9 @@ payers:
     plan_column: "bcbs_plan"
     source_column: "bcbs_source"
     is_default: true
+    normalization_patterns: ["BLUE CROSS", "BCBS"]
+    tic_portal: "https://transparency-in-coverage.bluecrossma.com/"
+    legal_basis: "45 CFR 147.212"
 
   AETNA:
     slug: "aetna"
@@ -21,6 +26,9 @@ payers:
     plan_column: "aetna_plan"
     source_column: "aetna_source"
     is_default: false
+    normalization_patterns: ["AETNA"]
+    tic_portal: "https://health1.aetna.com/app/public/#/one/insurerCode=AETNA_I&brandCode=ALICSI"
+    legal_basis: "45 CFR 147.212"
 
   HARVARD_PILGRIM:
     slug: "harvard_pilgrim"
@@ -30,6 +38,9 @@ payers:
     plan_column: "hp_plan_name"
     source_column: "hp_source"
     is_default: false
+    normalization_patterns: ["HARVARD PILGRIM", "HPHC"]
+    tic_portal: "https://www.point32health.org/transparency-in-coverage/"
+    legal_basis: "45 CFR 147.212"
 
   UHC:
     slug: "uhc"
@@ -39,3 +50,6 @@ payers:
     plan_column: "uhc_source"
     source_column: "uhc_source"
     is_default: false
+    normalization_patterns: ["UNITED", "UHC"]
+    tic_portal: "https://transparency-in-coverage.uhc.com/"
+    legal_basis: "45 CFR 147.212"

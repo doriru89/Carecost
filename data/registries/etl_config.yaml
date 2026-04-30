@@ -1,0 +1,83 @@
+# ETL pipeline configuration — HOW we process files, not WHAT things are.
+# Identity data (NPIs, names) lives in hospitals.yaml and payers.yaml.
+# This file is consumed by backend/app/etl/ modules (Phase 0b, next session).
+
+etl:
+  # MRF file format specifications (column indices, JSON paths)
+  mrf_formats:
+    standard_csv:
+      description: "CMS standard CSV with fixed column positions"
+      cpt_column_index: 3
+      payer_column_index: 14
+      plan_column_index: 15
+      setting_column_index: 9
+      skip_header_rows: 0
+    cms_v3_csv:
+      description: "CMS v3.0 format with dynamic header mapping (code|1..code|4)"
+      header_pattern: "code|"
+      skip_header_rows: 3
+    cms_json:
+      description: "JSON format (BIDMC, Dana-Farber, Mt. Auburn)"
+      cpt_path: "standard_charge_information[].code_information[].code"
+    xlsx:
+      description: "Excel format (BMC)"
+      cpt_column: "CPT/HCPCS Code"
+    csv_wide:
+      description: "Wide CSV where payer columns are in header"
+      header_pattern: "standard_charge|"
+
+  # CPT superset for extraction (broader than bundles — includes related codes for cross-validation)
+  cpt_extraction_sets:
+    gi:
+      - "43235"  # EGD diagnostic
+      - "43239"  # EGD with biopsy
+      - "43244"  # EGD band ligation
+      - "43249"  # EGD dilation
+      - "43255"  # EGD bleeding control
+      - "43259"  # EGD ultrasound
+      - "45378"  # Colonoscopy diagnostic
+      - "45380"  # Colonoscopy with biopsy
+      - "45384"  # Colonoscopy hot polypectomy
+      - "45385"  # Colonoscopy polyp removal
+      - "45388"  # Colonoscopy ablation
+      - "74176"  # CT abdomen/pelvis without contrast
+      - "74177"  # CT abdomen/pelvis with contrast
+      - "74178"  # CT abdomen/pelvis dual contrast
+      - "76700"  # Ultrasound abdomen complete
+      - "76705"  # Ultrasound abdomen limited
+      - "91110"  # Capsule endoscopy
+    derm:
+      - "99213"  # Office visit est patient lvl 3
+      - "99214"  # Office visit est patient lvl 4
+      - "11102"  # Tangential biopsy single lesion
+      - "11104"  # Punch biopsy single lesion
+      - "11106"  # Incisional biopsy single lesion
+      - "11300"  # Shave removal benign 0.5cm
+      - "11305"  # Shave removal benign 0.6-1.0cm
+      - "11400"  # Excision benign 0.5cm trunk/ext
+      - "11401"  # Excision benign 0.6-1.0cm
+      - "11600"  # Excision malignant 0.5cm trunk/ext
+      - "11602"  # Excision malignant 1.1-2.0cm
+      - "17110"  # Destruction benign up to 14
+      - "17111"  # Destruction benign 15+
+      - "17311"  # Mohs 1st stage head/neck
+      - "17312"  # Mohs additional stage
+      - "88305"  # Surgical pathology level 4
+      - "88312"  # Special stains
+      - "96910"  # Photochemotherapy (PUVA)
+      - "96920"  # Laser treatment <250 sq cm
+      - "96922"  # Laser treatment >500 sq cm
+
+  # Non-canonical payers the ETL encounters but aren't in payers.yaml
+  non_canonical_payers:
+    "Cigna": { map_to: null, include_in_output: false }
+    "Tufts Health Plan": { map_to: null, include_in_output: false }
+    "Medicare": { map_to: null, include_in_output: true }
+    "Medicaid": { map_to: null, include_in_output: true }
+    "Cash/Self-Pay": { map_to: null, include_in_output: true }
+    "WellSense": { map_to: null, include_in_output: false }
+    "Fallon Health": { map_to: null, include_in_output: false }
+    "MGB Health Plan": { map_to: null, include_in_output: false }
+    "Humana": { map_to: null, include_in_output: false }
+    "WellPoint": { map_to: null, include_in_output: false }
+    "Generic Commercial": { map_to: null, include_in_output: false }

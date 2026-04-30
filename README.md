@@ -77,7 +77,7 @@ Settings are loaded from **`backend/.env`** (see `backend/app/config.py`). Names
 | `LLM_API_KEY` | Optional; if unset, `/api/confirm` uses a deterministic fake LLM |
 | `LLM_MODEL` | OpenAI-compatible model name when using a live key (default `gpt-4o-mini`) |
 | `CORS_ORIGINS` | Comma-separated browser origins (**no trailing slash**); must include your Vite dev origin (`http://localhost:8080`) and production frontend URL |
-| `SAMPLES_DIR` / `AZ_DATA_DIR` | Optional overrides for CSV paths (defaults: `../sample-data` relative to `backend/`) |
+| `SAMPLES_DIR` / `AZ_DATA_DIR` | Optional overrides for CSV paths (defaults: `../data/seed` relative to `backend/`) |
 | `TEST_DATABASE_URL` | **Tests only:** PostgreSQL URL for pytest (default `…/carecost_test`); see `backend/tests/conftest.py` |
 
 ### GI assistant — Lava API key (Gemini)
@@ -117,12 +117,12 @@ Set `VITE_*` variables **before** `npm run build` on Railway so Vite embeds them
 
 ### Data sources and safety guardrails
 
-Use **`sample-data/`** as the canonical local seed set. The import script defaults to local data paths and now includes production safety checks:
+Use **`data/seed/`** as the canonical local seed set. The import script defaults to local data paths and now includes production safety checks:
 
 - Refuses to run when `APP_ENV` is `production`/`prod`.
 - Refuses non-local or likely managed/prod `DATABASE_URL` values unless you explicitly pass `--allow-unsafe-db`.
 
-**Automated tests** do not rely on `sample-data/`: pytest seeds from deterministic test fixtures.
+**Automated tests** do not rely on `data/seed/`: pytest seeds from deterministic test fixtures.
 
 The import CLI supports overrides via **`DATA_DIR`** and **`AZ_DATA_DIR`** (or CLI flags) when you keep local files outside defaults.
 
@@ -139,7 +139,7 @@ cd ..
 python scripts/import_csv_to_postgres.py
 ```
 
-Arizona MVP bundle (expects `sample-data/` with `providers.csv` and `hospital_rates_clean.csv`, plus seed `procedures.csv` / `insurers.csv` unless you pass `--seed-dir`):
+Arizona MVP bundle (expects `data/seed/` with `providers.csv` and `hospital_rates_clean.csv`, plus seed `procedures.csv` / `insurers.csv` unless you pass `--seed-dir`):
 
 ```powershell
 python scripts/import_csv_to_postgres.py --az-mvp

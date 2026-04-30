@@ -7,7 +7,8 @@ import pytest
 
 DATA_PATH = (
     Path(__file__).resolve().parent.parent.parent.parent
-    / "sample-data"
+    / "data"
+    / "seed"
     / "plan_payment_table.json"
 )
 

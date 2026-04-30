@@ -28,8 +28,8 @@ class Settings(BaseSettings):
         "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080"
     )
 
-    samples_dir: str = "../sample-data"
-    az_data_dir: str = "../sample-data"
+    samples_dir: str = "../data/seed"
+    az_data_dir: str = "../data/seed"
     latency_metrics_window_size: int = 200
     latency_metrics_log_every_n_requests: int = 50
 

@@ -4,7 +4,7 @@
 specialties:
   Gastroenterology:
     taxonomy: "207RG0100X"
-    default_scenario: "gi_general"
+    default_scenario: "colonoscopy_screening"
     data_file: "hospital_rates_clean.csv"
     providers_file: "providers.csv"
 

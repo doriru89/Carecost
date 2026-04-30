@@ -76,15 +76,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Import CSV fixtures into PostgreSQL")
     parser.add_argument(
         "--data-dir",
-        default=os.environ.get("DATA_DIR", str(ROOT / "sample-data")),
+        default=os.environ.get("DATA_DIR", str(ROOT / "data" / "seed")),
     )
     parser.add_argument(
         "--az-mvp",
         action="store_true",
         default=True,
-        help="Load sample-data/ (NPI providers + hospital_rates + per-NPI prices)",
+        help="Load data/seed/ (NPI providers + hospital_rates + per-NPI prices)",
     )
-    parser.add_argument("--seed-dir", default=str(ROOT / "sample-data"))
+    parser.add_argument("--seed-dir", default=str(ROOT / "data" / "seed"))
     parser.add_argument("--price-hospital-id", default="bmc")
     parser.add_argument(
         "--allow-unsafe-db",
@@ -113,7 +113,7 @@ def main() -> int:
                 p = seed / f"{name}.csv"
                 if p.exists():
                     fn(db, p)
-            az_dir = Path(os.environ.get("AZ_DATA_DIR", str(ROOT / "sample-data")))
+            az_dir = Path(os.environ.get("AZ_DATA_DIR", str(ROOT / "data" / "seed")))
             if not az_dir.is_dir():
                 print(f"Error: AZ data directory not found: {az_dir}", file=sys.stderr)
                 return 1

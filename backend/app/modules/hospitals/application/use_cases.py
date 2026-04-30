@@ -13,7 +13,7 @@ from app.db.tables import HospitalRate, Provider
 from app.registries import all_hospitals
 from app.services.insurance_options import build_insurance_options
 
-_PAYMENT_TABLE_PATH = Path(__file__).resolve().parents[5] / "sample-data" / "plan_payment_table.json"
+_PAYMENT_TABLE_PATH = Path(__file__).resolve().parents[5] / "data" / "seed" / "plan_payment_table.json"
 _PAYMENT_TABLE: list[dict[str, Any]] = []
 if _PAYMENT_TABLE_PATH.exists():
     _PAYMENT_TABLE = json.loads(_PAYMENT_TABLE_PATH.read_text())

@@ -252,6 +252,20 @@ def import_az_providers_csv(
     return _upsert_by_pk(db, Provider, values)
 
 
+_PAYER_PRICE_KEYS = ("bcbs_price", "aetna_price", "harvard_pilgrim_price", "uhc_price")
+_BENCHMARK_KEYS = ("turquoise_bundled_price", "masscomparecare_total_paid", "fh_physician_in_network")
+
+
+def _derive_rate_quality(row: dict) -> str:
+    if any(_parse_float_cell(row.get(k, "")) for k in _PAYER_PRICE_KEYS):
+        return "negotiated"
+    if _parse_float_cell(row.get("gross_charge", "")):
+        return "gross_only"
+    if any(_parse_float_cell(row.get(k, "")) for k in _BENCHMARK_KEYS):
+        return "benchmark_only"
+    return "unknown"
+
+
 def import_hospital_rates_csv(db: Session, path: Path) -> int:
     rows = _read_csv(path)
     if not rows:
@@ -314,6 +328,8 @@ def import_hospital_rates_csv(db: Session, path: Path) -> int:
                     row.get("fh_pathology_in_network", "")
                 ),
                 "source": "az_mvp",
+                "source_type": "mrf",
+                "rate_quality": _derive_rate_quality(row),
             }
         )
     return _upsert_by_pk(db, HospitalRate, values)
