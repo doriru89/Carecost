@@ -4,12 +4,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from app.services.specialty_config import SPECIALTY_CONFIG
+from app.registries import all_bundle_ids
 
-# All valid scenario IDs across specialties
-SCENARIO_IDS: tuple[str, ...] = tuple(
-    sid for config in SPECIALTY_CONFIG.values() for sid in config["bundle_cpt"]
-)
+SCENARIO_IDS: tuple[str, ...] = tuple(all_bundle_ids())
 
 
 def _get_text(intake: dict[str, Any], confirmed: dict[str, Any] | None) -> str:

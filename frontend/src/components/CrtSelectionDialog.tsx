@@ -16,8 +16,8 @@ export interface CrtOption {
 }
 
 export const EGD_PROCEDURES: CrtOption[] = [
-  { cpt: '43235', label: 'EGD diagnostic', desc: 'Upper endoscopy — diagnostic evaluation', bundleId: 'egd_with_biopsy' },
-  { cpt: '43235', label: 'EGD with biopsy', desc: 'Upper endoscopy with tissue biopsy', bundleId: 'egd_with_biopsy' },
+  { cpt: '43239', label: 'EGD diagnostic', desc: 'Upper endoscopy — diagnostic evaluation', bundleId: 'egd_with_biopsy' },
+  { cpt: '43239', label: 'EGD with biopsy', desc: 'Upper endoscopy with tissue biopsy', bundleId: 'egd_with_biopsy' },
   { cpt: '43244', label: 'EGD band ligation', desc: 'Upper endoscopy with variceal banding', bundleId: 'egd_band_ligation' },
   { cpt: '43249', label: 'EGD with dilation', desc: 'Upper endoscopy with esophageal dilation', bundleId: 'egd_dilation' },
   { cpt: '43255', label: 'EGD bleeding control', desc: 'Upper endoscopy for hemorrhage management', bundleId: 'egd_bleeding' },

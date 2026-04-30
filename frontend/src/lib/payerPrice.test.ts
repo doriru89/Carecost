@@ -16,7 +16,7 @@ const mockHospital: HospitalApi = {
   de_identified_max: 3264,
   gross_charge: 1222,
   discounted_cash: 305,
-  cpt: '43235',
+  cpt: '43239',
   cpt_desc: 'EGD diagnostic/biopsy',
 };
 
@@ -144,7 +144,7 @@ describe('getAllPriceSources', () => {
       de_identified_max: null,
       gross_charge: null,
       discounted_cash: null,
-      cpt: '43235',
+      cpt: '43239',
       cpt_desc: 'EGD diagnostic',
     };
     expect(getAllPriceSources(empty, 'BCBS')).toHaveLength(0);

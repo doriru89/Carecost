@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 APP_DIR = ROOT / "backend" / "app"
 ROUTES_DIR = APP_DIR / "routes"
 SERVICES_DIR = APP_DIR / "services"
+MODULES_DIR = APP_DIR / "modules"
 
 
 @dataclass(frozen=True)
@@ -74,6 +75,25 @@ def _collect_py_files(path: Path) -> list[Path]:
     return [p for p in path.rglob("*.py") if p.is_file()]
 
 
+def _check_module_domain_imports(path: Path, tree: ast.Module) -> list[Violation]:
+    violations: list[Violation] = []
+    if "/domain/" not in str(path):
+        return violations
+    for node in ast.walk(tree):
+        mod = _module_from_import(node)
+        if not mod:
+            continue
+        if mod.startswith("fastapi") or mod.startswith("sqlalchemy") or mod.startswith("app.db"):
+            violations.append(
+                Violation(
+                    path=path,
+                    line=getattr(node, "lineno", 1),
+                    message="Domain layer should not import FastAPI/SQLAlchemy/DB directly.",
+                )
+            )
+    return violations
+
+
 def run_checks() -> list[Violation]:
     violations: list[Violation] = []
 
@@ -84,6 +104,10 @@ def run_checks() -> list[Violation]:
     for path in _collect_py_files(SERVICES_DIR):
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         violations.extend(_check_service_imports(path, tree))
+
+    for path in _collect_py_files(MODULES_DIR):
+        tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        violations.extend(_check_module_domain_imports(path, tree))
 
     return violations
 

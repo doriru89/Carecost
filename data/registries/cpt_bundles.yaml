@@ -1,0 +1,217 @@
+# CPT Bundle Registry — SINGLE SOURCE OF TRUTH for procedure codes.
+# All backend/frontend code derives CPT codes from this file.
+# To add a procedure: add an entry here, then add price data via ETL.
+
+bundles:
+  # -- Gastroenterology --
+  colonoscopy_screening:
+    cpt: "45378"
+    label: "Screening colonoscopy"
+    specialty: "Gastroenterology"
+    description: "Preventive screening when there are no active GI symptoms."
+    tags: ["screening"]
+
+  colonoscopy_diagnostic:
+    cpt: "45378"
+    label: "Diagnostic colonoscopy"
+    specialty: "Gastroenterology"
+    description: "Colonoscopy to evaluate symptoms, abnormal tests, or follow-up findings."
+    tags: ["diagnostic"]
+
+  colonoscopy_with_biopsy:
+    cpt: "45380"
+    label: "Colonoscopy with biopsy"
+    specialty: "Gastroenterology"
+    description: "Colonoscopy including mucosal biopsies when indicated."
+    tags: ["biopsy"]
+
+  colonoscopy_polyp:
+    cpt: "45385"
+    label: "Colonoscopy with polypectomy"
+    specialty: "Gastroenterology"
+    description: "Procedure focused on removing polyps or similar interventions."
+    tags: ["therapeutic"]
+
+  egd_with_biopsy:
+    cpt: "43239"
+    label: "EGD with biopsy"
+    specialty: "Gastroenterology"
+    description: "Upper endoscopy with biopsy for reflux, dyspepsia, or similar evaluation."
+    tags: ["biopsy"]
+
+  egd_bleeding:
+    cpt: "43255"
+    label: "EGD for bleeding"
+    specialty: "Gastroenterology"
+    description: "Upper endoscopy for bleeding evaluation or therapeutic control."
+    tags: ["therapeutic"]
+
+  egd_dilation:
+    cpt: "43249"
+    label: "EGD with dilation"
+    specialty: "Gastroenterology"
+    description: "Endoscopy with dilation of a stricture or similar."
+    tags: ["therapeutic"]
+
+  egd_band_ligation:
+    cpt: "43244"
+    label: "EGD with band ligation"
+    specialty: "Gastroenterology"
+    description: "Endoscopic variceal band ligation."
+    tags: ["therapeutic"]
+
+  gi_imaging_ct:
+    cpt: "74177"
+    label: "CT abdomen/pelvis with IV contrast"
+    specialty: "Gastroenterology"
+    description: "Cross-sectional abdominal imaging used in GI workups."
+    tags: ["imaging"]
+
+  capsule_endoscopy:
+    cpt: "91110"
+    label: "Capsule endoscopy"
+    specialty: "Gastroenterology"
+    description: "Wireless capsule study of the small bowel."
+    tags: ["diagnostic"]
+
+  gi_general:
+    cpt: "45378"
+    label: "General GI consultation"
+    specialty: "Gastroenterology"
+    description: "Default GI procedure when scenario is unspecified."
+    tags: ["general"]
+    aliases_to: "colonoscopy_screening"
+
+  # -- Dermatology --
+  skin_biopsy_tangential:
+    cpt: "11102"
+    label: "Skin biopsy - tangential/shave"
+    specialty: "Dermatology"
+    description: "Surface biopsy of a single lesion."
+    tags: ["biopsy"]
+
+  skin_biopsy_punch:
+    cpt: "11104"
+    label: "Skin biopsy - punch"
+    specialty: "Dermatology"
+    description: "Deeper circular sample."
+    tags: ["biopsy"]
+
+  skin_biopsy_incisional:
+    cpt: "11106"
+    label: "Skin biopsy - incisional"
+    specialty: "Dermatology"
+    description: "Incisional biopsy for deeper tissue."
+    tags: ["biopsy"]
+
+  mole_removal_benign_small:
+    cpt: "11400"
+    label: "Mole removal (benign, small)"
+    specialty: "Dermatology"
+    description: "Excision of benign lesion, 0.5 cm or less."
+    tags: ["excision"]
+
+  mole_removal_benign_medium:
+    cpt: "11401"
+    label: "Mole removal (benign, medium)"
+    specialty: "Dermatology"
+    description: "Excision of benign lesion, 0.6-1.0 cm."
+    tags: ["excision"]
+
+  mole_removal_benign_large:
+    cpt: "11402"
+    label: "Mole removal (benign, large)"
+    specialty: "Dermatology"
+    description: "Excision of benign lesion, 1.1-2.0 cm."
+    tags: ["excision"]
+
+  mole_removal_malignant_small:
+    cpt: "11600"
+    label: "Mole removal (malignant, small)"
+    specialty: "Dermatology"
+    description: "Excision of malignant lesion, 0.5 cm or less."
+    tags: ["excision"]
+
+  mole_removal_malignant_medium:
+    cpt: "11601"
+    label: "Mole removal (malignant, medium)"
+    specialty: "Dermatology"
+    description: "Excision of malignant lesion, 0.6-1.0 cm."
+    tags: ["excision"]
+
+  mole_removal_malignant_large:
+    cpt: "11602"
+    label: "Mole removal (malignant, large)"
+    specialty: "Dermatology"
+    description: "Excision of malignant lesion, 1.1-2.0 cm."
+    tags: ["excision"]
+
+  lesion_destruction_first:
+    cpt: "17000"
+    label: "Lesion destruction (first)"
+    specialty: "Dermatology"
+    description: "Destruction of first premalignant lesion."
+    tags: ["destruction"]
+
+  lesion_destruction_additional:
+    cpt: "17003"
+    label: "Lesion destruction (additional)"
+    specialty: "Dermatology"
+    description: "Destruction of second through fourteenth lesion."
+    tags: ["destruction"]
+
+  wart_removal:
+    cpt: "17110"
+    label: "Wart removal"
+    specialty: "Dermatology"
+    description: "Destruction of flat warts, up to 14 lesions."
+    tags: ["destruction"]
+
+  mohs_surgery_head_neck:
+    cpt: "17311"
+    label: "Mohs surgery (head/neck)"
+    specialty: "Dermatology"
+    description: "Mohs micrographic surgery, first stage, head/neck/hands/feet/genitalia."
+    tags: ["surgery"]
+
+  mohs_surgery_additional_block:
+    cpt: "17312"
+    label: "Mohs surgery (additional block)"
+    specialty: "Dermatology"
+    description: "Each additional block after the first, same lesion."
+    tags: ["surgery"]
+
+  mohs_surgery_trunk:
+    cpt: "17313"
+    label: "Mohs surgery (trunk/extremities)"
+    specialty: "Dermatology"
+    description: "Mohs micrographic surgery, first stage, trunk/arms/legs."
+    tags: ["surgery"]
+
+  derm_pathology:
+    cpt: "88305"
+    label: "Dermatopathology"
+    specialty: "Dermatology"
+    description: "Surgical pathology, gross and microscopic examination."
+    tags: ["pathology"]
+
+  phototherapy:
+    cpt: "96910"
+    label: "Phototherapy"
+    specialty: "Dermatology"
+    description: "Photochemotherapy with UV."
+    tags: ["therapy"]
+
+  derm_office_visit_established:
+    cpt: "99213"
+    label: "Office visit (established, level 3)"
+    specialty: "Dermatology"
+    description: "Standard office visit for an established patient."
+    tags: ["office_visit"]
+
+  derm_office_visit_detailed:
+    cpt: "99214"
+    label: "Office visit (established, level 4)"
+    specialty: "Dermatology"
+    description: "Detailed office visit for an established patient."
+    tags: ["office_visit"]

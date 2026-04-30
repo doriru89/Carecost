@@ -19,3 +19,7 @@ agent-plans/
 test-results/*.json
 backend/coverage-backend.json
 frontend/coverage/
+
+# Large data files (ETL raw/intermediate)
+data/raw/
+data/intermediate/

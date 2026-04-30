@@ -10,6 +10,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.db.tables import HospitalRate, Provider
+from app.registries import all_hospitals
 from app.services.insurance_options import build_insurance_options
 
 _PAYMENT_TABLE_PATH = Path(__file__).resolve().parents[5] / "sample-data" / "plan_payment_table.json"
@@ -18,22 +19,8 @@ if _PAYMENT_TABLE_PATH.exists():
     _PAYMENT_TABLE = json.loads(_PAYMENT_TABLE_PATH.read_text())
 
 _HOSPITAL_INFO: dict[str, dict[str, Any]] = {
-    "Massachusetts General Hospital": {"id": "mgh", "lat": 42.3632, "lng": -71.0686},
-    "Brigham and Women's Hospital": {"id": "brigham", "lat": 42.3358, "lng": -71.1065},
-    "Beth Israel Deaconess Medical Center": {"id": "bidmc", "lat": 42.3389, "lng": -71.1063},
-    "Boston Medical Center": {"id": "bmc", "lat": 42.3346, "lng": -71.0721},
-    "Tufts Medical Center": {"id": "tufts", "lat": 42.3495, "lng": -71.0636},
-    "Brigham and Women's Faulkner": {"id": "faulkner", "lat": 42.3082, "lng": -71.1271},
-    "Boston Children's Hospital": {"id": "childrens", "lat": 42.3375, "lng": -71.1064},
-    "Dana-Farber Cancer Institute": {"id": "dana_farber", "lat": 42.3382, "lng": -71.1068},
-    "BMC Brighton (Formerly St. Elizabeth's)": {
-        "id": "bmc_brighton",
-        "lat": 42.3545,
-        "lng": -71.1525,
-    },
-    "Mount Auburn Hospital": {"id": "mtauburn", "lat": 42.3738, "lng": -71.1284},
-    "CHA Cambridge Hospital": {"id": "cha", "lat": 42.3667, "lng": -71.1050},
-    "Franciscan Childrens": {"id": "franciscan", "lat": 42.3540, "lng": -71.1530},
+    h.name: {"id": hid, "lat": h.lat, "lng": h.lng}
+    for hid, h in all_hospitals().items()
 }
 
 

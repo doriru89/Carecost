@@ -1,0 +1,41 @@
+# Payer identity registry.
+# id (key) = stable key used in prices table `payer` column (uppercase, regional).
+# slug = frontend-friendly key used in hospital_rates column names and UI (lowercase).
+# price_column / plan_column = column names in the hospital_rates table.
+
+payers:
+  BCBS_MA:
+    slug: "bcbs"
+    label: "Blue Cross Blue Shield (BCBS)"
+    carrier_patterns: ["blue cross", "bcbs"]
+    price_column: "bcbs_price"
+    plan_column: "bcbs_plan"
+    source_column: "bcbs_source"
+    is_default: true
+
+  AETNA:
+    slug: "aetna"
+    label: "Aetna"
+    carrier_patterns: ["aetna"]
+    price_column: "aetna_price"
+    plan_column: "aetna_plan"
+    source_column: "aetna_source"
+    is_default: false
+
+  HARVARD_PILGRIM:
+    slug: "harvard_pilgrim"
+    label: "Harvard Pilgrim"
+    carrier_patterns: ["harvard", "pilgrim"]
+    price_column: "harvard_pilgrim_price"
+    plan_column: "hp_plan_name"
+    source_column: "hp_source"
+    is_default: false
+
+  UHC:
+    slug: "uhc"
+    label: "UnitedHealthcare (UHC)"
+    carrier_patterns: ["united", "uhc", "unitedhealth"]
+    price_column: "uhc_price"
+    plan_column: "uhc_source"
+    source_column: "uhc_source"
+    is_default: false

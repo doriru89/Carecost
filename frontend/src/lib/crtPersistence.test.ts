@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { saveCrt, loadCrt } from './crtPersistence';
 
-const testCrt = { cpt: '43235', label: 'EGD with biopsy', bundleId: 'egd_with_biopsy' };
+const testCrt = { cpt: '43239', label: 'EGD with biopsy', bundleId: 'egd_with_biopsy' };
 
 describe('CRT persistence', () => {
   beforeEach(() => {
@@ -22,16 +22,16 @@ describe('CRT persistence', () => {
   });
 
   it('falls back to intakePayload when sessionStorage empty', () => {
-    const intake = { cpt_code: '43235', procedure_label: 'EGD with biopsy', bundle_id: 'egd_with_biopsy' };
+    const intake = { cpt_code: '43239', procedure_label: 'EGD with biopsy', bundle_id: 'egd_with_biopsy' };
     const result = loadCrt(intake);
-    // EGD_PROCEDURES.find returns first match for CPT 43235 = "EGD diagnostic"
-    expect(result).toEqual({ cpt: '43235', label: 'EGD diagnostic', bundleId: 'egd_with_biopsy' });
+    // EGD_PROCEDURES.find returns first match for CPT 43239 = "EGD diagnostic"
+    expect(result).toEqual({ cpt: '43239', label: 'EGD diagnostic', bundleId: 'egd_with_biopsy' });
   });
 
   it('prefers sessionStorage over intakePayload', () => {
     const otherCrt = { cpt: '43249', label: 'EGD with dilation', bundleId: 'egd_dilation' };
     sessionStorage.setItem('carecost_selectedCrt', JSON.stringify(otherCrt));
-    const intake = { cpt_code: '43235', procedure_label: 'EGD with biopsy', bundle_id: 'egd_with_biopsy' };
+    const intake = { cpt_code: '43239', procedure_label: 'EGD with biopsy', bundle_id: 'egd_with_biopsy' };
     const result = loadCrt(intake);
     expect(result).toEqual(otherCrt);
   });

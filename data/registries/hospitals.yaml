@@ -1,0 +1,100 @@
+# Hospital identity registry.
+# Key = stable hospital_id used in database and API.
+# address_patterns used by CSV import to match provider addresses to hospitals.
+
+hospitals:
+  mgh:
+    name: "Massachusetts General Hospital"
+    system: "Mass General Brigham"
+    neighborhood: "West End"
+    lat: 42.3632
+    lng: -71.0686
+    address_patterns: ["55 FRUIT ST", "MASSACHUSETTS GENERAL", "MASS GENERAL", "15 PARKMAN"]
+
+  brigham:
+    name: "Brigham and Women's Hospital"
+    system: "Mass General Brigham"
+    neighborhood: "Longwood"
+    lat: 42.3358
+    lng: -71.1065
+    address_patterns: ["221 LONGWOOD", "75 FRANCIS", "45 FRANCIS", "BRIGHAM AND WOMEN", "111 CYPRESS"]
+
+  bidmc:
+    name: "Beth Israel Deaconess Medical Center"
+    system: "Beth Israel Lahey Health"
+    neighborhood: "Longwood"
+    lat: 42.3389
+    lng: -71.1063
+    address_patterns: ["330 BROOKLINE AVE", "BIDMC", "BETH ISRAEL", "SHAPIRO"]
+
+  bmc:
+    name: "Boston Medical Center"
+    system: "Boston Medical Center Health System"
+    neighborhood: "South End"
+    lat: 42.3346
+    lng: -71.0721
+    address_patterns: ["72 EAST CONCORD", "725 ALBANY", "609 ALBANY", "715 ALBANY", "850 HARRISON"]
+
+  tufts:
+    name: "Tufts Medical Center"
+    system: "Wellforce"
+    neighborhood: "Chinatown"
+    lat: 42.3495
+    lng: -71.0636
+    address_patterns: ["800 WASHINGTON", "750 WASHINGTON", "TUFTS MEDICAL", "NEW ENGLAND MED"]
+
+  faulkner:
+    name: "Brigham and Women's Faulkner"
+    system: "Mass General Brigham"
+    neighborhood: "Jamaica Plain"
+    lat: 42.3082
+    lng: -71.1271
+    address_patterns: ["1153 CENTRE", "FAULKNER"]
+
+  childrens:
+    name: "Boston Children's Hospital"
+    system: "Boston Children's"
+    neighborhood: "Longwood"
+    lat: 42.3375
+    lng: -71.1064
+    address_patterns: ["300 LONGWOOD", "CHILDRENS", "CHILDREN'S"]
+
+  dana_farber:
+    name: "Dana-Farber Cancer Institute"
+    system: "Dana-Farber"
+    neighborhood: "Longwood"
+    lat: 42.3382
+    lng: -71.1068
+    address_patterns: ["DANA FARBER", "DANA-FARBER", "44 BINNEY", "450 BROOKLINE"]
+
+  bmc_brighton:
+    name: "BMC Brighton (Formerly St. Elizabeth's)"
+    system: "Boston Medical Center Health System"
+    neighborhood: "Brighton"
+    lat: 42.3545
+    lng: -71.1525
+    address_patterns: ["736 CAMBRIDGE ST", "ST ELIZABETH", "ST. ELIZABETH"]
+
+  mtauburn:
+    name: "Mount Auburn Hospital"
+    system: "Beth Israel Lahey Health"
+    neighborhood: "Cambridge"
+    lat: 42.3738
+    lng: -71.1284
+    address_patterns: ["MOUNT AUBURN", "MT AUBURN", "330 MOUNT AUBURN"]
+
+  cha:
+    name: "CHA Cambridge Hospital"
+    system: "Cambridge Health Alliance"
+    neighborhood: "Cambridge"
+    lat: 42.3667
+    lng: -71.1050
+    address_patterns: ["1493 CAMBRIDGE", "CHA CAMBRIDGE"]
+
+  franciscan:
+    name: "Franciscan Childrens"
+    system: "Franciscan"
+    neighborhood: "Brighton"
+    lat: 42.3540
+    lng: -71.1530
+    address_patterns: []

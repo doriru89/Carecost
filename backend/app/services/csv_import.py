@@ -10,19 +10,10 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 from app.db.tables import HospitalRate, Insurer, Price, Procedure, Provider
+from app.registries import bundles_for_specialty, infer_hospital_from_address
 
 BUNDLE_CPT_AZ_MVP: dict[str, str] = {
-    "colonoscopy_screening": "45378",
-    "colonoscopy_diagnostic": "45378",
-    "colonoscopy_with_biopsy": "45380",
-    "colonoscopy_polyp": "45385",
-    "egd_with_biopsy": "43235",
-    "egd_bleeding": "43255",
-    "egd_dilation": "43249",
-    "egd_band_ligation": "43244",
-    "gi_imaging_ct": "74176",
-    "capsule_endoscopy": "91110",
-    "gi_general": "45378",
+    bid: b.cpt for bid, b in bundles_for_specialty("Gastroenterology").items()
 }
 
 AZ_PROVIDERS_COLUMNS = (
@@ -76,39 +67,6 @@ INSURERS_COLUMNS = (
     "source",
 )
 
-_ADDRESS_HOSPITAL_PATTERNS: list[tuple[list[str], str]] = [
-    (
-        ["55 FRUIT ST", "MASSACHUSETTS GENERAL", "MASS GENERAL", "15 PARKMAN"],
-        "Massachusetts General Hospital",
-    ),
-    (
-        ["330 BROOKLINE AVE", "BIDMC", "BETH ISRAEL", "SHAPIRO"],
-        "Beth Israel Deaconess Medical Center",
-    ),
-    (
-        ["72 EAST CONCORD", "725 ALBANY", "609 ALBANY", "715 ALBANY", "850 HARRISON"],
-        "Boston Medical Center",
-    ),
-    (
-        ["221 LONGWOOD", "75 FRANCIS", "45 FRANCIS", "BRIGHAM AND WOMEN", "111 CYPRESS"],
-        "Brigham and Women's Hospital",
-    ),
-    (["DANA FARBER", "DANA-FARBER", "44 BINNEY", "450 BROOKLINE"], "Dana-Farber Cancer Institute"),
-    (["300 LONGWOOD", "CHILDRENS", "CHILDREN'S"], "Boston Children's Hospital"),
-    (
-        ["800 WASHINGTON", "750 WASHINGTON", "TUFTS MEDICAL", "NEW ENGLAND MED"],
-        "Tufts Medical Center",
-    ),
-    (["1493 CAMBRIDGE", "CHA CAMBRIDGE"], "CHA Cambridge Hospital"),
-    (["MOUNT AUBURN", "MT AUBURN", "330 MOUNT AUBURN"], "Mount Auburn Hospital"),
-    (
-        ["736 CAMBRIDGE ST", "ST ELIZABETH", "ST. ELIZABETH"],
-        "BMC Brighton (Formerly St. Elizabeth's)",
-    ),
-    (["1153 CENTRE", "FAULKNER"], "Brigham and Women's Faulkner"),
-]
-
-
 def _read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as f:
         return list(csv.DictReader(f))
@@ -119,14 +77,6 @@ def _npi_jitter_lat_lng(npi: str) -> tuple[float, float]:
     lat_off = ((h % 2000) - 1000) / 80000.0
     lng_off = (((h // 2000) % 2000) - 1000) / 80000.0
     return _AZ_MVP_REF_LAT + lat_off, _AZ_MVP_REF_LNG + lng_off
-
-
-def _infer_hospital_from_address(address: str, city: str) -> str:
-    text = f"{address} {city}".upper()
-    for patterns, hospital_name in _ADDRESS_HOSPITAL_PATTERNS:
-        if any(p.upper() in text for p in patterns):
-            return hospital_name
-    return ""
 
 
 def _parse_float_cell(raw: str) -> float | None:
@@ -279,7 +229,7 @@ def import_az_providers_csv(
             name_parts.append(cred)
         name = " ".join(name_parts)
         lat, lng = _npi_jitter_lat_lng(npi)
-        hospital = row.get("hospital", "").strip() or _infer_hospital_from_address(
+        hospital = row.get("hospital", "").strip() or infer_hospital_from_address(
             row.get("address", ""), row.get("city", "")
         )
         values.append(

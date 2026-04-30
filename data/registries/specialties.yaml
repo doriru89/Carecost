@@ -1,0 +1,15 @@
+# Specialty configuration. References bundles from cpt_bundles.yaml.
+# Adding a new specialty = adding an entry here + corresponding bundles.
+
+specialties:
+  Gastroenterology:
+    taxonomy: "207RG0100X"
+    default_scenario: "gi_general"
+    data_file: "hospital_rates_clean.csv"
+    providers_file: "providers.csv"
+
+  Dermatology:
+    taxonomy: "207N00000X"
+    default_scenario: "derm_office_visit_detailed"
+    data_file: "hospital_rates_derm.csv"
+    providers_file: "providers_derm.csv"

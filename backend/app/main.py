@@ -1,11 +1,13 @@
 import logging
 import time
 from collections import deque
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
+from app.registries import validate_all_registries
 from app.routes import api_router
 
 settings = get_settings()
@@ -29,8 +31,18 @@ class _LatencyTracker:
         return samples[max(0, min(idx, len(samples) - 1))]
 
 
+@asynccontextmanager
+async def _lifespan(_app: FastAPI):
+    counts = validate_all_registries()
+    logger.info(
+        "registries loaded: %d bundles, %d hospitals, %d payers, %d specialties",
+        counts["bundles"], counts["hospitals"], counts["payers"], counts["specialties"],
+    )
+    yield
+
+
 def create_app() -> FastAPI:
-    app = FastAPI(title=settings.app_name, version=settings.app_version)
+    app = FastAPI(title=settings.app_name, version=settings.app_version, lifespan=_lifespan)
     latency_tracker = _LatencyTracker(maxlen=max(10, settings.latency_metrics_window_size))
 
     app.add_middleware(

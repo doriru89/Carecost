@@ -8,27 +8,17 @@ from sqlalchemy import distinct
 from sqlalchemy.orm import Session
 
 from app.db.tables import HospitalRate
+from app.registries import all_payers
 
-INSURER_LABELS: dict[str, str] = {
-    "bcbs": "Blue Cross Blue Shield (BCBS)",
-    "aetna": "Aetna",
-    "harvard_pilgrim": "Harvard Pilgrim",
-    "uhc": "UnitedHealthcare (UHC)",
-}
+_payers = all_payers()
 
-PRICE_COLUMNS: tuple[tuple[str, str], ...] = (
-    ("bcbs_price", "bcbs"),
-    ("aetna_price", "aetna"),
-    ("harvard_pilgrim_price", "harvard_pilgrim"),
-    ("uhc_price", "uhc"),
+INSURER_LABELS: dict[str, str] = {p.slug: p.label for p in _payers.values()}
+
+PRICE_COLUMNS: tuple[tuple[str, str], ...] = tuple(
+    (p.price_column, p.slug) for p in _payers.values()
 )
 
-PLAN_FIELD_BY_INSURER_KEY: dict[str, str] = {
-    "bcbs": "bcbs_plan",
-    "aetna": "aetna_plan",
-    "harvard_pilgrim": "hp_plan_name",
-    "uhc": "uhc_source",
-}
+PLAN_FIELD_BY_INSURER_KEY: dict[str, str] = {p.slug: p.plan_column for p in _payers.values()}
 
 
 def build_insurance_options(db: Session) -> dict[str, Any]:

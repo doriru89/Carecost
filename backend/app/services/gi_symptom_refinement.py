@@ -12,66 +12,32 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 from app.config import get_settings
+from app.registries import bundles_for_specialty
 from app.services.personal_assistant import lava_chat_completion, parse_json_from_llm_text
 from app.services.safety_crisis import crisis_response_payload, crisis_scan_messages
 
-# Keep in sync with frontend `GI_PROCEDURE_NODES` leaves (giDecisionTree.ts).
-GI_LEAF_CATALOG: list[dict[str, str]] = [
-    {
-        "id": "leaf_colonoscopy_screening",
-        "cpt": "45378",
-        "title": "Screening colonoscopy",
-        "summary": "Preventive screening when there are no active GI symptoms.",
-    },
-    {
-        "id": "leaf_colonoscopy_diagnostic",
-        "cpt": "45378",
-        "title": "Diagnostic colonoscopy",
-        "summary": "Colonoscopy to evaluate symptoms, abnormal tests, or follow-up findings.",
-    },
-    {
-        "id": "leaf_colonoscopy_polyp",
-        "cpt": "45385",
-        "title": "Colonoscopy with polypectomy",
-        "summary": "Procedure focused on removing polyps or similar interventions.",
-    },
-    {
-        "id": "leaf_colonoscopy_with_biopsy",
-        "cpt": "45380",
-        "title": "Colonoscopy with biopsy",
-        "summary": "Colonoscopy including mucosal biopsies when indicated.",
-    },
-    {
-        "id": "leaf_egd_with_biopsy",
-        "cpt": "43235",
-        "title": "EGD (upper endoscopy) with biopsy",
-        "summary": "Upper endoscopy with biopsy for reflux, dyspepsia, or similar evaluation.",
-    },
-    {
-        "id": "leaf_egd_bleeding",
-        "cpt": "43255",
-        "title": "EGD for bleeding",
-        "summary": "Upper endoscopy for bleeding evaluation or therapeutic control.",
-    },
-    {
-        "id": "leaf_egd_dilation",
-        "cpt": "43249",
-        "title": "EGD with dilation",
-        "summary": "Endoscopy with dilation of a stricture or similar.",
-    },
-    {
-        "id": "leaf_gi_imaging_ct",
-        "cpt": "74176",
-        "title": "CT abdomen / pelvis without contrast",
-        "summary": "Cross-sectional abdominal imaging used in GI workups.",
-    },
-    {
-        "id": "leaf_capsule_endoscopy",
-        "cpt": "91110",
-        "title": "Capsule endoscopy",
-        "summary": "Wireless capsule study of the small bowel.",
-    },
+_GI_LEAF_IDS = [
+    "colonoscopy_screening",
+    "colonoscopy_diagnostic",
+    "colonoscopy_polyp",
+    "colonoscopy_with_biopsy",
+    "egd_with_biopsy",
+    "egd_bleeding",
+    "egd_dilation",
+    "gi_imaging_ct",
+    "capsule_endoscopy",
 ]
+
+GI_LEAF_CATALOG: list[dict[str, str]] = []
+_gi_bundles = bundles_for_specialty("Gastroenterology")
+for _bid in _GI_LEAF_IDS:
+    _b = _gi_bundles[_bid]
+    GI_LEAF_CATALOG.append({
+        "id": f"leaf_{_bid}",
+        "cpt": _b.cpt,
+        "title": _b.label,
+        "summary": _b.description,
+    })
 
 ALLOWED_LEAF_IDS = {row["id"] for row in GI_LEAF_CATALOG}
 
