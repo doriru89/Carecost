@@ -10,6 +10,7 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 from app.db.tables import HospitalRate, Insurer, Price, Procedure, Provider
+from app.etl.column_map import PAYER_RATE_MAP
 from app.etl.data_qualifier import derive_rate_quality_from_csv_row as _derive_rate_quality_from_csv
 from app.registries import bundles_for_specialty, infer_hospital_from_address
 
@@ -328,11 +329,8 @@ def import_hospital_rates_csv(db: Session, path: Path) -> int:
     return _upsert_by_pk(db, HospitalRate, values)
 
 
-_AZ_PAYER_RATE_FIELDS: tuple[tuple[str, str], ...] = (
-    ("bcbs_price", "BCBS_MA"),
-    ("aetna_price", "AETNA"),
-    ("harvard_pilgrim_price", "HARVARD_PILGRIM"),
-    ("uhc_price", "UHC"),
+_AZ_PAYER_RATE_FIELDS: tuple[tuple[str, str], ...] = tuple(
+    (price_col, payer_id) for payer_id, (price_col, _, _) in PAYER_RATE_MAP.items()
 )
 
 

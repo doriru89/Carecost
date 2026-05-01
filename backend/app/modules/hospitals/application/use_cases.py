@@ -9,8 +9,10 @@ from typing import Any
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.db.tables import HospitalRate, Provider
+from app.db.tables import HospitalProcedure, Provider
 from app.registries import all_hospitals
+from app.services.hospital_legacy import flatten_to_legacy
+from app.services.hospital_query import query_hospitals_normalized
 from app.services.insurance_options import build_insurance_options
 
 _PAYMENT_TABLE_PATH = Path(__file__).resolve().parents[5] / "data" / "seed" / "plan_payment_table.json"
@@ -37,14 +39,13 @@ def list_hospitals(db: Session, *, cpt: str, specialty: str | None) -> list[dict
         q = q.filter(Provider.specialties.contains([specialty]))
     counts = {row.hospital: row.cnt for row in q.group_by(Provider.hospital).all()}
 
-    rates_by_id: dict[str, HospitalRate] = {}
-    for rate in db.query(HospitalRate).filter(HospitalRate.cpt == cpt).all():
-        rates_by_id[rate.hospital_id] = rate
+    normalized = query_hospitals_normalized(db, cpt)
+    normalized_by_hid = {h["hospital_id"]: h for h in normalized}
 
     all_hospital_names: set[str] = set(counts.keys())
     for name, info in _HOSPITAL_INFO.items():
         hid = info.get("id")
-        if hid and hid in rates_by_id:
+        if hid and hid in normalized_by_hid:
             all_hospital_names.add(name)
 
     results = []
@@ -55,51 +56,39 @@ def list_hospitals(db: Session, *, cpt: str, specialty: str | None) -> list[dict
         if lat is None or lng is None:
             continue
         hid = info.get("id")
-        rate = rates_by_id.get(hid) if hid else None
-        count = counts.get(name, 0)
-        results.append(
-            {
-                "name": name,
-                "hospital_id": hid,
-                "lat": lat,
-                "lng": lng,
-                "doctor_count": count,
-                "bcbs_price": rate.bcbs_price if rate else None,
-                "bcbs_source": rate.bcbs_source if rate else "",
-                "bcbs_plan": rate.bcbs_plan if rate else "",
-                "aetna_price": rate.aetna_price if rate else None,
-                "aetna_source": rate.aetna_source if rate else "",
-                "harvard_pilgrim_price": rate.harvard_pilgrim_price if rate else None,
-                "hp_plan_name": rate.hp_plan_name if rate else "",
-                "hp_source": rate.hp_source if rate else "",
-                "uhc_price": rate.uhc_price if rate else None,
-                "uhc_source": rate.uhc_source if rate else "",
-                "de_identified_min": rate.de_identified_min if rate else None,
-                "de_identified_max": rate.de_identified_max if rate else None,
-                "gross_charge": rate.gross_charge if rate else None,
-                "discounted_cash": rate.discounted_cash if rate else None,
-                "bcbs_tic_rate": rate.bcbs_tic_rate if rate else None,
-                "bcbs_tic_billing_class": rate.bcbs_tic_billing_class if rate else "",
-                "billing_class": rate.billing_class if rate else "unknown",
-                "setting": rate.setting if rate else "",
-                "rate_methodology": rate.rate_methodology if rate else "",
-                "turquoise_bundled_price": rate.turquoise_bundled_price if rate else None,
-                "turquoise_quality_rating": rate.turquoise_quality_rating if rate else None,
-                "masscomparecare_total_paid": rate.masscomparecare_total_paid if rate else None,
-                "fh_physician_in_network": rate.fh_physician_in_network if rate else None,
-                "fh_anesthesia_in_network": rate.fh_anesthesia_in_network if rate else None,
-                "fh_facility_hosp_in_network": rate.fh_facility_hosp_in_network if rate else None,
-                "fh_pathology_in_network": rate.fh_pathology_in_network if rate else None,
-                "cpt": cpt,
-                "cpt_desc": rate.cpt_desc if rate else "",
-            }
-        )
+        norm = normalized_by_hid.get(hid) if hid else None
+        d = flatten_to_legacy(norm) if norm else _empty_legacy(cpt)
+        d["name"] = name
+        d["hospital_id"] = hid
+        d["lat"] = lat
+        d["lng"] = lng
+        d["doctor_count"] = counts.get(name, 0)
+        results.append(d)
     results.sort(key=lambda x: x["doctor_count"], reverse=True)
     return results
 
 
+def _empty_legacy(cpt: str) -> dict[str, Any]:
+    """Default dict for hospitals with no pricing data."""
+    return {
+        "cpt": cpt, "cpt_desc": "", "gross_charge": None,
+        "discounted_cash": None, "de_identified_min": None,
+        "de_identified_max": None, "billing_class": "unknown",
+        "setting": "", "rate_methodology": "",
+        "bcbs_price": None, "bcbs_source": "", "bcbs_plan": "",
+        "aetna_price": None, "aetna_source": "",
+        "harvard_pilgrim_price": None, "hp_plan_name": "", "hp_source": "",
+        "uhc_price": None, "uhc_source": "",
+        "bcbs_tic_rate": None, "bcbs_tic_billing_class": "",
+        "turquoise_bundled_price": None, "turquoise_quality_rating": None,
+        "masscomparecare_total_paid": None,
+        "fh_physician_in_network": None, "fh_anesthesia_in_network": None,
+        "fh_facility_hosp_in_network": None, "fh_pathology_in_network": None,
+    }
+
+
 def list_specialties(db: Session) -> list[dict[str, Any]]:
-    rows = db.query(HospitalRate.cpt, HospitalRate.cpt_desc).distinct().all()
+    rows = db.query(HospitalProcedure.cpt, HospitalProcedure.cpt_desc).distinct().all()
     gi_cpts = []
     derm_cpts = []
     for cpt, desc in rows:

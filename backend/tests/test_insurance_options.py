@@ -1,6 +1,6 @@
-"""Insurance dropdown options derived from hospital_rates (PostgreSQL)."""
+"""Insurance dropdown options derived from HospitalPayerRate (normalized)."""
 
-from app.db.tables import HospitalRate
+from app.db.tables import HospitalPayerRate
 from app.services.insurance_options import build_insurance_options
 
 
@@ -14,26 +14,30 @@ def test_insurance_options_empty_collection(db_session):
 def test_insurance_options_from_rates(db_session):
     db_session.add_all(
         [
-            HospitalRate(
-                id="bmc:45378",
-                hospital_id="bmc",
-                cpt="45378",
-                bcbs_price=100.0,
-                aetna_price=200.0,
-                bcbs_plan=" HMO Blue ",
-                aetna_plan="Open Access",
-                source="test",
+            HospitalPayerRate(
+                hospital_id="bmc", cpt="45378", payer_id="BCBS_MA",
+                negotiated_rate=100.0, plan_name="HMO Blue",
+                source="test", source_origin="mrf", billing_class="", price_source="",
             ),
-            HospitalRate(
-                id="bmc:45380",
-                hospital_id="bmc",
-                cpt="45380",
-                harvard_pilgrim_price=50.0,
-                uhc_price=75.0,
-                bcbs_plan="PPO Blue",
-                aetna_plan="Managed Choice",
-                uhc_source="Choice Plus",
-                source="test",
+            HospitalPayerRate(
+                hospital_id="bmc", cpt="45378", payer_id="AETNA",
+                negotiated_rate=200.0, plan_name="Open Access",
+                source="test", source_origin="mrf", billing_class="", price_source="",
+            ),
+            HospitalPayerRate(
+                hospital_id="bmc", cpt="45380", payer_id="BCBS_MA",
+                negotiated_rate=90.0, plan_name="PPO Blue",
+                source="test", source_origin="mrf", billing_class="", price_source="",
+            ),
+            HospitalPayerRate(
+                hospital_id="bmc", cpt="45380", payer_id="HARVARD_PILGRIM",
+                negotiated_rate=50.0, plan_name="",
+                source="test", source_origin="mrf", billing_class="", price_source="",
+            ),
+            HospitalPayerRate(
+                hospital_id="bmc", cpt="45380", payer_id="UHC",
+                negotiated_rate=75.0, plan_name="Choice Plus",
+                source="test", source_origin="mrf", billing_class="", price_source="",
             ),
         ]
     )
@@ -44,6 +48,6 @@ def test_insurance_options_from_rates(db_session):
     assert keys == {"bcbs", "aetna", "harvard_pilgrim", "uhc"}
     assert out["bcbs_plan_options"] == ["HMO Blue", "PPO Blue"]
     assert out["plan_options_by_insurer"]["bcbs"] == ["HMO Blue", "PPO Blue"]
-    assert out["plan_options_by_insurer"]["aetna"] == ["Managed Choice", "Open Access"]
+    assert out["plan_options_by_insurer"]["aetna"] == ["Open Access"]
     assert out["plan_options_by_insurer"]["harvard_pilgrim"] == []
     assert out["plan_options_by_insurer"]["uhc"] == ["Choice Plus"]

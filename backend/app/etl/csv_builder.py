@@ -10,6 +10,7 @@ import csv
 import dataclasses
 from pathlib import Path
 
+from app.etl.column_map import FH_COMPONENT_MAP, PAYER_RATE_MAP
 from app.etl.types import MergeResult
 
 PROCEDURE_COLUMNS = (
@@ -54,21 +55,6 @@ _MONETARY_FIELDS = {
     "fh_facility_asc_in_network", "fh_pathology_in_network",
 }
 
-_PAYER_RATE_MAP = {
-    "BCBS_MA": ("bcbs_price", "bcbs_source", "bcbs_plan"),
-    "AETNA": ("aetna_price", "aetna_source", "aetna_plan"),
-    "HARVARD_PILGRIM": ("harvard_pilgrim_price", "hp_source", "hp_plan_name"),
-    "UHC": ("uhc_price", "uhc_source", "uhc_source"),
-}
-
-_FH_COMPONENT_MAP = {
-    "physician_in_network": "fh_physician_in_network",
-    "physician_oon": "fh_physician_oon",
-    "anesthesia_in_network": "fh_anesthesia_in_network",
-    "facility_hosp_in_network": "fh_facility_hosp_in_network",
-    "facility_asc_in_network": "fh_facility_asc_in_network",
-    "pathology_in_network": "fh_pathology_in_network",
-}
 
 
 def _fmt(val, col: str) -> str:
@@ -145,7 +131,7 @@ def build_legacy_wide_csv(result: MergeResult, output_path: Path) -> int:
         row = proc_map.get(key)
         if not row:
             continue
-        mapping = _PAYER_RATE_MAP.get(pr.payer_id)
+        mapping = PAYER_RATE_MAP.get(pr.payer_id)
         if not mapping:
             continue
         price_col, source_col, plan_col = mapping
@@ -168,7 +154,7 @@ def build_legacy_wide_csv(result: MergeResult, output_path: Path) -> int:
         elif bm.benchmark_source == "masscomparecare":
             row["masscomparecare_total_paid"] = bm.price
         elif bm.benchmark_source == "fair_health":
-            col = _FH_COMPONENT_MAP.get(bm.component)
+            col = FH_COMPONENT_MAP.get(bm.component)
             if col:
                 row[col] = bm.price
 

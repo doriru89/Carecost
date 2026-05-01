@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from app.db.postgres import get_db
 from app.db.tables import Base
 from app.main import create_app
+from app.etl.seed_migration import migrate_wide_to_normalized
 from app.services.csv_import import import_az_directory
 
 AZ_DATA = Path(__file__).resolve().parent.parent.parent / "data" / "seed"
@@ -56,6 +57,7 @@ def db_session(engine: Engine) -> Session:
 @pytest.fixture
 def seeded_db(db_session: Session) -> Session:
     import_az_directory(db_session, AZ_DATA)
+    migrate_wide_to_normalized(db_session)
     db_session.commit()
     return db_session
 
