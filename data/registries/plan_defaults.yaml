@@ -1,6 +1,8 @@
 # Default plan financial parameters by carrier + plan type.
 # Placeholder: replace with real plan data when available (Phase 60+).
 # Source: representative MA market plans as of 2026.
+# NOTE: New payers require entries here for auto-fill defaults.
+# Without an entry, users see generic fallback in the frontend.
 
 plan_defaults:
   bcbs_ppo:
