@@ -107,7 +107,7 @@ class ProcedureRecord:
 
 @dataclass
 class PayerRateRecord:
-    """One negotiated rate for a (hospital, CPT, payer, source_origin) combination."""
+    """One negotiated rate for a (hospital, CPT, payer, source_origin, plan_name) combination."""
 
     hospital_id: str
     cpt: str
@@ -118,6 +118,9 @@ class PayerRateRecord:
     source_origin: str = "mrf"
     billing_class: str = ""
     price_source: str = ""
+    setting: str = ""
+    source_file: str = ""
+    rate_methodology: str = ""
 
 
 @dataclass

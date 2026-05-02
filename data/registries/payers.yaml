@@ -8,6 +8,8 @@ payers:
   BCBS_MA:
     slug: "bcbs"
     label: "Blue Cross Blue Shield (BCBS)"
+    parent_brand: "bcbs"
+    operating_states: ["MA"]
     carrier_patterns: ["blue cross", "bcbs"]
     is_default: true
     normalization_patterns: ["BLUE CROSS", "BCBS"]
@@ -17,6 +19,8 @@ payers:
   AETNA:
     slug: "aetna"
     label: "Aetna"
+    parent_brand: "aetna"
+    operating_states: ["MA", "CT", "NY", "CA"]
     carrier_patterns: ["aetna"]
     is_default: false
     normalization_patterns: ["AETNA"]
@@ -26,6 +30,8 @@ payers:
   HARVARD_PILGRIM:
     slug: "harvard_pilgrim"
     label: "Harvard Pilgrim"
+    parent_brand: "harvard_pilgrim"
+    operating_states: ["MA", "NH", "ME"]
     carrier_patterns: ["harvard", "pilgrim"]
     is_default: false
     normalization_patterns: ["HARVARD PILGRIM", "HPHC"]
@@ -35,6 +41,8 @@ payers:
   UHC:
     slug: "uhc"
     label: "UnitedHealthcare (UHC)"
+    parent_brand: "uhc"
+    operating_states: ["MA", "CT", "NY", "CA"]
     carrier_patterns: ["united", "uhc", "unitedhealth"]
     is_default: false
     normalization_patterns: ["UNITED", "UHC"]

@@ -60,6 +60,9 @@ def migrate_wide_to_normalized(db: Session) -> dict[str, int]:
                 "source_origin": "mrf",
                 "billing_class": row.billing_class,
                 "price_source": "seed",
+                "setting": row.setting or "",
+                "source_file": "",
+                "rate_methodology": row.rate_methodology or "",
             })
 
         if row.bcbs_tic_rate is not None:
@@ -73,6 +76,9 @@ def migrate_wide_to_normalized(db: Session) -> dict[str, int]:
                 "source_origin": "tic",
                 "billing_class": row.bcbs_tic_billing_class or "",
                 "price_source": "seed",
+                "setting": "",
+                "source_file": "",
+                "rate_methodology": "",
             })
 
         if row.turquoise_bundled_price is not None:

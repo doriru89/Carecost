@@ -8,6 +8,8 @@ hospitals:
   mgh:
     name: "Massachusetts General Hospital"
     system: "Mass General Brigham"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "West End"
     lat: 42.3632
     lng: -71.0686
@@ -21,6 +23,8 @@ hospitals:
   brigham:
     name: "Brigham and Women's Hospital"
     system: "Mass General Brigham"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "Longwood"
     lat: 42.3358
     lng: -71.1065
@@ -34,6 +38,8 @@ hospitals:
   bidmc:
     name: "Beth Israel Deaconess Medical Center"
     system: "Beth Israel Lahey Health"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "Longwood"
     lat: 42.3389
     lng: -71.1063
@@ -47,6 +53,8 @@ hospitals:
   bmc:
     name: "Boston Medical Center"
     system: "Boston Medical Center Health System"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "South End"
     lat: 42.3346
     lng: -71.0721
@@ -60,6 +68,8 @@ hospitals:
   tufts:
     name: "Tufts Medical Center"
     system: "Wellforce"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "Chinatown"
     lat: 42.3495
     lng: -71.0636
@@ -73,6 +83,8 @@ hospitals:
   faulkner:
     name: "Brigham and Women's Faulkner"
     system: "Mass General Brigham"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "Jamaica Plain"
     lat: 42.3082
     lng: -71.1271
@@ -86,6 +98,8 @@ hospitals:
   childrens:
     name: "Boston Children's Hospital"
     system: "Boston Children's"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "Longwood"
     lat: 42.3375
     lng: -71.1064
@@ -98,6 +112,8 @@ hospitals:
   dana_farber:
     name: "Dana-Farber Cancer Institute"
     system: "Dana-Farber"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "Longwood"
     lat: 42.3382
     lng: -71.1068
@@ -110,6 +126,8 @@ hospitals:
   bmc_brighton:
     name: "BMC Brighton (Formerly St. Elizabeth's)"
     system: "Boston Medical Center Health System"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "Brighton"
     lat: 42.3545
     lng: -71.1525
@@ -122,6 +140,8 @@ hospitals:
   mtauburn:
     name: "Mount Auburn Hospital"
     system: "Beth Israel Lahey Health"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "Cambridge"
     lat: 42.3738
     lng: -71.1284
@@ -135,6 +155,8 @@ hospitals:
   cha:
     name: "CHA Cambridge Hospital"
     system: "Cambridge Health Alliance"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "Cambridge"
     lat: 42.3667
     lng: -71.1050
@@ -148,6 +170,8 @@ hospitals:
   franciscan:
     name: "Franciscan Childrens"
     system: "Franciscan"
+    state: "MA"
+    metro_area: "boston"
     neighborhood: "Brighton"
     lat: 42.3540
     lng: -71.1530

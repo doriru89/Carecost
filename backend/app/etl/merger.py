@@ -114,6 +114,9 @@ def merge_records(
                 source_origin=rec.source_origin,
                 billing_class=rec.billing_class,
                 price_source=ps,
+                setting=rec.setting,
+                source_file=rec.source_file,
+                rate_methodology=rec.rate_methodology,
             ))
 
         has_gross = first_mrf.gross is not None and first_mrf.gross > 0

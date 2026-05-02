@@ -51,7 +51,7 @@ def validate_etl_output(
         seen.add(key)
 
     # Payer rate checks
-    rate_keys: set[tuple[str, str, str, str]] = set()
+    rate_keys: set[tuple[str, str, str, str, str]] = set()
     for pr in result.payer_rates:
         # 5. No negative prices
         if pr.negotiated_rate is not None and pr.negotiated_rate < 0:
@@ -69,7 +69,7 @@ def validate_etl_output(
             )
 
         # 10. Duplicate detection — payer rates
-        rk = (pr.hospital_id, pr.cpt, pr.payer_id, pr.source_origin)
+        rk = (pr.hospital_id, pr.cpt, pr.payer_id, pr.source_origin, pr.plan_name)
         if rk in rate_keys:
             errors.append(f"Duplicate payer rate {rk}")
         rate_keys.add(rk)

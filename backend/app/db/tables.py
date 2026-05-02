@@ -7,6 +7,7 @@ from datetime import datetime
 
 from sqlalchemy import (
     Boolean,
+    CheckConstraint,
     DateTime,
     Float,
     ForeignKey,
@@ -48,8 +49,10 @@ class Procedure(Base):
 
     bundle_id: Mapped[str] = mapped_column(String(128), primary_key=True)
     label: Mapped[str] = mapped_column(Text, nullable=False)
+    specialty: Mapped[str] = mapped_column(String(64), nullable=False, default="")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
     cpt_codes: Mapped[list[str]] = mapped_column(ARRAY(Text), nullable=False)
-    tags: Mapped[str] = mapped_column(Text, nullable=False)
+    tags: Mapped[list[str]] = mapped_column(ARRAY(Text), nullable=False, default=[])
     source: Mapped[str] = mapped_column(Text, nullable=False)
 
 
@@ -144,6 +147,31 @@ class HospitalRate(Base):
     rate_quality: Mapped[str] = mapped_column(String(32), nullable=False, default="unknown")
 
 
+class Hospital(Base):
+    __tablename__ = "hospitals"
+
+    hospital_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    name: Mapped[str] = mapped_column(Text, nullable=False)
+    system_name: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    state: Mapped[str] = mapped_column(String(8), nullable=False)
+    metro_area: Mapped[str] = mapped_column(String(64), nullable=False)
+    neighborhood: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    lat: Mapped[float | None] = mapped_column(Float, nullable=True)
+    lng: Mapped[float | None] = mapped_column(Float, nullable=True)
+    npi: Mapped[str] = mapped_column(String(20), nullable=False, default="")
+
+
+class Payer(Base):
+    __tablename__ = "payers"
+
+    payer_id: Mapped[str] = mapped_column(String(32), primary_key=True)
+    canonical_name: Mapped[str] = mapped_column(Text, nullable=False)
+    parent_brand: Mapped[str] = mapped_column(String(64), nullable=False, default="")
+    payer_type: Mapped[str] = mapped_column(String(32), nullable=False, default="commercial")
+    operating_states: Mapped[list[str]] = mapped_column(ARRAY(Text), nullable=False, default=[])
+    tic_portal: Mapped[str] = mapped_column(Text, nullable=False, default="")
+
+
 class HospitalProcedure(Base):
     __tablename__ = "hospital_procedures"
 
@@ -184,11 +212,19 @@ class HospitalPayerRate(Base):
     source_origin: Mapped[str] = mapped_column(String(32), nullable=False, default="mrf")
     billing_class: Mapped[str] = mapped_column(Text, nullable=False, default="")
     price_source: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    setting: Mapped[str] = mapped_column(String(64), nullable=False, default="")
+    source_file: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    rate_methodology: Mapped[str] = mapped_column(String(32), nullable=False, default="")
 
     __table_args__ = (
         UniqueConstraint(
-            "hospital_id", "cpt", "payer_id", "source_origin",
+            "hospital_id", "cpt", "payer_id", "source_origin", "plan_name",
             name="uq_hospital_payer_rates_natural_key",
+        ),
+        CheckConstraint(
+            "rate_methodology IN ('negotiated', 'derived', 'fee schedule', 'percentage', "
+            "'per diem', 'case rate', 'capitation', 'other', '')",
+            name="ck_hospital_payer_rates_methodology",
         ),
     )
 
@@ -238,3 +274,6 @@ Index("ix_hospital_rates_hospital_cpt", HospitalRate.hospital_id, HospitalRate.c
 Index("ix_hospital_procedures_hid_cpt", HospitalProcedure.hospital_id, HospitalProcedure.cpt)
 Index("ix_hospital_payer_rates_hid_cpt_payer", HospitalPayerRate.hospital_id, HospitalPayerRate.cpt, HospitalPayerRate.payer_id)
 Index("ix_hospital_benchmarks_hid_cpt", HospitalBenchmark.hospital_id, HospitalBenchmark.cpt)
+Index("ix_hospitals_metro_area", Hospital.metro_area)
+Index("ix_hospitals_state", Hospital.state)
+Index("ix_procedures_cpt_codes_gin", Procedure.cpt_codes, postgresql_using="gin")
