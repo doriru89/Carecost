@@ -106,7 +106,7 @@ def suggest_gi_next_step(
 
     conf_raw = str(data.get("confidence") or "low").lower()
     conf: Literal["high", "medium", "low"] = (
-        conf_raw if conf_raw in ("high", "medium", "low") else "low"
+        conf_raw if conf_raw in ("high", "medium", "low") else "low"  # type: ignore[assignment]
     )
 
     if rec is None and not msg:

@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import logging
 import time
 from collections import deque
+from collections.abc import AsyncIterator, Callable, Awaitable
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
@@ -32,7 +35,7 @@ class _LatencyTracker:
 
 
 @asynccontextmanager
-async def _lifespan(_app: FastAPI):
+async def _lifespan(_app: FastAPI) -> AsyncIterator[None]:
     counts = validate_all_registries()
     logger.info(
         "registries loaded: %d bundles, %d hospitals, %d payers, %d specialties",
@@ -54,7 +57,7 @@ def create_app() -> FastAPI:
     )
 
     @app.middleware("http")
-    async def latency_metrics_middleware(request: Request, call_next):
+    async def latency_metrics_middleware(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
         start = time.perf_counter()
         response = await call_next(request)
         elapsed_ms = (time.perf_counter() - start) * 1000

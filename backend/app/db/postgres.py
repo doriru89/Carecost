@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Generator
 
-from sqlalchemy import create_engine
+from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.config import get_settings
@@ -13,7 +13,7 @@ _engine = None
 _session_factory: sessionmaker[Session] | None = None
 
 
-def get_engine():
+def get_engine() -> Engine:
     global _engine, _session_factory
     if _engine is None:
         url = get_settings().database_url

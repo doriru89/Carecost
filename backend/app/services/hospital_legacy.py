@@ -81,8 +81,8 @@ def flatten_to_legacy(normalized: dict[str, Any]) -> dict[str, Any]:
         elif src == "masscomparecare" and comp == "total":
             d["masscomparecare_total_paid"] = bm["price"]
         elif src == "fair_health":
-            col = _LEGACY_FH_FIELDS.get(comp)
-            if col:
-                d[col] = bm["price"]
+            fh_col = _LEGACY_FH_FIELDS.get(comp)
+            if fh_col:
+                d[fh_col] = bm["price"]
 
     return d

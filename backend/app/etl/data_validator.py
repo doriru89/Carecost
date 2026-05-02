@@ -45,10 +45,10 @@ def validate_etl_output(
     # 10. Duplicate detection — procedures
     proc_keys = [(p.hospital_id, p.cpt) for p in result.procedures]
     seen: set[tuple[str, str]] = set()
-    for key in proc_keys:
-        if key in seen:
-            errors.append(f"Duplicate procedure {key[0]}:{key[1]}")
-        seen.add(key)
+    for pk in proc_keys:
+        if pk in seen:
+            errors.append(f"Duplicate procedure {pk[0]}:{pk[1]}")
+        seen.add(pk)
 
     # Payer rate checks
     rate_keys: set[tuple[str, str, str, str, str]] = set()

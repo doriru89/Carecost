@@ -19,7 +19,7 @@ def pick_primary_source(price_docs: list[dict[str, Any]]) -> str:
     for pr in priority:
         if pr in sources:
             return pr
-    return price_docs[0].get("source", "unknown")
+    return str(price_docs[0].get("source", "unknown"))
 
 
 def avg_confidence(price_docs: list[dict[str, Any]]) -> float:

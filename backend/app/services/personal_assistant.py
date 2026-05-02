@@ -17,7 +17,8 @@ def parse_json_from_llm_text(text: str) -> dict[str, Any]:
     if t.startswith("```"):
         t = re.sub(r"^```(?:json)?\s*", "", t, flags=re.IGNORECASE)
         t = re.sub(r"\s*```\s*$", "", t)
-    return json.loads(t)
+    result: dict[str, Any] = json.loads(t)
+    return result
 
 
 def lava_chat_completion(

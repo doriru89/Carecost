@@ -274,7 +274,7 @@ def _dispatch_csv_wide(
 
 
 def _parse_standard_csv(
-    reader: csv.reader,  # type: ignore[type-arg]
+    reader: Iterator[list[str]],
     cpt_codes: set[str],
     hospital_name: str,
     config: dict,
@@ -325,7 +325,7 @@ def _parse_standard_csv(
 
 
 def _parse_cms_v3_csv(
-    reader: csv.reader,  # type: ignore[type-arg]
+    reader: Iterator[list[str]],
     cpt_codes: set[str],
     hospital_name: str,
     config: dict,
@@ -564,7 +564,7 @@ def _parse_xlsx(
 
 
 def _parse_csv_wide(
-    reader: csv.reader,  # type: ignore[type-arg]
+    reader: Iterator[list[str]],
     cpt_codes: set[str],
     hospital_name: str,
     config: dict,

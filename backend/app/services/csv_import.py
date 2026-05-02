@@ -104,10 +104,10 @@ def _require_columns(row_keys: set[str], required: tuple[str, ...], file_label: 
         raise ValueError(f"{file_label}: missing columns: {', '.join(missing)}")
 
 
-def _upsert_by_pk(db: Session, table_cls: type, rows: list[dict]) -> int:
+def _upsert_by_pk(db: Session, table_cls: type, rows: list[dict]) -> int:  # noqa: ANN401
     if not rows:
         return 0
-    table = table_cls.__table__
+    table = table_cls.__table__  # type: ignore[attr-defined]
     pk_cols = {c.name for c in table.primary_key.columns}
     update_cols = [c.name for c in table.columns if c.name not in pk_cols]
     stmt = pg_insert(table).values(rows)
@@ -339,7 +339,7 @@ def _upsert_prices(db: Session, values: list[dict]) -> int:
     if not values:
         return 0
     table = Price.__table__
-    stmt = pg_insert(table).values(values)
+    stmt = pg_insert(table).values(values)  # type: ignore[arg-type]
     stmt = stmt.on_conflict_do_update(
         constraint="uq_prices_natural_key",
         set_={

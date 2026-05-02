@@ -90,7 +90,7 @@ def _open_tic_stream(path: Path) -> IO[bytes]:
     """Open .json.gz or .zip for ijson streaming."""
     suffix = path.suffix.lower()
     if suffix == ".gz" or path.name.endswith(".json.gz"):
-        return gzip.open(path, "rb")
+        return gzip.open(path, "rb")  # type: ignore[return-value]
     elif suffix == ".zip":
         zf = zipfile.ZipFile(path)
         json_files = [n for n in zf.namelist() if n.endswith(".json")]

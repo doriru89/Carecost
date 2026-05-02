@@ -191,7 +191,7 @@ def _normalize_response(data: dict[str, Any]) -> GiSymptomRefineResponse:
 
     conf_raw = str(data.get("confidence") or "low").lower()
     conf: Literal["high", "medium", "low"] = (
-        conf_raw if conf_raw in ("high", "medium", "low") else "low"
+        conf_raw if conf_raw in ("high", "medium", "low") else "low"  # type: ignore[assignment]
     )
 
     rationale_val = data.get("rationale")

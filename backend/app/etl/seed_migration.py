@@ -125,7 +125,7 @@ def migrate_wide_to_normalized(db: Session) -> dict[str, int]:
 def _upsert_normalized(db: Session, model: type, rows: list[dict], constraint: str) -> int:
     if not rows:
         return 0
-    table = model.__table__
+    table = model.__table__  # type: ignore[attr-defined]
     pk_cols = {c.name for c in table.primary_key.columns}
     update_cols = [c.name for c in table.columns if c.name not in pk_cols]
     stmt = pg_insert(table).values(rows)

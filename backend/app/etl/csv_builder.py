@@ -9,6 +9,7 @@ from __future__ import annotations
 import csv
 import dataclasses
 from pathlib import Path
+from typing import Any
 
 from app.etl.column_map import FH_COMPONENT_MAP, PAYER_RATE_MAP
 from app.etl.types import MergeResult
@@ -23,6 +24,7 @@ PROCEDURE_COLUMNS = (
 PAYER_RATE_COLUMNS = (
     "hospital_id", "cpt", "payer_id", "negotiated_rate", "plan_name",
     "source", "source_origin", "billing_class", "price_source",
+    "setting", "source_file", "rate_methodology",
 )
 
 BENCHMARK_COLUMNS = (
@@ -57,7 +59,7 @@ _MONETARY_FIELDS = {
 
 
 
-def _fmt(val, col: str) -> str:
+def _fmt(val: str | float | None, col: str) -> str:
     if val is None:
         return ""
     if col in _MONETARY_FIELDS and isinstance(val, float):
@@ -65,7 +67,7 @@ def _fmt(val, col: str) -> str:
     return str(val)
 
 
-def _write_csv(path: Path, columns: tuple[str, ...], records: list, sort_key) -> int:
+def _write_csv(path: Path, columns: tuple[str, ...], records: list[Any], sort_key: Any) -> int:
     sorted_recs = sorted(records, key=sort_key)
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
@@ -99,7 +101,7 @@ def build_csvs(result: MergeResult, output_dir: Path) -> dict[str, int]:
 def build_legacy_wide_csv(result: MergeResult, output_path: Path) -> int:
     from app.registries import get_hospital
 
-    proc_map: dict[tuple[str, str], dict] = {}
+    proc_map: dict[tuple[str, str], dict[str, str | float | None]] = {}
     for proc in result.procedures:
         key = (proc.hospital_id, proc.cpt)
         try:
@@ -128,35 +130,35 @@ def build_legacy_wide_csv(result: MergeResult, output_path: Path) -> int:
 
     for pr in result.payer_rates:
         key = (pr.hospital_id, pr.cpt)
-        row = proc_map.get(key)
-        if not row:
+        pr_row = proc_map.get(key)
+        if not pr_row:
             continue
         mapping = PAYER_RATE_MAP.get(pr.payer_id)
         if not mapping:
             continue
         price_col, source_col, plan_col = mapping
         if pr.source_origin == "tic" and pr.payer_id == "BCBS_MA":
-            row["bcbs_tic_rate"] = pr.negotiated_rate
-            row["bcbs_tic_billing_class"] = pr.billing_class
+            pr_row["bcbs_tic_rate"] = pr.negotiated_rate
+            pr_row["bcbs_tic_billing_class"] = pr.billing_class
         else:
-            row[price_col] = pr.negotiated_rate
-            row[source_col] = pr.source
-            row[plan_col] = pr.plan_name
+            pr_row[price_col] = pr.negotiated_rate
+            pr_row[source_col] = pr.source
+            pr_row[plan_col] = pr.plan_name
 
     for bm in result.benchmarks:
         key = (bm.hospital_id, bm.cpt)
-        row = proc_map.get(key)
-        if not row:
+        bm_row = proc_map.get(key)
+        if not bm_row:
             continue
         if bm.benchmark_source == "turquoise":
-            row["turquoise_bundled_price"] = bm.price
-            row["turquoise_quality_rating"] = bm.quality_rating
+            bm_row["turquoise_bundled_price"] = bm.price
+            bm_row["turquoise_quality_rating"] = bm.quality_rating
         elif bm.benchmark_source == "masscomparecare":
-            row["masscomparecare_total_paid"] = bm.price
+            bm_row["masscomparecare_total_paid"] = bm.price
         elif bm.benchmark_source == "fair_health":
             col = FH_COMPONENT_MAP.get(bm.component)
             if col:
-                row[col] = bm.price
+                bm_row[col] = bm.price
 
     sorted_rows = sorted(proc_map.values(), key=lambda r: (r["hospital_id"], r["cpt"]))
     with open(output_path, "w", newline="", encoding="utf-8") as f:

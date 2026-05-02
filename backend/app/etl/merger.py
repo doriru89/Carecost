@@ -119,6 +119,15 @@ def merge_records(
                 rate_methodology=rec.rate_methodology,
             ))
 
+        seen_keys: set[tuple[str, str, str]] = set()
+        deduped: list[PayerRateRecord] = []
+        for pr in payer_rates:
+            rk = (pr.payer_id, pr.source_origin, pr.plan_name)
+            if rk not in seen_keys:
+                seen_keys.add(rk)
+                deduped.append(pr)
+        payer_rates = deduped
+
         has_gross = first_mrf.gross is not None and first_mrf.gross > 0
         has_cash = first_mrf.cash is not None and first_mrf.cash > 0
         has_de_id = (
