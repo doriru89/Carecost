@@ -51,6 +51,7 @@ class SpecialtyEntry(BaseModel):
     default_scenario: str
     data_file: str
     providers_file: str
+    is_default: bool = False
 
 
 @functools.lru_cache(maxsize=1)
@@ -171,6 +172,13 @@ def get_specialty(name: str) -> SpecialtyEntry:
 
 def all_specialty_names() -> list[str]:
     return list(_load_specialties().keys())
+
+
+def default_specialty() -> str:
+    for name, s in _load_specialties().items():
+        if s.is_default:
+            return name
+    return next(iter(_load_specialties()))
 
 
 class EtlConfig(BaseModel):

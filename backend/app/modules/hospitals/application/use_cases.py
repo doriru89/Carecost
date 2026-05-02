@@ -9,10 +9,10 @@ from typing import Any
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.db.tables import HospitalProcedure, Provider
+from app.db.tables import Provider
 from app.registries import all_hospitals
 from app.services.hospital_legacy import flatten_to_legacy
-from app.services.hospital_query import query_hospitals_normalized
+from app.services.hospital_query import query_hospitals_normalized, query_hospitals_v2
 from app.services.insurance_options import build_insurance_options
 
 _PAYMENT_TABLE_PATH = Path(__file__).resolve().parents[5] / "data" / "seed" / "plan_payment_table.json"
@@ -88,21 +88,39 @@ def _empty_legacy(cpt: str) -> dict[str, Any]:
 
 
 def list_specialties(db: Session) -> list[dict[str, Any]]:
-    rows = db.query(HospitalProcedure.cpt, HospitalProcedure.cpt_desc).distinct().all()
-    gi_cpts = []
-    derm_cpts = []
-    for cpt, desc in rows:
-        desc_lower = (desc or "").lower()
-        if any(kw in desc_lower for kw in ["colon", "egd", "esophago", "gastro", "capsule", "gi "]):
-            gi_cpts.append({"cpt": cpt, "desc": desc})
-        elif any(kw in desc_lower for kw in ["skin", "derm", "biopsy", "destruction", "excision"]):
-            derm_cpts.append({"cpt": cpt, "desc": desc})
-        else:
-            gi_cpts.append({"cpt": cpt, "desc": desc})
+    from app.registries import all_specialty_names, bundles_for_specialty
+
     return [
-        {"id": "gi", "label": "Gastroenterology", "procedures": gi_cpts},
-        {"id": "derm", "label": "Dermatology", "procedures": derm_cpts},
+        {
+            "id": name.lower().replace(" ", "_"),
+            "label": name,
+            "procedures": [
+                {"cpt": b.cpt, "desc": b.label, "bundle_id": bid}
+                for bid, b in bundles_for_specialty(name).items()
+            ],
+        }
+        for name in all_specialty_names()
     ]
+
+
+def list_hospitals_v2(
+    db: Session, *, cpt: str, specialty: str | None = None, metro_area: str | None = None
+) -> list[dict[str, Any]]:
+    hospitals = query_hospitals_v2(db, cpt, metro_area=metro_area)
+    counts = _provider_counts(db, specialty)
+    for h in hospitals:
+        h["doctor_count"] = counts.get(h["name"], 0)
+    return hospitals
+
+
+def _provider_counts(db: Session, specialty: str | None) -> dict[str, int]:
+    q = db.query(Provider.hospital, func.count(Provider.npi).label("cnt")).filter(
+        Provider.hospital != "",
+        Provider.hospital.isnot(None),
+    )
+    if specialty:
+        q = q.filter(Provider.specialties.contains([specialty]))
+    return {row.hospital: row.cnt for row in q.group_by(Provider.hospital).all()}
 
 
 def get_payment_table(

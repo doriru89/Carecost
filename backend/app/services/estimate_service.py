@@ -57,9 +57,11 @@ def _price_to_dict(p: Price) -> dict[str, Any]:
 def _select_docs_for_payer(
     all_price_docs: list[dict[str, Any]], wanted_payer: str | None
 ) -> tuple[list[dict[str, Any]], str | None]:
+    from app.registries import default_payer_id
+
     selected_docs = [x for x in all_price_docs if x.get("payer") == wanted_payer]
     if not selected_docs:
-        selected_docs = [x for x in all_price_docs if x.get("payer") == "BCBS_MA"]
+        selected_docs = [x for x in all_price_docs if x.get("payer") == default_payer_id()]
     if not selected_docs and all_price_docs:
         first_payer = sorted({str(x.get("payer", "")) for x in all_price_docs})[0]
         selected_docs = [x for x in all_price_docs if x.get("payer") == first_payer]

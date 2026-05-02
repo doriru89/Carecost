@@ -59,8 +59,27 @@ def db_session(engine: Engine) -> Generator[Session, None, None]:
 def seeded_db(db_session: Session) -> Session:
     import_az_directory(db_session, AZ_DATA)
     migrate_wide_to_normalized(db_session)
+    _seed_dimension_tables(db_session)
     db_session.commit()
     return db_session
+
+
+def _seed_dimension_tables(db: Session) -> None:
+    """Populate hospitals + payers dimension tables from YAML registries."""
+    from app.db.tables import Hospital, Payer
+    from app.registries import all_hospitals, all_payers
+
+    for hid, h in all_hospitals().items():
+        db.merge(Hospital(
+            hospital_id=hid, name=h.name, system_name=h.system,
+            state="MA", metro_area="boston", neighborhood=h.neighborhood,
+            lat=h.lat, lng=h.lng, npi=h.npi or "",
+        ))
+    for pid, p in all_payers().items():
+        db.merge(Payer(
+            payer_id=pid, canonical_name=p.label, parent_brand="",
+            payer_type="commercial", operating_states=[], tic_portal=p.tic_portal or "",
+        ))
 
 
 @pytest.fixture

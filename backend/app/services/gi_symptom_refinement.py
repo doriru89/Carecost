@@ -16,28 +16,13 @@ from app.registries import bundles_for_specialty
 from app.services.personal_assistant import lava_chat_completion, parse_json_from_llm_text
 from app.services.safety_crisis import crisis_response_payload, crisis_scan_messages
 
-_GI_LEAF_IDS = [
-    "colonoscopy_screening",
-    "colonoscopy_diagnostic",
-    "colonoscopy_polyp",
-    "colonoscopy_with_biopsy",
-    "egd_with_biopsy",
-    "egd_bleeding",
-    "egd_dilation",
-    "gi_imaging_ct",
-    "capsule_endoscopy",
-]
-
-GI_LEAF_CATALOG: list[dict[str, str]] = []
 _gi_bundles = bundles_for_specialty("Gastroenterology")
-for _bid in _GI_LEAF_IDS:
-    _b = _gi_bundles[_bid]
-    GI_LEAF_CATALOG.append({
-        "id": f"leaf_{_bid}",
-        "cpt": _b.cpt,
-        "title": _b.label,
-        "summary": _b.description,
-    })
+_GI_LEAF_IDS = list(_gi_bundles.keys())
+
+GI_LEAF_CATALOG: list[dict[str, str]] = [
+    {"id": f"leaf_{bid}", "cpt": b.cpt, "title": b.label, "summary": b.description}
+    for bid, b in _gi_bundles.items()
+]
 
 ALLOWED_LEAF_IDS = {row["id"] for row in GI_LEAF_CATALOG}
 
