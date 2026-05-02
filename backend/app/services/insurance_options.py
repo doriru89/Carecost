@@ -25,20 +25,22 @@ def build_insurance_options(db: Session) -> dict[str, Any]:
         .filter(HospitalPayerRate.source_origin == "mrf")
         .all()
     )
+    slug_to_db_key: dict[str, str] = {}
     for (payer_id,) in available_payers:
         slug = PAYER_ID_TO_SLUG.get(payer_id)
         if not slug:
             continue
         label = INSURER_LABELS.get(slug, slug.replace("_", " ").title())
-        insurers.append({"key": slug, "label": label, "payer_id": payer_id})
+        insurers.append({"key": slug, "label": label, "payer_id": slug})
+        slug_to_db_key[slug] = payer_id
 
     plan_options_by_insurer: dict[str, list[str]] = {}
     for ins in insurers:
-        payer_id = ins["payer_id"]
+        db_key = slug_to_db_key[ins["key"]]
         raw = [
             r[0] for r in
             db.query(distinct(HospitalPayerRate.plan_name))
-            .filter(HospitalPayerRate.payer_id == payer_id)
+            .filter(HospitalPayerRate.payer_id == db_key)
             .all()
         ]
         plan_options_by_insurer[ins["key"]] = sorted(

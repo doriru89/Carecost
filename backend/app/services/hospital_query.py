@@ -8,6 +8,7 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from app.db.tables import Hospital, HospitalBenchmark, HospitalPayerRate, HospitalProcedure
+from app.services.insurance_options import PAYER_ID_TO_SLUG
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +88,7 @@ def query_hospitals(
             "de_identified_max": proc.de_identified_max,
             "payer_rates": [
                 {
-                    "payer_id": r.payer_id,
+                    "payer_id": PAYER_ID_TO_SLUG.get(r.payer_id, r.payer_id.lower()),
                     "negotiated_rate": r.negotiated_rate,
                     "plan_name": r.plan_name,
                     "source_origin": r.source_origin,
