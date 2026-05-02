@@ -1,6 +1,6 @@
 """TDD tests for rate_normalizer — written BEFORE implementation."""
 
-from app.etl.types import NormalizedRecord, RawMrfRecord, RawTicRecord
+from app.etl.types import RawMrfRecord, RawTicRecord
 
 
 def _make_mrf(hospital_name="Massachusetts General Hospital", cpt="45378",

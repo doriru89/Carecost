@@ -11,7 +11,6 @@ import json
 import zipfile
 from pathlib import Path
 
-import pytest
 
 
 def _make_tic_json(

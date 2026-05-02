@@ -1,4 +1,4 @@
-from app.services.intake import missing_required_fields, normalize_intake, validate_intake_payload
+from app.services.intake import normalize_intake, validate_intake_payload
 
 
 def test_missing_required_lists_zip_carrier_care_focus() -> None:

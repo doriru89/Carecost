@@ -107,7 +107,7 @@ def build_legacy_wide_csv(result: MergeResult, output_path: Path) -> int:
             hosp_name, neighborhood, system = h.name, h.neighborhood, h.system
         except KeyError:
             hosp_name, neighborhood, system = "", "", ""
-        row = {c: "" for c in LEGACY_WIDE_COLUMNS}
+        row: dict[str, str | float | None] = {c: "" for c in LEGACY_WIDE_COLUMNS}
         row.update({
             "hospital_id": proc.hospital_id,
             "hospital_name": hosp_name,

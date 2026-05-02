@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -28,7 +29,7 @@ def _test_database_url() -> str:
 
 
 @pytest.fixture(scope="session")
-def engine() -> Engine:
+def engine() -> Generator[Engine, None, None]:
     url = _test_database_url()
     os.environ["DATABASE_URL"] = url
     try:
@@ -44,7 +45,7 @@ def engine() -> Engine:
 
 
 @pytest.fixture
-def db_session(engine: Engine) -> Session:
+def db_session(engine: Engine) -> Generator[Session, None, None]:
     factory = sessionmaker(bind=engine, expire_on_commit=False)
     with factory() as session:
         for table in reversed(Base.metadata.sorted_tables):

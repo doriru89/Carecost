@@ -489,6 +489,9 @@ def _parse_xlsx(
 
     wb = openpyxl.load_workbook(file_path, read_only=True)
     ws = wb.active
+    if ws is None:
+        logger.warning("No active worksheet in %s", file_path)
+        return []
     results: list[RawMrfRecord] = []
     header: list[str] | None = None
 
