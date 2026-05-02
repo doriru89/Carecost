@@ -10,7 +10,16 @@ from pathlib import Path
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
-from app.db.tables import HospitalRate, Insurer, Price, Procedure, Provider
+from app.db.tables import (
+    HospitalBenchmark,
+    HospitalPayerRate,
+    HospitalProcedure,
+    HospitalRate,
+    Insurer,
+    Price,
+    Procedure,
+    Provider,
+)
 from app.etl.column_map import PAYER_RATE_MAP
 from app.etl.data_qualifier import derive_rate_quality_from_csv_row as _derive_rate_quality_from_csv
 from app.registries import bundles_for_specialty, infer_hospital_from_address
@@ -461,6 +470,93 @@ def import_az_directory(
             specialty="Dermatology",
             taxonomy="207N00000X",
         )
+    return counts
+
+
+def _upsert_by_constraint(db: Session, table_cls: type, rows: list[dict], constraint: str) -> int:
+    if not rows:
+        return 0
+    table = table_cls.__table__
+    pk_cols = {c.name for c in table.primary_key.columns}
+    update_cols = [c.name for c in table.columns if c.name not in pk_cols]
+    stmt = pg_insert(table).values(rows)
+    stmt = stmt.on_conflict_do_update(
+        constraint=constraint,
+        set_={col: stmt.excluded[col] for col in update_cols},
+    )
+    db.execute(stmt)
+    db.flush()
+    return len(rows)
+
+
+_PROCEDURE_FLOAT_COLS = {"gross_charge", "discounted_cash", "de_identified_min", "de_identified_max"}
+_PAYER_RATE_FLOAT_COLS = {"negotiated_rate"}
+_BENCHMARK_FLOAT_COLS = {"price", "quality_rating"}
+
+
+def import_hospital_procedures_csv(db: Session, path: Path) -> int:
+    from app.etl.csv_builder import PROCEDURE_COLUMNS
+
+    raw_rows = _read_csv(path)
+    if not raw_rows:
+        return 0
+    _require_columns(set(raw_rows[0].keys()), PROCEDURE_COLUMNS, path.name)
+    rows = []
+    for r in raw_rows:
+        row = {c: r.get(c, "") for c in PROCEDURE_COLUMNS}
+        row["id"] = f"{row['hospital_id']}:{row['cpt']}"
+        for col in _PROCEDURE_FLOAT_COLS:
+            row[col] = _parse_float_cell(row[col])
+        rows.append(row)
+    return _upsert_by_constraint(db, HospitalProcedure, rows, "uq_hospital_procedures_hid_cpt")
+
+
+def import_hospital_payer_rates_csv(db: Session, path: Path) -> int:
+    from app.etl.csv_builder import PAYER_RATE_COLUMNS
+
+    raw_rows = _read_csv(path)
+    if not raw_rows:
+        return 0
+    _require_columns(set(raw_rows[0].keys()), PAYER_RATE_COLUMNS, path.name)
+    rows = []
+    for r in raw_rows:
+        row = {c: r.get(c, "") for c in PAYER_RATE_COLUMNS}
+        for col in _PAYER_RATE_FLOAT_COLS:
+            row[col] = _parse_float_cell(row[col])
+        rows.append(row)
+    return _upsert_by_constraint(db, HospitalPayerRate, rows, "uq_hospital_payer_rates_natural_key")
+
+
+def import_hospital_benchmarks_csv(db: Session, path: Path) -> int:
+    from app.etl.csv_builder import BENCHMARK_COLUMNS
+
+    raw_rows = _read_csv(path)
+    if not raw_rows:
+        return 0
+    _require_columns(set(raw_rows[0].keys()), BENCHMARK_COLUMNS, path.name)
+    rows = []
+    for r in raw_rows:
+        row = {c: r.get(c, "") for c in BENCHMARK_COLUMNS}
+        for col in _BENCHMARK_FLOAT_COLS:
+            row[col] = _parse_float_cell(row[col])
+        rows.append(row)
+    return _upsert_by_constraint(db, HospitalBenchmark, rows, "uq_hospital_benchmarks_natural_key")
+
+
+def import_normalized_directory(db: Session, directory: Path) -> dict[str, int]:
+    if not directory.is_dir():
+        raise FileNotFoundError(f"ETL output directory not found: {directory}")
+    counts: dict[str, int] = {}
+    for stem, fn in (
+        ("hospital_procedures", import_hospital_procedures_csv),
+        ("hospital_payer_rates", import_hospital_payer_rates_csv),
+        ("hospital_benchmarks", import_hospital_benchmarks_csv),
+    ):
+        p = directory / f"{stem}.csv"
+        if p.exists():
+            counts[stem] = fn(db, p)
+        else:
+            _logger.warning("Skipping %s.csv — file not found in %s", stem, directory)
     return counts
 
 

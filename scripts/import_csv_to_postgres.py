@@ -18,6 +18,7 @@ from app.db.postgres import get_db, get_engine  # noqa: E402
 from app.services.csv_import import (  # noqa: E402
     import_az_directory,
     import_insurers_csv,
+    import_normalized_directory,
     import_procedures_csv,
     import_sample_directory,
 )
@@ -101,6 +102,16 @@ def main() -> int:
     parser.add_argument("--seed-dir", default=str(ROOT / "data" / "seed"))
     parser.add_argument("--price-hospital-id", default="bmc")
     parser.add_argument(
+        "--normalized",
+        action="store_true",
+        help="Import ETL-generated normalized CSVs (procedures, payer_rates, benchmarks).",
+    )
+    parser.add_argument(
+        "--etl-output-dir",
+        default=str(ROOT / "data" / "intermediate" / "etl_output"),
+        help="Directory containing normalized CSV files (default: data/intermediate/etl_output).",
+    )
+    parser.add_argument(
         "--allow-unsafe-db",
         action="store_true",
         help="Bypass production/non-local DB safety checks (use with care).",
@@ -118,7 +129,10 @@ def main() -> int:
     db = next(session_gen)
 
     try:
-        if args.az_mvp:
+        if args.normalized:
+            etl_dir = Path(args.etl_output_dir)
+            counts = import_normalized_directory(db, etl_dir)
+        elif args.az_mvp:
             seed = Path(args.seed_dir)
             for name, fn in (
                 ("procedures", import_procedures_csv),
