@@ -1,4 +1,4 @@
-import { EGD_PROCEDURES } from '@/components/CrtSelectionDialog';
+import { GI_PROCEDURES as EGD_PROCEDURES } from '@/lib/procedures';
 
 export type SelectedCrt = { cpt: string; label: string; bundleId: string };
 

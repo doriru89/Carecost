@@ -8,20 +8,10 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 
-export interface CrtOption {
-  cpt: string;
-  label: string;
-  desc: string;
-  bundleId: string;
-}
+import { GI_PROCEDURES, type CrtOption } from '@/lib/procedures';
 
-export const EGD_PROCEDURES: CrtOption[] = [
-  { cpt: '43239', label: 'EGD diagnostic', desc: 'Upper endoscopy — diagnostic evaluation', bundleId: 'egd_with_biopsy' },
-  { cpt: '43239', label: 'EGD with biopsy', desc: 'Upper endoscopy with tissue biopsy', bundleId: 'egd_with_biopsy' },
-  { cpt: '43244', label: 'EGD band ligation', desc: 'Upper endoscopy with variceal banding', bundleId: 'egd_band_ligation' },
-  { cpt: '43249', label: 'EGD with dilation', desc: 'Upper endoscopy with esophageal dilation', bundleId: 'egd_dilation' },
-  { cpt: '43255', label: 'EGD bleeding control', desc: 'Upper endoscopy for hemorrhage management', bundleId: 'egd_bleeding' },
-];
+export type { CrtOption };
+export const EGD_PROCEDURES = GI_PROCEDURES;
 
 interface CrtSelectionDialogProps {
   open: boolean;
@@ -48,7 +38,7 @@ const CrtSelectionDialog = ({ open, onOpenChange, onSelect }: CrtSelectionDialog
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-2 mt-2">
+        <div className="space-y-2 mt-2 max-h-[60vh] overflow-y-auto">
           {EGD_PROCEDURES.map((proc, i) => (
             <button
               key={`${proc.bundleId}-${i}`}

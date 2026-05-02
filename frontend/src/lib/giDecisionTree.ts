@@ -1,7 +1,13 @@
 /**
  * GI decision tree: symptom / visit-type questions → bundle (CPT) for estimates.
- * Keys must match backend `BUNDLE_CPT_AZ_MVP` / `SCENARIO_IDS`.
+ * CPT codes derived from bundles.json (SSOT: data/registries/cpt_bundles.yaml).
  */
+
+import registry from '../generated/bundles.json';
+
+function cpt(bundleId: string): string {
+  return registry.bundles[bundleId as keyof typeof registry.bundles]?.cpt ?? '';
+}
 
 export type GiQuestionNode = {
   kind: 'question';
@@ -93,7 +99,7 @@ export const GI_PROCEDURE_NODES: Record<string, GiTreeNode> = {
     id: 'leaf_colonoscopy_screening',
     bundleId: 'colonoscopy_screening',
     scenarioId: 'colonoscopy_screening',
-    cptCode: '45378',
+    cptCode: cpt('colonoscopy_screening'),
     title: 'Screening colonoscopy',
     description: 'Average screening colonoscopy — preventive care when you have no active symptoms.',
   },
@@ -102,7 +108,7 @@ export const GI_PROCEDURE_NODES: Record<string, GiTreeNode> = {
     id: 'leaf_colonoscopy_diagnostic',
     bundleId: 'colonoscopy_diagnostic',
     scenarioId: 'colonoscopy_diagnostic',
-    cptCode: '45378',
+    cptCode: cpt('colonoscopy_diagnostic'),
     title: 'Diagnostic colonoscopy',
     description: 'Colonoscopy to evaluate symptoms or abnormal findings.',
   },
@@ -111,7 +117,7 @@ export const GI_PROCEDURE_NODES: Record<string, GiTreeNode> = {
     id: 'leaf_colonoscopy_polyp',
     bundleId: 'colonoscopy_polyp',
     scenarioId: 'colonoscopy_polyp',
-    cptCode: '45385',
+    cptCode: cpt('colonoscopy_polyp'),
     title: 'Colonoscopy with polypectomy',
     description: 'Procedure focused on polyp removal or similar interventions.',
   },
@@ -120,7 +126,7 @@ export const GI_PROCEDURE_NODES: Record<string, GiTreeNode> = {
     id: 'leaf_colonoscopy_with_biopsy',
     bundleId: 'colonoscopy_with_biopsy',
     scenarioId: 'colonoscopy_with_biopsy',
-    cptCode: '45380',
+    cptCode: cpt('colonoscopy_with_biopsy'),
     title: 'Colonoscopy with biopsy',
     description: 'Colonoscopy including biopsies when indicated.',
   },
@@ -129,7 +135,7 @@ export const GI_PROCEDURE_NODES: Record<string, GiTreeNode> = {
     id: 'leaf_egd_with_biopsy',
     bundleId: 'egd_with_biopsy',
     scenarioId: 'egd_with_biopsy',
-    cptCode: '43239',
+    cptCode: cpt('egd_with_biopsy'),
     title: 'EGD (upper endoscopy) with biopsy',
     description: 'Esophagogastroduodenoscopy with diagnostic biopsy when needed.',
   },
@@ -138,7 +144,7 @@ export const GI_PROCEDURE_NODES: Record<string, GiTreeNode> = {
     id: 'leaf_egd_bleeding',
     bundleId: 'egd_bleeding',
     scenarioId: 'egd_bleeding',
-    cptCode: '43255',
+    cptCode: cpt('egd_bleeding'),
     title: 'EGD for bleeding',
     description: 'Upper endoscopy for bleeding evaluation or control.',
   },
@@ -147,7 +153,7 @@ export const GI_PROCEDURE_NODES: Record<string, GiTreeNode> = {
     id: 'leaf_egd_dilation',
     bundleId: 'egd_dilation',
     scenarioId: 'egd_dilation',
-    cptCode: '43249',
+    cptCode: cpt('egd_dilation'),
     title: 'EGD with dilation',
     description: 'Endoscopy with dilation of stricture or similar.',
   },
@@ -156,7 +162,7 @@ export const GI_PROCEDURE_NODES: Record<string, GiTreeNode> = {
     id: 'leaf_gi_imaging_ct',
     bundleId: 'gi_imaging_ct',
     scenarioId: 'gi_imaging_ct',
-    cptCode: '74177',
+    cptCode: cpt('gi_imaging_ct'),
     title: 'CT abdomen / pelvis with IV contrast',
     description: 'Cross-sectional imaging commonly used in GI workups.',
   },
@@ -165,7 +171,7 @@ export const GI_PROCEDURE_NODES: Record<string, GiTreeNode> = {
     id: 'leaf_capsule_endoscopy',
     bundleId: 'capsule_endoscopy',
     scenarioId: 'capsule_endoscopy',
-    cptCode: '91110',
+    cptCode: cpt('capsule_endoscopy'),
     title: 'Capsule endoscopy',
     description: 'Wireless capsule study of the small bowel.',
   },

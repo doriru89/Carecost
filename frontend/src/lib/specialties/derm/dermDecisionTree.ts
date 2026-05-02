@@ -1,7 +1,13 @@
 /**
  * Derm decision tree: symptom / visit-type questions → bundle (CPT) for estimates.
- * Keys must match backend specialty_config.py Dermatology bundle_cpt.
+ * CPT codes derived from bundles.json (SSOT: data/registries/cpt_bundles.yaml).
  */
+
+import registry from '../../../generated/bundles.json';
+
+function cpt(bundleId: string): string {
+  return registry.bundles[bundleId as keyof typeof registry.bundles]?.cpt ?? '';
+}
 
 export type DermQuestionNode = {
   kind: 'question';
@@ -88,7 +94,7 @@ export const DERM_PROCEDURE_NODES: Record<string, DermTreeNode> = {
     id: 'leaf_office_visit',
     bundleId: 'derm_office_visit_detailed',
     scenarioId: 'derm_office_visit_detailed',
-    cptCode: '99214',
+    cptCode: cpt('derm_office_visit_detailed'),
     title: 'Dermatology Office Visit',
     description: 'Established patient visit, detailed evaluation. Most common derm visit code.',
   },
@@ -98,7 +104,7 @@ export const DERM_PROCEDURE_NODES: Record<string, DermTreeNode> = {
     id: 'leaf_biopsy_tangential',
     bundleId: 'skin_biopsy_tangential',
     scenarioId: 'skin_biopsy_tangential',
-    cptCode: '11102',
+    cptCode: cpt('skin_biopsy_tangential'),
     title: 'Skin Biopsy — Tangential / Shave',
     description: 'Surface biopsy of a single lesion. Pathology billed separately.',
   },
@@ -108,7 +114,7 @@ export const DERM_PROCEDURE_NODES: Record<string, DermTreeNode> = {
     id: 'leaf_biopsy_punch',
     bundleId: 'skin_biopsy_punch',
     scenarioId: 'skin_biopsy_punch',
-    cptCode: '11104',
+    cptCode: cpt('skin_biopsy_punch'),
     title: 'Skin Biopsy — Punch',
     description: 'Deeper circular sample. Pathology billed separately.',
   },
@@ -118,7 +124,7 @@ export const DERM_PROCEDURE_NODES: Record<string, DermTreeNode> = {
     id: 'leaf_mole_benign',
     bundleId: 'mole_removal_benign_small',
     scenarioId: 'mole_removal_benign_small',
-    cptCode: '11400',
+    cptCode: cpt('mole_removal_benign_small'),
     title: 'Mole Removal — Benign',
     description: 'Excision of benign lesion (≤0.5 cm, trunk/extremity). Pathology billed separately.',
   },
@@ -128,7 +134,7 @@ export const DERM_PROCEDURE_NODES: Record<string, DermTreeNode> = {
     id: 'leaf_mole_malignant',
     bundleId: 'mole_removal_malignant_small',
     scenarioId: 'mole_removal_malignant_small',
-    cptCode: '11600',
+    cptCode: cpt('mole_removal_malignant_small'),
     title: 'Mole Removal — Malignant / Suspected',
     description: 'Excision of malignant lesion (≤0.5 cm, trunk/extremity). Pathology billed separately.',
   },
@@ -138,7 +144,7 @@ export const DERM_PROCEDURE_NODES: Record<string, DermTreeNode> = {
     id: 'leaf_lesion_destruction',
     bundleId: 'lesion_destruction_first',
     scenarioId: 'lesion_destruction_first',
-    cptCode: '17000',
+    cptCode: cpt('lesion_destruction_first'),
     title: 'Lesion Destruction (Wart, Skin Tag)',
     description: 'Destruction of first lesion by freezing, laser, or chemical. Additional lesions billed separately.',
   },
@@ -148,7 +154,7 @@ export const DERM_PROCEDURE_NODES: Record<string, DermTreeNode> = {
     id: 'leaf_mohs_head_neck',
     bundleId: 'mohs_surgery_head_neck',
     scenarioId: 'mohs_surgery_head_neck',
-    cptCode: '17311',
+    cptCode: cpt('mohs_surgery_head_neck'),
     title: 'Mohs Surgery — Head/Neck',
     description: 'Mohs micrographic surgery, first stage. Additional stages billed separately. Facility fee separate at hospital sites.',
   },
@@ -158,7 +164,7 @@ export const DERM_PROCEDURE_NODES: Record<string, DermTreeNode> = {
     id: 'leaf_mohs_trunk',
     bundleId: 'mohs_surgery_trunk',
     scenarioId: 'mohs_surgery_trunk',
-    cptCode: '17313',
+    cptCode: cpt('mohs_surgery_trunk'),
     title: 'Mohs Surgery — Trunk/Extremity',
     description: 'Mohs micrographic surgery, first stage (trunk/arms/legs). Additional stages billed separately.',
   },

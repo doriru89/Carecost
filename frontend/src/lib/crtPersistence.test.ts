@@ -24,8 +24,7 @@ describe('CRT persistence', () => {
   it('falls back to intakePayload when sessionStorage empty', () => {
     const intake = { cpt_code: '43239', procedure_label: 'EGD with biopsy', bundle_id: 'egd_with_biopsy' };
     const result = loadCrt(intake);
-    // EGD_PROCEDURES.find returns first match for CPT 43239 = "EGD diagnostic"
-    expect(result).toEqual({ cpt: '43239', label: 'EGD diagnostic', bundleId: 'egd_with_biopsy' });
+    expect(result).toEqual({ cpt: '43239', label: 'EGD with biopsy', bundleId: 'egd_with_biopsy' });
   });
 
   it('prefers sessionStorage over intakePayload', () => {
