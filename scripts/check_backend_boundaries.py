@@ -94,6 +94,34 @@ def _check_module_domain_imports(path: Path, tree: ast.Module) -> list[Violation
     return violations
 
 
+def _check_cross_module_imports(path: Path, tree: ast.Module) -> list[Violation]:
+    """Modules cannot import from other modules (only via shared)."""
+    violations: list[Violation] = []
+    try:
+        parts = path.relative_to(MODULES_DIR).parts
+    except ValueError:
+        return violations
+    if not parts:
+        return violations
+    own_module = parts[0]
+
+    for node in ast.walk(tree):
+        mod = _module_from_import(node)
+        if not mod:
+            continue
+        if mod.startswith("app.modules."):
+            target_module = mod.split(".")[2]
+            if target_module != own_module and target_module != "shared":
+                violations.append(
+                    Violation(
+                        path=path,
+                        line=getattr(node, "lineno", 1),
+                        message=f"Module '{own_module}' cannot import from module '{target_module}' (only 'shared' allowed).",
+                    )
+                )
+    return violations
+
+
 def run_checks() -> list[Violation]:
     violations: list[Violation] = []
 
@@ -108,6 +136,7 @@ def run_checks() -> list[Violation]:
     for path in _collect_py_files(MODULES_DIR):
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         violations.extend(_check_module_domain_imports(path, tree))
+        violations.extend(_check_cross_module_imports(path, tree))
 
     return violations
 

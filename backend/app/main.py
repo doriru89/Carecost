@@ -37,6 +37,9 @@ class _LatencyTracker:
 @asynccontextmanager
 async def _lifespan(_app: FastAPI) -> AsyncIterator[None]:
     counts = validate_all_registries()
+    assert counts["payers"] > 0, "No payers loaded — check data/registries/payers.yaml"
+    assert counts["bundles"] > 0, "No bundles loaded — check data/registries/cpt_bundles.yaml"
+    assert counts["hospitals"] > 0, "No hospitals loaded — check data/registries/hospitals.yaml"
     logger.info(
         "registries loaded: %d bundles, %d hospitals, %d payers, %d specialties",
         counts["bundles"], counts["hospitals"], counts["payers"], counts["specialties"],
