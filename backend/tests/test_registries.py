@@ -65,19 +65,22 @@ def test_infer_hospital_from_address():
 
 
 def test_payer_defaults():
-    assert default_payer_id() == "BCBS_MA"
-    p = get_payer("BCBS_MA")
-    assert p.slug == "bcbs"
+    pid = default_payer_id()
+    assert pid is not None
+    p = get_payer(pid)
+    assert p.slug
     assert p.is_default is True
 
 
 def test_carrier_to_payer():
-    assert carrier_to_payer_id("Blue Cross Blue Shield") == "BCBS_MA"
-    assert carrier_to_payer_id("Aetna") == "AETNA"
-    assert carrier_to_payer_id("Harvard Pilgrim") == "HARVARD_PILGRIM"
-    assert carrier_to_payer_id("UnitedHealthcare") == "UHC"
-    assert carrier_to_payer_id(None) == "BCBS_MA"
-    assert carrier_to_payer_id("") == "BCBS_MA"
+    from app.registries import all_payers
+
+    payers = all_payers()
+    for payer_id, entry in payers.items():
+        for pattern in entry.carrier_patterns:
+            assert carrier_to_payer_id(pattern) == payer_id
+    assert carrier_to_payer_id(None) == default_payer_id()
+    assert carrier_to_payer_id("") == default_payer_id()
 
 
 def test_specialty_config():

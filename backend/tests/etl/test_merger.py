@@ -6,9 +6,14 @@ from app.etl.types import (
     MergeResult,
     QualifiedRecord,
 )
+from app.registries import default_payer_id
+
+_DEFAULT_PAYER = default_payer_id()
 
 
-def _make_qualified(hospital_id="mgh", cpt="45378", payer_id="BCBS_MA", **kwargs):
+def _make_qualified(hospital_id="mgh", cpt="45378", payer_id=None, **kwargs):
+    if payer_id is None:
+        payer_id = _DEFAULT_PAYER
     defaults = dict(
         hospital_id=hospital_id, cpt=cpt, cpt_desc="Colonoscopy",
         description="HC COLONOSCOPY", payer_id=payer_id,
