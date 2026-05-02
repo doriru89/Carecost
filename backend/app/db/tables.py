@@ -42,6 +42,9 @@ class Provider(Base):
     specialties: Mapped[list[str]] = mapped_column(ARRAY(Text), nullable=False)
     source: Mapped[str] = mapped_column(Text, nullable=False)
     hospital: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    hospital_id: Mapped[str | None] = mapped_column(
+        String(64), ForeignKey("hospitals.hospital_id"), nullable=True
+    )
 
 
 class Procedure(Base):
