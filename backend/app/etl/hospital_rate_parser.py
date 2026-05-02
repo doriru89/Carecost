@@ -380,12 +380,13 @@ def _parse_cms_v3_csv(
         if not cpt:
             continue
 
+        desc = _get(row, "description")
         results.append(
             RawMrfRecord(
                 hospital_name=hospital_name,
                 cpt=cpt,
-                cpt_desc="",
-                description=_get(row, "description"),
+                cpt_desc=desc,
+                description=desc,
                 payer_raw=_get(row, "payer_name"),
                 plan=_get(row, "plan_name"),
                 setting=_get(row, "setting"),
@@ -448,7 +449,7 @@ def _parse_cms_json(
                 RawMrfRecord(
                     hospital_name=hospital_name,
                     cpt=matched_cpt,
-                    cpt_desc="",
+                    cpt_desc=description,
                     description=description,
                     payer_raw=payer,
                     plan=charge.get("plan_name", "") or "",
