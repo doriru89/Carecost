@@ -1,3 +1,7 @@
 [build]
 builder = "dockerfile"
 dockerfilePath = "Dockerfile"
+
+# NOTE: When Railway root directory is set to "/" (repo root) for staging/test,
+# the Dockerfile at repo root is used instead. This file applies only when
+# Railway root is set to "backend/" (production on main branch).
