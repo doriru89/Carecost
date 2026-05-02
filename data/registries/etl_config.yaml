@@ -71,71 +71,73 @@ etl:
   # Hospital-to-format mapping: which format handler + container for each hospital's MRF
   hospital_mrf_sources:
     mgh:
-      format: standard_csv
+      format: cms_v3_csv
       encoding: latin-1
       container: zip
       skip_header_rows: 2
       min_expected_cpts: 10
     brigham:
-      format: standard_csv
+      format: cms_v3_csv
       encoding: latin-1
       container: zip
       skip_header_rows: 2
       min_expected_cpts: 10
     faulkner:
-      format: standard_csv
+      format: cms_v3_csv
       encoding: latin-1
       container: zip
       skip_header_rows: 2
       min_expected_cpts: 8
     bidmc:
       format: cms_json
-      encoding: utf-8
+      encoding: utf-8-sig
       container: plain
       min_expected_cpts: 5
     childrens:
       format: cms_json
       encoding: utf-8
-      container: zip
+      container: plain
       min_expected_cpts: 3
     dana_farber:
       format: cms_json
-      encoding: utf-8
+      encoding: utf-8-sig
       container: plain
       min_expected_cpts: 3
     mtauburn:
       format: cms_json
-      encoding: utf-8
+      encoding: utf-8-sig
       container: plain
       min_expected_cpts: 5
     bmc:
-      format: xlsx
+      format: cms_v3_csv
       encoding: utf-8
-      container: plain
+      container: zip
+      skip_header_rows: 2
       min_expected_cpts: 10
     bmc_brighton:
       format: cms_v3_csv
       encoding: utf-8
       container: zip
-      skip_header_rows: 3
+      skip_header_rows: 2
       min_expected_cpts: 8
     cha:
       format: cms_v3_csv
       encoding: utf-8
-      container: zip
-      skip_header_rows: 3
+      container: plain
+      skip_header_rows: 2
       min_expected_cpts: 8
     tufts:
       format: cms_v3_csv
-      encoding: utf-8
+      encoding: latin-1
       container: zip
-      skip_header_rows: 3
+      skip_header_rows: 2
       min_expected_cpts: 10
     franciscan:
-      format: csv_wide
-      encoding: utf-8
+      format: cms_v3_csv
+      encoding: latin-1
       container: plain
-      min_expected_cpts: 3
+      skip_header_rows: 2
+      min_expected_cpts: 0
 
   # Non-canonical payers the ETL encounters but aren't in payers.yaml
   non_canonical_payers:
