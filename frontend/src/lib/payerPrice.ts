@@ -1,14 +1,5 @@
 import type { HospitalApi } from '@/api/client';
 
-type PayerField = 'bcbs_price' | 'aetna_price' | 'harvard_pilgrim_price' | 'uhc_price';
-
-const CARRIER_TO_FIELD: Record<string, PayerField> = {
-  bcbs: 'bcbs_price',
-  aetna: 'aetna_price',
-  harvard_pilgrim: 'harvard_pilgrim_price',
-  uhc: 'uhc_price',
-};
-
 /** Map an insurance carrier label to a payer key. */
 export function carrierKeyFromLabel(carrier: string): string {
   const c = carrier.toLowerCase();
@@ -19,11 +10,16 @@ export function carrierKeyFromLabel(carrier: string): string {
   return 'bcbs';
 }
 
-/** Get the negotiated price for the user's payer. Returns null if unavailable — NO fallback. */
+/** Get the negotiated price for the user's payer from payer_rates[]. MRF preferred, TiC fallback. */
 export function getPayerPrice(hospital: HospitalApi, carrier: string): number | null {
-  const key = carrierKeyFromLabel(carrier);
-  const field = CARRIER_TO_FIELD[key] ?? 'bcbs_price';
-  return (hospital[field] as number | null) ?? null;
+  const payerId = carrierKeyFromLabel(carrier);
+  const rates = hospital.payer_rates.filter(r => r.payer_id === payerId && r.negotiated_rate != null);
+  if (rates.length === 0) return null;
+  const mrf = rates.find(r => r.source_origin === 'mrf');
+  if (mrf) return mrf.negotiated_rate;
+  const tic = rates.find(r => r.source_origin === 'tic');
+  if (tic) return tic.negotiated_rate;
+  return rates[0].negotiated_rate;
 }
 
 export type PriceSource = {
@@ -34,54 +30,38 @@ export type PriceSource = {
   source?: string;
 };
 
-/** Return ALL available price sources for a hospital, labeled by what they are. */
+/** Return ALL available price sources for a hospital, from payer_rates + benchmarks + standard fields. */
 export function getAllPriceSources(hospital: HospitalApi, carrier: string): PriceSource[] {
-  const carrierPrice = getPayerPrice(hospital, carrier);
-  const carrierKey = carrierKeyFromLabel(carrier);
-  const carrierLabel = {
-    bcbs: 'BCBS', aetna: 'Aetna', harvard_pilgrim: 'Harvard Pilgrim', uhc: 'UHC',
-  }[carrierKey] ?? carrier;
+  const payerId = carrierKeyFromLabel(carrier);
+  const sources: PriceSource[] = [];
 
-  const sources: (PriceSource | null)[] = [
-    carrierPrice != null
-      ? { label: `${carrierLabel} negotiated rate`, price: carrierPrice, kind: 'negotiated' }
-      : null,
-    hospital.bcbs_tic_rate != null
-      ? { label: 'BCBS TiC (insurer-reported)', price: hospital.bcbs_tic_rate, kind: 'tic', billing_class: hospital.bcbs_tic_billing_class }
-      : null,
-    hospital.discounted_cash != null
-      ? { label: 'Cash / self-pay price', price: hospital.discounted_cash, kind: 'cash' }
-      : null,
-    hospital.de_identified_min != null
-      ? { label: 'De-identified min (all payers)', price: hospital.de_identified_min, kind: 'de_identified' }
-      : null,
-    hospital.de_identified_max != null
-      ? { label: 'De-identified max (all payers)', price: hospital.de_identified_max, kind: 'de_identified' }
-      : null,
-    hospital.gross_charge != null
-      ? { label: 'Gross charge (list price)', price: hospital.gross_charge, kind: 'gross' }
-      : null,
-    hospital.turquoise_bundled_price != null
-      ? { label: 'Turquoise bundled estimate', price: hospital.turquoise_bundled_price, kind: 'benchmark' }
-      : null,
-    hospital.masscomparecare_total_paid != null
-      ? { label: 'MassCompareCare claims-paid', price: hospital.masscomparecare_total_paid, kind: 'benchmark' }
-      : null,
-    hospital.fh_physician_in_network != null
-      ? { label: 'FAIR Health physician (in-network)', price: hospital.fh_physician_in_network, kind: 'benchmark' }
-      : null,
-    hospital.fh_facility_hosp_in_network != null
-      ? { label: 'FAIR Health facility (hospital)', price: hospital.fh_facility_hosp_in_network, kind: 'benchmark' }
-      : null,
-    hospital.fh_anesthesia_in_network != null
-      ? { label: 'FAIR Health anesthesia', price: hospital.fh_anesthesia_in_network, kind: 'benchmark' }
-      : null,
-    hospital.fh_pathology_in_network != null
-      ? { label: 'FAIR Health pathology', price: hospital.fh_pathology_in_network, kind: 'benchmark' }
-      : null,
-  ];
+  for (const r of hospital.payer_rates) {
+    if (r.negotiated_rate == null) continue;
+    const kind: PriceSource['kind'] = r.source_origin === 'tic' ? 'tic' : 'negotiated';
+    const label = r.payer_id === payerId
+      ? `${r.payer_id.toUpperCase()} negotiated rate`
+      : `${r.payer_id.toUpperCase()} (${r.source_origin})`;
+    sources.push({ label, price: r.negotiated_rate, kind, billing_class: r.billing_class });
+  }
 
-  return sources.filter((s): s is PriceSource => s != null);
+  if (hospital.discounted_cash != null)
+    sources.push({ label: 'Cash / self-pay price', price: hospital.discounted_cash, kind: 'cash' });
+  if (hospital.de_identified_min != null)
+    sources.push({ label: 'De-identified min (all payers)', price: hospital.de_identified_min, kind: 'de_identified' });
+  if (hospital.de_identified_max != null)
+    sources.push({ label: 'De-identified max (all payers)', price: hospital.de_identified_max, kind: 'de_identified' });
+  if (hospital.gross_charge != null)
+    sources.push({ label: 'Gross charge (list price)', price: hospital.gross_charge, kind: 'gross' });
+
+  for (const b of hospital.benchmarks) {
+    if (b.price == null) continue;
+    const srcLabel = b.benchmark_source === 'fair_health'
+      ? `FAIR Health ${b.component.replace(/_/g, ' ')}`
+      : `${b.benchmark_source} ${b.component}`;
+    sources.push({ label: srcLabel, price: b.price, kind: 'benchmark' });
+  }
+
+  return sources;
 }
 
 /** Estimate patient cost: (negotiated_rate - deductible) * coinsurance%. */

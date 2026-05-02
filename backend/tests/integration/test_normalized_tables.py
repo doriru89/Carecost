@@ -43,7 +43,7 @@ def test_seed_migration_idempotent(seeded_db):
     assert seeded_db.query(HospitalBenchmark).count() == before_bm
 
 
-def test_list_hospitals_contract_preserved(client):
+def test_list_hospitals_contract_normalized(client):
     r = client.get("/api/hospitals?cpt=45378")
     assert r.status_code == 200
     data = r.json()
@@ -51,15 +51,10 @@ def test_list_hospitals_contract_preserved(client):
     h = data[0]
     for field in [
         "name", "hospital_id", "lat", "lng", "doctor_count",
-        "bcbs_price", "aetna_price", "harvard_pilgrim_price", "uhc_price",
-        "bcbs_source", "bcbs_plan", "hp_plan_name", "hp_source", "uhc_source",
+        "system_name", "metro_area", "neighborhood",
         "gross_charge", "discounted_cash", "de_identified_min", "de_identified_max",
-        "bcbs_tic_rate", "bcbs_tic_billing_class",
-        "billing_class", "setting", "rate_methodology",
-        "turquoise_bundled_price", "turquoise_quality_rating",
-        "masscomparecare_total_paid",
-        "fh_physician_in_network", "fh_anesthesia_in_network",
-        "fh_facility_hosp_in_network", "fh_pathology_in_network",
-        "cpt", "cpt_desc",
+        "cpt", "cpt_desc", "payer_rates", "benchmarks",
     ]:
-        assert field in h, f"Missing legacy field: {field}"
+        assert field in h, f"Missing field: {field}"
+    assert isinstance(h["payer_rates"], list)
+    assert isinstance(h["benchmarks"], list)

@@ -175,7 +175,7 @@ const MapPage = () => {
   });
 
   const estimatesLackRates = useMemo(() => {
-    if (hospitals.some(h => h.bcbs_price != null || h.aetna_price != null || h.discounted_cash != null)) return false;
+    if (hospitals.some(h => h.payer_rates.length > 0 || h.discounted_cash != null)) return false;
     const rows = estimateQuery.data?.estimates ?? [];
     if (rows.length === 0 || estimateQuery.isError) return false;
     return !rows.some(r => r.allowed_amount_range.max > 0 || r.oop_range.max > 0);
@@ -227,7 +227,7 @@ const MapPage = () => {
     const all = new Set(hospitals.map(h => h.name));
     all.add('Independent Providers');
 
-    const priceFor = (h: HospitalApi) => getPayerPrice(h, insuranceCarrierLabel) ?? h.bcbs_price ?? h.discounted_cash;
+    const priceFor = (h: HospitalApi) => getPayerPrice(h, insuranceCarrierLabel) ?? h.discounted_cash;
     const cheapest = [...hospitals]
       .filter(h => priceFor(h) != null)
       .sort((a, b) => (priceFor(a) ?? Infinity) - (priceFor(b) ?? Infinity))[0];
@@ -282,7 +282,7 @@ const MapPage = () => {
     const ro = new ResizeObserver(() => {
       if (mapRef.current || container.clientHeight < 100 || container.clientWidth < 100) return;
       const map = L.map(container, { zoomAnimation: false, fadeAnimation: false })
-        .setView([42.3601, -71.0589], 13);
+        .setView([39.8, -98.5], 4);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/">OSM</a>',
       }).addTo(map);
@@ -299,6 +299,15 @@ const MapPage = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!mapRef.current || hospitals.length === 0) return;
+    const valid = hospitals.filter(h => h.lat != null && h.lng != null && h.lat !== 0 && h.lng !== 0);
+    if (valid.length === 0) { mapRef.current.setView([39.8, -98.5], 4); return; }
+    const avgLat = valid.reduce((s, h) => s + h.lat, 0) / valid.length;
+    const avgLng = valid.reduce((s, h) => s + h.lng, 0) / valid.length;
+    mapRef.current.setView([avgLat, avgLng], 13);
+  }, [hospitals]);
 
   // Payer-aware map markers
   useEffect(() => {
@@ -732,21 +741,27 @@ const MapPage = () => {
                         {hData && (
                           <div className="bg-muted/30 rounded-lg px-3 py-2 text-xs">
                             <p className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px] mb-1.5">All insurers</p>
-                            <div className="grid grid-cols-4 gap-1.5 text-center">
+                            <div className="flex overflow-x-auto gap-1.5 text-center">
                               {(() => {
-                                const entries = [
-                                  ['BCBS', hData.bcbs_price, 'bcbs'],
-                                  ['Aetna', hData.aetna_price, 'aetna'],
-                                  ['Harvard Pilgrim', hData.harvard_pilgrim_price, 'harvard_pilgrim'],
-                                  ['UHC', hData.uhc_price, 'uhc'],
-                                ] as const;
-                                const prices = entries.map(e => e[1]).filter((p): p is number => p != null);
+                                const PAYER_LABELS: Record<string, string> = {
+                                  bcbs: 'BCBS', aetna: 'Aetna', harvard_pilgrim: 'Harvard Pilgrim', uhc: 'UHC',
+                                };
+                                const ratesByPayer = new Map<string, number | null>();
+                                for (const r of hData.payer_rates) {
+                                  if (!ratesByPayer.has(r.payer_id) || r.source_origin === 'mrf') {
+                                    ratesByPayer.set(r.payer_id, r.negotiated_rate);
+                                  }
+                                }
+                                const entries = [...ratesByPayer.entries()].map(([key, price]) => ({
+                                  key, label: PAYER_LABELS[key] ?? key.toUpperCase(), price,
+                                }));
+                                const prices = entries.map(e => e.price).filter((p): p is number => p != null);
                                 const lowest = prices.length > 0 ? Math.min(...prices) : null;
-                                return entries.map(([label, price, key]) => {
+                                return entries.map(({ label, price, key }) => {
                                   const isActive = carrierKeyFromLabel(insuranceCarrierLabel) === key;
                                   const isCheapest = price != null && price === lowest;
                                   return (
-                                    <div key={key} className={`rounded-md px-1 py-1.5 ${isActive ? 'bg-primary/10 ring-1 ring-primary/30' : ''}`}>
+                                    <div key={key} className={`rounded-md px-1 py-1.5 min-w-[4rem] ${isActive ? 'bg-primary/10 ring-1 ring-primary/30' : ''}`}>
                                       <p className="text-[10px] text-muted-foreground truncate">{label}</p>
                                       <p className={`font-semibold ${isCheapest ? 'text-green-700' : ''}`}>{price != null ? `$${Math.round(price).toLocaleString()}` : 'N/A'}</p>
                                     </div>

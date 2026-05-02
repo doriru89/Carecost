@@ -10,9 +10,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.db.tables import Provider
-from app.registries import all_hospitals
-from app.services.hospital_legacy import flatten_to_legacy
-from app.services.hospital_query import query_hospitals_normalized, query_hospitals_v2
+from app.services.hospital_query import query_hospitals
 from app.services.insurance_options import build_insurance_options
 
 _PAYMENT_TABLE_PATH = Path(__file__).resolve().parents[5] / "data" / "seed" / "plan_payment_table.json"
@@ -20,71 +18,29 @@ _PAYMENT_TABLE: list[dict[str, Any]] = []
 if _PAYMENT_TABLE_PATH.exists():
     _PAYMENT_TABLE = json.loads(_PAYMENT_TABLE_PATH.read_text())
 
-_HOSPITAL_INFO: dict[str, dict[str, Any]] = {
-    h.name: {"id": hid, "lat": h.lat, "lng": h.lng}
-    for hid, h in all_hospitals().items()
-}
-
 
 def get_insurance_options(db: Session) -> dict[str, Any]:
     return build_insurance_options(db)
 
 
-def list_hospitals(db: Session, *, cpt: str, specialty: str | None) -> list[dict[str, Any]]:
+def list_hospitals(
+    db: Session, *, cpt: str, specialty: str | None = None, metro_area: str | None = None
+) -> list[dict[str, Any]]:
+    hospitals = query_hospitals(db, cpt, metro_area=metro_area)
+    counts = _provider_counts(db, specialty)
+    for h in hospitals:
+        h["doctor_count"] = counts.get(h["name"], 0)
+    return hospitals
+
+
+def _provider_counts(db: Session, specialty: str | None) -> dict[str, int]:
     q = db.query(Provider.hospital, func.count(Provider.npi).label("cnt")).filter(
         Provider.hospital != "",
         Provider.hospital.isnot(None),
     )
     if specialty:
         q = q.filter(Provider.specialties.contains([specialty]))
-    counts = {row.hospital: row.cnt for row in q.group_by(Provider.hospital).all()}
-
-    normalized = query_hospitals_normalized(db, cpt)
-    normalized_by_hid = {h["hospital_id"]: h for h in normalized}
-
-    all_hospital_names: set[str] = set(counts.keys())
-    for name, info in _HOSPITAL_INFO.items():
-        hid = info.get("id")
-        if hid and hid in normalized_by_hid:
-            all_hospital_names.add(name)
-
-    results = []
-    for name in all_hospital_names:
-        info = _HOSPITAL_INFO.get(name, {})
-        lat = info.get("lat")
-        lng = info.get("lng")
-        if lat is None or lng is None:
-            continue
-        hid = info.get("id")
-        norm = normalized_by_hid.get(hid) if hid else None
-        d = flatten_to_legacy(norm) if norm else _empty_legacy(cpt)
-        d["name"] = name
-        d["hospital_id"] = hid
-        d["lat"] = lat
-        d["lng"] = lng
-        d["doctor_count"] = counts.get(name, 0)
-        results.append(d)
-    results.sort(key=lambda x: x["doctor_count"], reverse=True)
-    return results
-
-
-def _empty_legacy(cpt: str) -> dict[str, Any]:
-    """Default dict for hospitals with no pricing data."""
-    return {
-        "cpt": cpt, "cpt_desc": "", "gross_charge": None,
-        "discounted_cash": None, "de_identified_min": None,
-        "de_identified_max": None, "billing_class": "unknown",
-        "setting": "", "rate_methodology": "",
-        "bcbs_price": None, "bcbs_source": "", "bcbs_plan": "",
-        "aetna_price": None, "aetna_source": "",
-        "harvard_pilgrim_price": None, "hp_plan_name": "", "hp_source": "",
-        "uhc_price": None, "uhc_source": "",
-        "bcbs_tic_rate": None, "bcbs_tic_billing_class": "",
-        "turquoise_bundled_price": None, "turquoise_quality_rating": None,
-        "masscomparecare_total_paid": None,
-        "fh_physician_in_network": None, "fh_anesthesia_in_network": None,
-        "fh_facility_hosp_in_network": None, "fh_pathology_in_network": None,
-    }
+    return {row.hospital: row.cnt for row in q.group_by(Provider.hospital).all()}
 
 
 def list_specialties(db: Session) -> list[dict[str, Any]]:
@@ -101,26 +57,6 @@ def list_specialties(db: Session) -> list[dict[str, Any]]:
         }
         for name in all_specialty_names()
     ]
-
-
-def list_hospitals_v2(
-    db: Session, *, cpt: str, specialty: str | None = None, metro_area: str | None = None
-) -> list[dict[str, Any]]:
-    hospitals = query_hospitals_v2(db, cpt, metro_area=metro_area)
-    counts = _provider_counts(db, specialty)
-    for h in hospitals:
-        h["doctor_count"] = counts.get(h["name"], 0)
-    return hospitals
-
-
-def _provider_counts(db: Session, specialty: str | None) -> dict[str, int]:
-    q = db.query(Provider.hospital, func.count(Provider.npi).label("cnt")).filter(
-        Provider.hospital != "",
-        Provider.hospital.isnot(None),
-    )
-    if specialty:
-        q = q.filter(Provider.specialties.contains([specialty]))
-    return {row.hospital: row.cnt for row in q.group_by(Provider.hospital).all()}
 
 
 def get_payment_table(

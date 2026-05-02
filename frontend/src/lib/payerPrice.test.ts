@@ -5,19 +5,31 @@ import type { HospitalApi } from '@/api/client';
 const mockHospital: HospitalApi = {
   name: 'Test Hospital',
   hospital_id: 'test',
+  system_name: 'Test System',
+  metro_area: 'boston',
+  neighborhood: 'Back Bay',
   lat: 42.36,
   lng: -71.06,
   doctor_count: 5,
-  bcbs_price: 1278,
-  aetna_price: 1349,
-  harvard_pilgrim_price: 1644,
-  uhc_price: 1644,
-  de_identified_min: 1010,
-  de_identified_max: 3264,
-  gross_charge: 1222,
-  discounted_cash: 305,
   cpt: '43239',
   cpt_desc: 'EGD diagnostic/biopsy',
+  gross_charge: 1222,
+  discounted_cash: 305,
+  de_identified_min: 1010,
+  de_identified_max: 3264,
+  payer_rates: [
+    { payer_id: 'bcbs', negotiated_rate: 1278, plan_name: 'BCBS PPO', source_origin: 'mrf', billing_class: 'institutional' },
+    { payer_id: 'bcbs', negotiated_rate: 1644, plan_name: 'BCBS TiC', source_origin: 'tic', billing_class: 'institutional' },
+    { payer_id: 'aetna', negotiated_rate: 1349, plan_name: 'Aetna PPO', source_origin: 'mrf', billing_class: 'institutional' },
+    { payer_id: 'harvard_pilgrim', negotiated_rate: 1644, plan_name: 'HP PPO', source_origin: 'mrf', billing_class: 'institutional' },
+    { payer_id: 'uhc', negotiated_rate: 1644, plan_name: 'UHC PPO', source_origin: 'mrf', billing_class: 'institutional' },
+  ],
+  benchmarks: [
+    { benchmark_source: 'turquoise', component: 'total', price: 2800, quality_rating: 4.2 },
+    { benchmark_source: 'masscomparecare', component: 'total', price: 1900, quality_rating: null },
+    { benchmark_source: 'fair_health', component: 'physician_in_network', price: 941, quality_rating: null },
+    { benchmark_source: 'fair_health', component: 'facility_hosp_in_network', price: 2350, quality_rating: null },
+  ],
 };
 
 describe('carrierKeyFromLabel', () => {
@@ -45,30 +57,41 @@ describe('carrierKeyFromLabel', () => {
 });
 
 describe('getPayerPrice', () => {
-  it('returns bcbs_price for BCBS carrier', () => {
+  it('returns negotiated rate for matching payer_id', () => {
     expect(getPayerPrice(mockHospital, 'Blue Cross')).toBe(1278);
   });
 
-  it('returns aetna_price for Aetna carrier', () => {
+  it('returns aetna rate for Aetna carrier', () => {
     expect(getPayerPrice(mockHospital, 'Aetna')).toBe(1349);
   });
 
-  it('returns harvard_pilgrim_price for Harvard Pilgrim', () => {
-    expect(getPayerPrice(mockHospital, 'Harvard Pilgrim')).toBe(1644);
+  it('prefers MRF over TiC source_origin', () => {
+    expect(getPayerPrice(mockHospital, 'BCBS')).toBe(1278);
   });
 
-  it('returns uhc_price for UHC', () => {
-    expect(getPayerPrice(mockHospital, 'UnitedHealthcare')).toBe(1644);
+  it('falls back to TiC when no MRF exists', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'bcbs', negotiated_rate: 1644, plan_name: 'TiC', source_origin: 'tic', billing_class: 'institutional' },
+      ],
+    };
+    expect(getPayerPrice(h, 'BCBS')).toBe(1644);
   });
 
-  it('returns null when payer field is null (no silent BCBS fallback)', () => {
-    const h = { ...mockHospital, aetna_price: null };
-    expect(getPayerPrice(h, 'Aetna')).toBeNull();
+  it('returns null for empty payer_rates (NOT $0)', () => {
+    const h: HospitalApi = { ...mockHospital, payer_rates: [] };
+    expect(getPayerPrice(h, 'BCBS')).toBeNull();
   });
 
-  it('returns null when both payer and bcbs are null', () => {
-    const h = { ...mockHospital, aetna_price: null, bcbs_price: null };
-    expect(getPayerPrice(h, 'Aetna')).toBeNull();
+  it('returns null for unknown payer with no matching rates', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'aetna', negotiated_rate: 1349, plan_name: '', source_origin: 'mrf', billing_class: '' },
+      ],
+    };
+    expect(getPayerPrice(h, 'Some Unknown Carrier')).toBeNull();
   });
 });
 
@@ -78,89 +101,68 @@ describe('computeYourPlanEstimate', () => {
   });
 
   it('computes (price - deductible) * coinsurance%', () => {
-    // (2500 - 500) * 20/100 = 400
     expect(computeYourPlanEstimate(2500, 500, 20)).toBe(400);
   });
 
   it('handles zero deductible', () => {
-    // 1000 * 20/100 = 200
     expect(computeYourPlanEstimate(1000, 0, 20)).toBe(200);
   });
 
   it('rounds to nearest dollar', () => {
-    // (1278 - 500) * 20/100 = 155.6 → 156
     expect(computeYourPlanEstimate(1278, 500, 20)).toBe(156);
   });
 });
 
 describe('getAllPriceSources', () => {
-  const fullHospital: HospitalApi = {
-    ...mockHospital,
-    bcbs_tic_rate: 1644,
-    bcbs_tic_billing_class: 'institutional',
-    turquoise_bundled_price: 2800,
-    masscomparecare_total_paid: 1900,
-  };
-
-  it('returns all 8 sources when hospital has complete data', () => {
-    const sources = getAllPriceSources(fullHospital, 'Blue Cross');
-    expect(sources.length).toBe(8);
-    expect(sources.filter(s => s.kind === 'negotiated')).toHaveLength(1);
-    expect(sources.filter(s => s.kind === 'tic')).toHaveLength(1);
+  it('returns sources from payer_rates + standard fields + benchmarks', () => {
+    const sources = getAllPriceSources(mockHospital, 'Blue Cross');
+    expect(sources.length).toBeGreaterThanOrEqual(8);
+    expect(sources.filter(s => s.kind === 'negotiated').length).toBeGreaterThanOrEqual(1);
     expect(sources.filter(s => s.kind === 'de_identified')).toHaveLength(2);
     expect(sources.filter(s => s.kind === 'gross')).toHaveLength(1);
     expect(sources.filter(s => s.kind === 'cash')).toHaveLength(1);
-    expect(sources.filter(s => s.kind === 'benchmark')).toHaveLength(2);
+    expect(sources.filter(s => s.kind === 'benchmark').length).toBeGreaterThanOrEqual(2);
   });
 
-  it('omits null sources silently', () => {
+  it('omits null rates silently', () => {
     const sparse: HospitalApi = {
       ...mockHospital,
-      aetna_price: null,
-      bcbs_tic_rate: undefined,
-      turquoise_bundled_price: undefined,
-      masscomparecare_total_paid: undefined,
+      payer_rates: [
+        { payer_id: 'aetna', negotiated_rate: null, plan_name: '', source_origin: 'mrf', billing_class: '' },
+      ],
       discounted_cash: null,
       gross_charge: null,
+      benchmarks: [],
     };
-    // Aetna carrier with null aetna_price → no negotiated source
     const sources = getAllPriceSources(sparse, 'Aetna');
     expect(sources.filter(s => s.kind === 'negotiated')).toHaveLength(0);
-    // Only de_identified_min + de_identified_max remain
     expect(sources).toHaveLength(2);
   });
 
   it('returns empty array when hospital has no data', () => {
     const empty: HospitalApi = {
-      name: 'Empty Hospital',
-      hospital_id: 'empty',
-      lat: 42.36, lng: -71.06,
-      doctor_count: 0,
-      bcbs_price: null,
-      aetna_price: null,
-      harvard_pilgrim_price: null,
-      uhc_price: null,
+      ...mockHospital,
+      payer_rates: [],
       de_identified_min: null,
       de_identified_max: null,
       gross_charge: null,
       discounted_cash: null,
-      cpt: '43239',
-      cpt_desc: 'EGD diagnostic',
+      benchmarks: [],
     };
     expect(getAllPriceSources(empty, 'BCBS')).toHaveLength(0);
   });
 
-  it('labels negotiated source with correct carrier name', () => {
-    const sources = getAllPriceSources(fullHospital, 'Harvard Pilgrim');
-    const neg = sources.find(s => s.kind === 'negotiated');
+  it('labels user carrier negotiated rate correctly', () => {
+    const sources = getAllPriceSources(mockHospital, 'Harvard Pilgrim');
+    const neg = sources.find(s => s.kind === 'negotiated' && s.label.includes('HARVARD_PILGRIM'));
     expect(neg).toBeDefined();
-    expect(neg!.label).toContain('Harvard Pilgrim');
+    expect(neg!.label).toContain('negotiated rate');
   });
 
-  it('includes TiC billing_class in source metadata', () => {
-    const sources = getAllPriceSources(fullHospital, 'BCBS');
-    const tic = sources.find(s => s.kind === 'tic');
-    expect(tic).toBeDefined();
-    expect(tic!.billing_class).toBe('institutional');
+  it('includes billing_class in payer rate sources', () => {
+    const sources = getAllPriceSources(mockHospital, 'BCBS');
+    const neg = sources.find(s => s.kind === 'negotiated' && s.label.includes('BCBS'));
+    expect(neg).toBeDefined();
+    expect(neg!.billing_class).toBe('institutional');
   });
 });

@@ -37,13 +37,7 @@ const GENERIC_PLAN_FALLBACK = [
 
 const BCBS_PLAN_FALLBACK = ['Plan name not listed in hospital data file'];
 
-/** Used when the API is unreachable or DB has no `hospital_rates` yet (build/deploy still works). */
-const FALLBACK_INSURERS: InsurerOptionApi[] = [
-  { key: 'bcbs', label: 'Blue Cross Blue Shield (BCBS)', price_column: 'bcbs_price' },
-  { key: 'aetna', label: 'Aetna', price_column: 'aetna_price' },
-  { key: 'harvard_pilgrim', label: 'Harvard Pilgrim', price_column: 'harvard_pilgrim_price' },
-  { key: 'uhc', label: 'UnitedHealthcare (UHC)', price_column: 'uhc_price' },
-];
+import { FALLBACK_INSURERS } from '@/lib/constants';
 
 const Onboarding = () => {
   const [step, setStep] = useState(0);

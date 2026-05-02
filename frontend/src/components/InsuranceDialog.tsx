@@ -25,14 +25,9 @@ import { maskUsDateDigits, parseUsDateToIso, isoToUsDisplay } from '@/lib/usDate
 import { PLAN_CONFIGS } from '@/lib/hospitalRatesCsv';
 import { toast } from 'sonner';
 
-const STEPS = ['About you', 'Coverage'];
+import { FALLBACK_INSURERS } from '@/lib/constants';
 
-const FALLBACK_INSURERS: InsurerOptionApi[] = [
-  { key: 'bcbs', label: 'Blue Cross Blue Shield (BCBS)', price_column: 'bcbs_price' },
-  { key: 'aetna', label: 'Aetna', price_column: 'aetna_price' },
-  { key: 'harvard_pilgrim', label: 'Harvard Pilgrim', price_column: 'harvard_pilgrim_price' },
-  { key: 'uhc', label: 'UnitedHealthcare (UHC)', price_column: 'uhc_price' },
-];
+const STEPS = ['About you', 'Coverage'];
 
 const GENERIC_PLAN_FALLBACK = ['Commercial PPO', 'Commercial HMO', 'Medicare Advantage', 'Other — see insurance card'];
 const BCBS_PLAN_FALLBACK = ['Plan name not listed in hospital data file'];

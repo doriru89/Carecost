@@ -8,7 +8,7 @@ export function buildEstimateFallback(
   selectedCrt: { bundleId: string } | null,
 ): Record<string, unknown> {
   const fallback: Record<string, unknown> = {
-    zip: profile?.zip || '02118',
+    zip: profile?.zip || '',
     insurance_carrier: insurance?.carrier || 'Blue Cross Blue Shield of Massachusetts',
     care_focus: selectedSpecialty,
     scenario_id: selectedCrt?.bundleId ?? '',

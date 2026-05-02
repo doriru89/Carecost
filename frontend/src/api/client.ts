@@ -194,49 +194,48 @@ export async function postEstimate(body: {
   });
 }
 
-export type HospitalApi = {
-  name: string;
-  hospital_id: string | null;
-  lat: number;
-  lng: number;
-  doctor_count: number;
-  bcbs_price: number | null;
-  aetna_price: number | null;
-  harvard_pilgrim_price: number | null;
-  uhc_price: number | null;
-  de_identified_min: number | null;
-  de_identified_max: number | null;
-  gross_charge: number | null;
-  discounted_cash: number | null;
-  cpt: string;
-  cpt_desc: string;
-  // Provenance fields
-  billing_class?: string;
-  setting?: string;
-  rate_methodology?: string;
-  bcbs_tic_rate?: number | null;
-  bcbs_tic_billing_class?: string;
-  bcbs_source?: string;
-  bcbs_plan?: string;
-  hp_plan_name?: string;
-  hp_source?: string;
-  aetna_source?: string;
-  uhc_source?: string;
-  turquoise_bundled_price?: number | null;
-  turquoise_quality_rating?: number | null;
-  masscomparecare_total_paid?: number | null;
-  fh_physician_in_network?: number | null;
-  fh_anesthesia_in_network?: number | null;
-  fh_facility_hosp_in_network?: number | null;
-  fh_pathology_in_network?: number | null;
+export type PayerRate = {
+  payer_id: string;
+  negotiated_rate: number | null;
+  plan_name: string;
+  source_origin: string;
+  billing_class: string;
 };
 
-export async function fetchHospitals(cpt?: string, specialty?: string): Promise<HospitalApi[]> {
+export type Benchmark = {
+  benchmark_source: string;
+  component: string;
+  price: number | null;
+  quality_rating: number | null;
+};
+
+export type HospitalApi = {
+  hospital_id: string;
+  name: string;
+  system_name: string;
+  metro_area: string;
+  neighborhood: string;
+  lat: number;
+  lng: number;
+  cpt: string;
+  cpt_desc: string;
+  gross_charge: number | null;
+  discounted_cash: number | null;
+  de_identified_min: number | null;
+  de_identified_max: number | null;
+  doctor_count: number;
+  payer_rates: PayerRate[];
+  benchmarks: Benchmark[];
+};
+
+export async function fetchHospitals(
+  cpt: string, specialty?: string, metro_area?: string,
+): Promise<HospitalApi[]> {
   const q = new URLSearchParams();
-  if (cpt) q.set('cpt', cpt);
+  q.set('cpt', cpt);
   if (specialty) q.set('specialty', specialty);
-  const qs = q.toString();
-  return json<HospitalApi[]>(`/api/hospitals${qs ? `?${qs}` : ''}`);
+  if (metro_area) q.set('metro_area', metro_area);
+  return json<HospitalApi[]>(`/api/hospitals?${q.toString()}`);
 }
 
 export type PaymentRow = {
@@ -288,7 +287,7 @@ export async function fetchPaymentTable(params?: {
 export type InsurerOptionApi = {
   key: string;
   label: string;
-  price_column: string;
+  payer_id: string;
 };
 
 export type InsuranceOptionsApi = {

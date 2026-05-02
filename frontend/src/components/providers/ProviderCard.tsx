@@ -290,7 +290,7 @@ const ProviderCard = ({
 
               {/* FAIR Health 80th percentile breakdown */}
               {(() => {
-                const fh = computeFairHealthTotal(hospital);
+                const fh = computeFairHealthTotal(hospital.benchmarks);
                 if (!fh) return null;
                 return (
                   <div className="pt-2 mt-2 border-t border-border">

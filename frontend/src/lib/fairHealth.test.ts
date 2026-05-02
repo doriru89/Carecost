@@ -1,52 +1,53 @@
 import { describe, expect, it } from 'vitest';
 import { computeFairHealthTotal } from './fairHealth';
+import type { Benchmark } from '@/api/client';
 
 describe('computeFairHealthTotal', () => {
-  it('sums all 4 components when present', () => {
-    const result = computeFairHealthTotal({
-      fh_physician_in_network: 604,
-      fh_facility_hosp_in_network: 2133,
-      fh_anesthesia_in_network: 853,
-      fh_pathology_in_network: 0,
-    });
+  it('sums all fair_health components when present', () => {
+    const benchmarks: Benchmark[] = [
+      { benchmark_source: 'fair_health', component: 'physician_in_network', price: 604, quality_rating: null },
+      { benchmark_source: 'fair_health', component: 'facility_hosp_in_network', price: 2133, quality_rating: null },
+      { benchmark_source: 'fair_health', component: 'anesthesia_in_network', price: 853, quality_rating: null },
+      { benchmark_source: 'fair_health', component: 'pathology_in_network', price: 0, quality_rating: null },
+    ];
+    const result = computeFairHealthTotal(benchmarks);
     expect(result).not.toBeNull();
-    expect(result!.total).toBe(3590); // 604+2133+853
-    expect(result!.components).toHaveLength(3); // pathology=0 excluded
+    expect(result!.total).toBe(3590);
+    expect(result!.components).toHaveLength(3);
   });
 
-  it('returns null when all fields are null', () => {
-    const result = computeFairHealthTotal({
-      fh_physician_in_network: null,
-      fh_facility_hosp_in_network: null,
-      fh_anesthesia_in_network: null,
-      fh_pathology_in_network: null,
-    });
-    expect(result).toBeNull();
+  it('returns null when no fair_health benchmarks exist', () => {
+    const benchmarks: Benchmark[] = [
+      { benchmark_source: 'turquoise', component: 'total', price: 2800, quality_rating: 4.2 },
+    ];
+    expect(computeFairHealthTotal(benchmarks)).toBeNull();
+  });
+
+  it('returns null for empty benchmarks array', () => {
+    expect(computeFairHealthTotal([])).toBeNull();
   });
 
   it('sums partial data — only available components', () => {
-    const result = computeFairHealthTotal({
-      fh_physician_in_network: 500,
-      fh_facility_hosp_in_network: null,
-      fh_anesthesia_in_network: 300,
-      fh_pathology_in_network: null,
-    });
+    const benchmarks: Benchmark[] = [
+      { benchmark_source: 'fair_health', component: 'physician_in_network', price: 500, quality_rating: null },
+      { benchmark_source: 'fair_health', component: 'anesthesia_in_network', price: 300, quality_rating: null },
+    ];
+    const result = computeFairHealthTotal(benchmarks);
     expect(result).not.toBeNull();
     expect(result!.total).toBe(800);
     expect(result!.components).toHaveLength(2);
   });
 
-  it('labels components correctly', () => {
-    const result = computeFairHealthTotal({
-      fh_physician_in_network: 604,
-      fh_facility_hosp_in_network: 2133,
-      fh_anesthesia_in_network: 853,
-      fh_pathology_in_network: null,
-    });
+  it('maps component names to human labels', () => {
+    const benchmarks: Benchmark[] = [
+      { benchmark_source: 'fair_health', component: 'physician_in_network', price: 604, quality_rating: null },
+      { benchmark_source: 'fair_health', component: 'facility_hosp_in_network', price: 2133, quality_rating: null },
+      { benchmark_source: 'fair_health', component: 'anesthesia_in_network', price: 853, quality_rating: null },
+    ];
+    const result = computeFairHealthTotal(benchmarks);
     const labels = result!.components.map(c => c.label);
     expect(labels).toContain('Physician');
     expect(labels).toContain('Facility');
     expect(labels).toContain('Anesthesia');
-    expect(labels).not.toContain('Pathology');
   });
 });

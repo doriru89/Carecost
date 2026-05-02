@@ -36,7 +36,7 @@ describe('buildEstimateFallback', () => {
 
   it('falls back to Boston defaults when profile and insurance are null', () => {
     const result = buildEstimateFallback(null, null, null, 'Gastroenterology', null);
-    expect(result.zip).toBe('02118');
+    expect(result.zip).toBe('');
     expect(result.insurance_carrier).toContain('Blue Cross');
   });
 

@@ -1,16 +1,3 @@
-export type InsurerFromRates = {
-  key: string;
-  label: string;
-  priceColumn: string;
-};
-
-export const INSURERS_FROM_RATES: InsurerFromRates[] = [
-  { key: 'bcbs', label: 'Blue Cross Blue Shield (BCBS)', priceColumn: 'bcbs_price' },
-  { key: 'aetna', label: 'Aetna', priceColumn: 'aetna_price' },
-  { key: 'harvard_pilgrim', label: 'Harvard Pilgrim', priceColumn: 'harvard_pilgrim_price' },
-  { key: 'uhc', label: 'UnitedHealthcare (UHC)', priceColumn: 'uhc_price' },
-];
-
 export const BCBS_PLAN_OPTIONS: string[] = [
   'CHA HB BCBS HMO BLUE',
   'CHA HB BCBS INDEMNITY',
