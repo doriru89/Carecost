@@ -51,10 +51,28 @@ def test_hospitals_missing_dim_graceful(client: TestClient) -> None:
     assert r.json() == []
 
 
-def test_hospitals_excludes_seed_era_rows(client: TestClient) -> None:
-    """payer_rates must only contain ETL data (source_file != ''), not seed-era rows."""
+def test_hospitals_excludes_seed_era_rows(seeded_db, client: TestClient) -> None:
+    """Seed-era rows (source_file='') must not appear; ETL rows (source_file set) must."""
+    from app.db.tables import HospitalPayerRate
+
+    seed_row = HospitalPayerRate(
+        hospital_id="bmc", cpt="45378", payer_id="TEST_SEED",
+        negotiated_rate=100.0, plan_name="seed plan",
+        source_file="", source_origin="mrf",
+    )
+    etl_row = HospitalPayerRate(
+        hospital_id="bmc", cpt="45378", payer_id="TEST_ETL",
+        negotiated_rate=200.0, plan_name="etl plan",
+        source_file="etl_2026.csv", source_origin="mrf",
+    )
+    seeded_db.add_all([seed_row, etl_row])
+    seeded_db.commit()
+
     r = client.get("/api/hospitals?cpt=45378")
     data = r.json()
-    for h in data:
-        for rate in h["payer_rates"]:
-            assert "source_origin" in rate, "payer_rate missing source_origin field"
+    bmc = next((h for h in data if h["hospital_id"] == "bmc"), None)
+    assert bmc is not None, "BMC not found in response"
+
+    payer_ids = [pr["payer_id"] for pr in bmc["payer_rates"]]
+    assert "test_etl" in payer_ids, "ETL row should appear in payer_rates"
+    assert "test_seed" not in payer_ids, "Seed-era row should be excluded"

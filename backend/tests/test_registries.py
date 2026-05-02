@@ -98,17 +98,6 @@ def test_no_gi_general_bundle():
     assert "gi_general" not in ids
 
 
-def test_no_gi_general_in_payment_table():
-    import json
-    from pathlib import Path
-
-    table = json.loads(
-        (Path(__file__).resolve().parent.parent.parent / "data" / "seed" / "plan_payment_table.json").read_text()
-    )
-    gi_general_rows = [r for r in table if r.get("scenario_id") == "gi_general"]
-    assert len(gi_general_rows) == 0, f"Found {len(gi_general_rows)} orphaned gi_general rows"
-
-
 def test_hospital_npi_uniqueness():
     from app.registries import hospital_npi_map
 

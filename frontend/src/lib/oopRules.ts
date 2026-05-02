@@ -1,4 +1,4 @@
-import type { PlanConfig } from './hospitalRatesCsv';
+import type { PlanConfig } from './planConfig';
 
 export type OopResult = {
   ruleType: 'preventive' | 'copay_only' | 'ded_coinsurance';

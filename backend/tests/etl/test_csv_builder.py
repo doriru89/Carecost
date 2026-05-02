@@ -1,7 +1,6 @@
 """TDD tests for csv_builder — written BEFORE implementation."""
 
 import csv
-from pathlib import Path
 
 from app.etl.types import (
     BenchmarkRecord,
@@ -109,43 +108,3 @@ class TestBuildCsvs:
         assert counts["hospital_benchmarks.csv"] == 1
 
 
-class TestBuildLegacyWideCsv:
-    def test_35_columns(self, tmp_path):
-        from app.etl.csv_builder import build_legacy_wide_csv
-        out = tmp_path / "hospital_rates.csv"
-        build_legacy_wide_csv(_make_result(), out)
-        with open(out) as f:
-            header = next(csv.reader(f))
-        assert len(header) == 35
-
-    def test_header_matches_seed(self, tmp_path):
-        from app.etl.csv_builder import LEGACY_WIDE_COLUMNS
-        seed_path = Path(__file__).parent.parent.parent.parent / "data" / "seed" / "hospital_rates_clean.csv"
-        with open(seed_path) as f:
-            seed_header = next(csv.reader(f))
-        assert list(LEGACY_WIDE_COLUMNS) == seed_header
-
-    def test_payer_pivot(self, tmp_path):
-        from app.etl.csv_builder import build_legacy_wide_csv
-        result = MergeResult(
-            procedures=[ProcedureRecord(
-                hospital_id="mgh", cpt="45378", cpt_desc="Colonoscopy",
-                gross_charge=3883.0, discounted_cash=2912.0,
-                de_identified_min=2200.0, de_identified_max=5500.0,
-            )],
-            payer_rates=[
-                PayerRateRecord(hospital_id="mgh", cpt="45378", payer_id="BCBS_MA",
-                                negotiated_rate=3411.0, plan_name="HMO Blue",
-                                source="negotiated_dollar", source_origin="mrf"),
-                PayerRateRecord(hospital_id="mgh", cpt="45378", payer_id="AETNA",
-                                negotiated_rate=2900.0, source_origin="mrf"),
-            ],
-            benchmarks=[],
-        )
-        out = tmp_path / "hospital_rates.csv"
-        build_legacy_wide_csv(result, out)
-        with open(out) as f:
-            row = list(csv.DictReader(f))[0]
-        assert row["bcbs_price"] == "3411.00"
-        assert row["aetna_price"] == "2900.00"
-        assert row["bcbs_plan"] == "HMO Blue"

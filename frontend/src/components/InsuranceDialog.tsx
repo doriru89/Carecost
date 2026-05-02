@@ -22,7 +22,7 @@ import {
 } from '@/api/client';
 import { isUserProfileComplete } from '@/lib/profileComplete';
 import { maskUsDateDigits, parseUsDateToIso, isoToUsDisplay } from '@/lib/usDate';
-import { PLAN_CONFIGS } from '@/lib/hospitalRatesCsv';
+import { PLAN_CONFIGS } from '@/lib/planConfig';
 import { toast } from 'sonner';
 
 import { FALLBACK_INSURERS } from '@/lib/constants';

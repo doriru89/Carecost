@@ -20,7 +20,7 @@ import { fetchProviders, fetchHospitals, postEstimate, type ProviderApi, type Ho
 import { apiEstimateToCostEstimate } from '@/lib/mapEstimate';
 import { getPayerPrice, computeYourPlanEstimate, carrierKeyFromLabel, getAllPriceSources } from '@/lib/payerPrice';
 import { computeOop } from '@/lib/oopRules';
-import { PLAN_CONFIGS, type PlanConfig } from '@/lib/hospitalRatesCsv';
+import { PLAN_CONFIGS, type PlanConfig } from '@/lib/planConfig';
 import { buildEstimateFallback } from '@/lib/estimateFallback';
 import { loadCrt, saveCrt, type SelectedCrt } from '@/lib/crtPersistence';
 import { useLocation, useNavigate } from 'react-router-dom';

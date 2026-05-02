@@ -15,10 +15,16 @@ from sqlalchemy.orm import Session, sessionmaker
 from app.db.postgres import get_db
 from app.db.tables import Base
 from app.main import create_app
-from app.etl.seed_migration import migrate_wide_to_normalized
-from app.services.csv_import import import_az_directory
+from app.services.csv_import import (
+    import_az_providers_csv,
+    import_insurers_csv,
+    import_normalized_directory,
+    import_procedures_csv,
+)
 
-AZ_DATA = Path(__file__).resolve().parent.parent.parent / "data" / "seed"
+_DATA_ROOT = Path(__file__).resolve().parent.parent.parent / "data"
+_SEED_DIR = _DATA_ROOT / "seed"
+_ETL_OUTPUT = _DATA_ROOT / "intermediate" / "etl_output"
 
 
 def _test_database_url() -> str:
@@ -57,8 +63,14 @@ def db_session(engine: Engine) -> Generator[Session, None, None]:
 
 @pytest.fixture
 def seeded_db(db_session: Session) -> Session:
-    import_az_directory(db_session, AZ_DATA)
-    migrate_wide_to_normalized(db_session)
+    import_normalized_directory(db_session, _ETL_OUTPUT)
+    import_az_providers_csv(db_session, _SEED_DIR / "providers.csv")
+    p = _SEED_DIR / "procedures.csv"
+    if p.exists():
+        import_procedures_csv(db_session, p)
+    p = _SEED_DIR / "insurers.csv"
+    if p.exists():
+        import_insurers_csv(db_session, p)
     _seed_dimension_tables(db_session)
     db_session.commit()
     return db_session

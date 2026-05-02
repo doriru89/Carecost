@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
 from typing import Any
 
 from sqlalchemy import func
@@ -12,11 +10,6 @@ from sqlalchemy.orm import Session
 from app.db.tables import Provider
 from app.services.hospital_query import query_hospitals
 from app.services.insurance_options import build_insurance_options
-
-_PAYMENT_TABLE_PATH = Path(__file__).resolve().parents[5] / "data" / "seed" / "plan_payment_table.json"
-_PAYMENT_TABLE: list[dict[str, Any]] = []
-if _PAYMENT_TABLE_PATH.exists():
-    _PAYMENT_TABLE = json.loads(_PAYMENT_TABLE_PATH.read_text())
 
 
 def get_insurance_options(db: Session) -> dict[str, Any]:
@@ -59,23 +52,3 @@ def list_specialties(db: Session) -> list[dict[str, Any]]:
     ]
 
 
-def get_payment_table(
-    *,
-    plan_id: str | None,
-    cpt: str | None,
-    hospital_id: str | None,
-    scenario_id: str | None,
-    specialty: str | None,
-) -> list[dict[str, Any]]:
-    results = _PAYMENT_TABLE
-    if plan_id:
-        results = [r for r in results if r["plan_id"] == plan_id]
-    if cpt:
-        results = [r for r in results if r["cpt"] == cpt]
-    if hospital_id:
-        results = [r for r in results if r["hospital_id"] == hospital_id]
-    if scenario_id:
-        results = [r for r in results if r["scenario_id"] == scenario_id]
-    if specialty:
-        results = [r for r in results if r["specialty"].lower() == specialty.lower()]
-    return results

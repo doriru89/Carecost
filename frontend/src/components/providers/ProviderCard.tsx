@@ -6,7 +6,7 @@ import { computeYourPlanEstimate, getAllPriceSources } from '@/lib/payerPrice';
 import { computeFairHealthTotal } from '@/lib/fairHealth';
 import { computeOop } from '@/lib/oopRules';
 import type { HospitalApi } from '@/api/client';
-import type { PlanConfig } from '@/lib/hospitalRatesCsv';
+import type { PlanConfig } from '@/lib/planConfig';
 import type { Provider, CostEstimate } from '@/types';
 
 interface ProviderCardProps {

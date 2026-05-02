@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { computeOop } from './oopRules';
-import type { PlanConfig } from './hospitalRatesCsv';
+import type { PlanConfig } from './planConfig';
 
 const bcbsHmo: PlanConfig = {
   id: 'bcbs_hmo', payer: 'BCBS', carrierKey: 'bcbs',

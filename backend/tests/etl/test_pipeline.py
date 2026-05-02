@@ -52,7 +52,6 @@ class TestRunEtl:
         assert (output_dir / "hospital_procedures.csv").exists()
         assert (output_dir / "hospital_payer_rates.csv").exists()
         assert (output_dir / "hospital_benchmarks.csv").exists()
-        assert (output_dir / "hospital_rates.csv").exists()
 
     def test_sha256_sidecar(self, tmp_path):
         from app.etl.pipeline import run_etl

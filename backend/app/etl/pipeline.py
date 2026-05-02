@@ -11,7 +11,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-from app.etl.csv_builder import build_csvs, build_legacy_wide_csv
+from app.etl.csv_builder import build_csvs
 from app.etl.data_qualifier import qualify_batch
 from app.etl.data_validator import validate_etl_output
 from app.etl.hospital_rate_parser import parse_all_hospital_rates
@@ -106,13 +106,9 @@ def run_etl(
 
     # 8. Build normalized CSVs
     output_dir.mkdir(parents=True, exist_ok=True)
-    build_csvs(merge_result, output_dir)
+    csv_counts = build_csvs(merge_result, output_dir)
 
-    # 9. Build legacy wide CSV
-    legacy_path = output_dir / "hospital_rates.csv"
-    legacy_count = build_legacy_wide_csv(merge_result, legacy_path)
-
-    # 10. SHA256 provenance
+    # 9. SHA256 provenance
     for csv_file in output_dir.glob("*.csv"):
         _sha256_file(csv_file)
 
@@ -122,7 +118,7 @@ def run_etl(
         tic_records_extracted=len(tic_records),
         records_after_normalization=len(normalized),
         merged_rows=len(merge_result.procedures),
-        csv_rows_written=legacy_count,
+        csv_rows_written=sum(csv_counts.values()),
         hospitals_found=sorted({p.hospital_id for p in merge_result.procedures}),
         warnings=validation.warnings,
         validation_report=validation,

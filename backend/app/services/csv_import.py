@@ -14,14 +14,11 @@ from app.db.tables import (
     HospitalBenchmark,
     HospitalPayerRate,
     HospitalProcedure,
-    HospitalRate,
     Insurer,
     Price,
     Procedure,
     Provider,
 )
-from app.etl.column_map import PAYER_RATE_MAP
-from app.etl.data_qualifier import derive_rate_quality_from_csv_row as _derive_rate_quality_from_csv
 from app.registries import bundles_for_specialty, infer_hospital_from_address
 
 BUNDLE_CPT_AZ_MVP: dict[str, str] = {
@@ -264,86 +261,6 @@ def import_az_providers_csv(
     return _upsert_by_pk(db, Provider, values)
 
 
-def import_hospital_rates_csv(db: Session, path: Path) -> int:
-    rows = _read_csv(path)
-    if not rows:
-        return 0
-    values = []
-    for row in rows:
-        hid = row["hospital_id"].strip()
-        cpt = str(row["cpt"]).strip()
-        values.append(
-            {
-                "id": f"{hid}:{cpt}",
-                "hospital_id": hid,
-                "hospital_name": row.get("hospital_name", "").strip(),
-                "neighborhood": row.get("neighborhood", "").strip(),
-                "system": row.get("system", "").strip(),
-                "data_completeness": row.get("data_completeness", "").strip(),
-                "cpt": cpt,
-                "cpt_desc": row.get("cpt_desc", "").strip(),
-                "gross_charge": _parse_float_cell(row.get("gross_charge", "")),
-                "discounted_cash": _parse_float_cell(row.get("discounted_cash", "")),
-                "de_identified_min": _parse_float_cell(row.get("de_identified_min", "")),
-                "de_identified_max": _parse_float_cell(row.get("de_identified_max", "")),
-                "bcbs_price": _parse_float_cell(row.get("bcbs_price", "")),
-                "bcbs_source": row.get("bcbs_source", "").strip(),
-                "bcbs_plan": row.get("bcbs_plan", "").strip(),
-                "aetna_price": _parse_float_cell(row.get("aetna_price", "")),
-                "aetna_source": row.get("aetna_source", "").strip(),
-                "aetna_plan": row.get("aetna_plan", "").strip(),
-                "harvard_pilgrim_price": _parse_float_cell(row.get("harvard_pilgrim_price", "")),
-                "hp_plan_name": row.get(
-                    "hp_plan_name", row.get("harvard_pilgrim_plan", "")
-                ).strip(),
-                "hp_source": row.get("hp_source", "").strip(),
-                "uhc_price": _parse_float_cell(row.get("uhc_price", "")),
-                "uhc_source": row.get("uhc_source", row.get("uhc_plan", "")).strip(),
-                "bcbs_tic_rate": _parse_float_cell(row.get("bcbs_tic_rate", "")),
-                "bcbs_tic_billing_class": row.get("bcbs_tic_billing_class", "").strip(),
-                "billing_class": row.get("billing_class", "unknown").strip(),
-                "setting": row.get("setting", "").strip(),
-                "rate_methodology": row.get("rate_methodology", "").strip(),
-                "turquoise_bundled_price": _parse_float_cell(
-                    row.get("turquoise_bundled_price", "")
-                ),
-                "turquoise_quality_rating": _parse_float_cell(
-                    row.get("turquoise_quality_rating", "")
-                ),
-                "masscomparecare_total_paid": _parse_float_cell(
-                    row.get("masscomparecare_total_paid", "")
-                ),
-                "fh_physician_in_network": _parse_float_cell(
-                    row.get("fh_physician_in_network", "")
-                ),
-                "fh_anesthesia_in_network": _parse_float_cell(
-                    row.get("fh_anesthesia_in_network", "")
-                ),
-                "fh_facility_hosp_in_network": _parse_float_cell(
-                    row.get("fh_facility_hosp_in_network", "")
-                ),
-                "fh_physician_oon": _parse_float_cell(
-                    row.get("fh_physician_oon", "")
-                ),
-                "fh_facility_asc_in_network": _parse_float_cell(
-                    row.get("fh_facility_asc_in_network", "")
-                ),
-                "fh_pathology_in_network": _parse_float_cell(
-                    row.get("fh_pathology_in_network", "")
-                ),
-                "source": "az_mvp",
-                "source_type": "mrf",
-                "rate_quality": _derive_rate_quality_from_csv(row),
-            }
-        )
-    return _upsert_by_pk(db, HospitalRate, values)
-
-
-_AZ_PAYER_RATE_FIELDS: tuple[tuple[str, str], ...] = tuple(
-    (price_col, payer_id) for payer_id, (price_col, _, _) in PAYER_RATE_MAP.items()
-)
-
-
 def _upsert_prices(db: Session, values: list[dict]) -> int:
     if not values:
         return 0
@@ -363,114 +280,7 @@ def _upsert_prices(db: Session, values: list[dict]) -> int:
     return len(values)
 
 
-def import_az_mvp_prices(
-    db: Session,
-    hospital_id: str = "bmc",
-    effective_date: str = "2024-01-01",
-) -> int:
-    npis = [r[0] for r in db.query(Provider.npi).filter(Provider.source == "az_mvp").all()]
-    if not npis:
-        return 0
-
-    values = []
-    for bundle_id, cpt in BUNDLE_CPT_AZ_MVP.items():
-        hr = (
-            db.query(HospitalRate)
-            .filter(
-                HospitalRate.hospital_id == hospital_id,
-                HospitalRate.cpt == cpt,
-            )
-            .first()
-        )
-        if not hr:
-            continue
-
-        dmin = hr.de_identified_min
-        dmax = hr.de_identified_max
-        fallback_min_c = _dollars_to_cents(dmin) if dmin is not None else None
-        fallback_max_c = _dollars_to_cents(dmax) if dmax is not None else None
-        if fallback_min_c is None and fallback_max_c is None:
-            gc = _dollars_to_cents(hr.gross_charge) if hr.gross_charge is not None else None
-            fallback_min_c = fallback_max_c = gc or 0
-        elif fallback_min_c is None:
-            fallback_min_c = fallback_max_c or 0
-        elif fallback_max_c is None:
-            fallback_max_c = fallback_min_c
-
-        payer_bands: list[tuple[str, int, int]] = []
-        for field_name, payer_key in _AZ_PAYER_RATE_FIELDS:
-            raw = getattr(hr, field_name, None)
-            c = _dollars_to_cents(raw) if raw is not None else None
-            if c is None or c <= 0:
-                continue
-            payer_bands.append((payer_key, c, c))
-
-        if not payer_bands:
-            payer_bands.append(
-                ("BCBS_MA", int(fallback_min_c), int(fallback_max_c or fallback_min_c))
-            )
-
-        for npi in npis:
-            for payer_key, min_c, max_c in payer_bands:
-                values.append(
-                    {
-                        "provider_id": npi,
-                        "bundle_id": bundle_id,
-                        "payer": payer_key,
-                        "source": "az_mvp",
-                        "effective_date": effective_date,
-                        "min_rate_cents": min_c,
-                        "max_rate_cents": max_c,
-                        "confidence": 0.88,
-                        "mvp_hospital_id": hospital_id,
-                    }
-                )
-    return _upsert_prices(db, values)
-
-
 _logger = logging.getLogger(__name__)
-
-# Maps CSV stem patterns to the counts-dict key used by downstream logic.
-_RATE_CSV_KEY_MAP: dict[str, str] = {
-    "hospital_rates_clean": "hospital_rates_gi",
-    "hospital_rates": "hospital_rates_gi",
-    "hospital_rates_derm": "hospital_rates_derm",
-}
-
-
-def import_az_directory(
-    db: Session,
-    directory: Path,
-    *,
-    price_hospital_id: str = "bmc",
-) -> dict[str, int]:
-    counts: dict[str, int] = {}
-    p = directory / "providers.csv"
-    if p.exists():
-        counts["providers_gi"] = import_az_providers_csv(db, p)
-
-    rate_csvs = sorted(
-        f for f in directory.glob("hospital_rates*.csv")
-        if not f.name.endswith(".bak")
-    )
-    for csv_path in rate_csvs:
-        key = _RATE_CSV_KEY_MAP.get(csv_path.stem)
-        if key is None:
-            key = "hospital_rates_" + (csv_path.stem.removeprefix("hospital_rates_") or "gi")
-        counts[key] = import_hospital_rates_csv(db, csv_path)
-        _logger.info("Imported %s → %s (%d rows)", csv_path.name, key, counts[key])
-
-    if counts.get("providers_gi") and counts.get("hospital_rates_gi"):
-        counts["prices_gi"] = import_az_mvp_prices(db, hospital_id=price_hospital_id)
-    p = directory / "providers_derm.csv"
-    if p.exists():
-        counts["providers_derm"] = import_az_providers_csv(
-            db,
-            p,
-            specialty="Dermatology",
-            taxonomy="207N00000X",
-        )
-    return counts
 
 
 def _upsert_by_constraint(db: Session, table_cls: type, rows: list[dict], constraint: str) -> int:

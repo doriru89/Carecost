@@ -144,52 +144,6 @@ class MergeResult:
     benchmarks: list[BenchmarkRecord] = field(default_factory=list)
 
 
-# DEPRECATED — used only by legacy csv_import path (build_legacy_wide_csv).
-@dataclass
-class MergedRecord:
-    """One row per (hospital_id, cpt) with all payer rates + benchmarks."""
-
-    hospital_id: str
-    hospital_name: str
-    neighborhood: str
-    system: str
-    data_completeness: str
-    cpt: str
-    cpt_desc: str
-    gross_charge: float | None
-    discounted_cash: float | None
-    de_identified_min: float | None
-    de_identified_max: float | None
-    bcbs_price: float | None = None
-    bcbs_source: str = ""
-    bcbs_plan: str = ""
-    aetna_price: float | None = None
-    aetna_source: str = ""
-    aetna_plan: str = ""
-    harvard_pilgrim_price: float | None = None
-    hp_plan_name: str = ""
-    hp_source: str = ""
-    uhc_price: float | None = None
-    uhc_source: str = ""
-    bcbs_tic_rate: float | None = None
-    bcbs_tic_billing_class: str = ""
-    billing_class: str = "unknown"
-    setting: str = ""
-    rate_methodology: str = ""
-    turquoise_bundled_price: float | None = None
-    turquoise_quality_rating: float | None = None
-    masscomparecare_total_paid: float | None = None
-    fh_physician_in_network: float | None = None
-    fh_physician_oon: float | None = None
-    fh_anesthesia_in_network: float | None = None
-    fh_facility_hosp_in_network: float | None = None
-    fh_facility_asc_in_network: float | None = None
-    fh_pathology_in_network: float | None = None
-    price_granularity: str = "itemized"
-    compliance_score: str = "unknown"
-    null_reason: str | None = None
-    source_type: str = "mrf"
-    rate_quality: str = "unknown"
 
 
 @dataclass(frozen=True)

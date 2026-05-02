@@ -238,52 +238,6 @@ export async function fetchHospitals(
   return json<HospitalApi[]>(`/api/hospitals?${q.toString()}`);
 }
 
-export type PaymentRow = {
-  key: string;
-  plan_id: string;
-  plan_name: string;
-  payer: string;
-  hospital_id: string;
-  hospital_name: string;
-  scenario_id: string;
-  cpt: string;
-  cpt_desc: string;
-  specialty: string;
-  negotiated_rate_cents: number | null;
-  rule_type: string;
-  scenario_a_cents: number | null;
-  scenario_b_cents: number | null;
-  rule_summary: string;
-  note: string;
-  plan_deductible_cents: number;
-  plan_coinsurance_pct: number;
-  plan_copay_specialist_cents: number;
-  plan_oop_max_cents: number;
-  fh_physician_in_network: number | null;
-  fh_anesthesia_in_network: number | null;
-  fh_facility_hosp_in_network: number | null;
-  fh_pathology_in_network: number | null;
-  data_completeness: 'full' | 'benchmark_only' | 'no_data';
-  billing_class: string;
-};
-
-export async function fetchPaymentTable(params?: {
-  plan_id?: string;
-  cpt?: string;
-  hospital_id?: string;
-  scenario_id?: string;
-  specialty?: string;
-}): Promise<PaymentRow[]> {
-  const q = new URLSearchParams();
-  if (params?.plan_id) q.set('plan_id', params.plan_id);
-  if (params?.cpt) q.set('cpt', params.cpt);
-  if (params?.hospital_id) q.set('hospital_id', params.hospital_id);
-  if (params?.scenario_id) q.set('scenario_id', params.scenario_id);
-  if (params?.specialty) q.set('specialty', params.specialty);
-  const qs = q.toString();
-  return json<PaymentRow[]>(`/api/hospitals/payment-table${qs ? `?${qs}` : ''}`);
-}
-
 export type InsurerOptionApi = {
   key: string;
   label: string;

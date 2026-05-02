@@ -2,19 +2,17 @@
 from pathlib import Path
 
 SEED_DIR = Path(__file__).resolve().parent.parent.parent / "data" / "seed"
+ETL_OUTPUT = Path(__file__).resolve().parent.parent.parent / "data" / "intermediate" / "etl_output"
 
 
 def test_seed_directory_exists():
     assert SEED_DIR.is_dir(), "data/seed/ must exist"
 
 
-def test_payment_table_in_seed():
-    assert (SEED_DIR / "plan_payment_table.json").exists()
-
-
-def test_hospital_rates_in_seed():
-    assert (SEED_DIR / "hospital_rates_clean.csv").exists()
-
-
 def test_providers_in_seed():
     assert (SEED_DIR / "providers.csv").exists()
+
+
+def test_etl_output_has_normalized_csvs():
+    assert (ETL_OUTPUT / "hospital_procedures.csv").exists()
+    assert (ETL_OUTPUT / "hospital_payer_rates.csv").exists()

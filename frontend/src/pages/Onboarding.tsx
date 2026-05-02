@@ -24,7 +24,7 @@ import {
   SPECIALTY_SELECT_OPTIONS,
   getSpecialtyPlugin,
 } from '@/lib/specialties';
-import { PLAN_CONFIGS } from '@/lib/hospitalRatesCsv';
+import { PLAN_CONFIGS } from '@/lib/planConfig';
 
 const STEPS = ['About you', 'Coverage', 'Specialty', 'Procedure'];
 
