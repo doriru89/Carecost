@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import logging
 from pathlib import Path
 
 from sqlalchemy.dialects.postgresql import insert as pg_insert
@@ -418,6 +419,16 @@ def import_az_mvp_prices(
     return _upsert_prices(db, values)
 
 
+_logger = logging.getLogger(__name__)
+
+# Maps CSV stem patterns to the counts-dict key used by downstream logic.
+_RATE_CSV_KEY_MAP: dict[str, str] = {
+    "hospital_rates_clean": "hospital_rates_gi",
+    "hospital_rates": "hospital_rates_gi",
+    "hospital_rates_derm": "hospital_rates_derm",
+}
+
+
 def import_az_directory(
     db: Session,
     directory: Path,
@@ -428,9 +439,18 @@ def import_az_directory(
     p = directory / "providers.csv"
     if p.exists():
         counts["providers_gi"] = import_az_providers_csv(db, p)
-    p = directory / "hospital_rates_clean.csv"
-    if p.exists():
-        counts["hospital_rates_gi"] = import_hospital_rates_csv(db, p)
+
+    rate_csvs = sorted(
+        f for f in directory.glob("hospital_rates*.csv")
+        if not f.name.endswith(".bak")
+    )
+    for csv_path in rate_csvs:
+        key = _RATE_CSV_KEY_MAP.get(csv_path.stem)
+        if key is None:
+            key = "hospital_rates_" + (csv_path.stem.removeprefix("hospital_rates_") or "gi")
+        counts[key] = import_hospital_rates_csv(db, csv_path)
+        _logger.info("Imported %s → %s (%d rows)", csv_path.name, key, counts[key])
+
     if counts.get("providers_gi") and counts.get("hospital_rates_gi"):
         counts["prices_gi"] = import_az_mvp_prices(db, hospital_id=price_hospital_id)
     p = directory / "providers_derm.csv"
@@ -441,9 +461,6 @@ def import_az_directory(
             specialty="Dermatology",
             taxonomy="207N00000X",
         )
-    p = directory / "hospital_rates_derm.csv"
-    if p.exists():
-        counts["hospital_rates_derm"] = import_hospital_rates_csv(db, p)
     return counts
 
 

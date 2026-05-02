@@ -75,55 +75,67 @@ etl:
       encoding: latin-1
       container: zip
       skip_header_rows: 2
+      min_expected_cpts: 10
     brigham:
       format: standard_csv
       encoding: latin-1
       container: zip
       skip_header_rows: 2
+      min_expected_cpts: 10
     faulkner:
       format: standard_csv
       encoding: latin-1
       container: zip
       skip_header_rows: 2
+      min_expected_cpts: 8
     bidmc:
       format: cms_json
       encoding: utf-8
       container: plain
+      min_expected_cpts: 5
     childrens:
       format: cms_json
       encoding: utf-8
       container: zip
+      min_expected_cpts: 3
     dana_farber:
       format: cms_json
       encoding: utf-8
       container: plain
+      min_expected_cpts: 3
     mtauburn:
       format: cms_json
       encoding: utf-8
       container: plain
+      min_expected_cpts: 5
     bmc:
       format: xlsx
       encoding: utf-8
       container: plain
+      min_expected_cpts: 10
     bmc_brighton:
       format: cms_v3_csv
       encoding: utf-8
       container: zip
       skip_header_rows: 3
+      min_expected_cpts: 8
     cha:
       format: cms_v3_csv
       encoding: utf-8
       container: zip
       skip_header_rows: 3
+      min_expected_cpts: 8
     tufts:
       format: cms_v3_csv
       encoding: utf-8
       container: zip
       skip_header_rows: 3
+      min_expected_cpts: 10
     franciscan:
       format: csv_wide
       encoding: utf-8
       container: plain
+      min_expected_cpts: 3
 
   # Non-canonical payers the ETL encounters but aren't in payers.yaml
   non_canonical_payers:

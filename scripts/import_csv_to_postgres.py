@@ -43,6 +43,9 @@ def _looks_like_prod_database_url(url: str) -> bool:
     return bool(host) and not db_name.endswith("_test")
 
 
+_STAGING_URL_PATTERNS = ("backend-test-", "staging.", "-staging.")
+
+
 def _enforce_db_safety(*, allow_unsafe: bool) -> None:
     env = os.environ.get("APP_ENV", "").strip().lower()
     db_url = os.environ.get("DATABASE_URL", "").strip()
@@ -54,6 +57,17 @@ def _enforce_db_safety(*, allow_unsafe: bool) -> None:
         raise RuntimeError(
             "Refusing to run import with APP_ENV=production/prod. "
             "Use --allow-unsafe-db only when you are absolutely sure."
+        )
+
+    if env == "staging":
+        parsed = urlparse(db_url)
+        host = (parsed.hostname or "").lower()
+        if any(p in host for p in _STAGING_URL_PATTERNS):
+            return
+        raise RuntimeError(
+            f"APP_ENV=staging but DATABASE_URL host '{host}' "
+            "doesn't match any known staging pattern. "
+            "Verify the URL or use --allow-unsafe-db."
         )
 
     if db_url and _looks_like_prod_database_url(db_url):

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -18,6 +19,7 @@ from app.etl.insurer_rate_parser import parse_insurer_rates
 from app.etl.merger import load_benchmarks, merge_records
 from app.etl.rate_normalizer import normalize_records
 from app.etl.types import EtlResult
+from app.registries import load_etl_config
 
 logger = logging.getLogger(__name__)
 
@@ -66,6 +68,20 @@ def run_etl(
     all_raw = list(mrf_records) + list(tic_records)
     normalized = normalize_records(all_raw)
     logger.info("Normalized %d records", len(normalized))
+
+    # 3.5. Check per-hospital CPT coverage against config thresholds
+    config = load_etl_config()
+    per_hospital_cpts: dict[str, set[str]] = defaultdict(set)
+    for rec in normalized:
+        per_hospital_cpts[rec.hospital_id].add(rec.cpt)
+    for hospital_id, source in config.hospital_mrf_sources.items():
+        min_cpts = source.get("min_expected_cpts", 1)
+        actual = len(per_hospital_cpts.get(hospital_id, set()))
+        if actual < min_cpts:
+            logger.error(
+                "%s: %d unique CPTs < %d minimum (possible format mismatch)",
+                hospital_id, actual, min_cpts,
+            )
 
     # 4. Qualify
     qualified = qualify_batch(normalized)
