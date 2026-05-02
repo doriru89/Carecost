@@ -19,11 +19,7 @@ from app.db.tables import (
     Procedure,
     Provider,
 )
-from app.registries import bundles_for_specialty, infer_hospital_from_address
-
-BUNDLE_CPT_AZ_MVP: dict[str, str] = {
-    bid: b.cpt for bid, b in bundles_for_specialty("Gastroenterology").items()
-}
+from app.registries import infer_hospital_from_address
 
 AZ_PROVIDERS_COLUMNS = (
     "npi",

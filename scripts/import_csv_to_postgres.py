@@ -16,10 +16,7 @@ if str(BACKEND) not in sys.path:
 
 from app.db.postgres import get_db, get_engine  # noqa: E402
 from app.services.csv_import import (  # noqa: E402
-    import_az_directory,
-    import_insurers_csv,
     import_normalized_directory,
-    import_procedures_csv,
     import_sample_directory,
 )
 
@@ -94,17 +91,9 @@ def main() -> int:
         default=os.environ.get("DATA_DIR", str(ROOT / "data" / "seed")),
     )
     parser.add_argument(
-        "--az-mvp",
+        "--sample",
         action="store_true",
-        default=True,
-        help="Load data/seed/ (NPI providers + hospital_rates + per-NPI prices)",
-    )
-    parser.add_argument("--seed-dir", default=str(ROOT / "data" / "seed"))
-    parser.add_argument("--price-hospital-id", default="bmc")
-    parser.add_argument(
-        "--normalized",
-        action="store_true",
-        help="Import ETL-generated normalized CSVs (procedures, payer_rates, benchmarks).",
+        help="Import sample directory (data/seed/) instead of normalized ETL output.",
     )
     parser.add_argument(
         "--etl-output-dir",
@@ -129,28 +118,14 @@ def main() -> int:
     db = next(session_gen)
 
     try:
-        if args.normalized:
-            etl_dir = Path(args.etl_output_dir)
-            counts = import_normalized_directory(db, etl_dir)
-        elif args.az_mvp:
-            seed = Path(args.seed_dir)
-            for name, fn in (
-                ("procedures", import_procedures_csv),
-                ("insurers", import_insurers_csv),
-            ):
-                p = seed / f"{name}.csv"
-                if p.exists():
-                    fn(db, p)
-            az_dir = Path(os.environ.get("AZ_DATA_DIR", str(ROOT / "data" / "seed")))
-            if not az_dir.is_dir():
-                print(f"Error: AZ data directory not found: {az_dir}", file=sys.stderr)
-                return 1
-            counts = import_az_directory(db, az_dir, price_hospital_id=args.price_hospital_id)
-        else:
+        if args.sample:
             if not data_dir.is_dir():
                 print(f"Error: data directory not found: {data_dir}", file=sys.stderr)
                 return 1
             counts = import_sample_directory(db, data_dir)
+        else:
+            etl_dir = Path(args.etl_output_dir)
+            counts = import_normalized_directory(db, etl_dir)
 
         db.commit()
         for k, v in counts.items():

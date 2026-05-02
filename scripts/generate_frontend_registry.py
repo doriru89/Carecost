@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
-"""Generate frontend/src/generated/bundles.json from YAML registries.
+"""Generate frontend/src/generated/*.json from YAML registries.
+
+Outputs:
+    bundles.json      — CPT bundles + specialties (from cpt_bundles.yaml + specialties.yaml)
+    payers.json       — payer list for fallback (from payers.yaml)
+    plan_configs.json — plan financial defaults (from plan_defaults.yaml)
 
 Usage:
-    python scripts/generate_frontend_registry.py          # generate
+    python scripts/generate_frontend_registry.py          # generate all
     python scripts/generate_frontend_registry.py --check  # verify freshness (CI gate)
 """
 
@@ -16,10 +21,10 @@ import yaml
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
 _DATA_DIR = _REPO_ROOT / "data" / "registries"
-_OUTPUT = _REPO_ROOT / "frontend" / "src" / "generated" / "bundles.json"
+_GEN_DIR = _REPO_ROOT / "frontend" / "src" / "generated"
 
 
-def build_registry() -> dict:
+def _build_bundles() -> dict:
     bundles_raw = yaml.safe_load((_DATA_DIR / "cpt_bundles.yaml").read_text())["bundles"]
     specialties_raw = yaml.safe_load((_DATA_DIR / "specialties.yaml").read_text())["specialties"]
 
@@ -47,25 +52,68 @@ def build_registry() -> dict:
     return {"specialties": specialties, "bundles": bundles}
 
 
+def _build_payers() -> list[dict]:
+    payers_raw = yaml.safe_load((_DATA_DIR / "payers.yaml").read_text())["payers"]
+    return [
+        {"key": p["slug"], "label": p["label"], "payer_id": p["slug"]}
+        for p in payers_raw.values()
+    ]
+
+
+def _build_plan_configs() -> list[dict]:
+    plans_raw = yaml.safe_load((_DATA_DIR / "plan_defaults.yaml").read_text())["plan_defaults"]
+    return [
+        {
+            "id": pid,
+            "payer": p["payer"],
+            "carrierKey": p["carrier"],
+            "planName": p["plan_name"],
+            "planType": p["plan_type"],
+            "deductible": p["deductible"],
+            "oopMax": p["oop_max"],
+            "coinsurancePct": p["coinsurance_pct"],
+            "copaySpecialist": p["copay_specialist"],
+        }
+        for pid, p in plans_raw.items()
+    ]
+
+
+_OUTPUTS: list[tuple[str, callable]] = [
+    ("bundles.json", _build_bundles),
+    ("payers.json", _build_payers),
+    ("plan_configs.json", _build_plan_configs),
+]
+
+
 def main() -> int:
-    registry = build_registry()
-    content = json.dumps(registry, indent=2, ensure_ascii=False) + "\n"
+    check_mode = "--check" in sys.argv
+    _GEN_DIR.mkdir(parents=True, exist_ok=True)
+    failures = []
 
-    if "--check" in sys.argv:
-        if not _OUTPUT.exists():
-            print(f"FAIL: {_OUTPUT} does not exist. Run without --check to generate.")
-            return 1
-        existing = _OUTPUT.read_text()
-        if existing == content:
-            print(f"OK: {_OUTPUT.name} is up-to-date ({len(registry['bundles'])} bundles)")
-            return 0
+    for filename, builder in _OUTPUTS:
+        path = _GEN_DIR / filename
+        data = builder()
+        content = json.dumps(data, indent=2, ensure_ascii=False) + "\n"
+
+        if check_mode:
+            if not path.exists():
+                failures.append(f"{filename} does not exist")
+            elif path.read_text() != content:
+                failures.append(f"{filename} is stale")
+            else:
+                count = len(data) if isinstance(data, list) else sum(len(v) for v in data.values())
+                print(f"OK: {filename} ({count} entries)")
         else:
-            print(f"FAIL: {_OUTPUT.name} is stale. Regenerate with: python scripts/generate_frontend_registry.py")
-            return 1
+            path.write_text(content)
+            count = len(data) if isinstance(data, list) else sum(len(v) for v in data.values())
+            print(f"Generated {filename}: {count} entries")
 
-    _OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    _OUTPUT.write_text(content)
-    print(f"Generated {_OUTPUT.name}: {len(registry['specialties'])} specialties, {len(registry['bundles'])} bundles")
+    if check_mode and failures:
+        for f in failures:
+            print(f"FAIL: {f}")
+        print("Regenerate with: python scripts/generate_frontend_registry.py")
+        return 1
+
     return 0
 
 

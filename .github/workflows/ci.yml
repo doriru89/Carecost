@@ -57,8 +57,15 @@ jobs:
             --cov-report=term-missing \
             --cov-report=json:coverage-backend.json \
             --cov-fail-under=75
+      - name: Registry drift check (generated files match YAML)
+        working-directory: .
+        run: python scripts/generate_frontend_registry.py --check
       - name: Docker build API image
+        working-directory: .
         run: docker build -t yhack-api:ci .
+      - name: Docker startup smoke test
+        working-directory: .
+        run: docker run --rm yhack-api:ci python -c "from app.main import app; print('startup OK')"
       - name: Upload backend coverage artifact
         uses: actions/upload-artifact@v4
         with:

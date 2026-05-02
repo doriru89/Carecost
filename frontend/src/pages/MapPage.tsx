@@ -450,7 +450,7 @@ const MapPage = () => {
               <p className="text-xs text-amber-800 dark:text-amber-200 bg-amber-50 dark:bg-amber-950/40 border border-amber-200/80 rounded-lg px-3 py-2">
                 No hospital rates found in the database for this CPT/bundle — pins cannot show dollars. From the repo
                 root run{' '}
-                <code className="text-[11px] bg-background/80 px-1 rounded">python scripts/import_csv_to_postgres.py --az-mvp</code>{' '}
+                <code className="text-[11px] bg-background/80 px-1 rounded">python scripts/import_csv_to_postgres.py</code>{' '}
                 then refresh.
               </p>
             )}

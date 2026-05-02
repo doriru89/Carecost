@@ -49,8 +49,8 @@ class PayerEntry(BaseModel):
 class SpecialtyEntry(BaseModel):
     taxonomy: str
     default_scenario: str
-    data_file: str
-    providers_file: str
+    data_file: str = ""
+    providers_file: str = ""
     is_default: bool = False
 
 

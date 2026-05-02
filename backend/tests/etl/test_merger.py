@@ -58,6 +58,23 @@ class TestLoadBenchmarks:
         assert benchmarks.masscomparecare == {}
 
 
+class TestBenchmarkWarnings:
+    def test_missing_benchmark_files_warn(self, tmp_path, caplog):
+        import logging
+        from app.etl.merger import load_benchmarks
+
+        seed_dir = tmp_path / "empty"
+        seed_dir.mkdir()
+        with caplog.at_level(logging.WARNING, logger="app.etl.merger"):
+            bd = load_benchmarks(seed_dir, "Gastroenterology")
+        assert bd.fair_health == {}
+        assert bd.turquoise == {}
+        assert bd.masscomparecare == {}
+        assert "Fair Health benchmark file not found" in caplog.text
+        assert "Turquoise benchmark file not found" in caplog.text
+        assert "MassCompareCare benchmark file not found" in caplog.text
+
+
 class TestMergeRecords:
     def test_single_mrf_record(self):
         from app.etl.merger import merge_records
@@ -174,7 +191,6 @@ class TestMergeRecords:
 
         seed_dir = tmp_path / "seed"
         seed_dir.mkdir()
-        (seed_dir / "plan_payment_table.json").write_text("[]")
         turq_data = [
             {"hospital_name": "MGH", "hospital_id": "mgh", "cpt": "45378",
              "bundled_price": 5200.0, "quality_rating": 4.2},

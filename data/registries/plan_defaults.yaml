@@ -1,0 +1,64 @@
+# Default plan financial parameters by carrier + plan type.
+# Placeholder: replace with real plan data when available (Phase 60+).
+# Source: representative MA market plans as of 2026.
+
+plan_defaults:
+  bcbs_ppo:
+    carrier: bcbs
+    payer: "Blue Cross Blue Shield (BCBS)"
+    plan_name: "Blue Cross PPO"
+    plan_type: PPO
+    deductible: 1500
+    oop_max: 6000
+    coinsurance_pct: 20
+    copay_specialist: 50
+
+  bcbs_hmo:
+    carrier: bcbs
+    payer: "Blue Cross Blue Shield (BCBS)"
+    plan_name: "Blue Cross HMO Blue"
+    plan_type: HMO
+    deductible: 500
+    oop_max: 4000
+    coinsurance_pct: 10
+    copay_specialist: 40
+
+  aetna_ppo:
+    carrier: aetna
+    payer: "Aetna"
+    plan_name: "Aetna Open Access PPO"
+    plan_type: PPO
+    deductible: 2000
+    oop_max: 7000
+    coinsurance_pct: 20
+    copay_specialist: 50
+
+  hp_ppo:
+    carrier: harvard_pilgrim
+    payer: "Harvard Pilgrim"
+    plan_name: "Harvard Pilgrim Choice PPO"
+    plan_type: PPO
+    deductible: 1500
+    oop_max: 6000
+    coinsurance_pct: 20
+    copay_specialist: 50
+
+  hp_hmo:
+    carrier: harvard_pilgrim
+    payer: "Harvard Pilgrim"
+    plan_name: "Harvard Pilgrim Best Buy HMO"
+    plan_type: HMO
+    deductible: 500
+    oop_max: 4000
+    coinsurance_pct: 10
+    copay_specialist: 40
+
+  uhc_ppo:
+    carrier: uhc
+    payer: "UnitedHealthcare (UHC)"
+    plan_name: "UnitedHealthcare Choice Plus PPO"
+    plan_type: PPO
+    deductible: 2000
+    oop_max: 7500
+    coinsurance_pct: 20
+    copay_specialist: 50

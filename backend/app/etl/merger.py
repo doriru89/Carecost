@@ -52,6 +52,8 @@ def load_benchmarks(data_dir: Path, specialty: str) -> BenchmarkData:
                 fh = {k: row.get(k) for k in _FH_COMPONENTS if row.get(k) is not None}
                 if fh:
                     bd.fair_health[key] = fh
+    else:
+        logger.warning("Fair Health benchmark file not found: %s", ppt_path)
 
     turq_path = data_dir / "turquoise_data.json"
     if turq_path.exists():
@@ -59,6 +61,8 @@ def load_benchmarks(data_dir: Path, specialty: str) -> BenchmarkData:
             key = (row.get("hospital_id", ""), row.get("cpt", ""))
             if key[0] and key[1]:
                 bd.turquoise[key] = row
+    else:
+        logger.warning("Turquoise benchmark file not found: %s", turq_path)
 
     mcc_path = data_dir / "masscomparecare_data.json"
     if mcc_path.exists():
@@ -66,7 +70,13 @@ def load_benchmarks(data_dir: Path, specialty: str) -> BenchmarkData:
             key = (row.get("hospital_id", ""), row.get("cpt", ""))
             if key[0] and key[1]:
                 bd.masscomparecare[key] = row
+    else:
+        logger.warning("MassCompareCare benchmark file not found: %s", mcc_path)
 
+    logger.info(
+        "Loaded benchmarks: FH=%d, turquoise=%d, mcc=%d",
+        len(bd.fair_health), len(bd.turquoise), len(bd.masscomparecare),
+    )
     return bd
 
 

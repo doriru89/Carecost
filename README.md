@@ -139,10 +139,16 @@ cd ..
 python scripts/import_csv_to_postgres.py
 ```
 
-Arizona MVP bundle (expects `data/seed/` with `providers.csv` and `hospital_rates_clean.csv`, plus seed `procedures.csv` / `insurers.csv` unless you pass `--seed-dir`):
+Normalized ETL import (expects ETL output in `data/intermediate/etl_output/`):
 
 ```powershell
-python scripts/import_csv_to_postgres.py --az-mvp
+python scripts/import_csv_to_postgres.py
+```
+
+Sample data (for development without running ETL):
+
+```powershell
+python scripts/import_csv_to_postgres.py --sample
 ```
 
 ### 2. Run the API

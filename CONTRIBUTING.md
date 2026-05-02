@@ -28,7 +28,7 @@ Thanks for your interest. This guide covers the basics for getting a dev environ
 4. **Seed data** — run the import script to populate the database from CSVs in `data/seed/`:
 
    ```bash
-   python scripts/import_csv_to_postgres.py --az-mvp
+   python scripts/import_csv_to_postgres.py
    ```
 
 5. **Run** — start the backend and frontend:
