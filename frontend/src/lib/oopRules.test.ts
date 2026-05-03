@@ -46,4 +46,31 @@ describe('computeOop', () => {
     expect(result.ruleType).toBe('copay_only');
     expect(result.estimate).toBe(50); // PPO copay is $50
   });
+
+  it('PPO with deductibleAppliesToSpecialist overrides copay to ded_coinsurance', () => {
+    const ppoPlan: PlanConfig = {
+      ...bcbsPpo,
+      deductibleAppliesToSpecialist: true,
+    };
+    const result = computeOop(250, ppoPlan, null, '99213');
+    expect(result.ruleType).toBe('ded_coinsurance');
+    // Scenario A: min(1500, 250) = 250 deductible portion, coins = 0 → pays 250
+    expect(result.estimate).toBe(250);
+  });
+
+  it('HMO with deductibleAppliesToSpecialist=false keeps copay_only', () => {
+    const hmoPlan: PlanConfig = {
+      ...bcbsHmo,
+      deductibleAppliesToSpecialist: false,
+    };
+    const result = computeOop(250, hmoPlan, null, '99213');
+    expect(result.ruleType).toBe('copay_only');
+    expect(result.estimate).toBe(40);
+  });
+
+  it('CPT 99203 returns copay_only for HMO', () => {
+    const result = computeOop(200, bcbsHmo, null, '99203');
+    expect(result.ruleType).toBe('copay_only');
+    expect(result.estimate).toBe(40);
+  });
 });

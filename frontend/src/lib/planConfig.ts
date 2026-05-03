@@ -17,6 +17,7 @@ export type PlanConfig = {
   oopMax: number;
   coinsurancePct: number;
   copaySpecialist: number;
+  deductibleAppliesToSpecialist?: boolean;
 };
 
 export const PLAN_CONFIGS: PlanConfig[] = _planConfigs as PlanConfig[];

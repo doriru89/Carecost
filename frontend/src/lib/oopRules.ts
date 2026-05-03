@@ -1,4 +1,5 @@
 import type { PlanConfig } from './planConfig';
+import _rules from '../generated/plan_rules.json';
 
 export type OopResult = {
   ruleType: 'preventive' | 'copay_only' | 'ded_coinsurance';
@@ -7,8 +8,16 @@ export type OopResult = {
   explanation: string;
 };
 
-const PREVENTIVE_SCENARIOS = new Set(['colonoscopy_screening']);
-const COPAY_CPTS = new Set(['99213', '99214', '99203']);
+const PREVENTIVE_SCENARIOS = new Set(
+  Object.entries(_rules.scenario_rules)
+    .filter(([, r]) => r.rule_type === 'preventive')
+    .map(([id]) => id),
+);
+const COPAY_CPTS = new Set(
+  Object.entries(_rules.cpt_rules)
+    .filter(([, r]) => r.rule_type === 'copay_only')
+    .map(([cpt]) => cpt),
+);
 
 /** Compute OOP estimate using service-specific plan rules. All amounts in dollars. */
 export function computeOop(
@@ -27,8 +36,8 @@ export function computeOop(
     };
   }
 
-  // Rule 2: Copay-only (office visits)
-  if (cptCode && COPAY_CPTS.has(cptCode)) {
+  // Rule 2: Copay-only (office visits) — unless PPO overrides to ded_coinsurance
+  if (cptCode && COPAY_CPTS.has(cptCode) && !plan.deductibleAppliesToSpecialist) {
     return {
       ruleType: 'copay_only',
       estimate: plan.copaySpecialist,
