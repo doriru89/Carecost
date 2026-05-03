@@ -1,0 +1,388 @@
+hospital_id,cpt,cpt_desc,gross_charge,discounted_cash,de_identified_min,de_identified_max,billing_class,setting,rate_methodology,data_completeness,compliance_score,price_granularity,null_reason,source_type,rate_quality
+bidmc,11102,HC TANGENTIAL BIOPSY SKIN SINGLE LESION,1176.00,1176.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,11104,HC PUNCH BIOPSY SKIN SINGLE LESION,1183.00,1183.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,11106,HC INCISIONAL BIOPSY SKIN SINGLE LESION,1304.00,1304.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,11300,HC SHAVING TRUNK ARMS OR LEGS SINGLE LESION 0.5 CM OR LESS,254.00,254.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,11305,HC SHAVING SCALP NECK HANDS ETC SINGLE LESION 0.5 CM OR LESS,337.00,337.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,11400,HC EXC BEN LES TRUNK ARMS OR LEGS 0.5 CM OR LESS,838.00,838.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,11401,HC EXC BEN LES TRUNK ARMS OR LEGS 0.6 TO 1.0 CM,849.00,849.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,11600,HC EXC MAL LES TRUNK ARMS OR LEGS 0.5 CM OR LESS,1034.00,1034.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,11602,HC EXC MAL LES TRUNK ARMS OR LEGS 1.1 TO 2.0 CM,879.00,879.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,17110,HC DESTR BEN LES NOT SKIN TAGS OR VASC PROLIF LES UP TO 14,835.00,835.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,17111,HC DESTR BEN LES NOT SKIN TAGS OR VASC PROLIF LES 15 OR MORE,564.00,564.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,17311,HC MOHS MICROGR HEAD NECK ETC 1ST STAGE UP TO 5 BLOCKS,1803.00,1803.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,17312,HC MOHS MICROGR HEAD NECK ETC EA ADDL STAGE,2033.00,2033.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,43235,HC UPPER GI ENDO DIAG BRUSH WASH,2834.00,2834.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,43239,HC UPPER GI ENDO BIOPSY,2615.00,2615.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,43244,HC UPPER GI ENDO BAND LIGATION,5492.00,5492.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,43249,HC UPPER GI ENDO BALLOON DILAT,5492.00,5492.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,43255,HC UPPER GI ENDO CTRL BLEEDING,5492.00,5492.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,43259,HC UPPER GI ENDO US,8938.00,8938.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,45378,HC COLONOSCOPY FLEX DX W SPEC COLL WHEN PFRMD,2406.00,2406.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,45380,HC COLONOSCOPY FLEX W BX SGL OR MULT,3237.00,3237.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,45384,HC COLONOSCOPY FLEX W RMVL TMR POLYP LES HOT BX FORCEPS,3237.00,3237.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,45385,HC COLONOSCOPY FLEX W RMVL TMR POLYP LES SNARE TECH,3237.00,3237.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,45388,HC COLONOSCOPY FLX ABLATION TUMOR POLYP/OTHER LES,3691.00,3691.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,74176,HC CT ABD AND PELVIS WO CONTRAST MATERIAL,2359.00,2359.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,74177,HC CT ABD AND PELVIS W CONTRAST MATERIAL,3721.00,3721.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,74178,HC CT ABD AND PELVIS W/& WO CONTRAST 1 OR MORE BODY REGIONS,3721.00,3721.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,76700,HC US ABDOMINAL REAL TIME W IMAGE DOCUMENTATION,1333.00,1333.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,76705,HC US ABDOMINAL REAL TIME W IMAGE LTD,1158.00,1158.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,88305,CHG LEVEL IV SURG PATHOLOGY GROSS&MICROSCOPIC EXAM,435.00,435.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,88312,CHG SPECIAL STAIN GROUP 1 MICROORGANISMS I&R,423.00,423.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,91110,HC M2A CAPSULE ENDO,5610.00,5610.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,96910,HC PHOTOTHER ULTRAVIOLET B,456.00,456.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,96920,Laser tx skin < 250 sq cm,,,240.45,515.23,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+bidmc,96922,Laser tx skin >500 sq cm,,,487.19,917.11,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+bidmc,99213,HC OFFICE OR OP VISIT EST PT LEVEL 3,187.00,187.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bidmc,99214,HC OFFICE OR OP VISIT EST PT LEVEL 4,226.00,226.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+bmc,11102,HC Tangntl Bx Skin Single Les,446.00,200.70,160.56,1160.19,,both,,full,full,itemized,,mrf,negotiated
+bmc,11104,HC Punch Bx Skin Single Lesion,440.00,198.00,158.40,1160.19,,both,,full,full,itemized,,mrf,negotiated
+bmc,11106,HC Incal Bx Skn Single Les,400.00,180.00,144.00,2109.30,,both,,full,full,itemized,,mrf,negotiated
+bmc,11300,HC Shaving Skin Lesion 1 Trunk/Arm/Leg Diam 0.5cm/<,144.00,64.80,51.84,1160.19,,both,,full,full,itemized,,mrf,negotiated
+bmc,11305,HC Shaving Skin Lesion 1 S/N/H/F/G Diam 0.5 Cm/<,153.00,68.85,55.08,695.29,,both,,full,full,itemized,,mrf,negotiated
+bmc,11400,HC Exc B9 Lesion Mrgn Xcp Sk Tg T/a/L 0.5 Cm/<,1232.00,554.40,431.24,2021.00,,both,,full,full,itemized,,mrf,negotiated
+bmc,11401,HC Exc B9 Lesion Mrgn Xcp Sk Tg T/a/L 0.6-1.0 Cm,1414.00,636.30,314.08,1201.90,,both,,full,full,itemized,,mrf,negotiated
+bmc,11600,"HC Exc Skin Malig <0.5 Cm Trunk,Arm,Leg",1389.00,625.05,431.24,2021.00,,both,,full,full,itemized,,mrf,negotiated
+bmc,11602,HC Excision Mal Lesion Trunk/Arm/Leg 1.1-2.0 Cm,1845.00,830.25,314.08,1568.25,,both,,full,full,itemized,,mrf,negotiated
+bmc,17110,HC Destruction Benign Lesions Up to 14,726.00,326.70,112.04,617.10,,both,,full,full,itemized,,mrf,negotiated
+bmc,17111,HC Destruction Benign Lesions 15/>,764.00,343.80,176.45,649.40,,both,,full,full,itemized,,mrf,negotiated
+bmc,17311,HC Mohs Micrographic H/N/H/F/G 1st Stage 5 Blocks,1844.00,829.80,431.24,2109.30,,both,,full,full,itemized,,mrf,negotiated
+bmc,17312,HC Mohs Micrographic H/N/H/F/G Each Addl Stage,1419.00,638.55,431.24,1206.15,,both,,full,full,itemized,,mrf,negotiated
+bmc,43235,HC Esophagogastroduodenoscopy Transoral Diagnostic,2353.00,1058.85,431.24,2588.52,,both,,full,full,itemized,,mrf,negotiated
+bmc,43239,HC Egd Transoral Biopsy Single/Multiple,2215.00,996.75,431.24,2588.52,,both,,full,full,itemized,,mrf,negotiated
+bmc,43244,HC Egd Band Ligation Esophgeal/Gastric Varices,1504.00,676.80,431.24,5476.53,,both,,full,full,itemized,,mrf,negotiated
+bmc,43249,HC Egd Balloon Dilation Esophagus <30 Mm Diam,2738.00,1232.10,431.24,5476.53,,both,,full,full,itemized,,mrf,negotiated
+bmc,43255,HC Egd Transoral Control Bleeding Any Method,1509.00,679.05,431.24,5476.53,,both,,full,full,itemized,,mrf,negotiated
+bmc,43259,HC Edg US Exam Surgical Alter Stom Duodenum/Jejunum,3086.00,1388.70,431.24,5476.53,,both,,full,full,itemized,,mrf,negotiated
+bmc,45378,HC Colonoscopy Flx Dx W/Collj Spec When Pfrmd,3232.00,1454.40,395.43,2747.20,,both,,full,full,itemized,,mrf,negotiated
+bmc,45380,HC Colonoscopy W/Biopsy Single/Multiple,3516.00,1582.20,431.24,3415.20,,both,,full,full,itemized,,mrf,negotiated
+bmc,45384,HC Colsc Flx W/Removal Lesion by Hot Bx Forceps,4031.00,1813.95,431.24,3426.35,,both,,full,full,itemized,,mrf,negotiated
+bmc,45385,HC Colsc Flx W/Rmvl of Tumor Polyp Lesion Snare Tq,3464.00,1558.80,431.24,3415.20,,both,,full,full,itemized,,mrf,negotiated
+bmc,45388,HC Colonoscopy Flx Ablation Tumor Polyp/Other Les,2770.00,1246.50,431.24,3415.20,,both,,full,full,itemized,,mrf,negotiated
+bmc,74176,HC Chg CT Abdomen & Pelvis W/O Contrast Material,2366.00,1064.70,230.56,2011.10,,both,,full,full,itemized,,mrf,negotiated
+bmc,74177,HC Chg CT Abdomen & Pelvis W/Contrast Material,3745.00,1685.25,356.43,3183.25,,both,,full,full,itemized,,mrf,negotiated
+bmc,74178,HC Chg CT Abdomen & Pelvis W/O Contrst 1/> Body Re,4505.00,2027.25,356.43,3829.25,,both,,full,full,itemized,,mrf,negotiated
+bmc,76700,HC Chg US Abdominal Real Time W/Image Documentation,1211.00,544.95,106.81,1029.35,,both,,full,full,itemized,,mrf,negotiated
+bmc,76705,HC Chg US Abdominal Real Time W/Image Limited,970.00,436.50,84.33,824.50,,both,,full,full,itemized,,mrf,negotiated
+bmc,88305,HC Chg Level IV Surg Pathology Gross&Microscopic Exam,443.00,199.35,35.03,512.54,,both,,full,full,itemized,,mrf,negotiated
+bmc,88312,HC Chg Special Stain Group 1 Microorganisms I&R,407.00,183.15,24.52,512.54,,both,,full,full,itemized,,mrf,negotiated
+bmc,91110,HC GI Imag Intraluminal Esophagus-Ileum W/I&R,5325.00,2396.25,431.24,4526.25,,both,,full,full,itemized,,mrf,negotiated
+bmc,96910,HC Photochemotx Tar&Uvb/Petrolatum/Uvb,177.00,79.65,63.72,512.54,,both,,full,full,itemized,,mrf,negotiated
+bmc,99213,HC Office Outpatient Visit 20 Mins Met or Exceeded,417.00,187.65,23.27,512.54,,both,,full,full,itemized,,mrf,negotiated
+bmc,99214,HC Office Outpatient Visit 30 Mins Met or Exceeded,634.00,285.30,23.27,538.90,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,11102,HC Tangntl Bx Skin Single Les,338.42,152.29,201.78,633.34,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,11104,HC Punch Bx Skin Single Lesion,1405.02,632.26,201.78,1064.02,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,11106,HC Incal Bx Skn Single Les,602.38,271.07,225.55,1151.46,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,11300,HC Shaving Skin Lesion 1 Trunk/Arm/Leg Diam 0.5cm/<,699.71,314.87,117.83,633.34,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,11305,HC Shaving Skin Lesion 1 S/N/H/F/G Diam 0.5 Cm/<,261.67,117.75,117.83,475.07,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,11400,HC Exc B9 Lesion Mrgn Xcp Sk Tg T/a/L 0.5 Cm/<,1143.65,514.64,475.07,1231.40,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,11401,HC Exc B9 Lesion Mrgn Xcp Sk Tg T/a/L 0.6-1.0 Cm,1143.65,514.64,359.17,1231.40,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,11600,"EXCISION MALIG.LESIONS,TRUNK,ARMS,LEGS-UP TO 0.5 CM",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+bmc_brighton,11602,"EXCISION MALIG.LESIONS,TRUNK,ARMS,LEGS-1.0 CM TO 2.0 CM",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+bmc_brighton,17110,HC Destruction Benign Lesions Up to 14,709.87,319.44,29.12,537.58,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,17111,"DESTRUC ANY METH FLAT WARTS,MOLL CONT,OR MILIA; 15 OR MORE",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+bmc_brighton,17311,"MOHS MICROGRAPHIC TECHNIQUE, INCL REMOVAL OF ALL GROSS TUMOR,",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+bmc_brighton,17312,"MOHS MICROGRAPHIC TECHNIQUE, INCL REMOVAL OF ALL GROSS TUMOR,",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+bmc_brighton,43235,HC Esophagogastroduodenoscopy Transoral Diagnostic,2013.15,905.92,475.07,1929.98,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,43239,HC Egd Transoral Biopsy Single/Multiple,1975.88,889.15,475.07,1929.98,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,43244,HC Egd Band Ligation Esophgeal/Gastric Varices,4505.62,2027.53,475.07,4600.37,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,43249,HC Egd Balloon Dilation Esophagus <30 Mm Diam,2816.00,1267.20,475.07,2989.62,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,43255,HC Egd Transoral Control Bleeding Any Method,2816.00,1267.20,475.07,4600.37,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,43259,HC Edg US Exam Surgical Alter Stom Duodenum/Jejunum,2816.00,1267.20,475.07,4600.37,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,45378,HC Colonoscopy Flx Dx W/Collj Spec When Pfrmd,1354.00,609.30,475.07,2658.00,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,45380,HC Colonoscopy W/Biopsy Single/Multiple,1751.00,787.95,475.07,1929.98,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,45384,"COLONOSCOPY, FLEX.; W/REMOVAL OF TUMOR(S), POLYP(S), OR OTHER",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+bmc_brighton,45385,HC Colsc Flx W/Rmvl of Tumor Polyp Lesion Snare Tq,1751.00,787.95,475.07,1929.98,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,45388,HC Colonoscopy Flx Ablation Tumor Polyp/Other Les,1751.00,787.95,475.07,4308.00,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,74176,HC Chg CT Abdomen & Pelvis W/O Contrast Material,836.80,376.56,285.95,1108.00,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,74177,HC Chg CT Abdomen & Pelvis W/Contrast Material,1421.95,639.88,418.11,1348.00,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,74178,HC Chg CT Abdomen & Pelvis W/O Contrst 1/> Body Re,1421.95,639.88,418.11,1348.00,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,76700,HC Chg US Abdominal Real Time W/Image Documentation,621.18,279.53,125.29,475.07,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,76705,HC Chg US Abdominal Real Time W/Image Limited,523.84,235.73,125.29,475.07,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,88305,HC Chg Level IV Surg Pathology Gross&Microscopic Exam,192.58,86.66,62.45,475.07,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,88312,HC Chg Special Stain Group 1 Microorganisms I&R,192.58,86.66,62.45,475.07,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,91110,HC GI Imag Intraluminal Esophagus-Ileum W/I&R,1392.00,626.40,475.07,3012.80,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,96910,PHOTOCHEMOTHERAPY;TAR & ULTRAVIOLET B,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+bmc_brighton,96920,EXCIMER LASER TX PSORIASIS TOT AREA <250 SQ CM,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+bmc_brighton,96922,EXCIMER LASER TX PSORIASIS >500 SQ CM,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+bmc_brighton,99213,HC Office Outpatient Visit 20 Mins Met or Exceeded,166.97,75.14,29.12,475.07,,both,,full,full,itemized,,mrf,negotiated
+bmc_brighton,99214,HC Office Outpatient Visit 30 Mins Met or Exceeded,256.43,115.39,29.12,475.07,,both,,full,full,itemized,,mrf,negotiated
+brigham,11102,Tangential Biopsy Skin Single Lesion,598.00,448.50,185.38,475.41,,both,,full,full,itemized,,mrf,negotiated
+brigham,11104,Punch Biopsy Skin Single Lesion,598.00,448.50,185.38,593.02,,both,,full,full,itemized,,mrf,negotiated
+brigham,11106,Incisional Biopsy Skin Single Lesion,1043.00,782.25,323.33,908.58,,both,,full,full,itemized,,mrf,negotiated
+brigham,11300,Pf Shave Lesn Trnk/Arm <0.5cm,148.00,111.00,45.88,593.02,,both,,full,full,itemized,,mrf,negotiated
+brigham,11305,Pf Shave Lesn Sclp/Hnd <0.5cm,160.00,120.00,49.60,294.93,,both,,full,full,itemized,,mrf,negotiated
+brigham,11400,Exc Lesn Bgn Trunk/Arm/Leg <0.5cm,1133.00,849.75,351.23,1044.34,,both,,full,full,itemized,,mrf,negotiated
+brigham,11401,Exc Lesn Bgn Trunk/Arm/Leg .6-1.0cm,1432.00,1074.00,443.92,1138.44,,both,,full,full,itemized,,mrf,negotiated
+brigham,11600,Exc Lesn Mal Trunk/Arm/Leg <0.5cm,2368.00,1776.00,734.08,1882.56,,both,,full,full,itemized,,mrf,negotiated
+brigham,11602,Exc Lesn Mal Trunk/Arm/Leg 1.1-2.0,1432.00,1074.00,443.92,1138.44,,both,,full,full,itemized,,mrf,negotiated
+brigham,17110,Destruct Benign Lesion Up to 14 Les,463.00,347.25,143.53,372.25,,both,,full,full,itemized,,mrf,negotiated
+brigham,17111,Destruct Benign Lesions > 15,480.00,360.00,148.80,381.60,,both,,full,full,itemized,,mrf,negotiated
+brigham,17311,Chemosurg/Mohs 1st Stg H/N/Hf/G <5,1811.00,1358.25,561.41,1439.75,,both,,full,full,itemized,,mrf,negotiated
+brigham,17312,Chemosurg/Mohs Ea Addl H/N/Hf/G <5,966.00,724.50,299.46,767.97,,both,,full,full,itemized,,mrf,negotiated
+brigham,43235,Egd Flex Dx W/Brushing/Washing,2421.00,1815.75,750.51,1924.70,,both,,full,full,itemized,,mrf,negotiated
+brigham,43239,Egd Flex Transoral W/Biopsy,3692.00,2769.00,1057.74,2935.14,,both,,full,full,itemized,,mrf,negotiated
+brigham,43244,Egd W/Band Ligate Varices Esop/Gast,3611.00,2708.25,1119.41,2906.42,,both,,full,full,itemized,,mrf,negotiated
+brigham,43249,Egd Flex W/Balloon Dilation <30mm,3643.00,2732.25,1129.33,2906.42,,both,,full,full,itemized,,mrf,negotiated
+brigham,43255,Egd W/Control Bleeding,3692.00,2769.00,1144.52,2935.14,,both,,full,full,itemized,,mrf,negotiated
+brigham,43259,Egd W/Endo US Duodenum/Jejunum,3576.00,2682.00,1108.56,2906.42,,both,,full,full,itemized,,mrf,negotiated
+brigham,45378,Colonoscopy Flexible,3883.00,2912.25,1028.57,3086.99,,both,,full,full,itemized,,mrf,negotiated
+brigham,45380,Colonoscopy W/Biopsy Single/Multiple,2621.00,1965.75,812.51,2083.70,,both,,full,full,itemized,,mrf,negotiated
+brigham,45384,"COLONOSCOPY, FLEX.; W/REMOVAL OF TUMOR(S), POLYP(S), OR OTHER",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+brigham,45385,Colonoscopy Flex W/Rem Tumor Snare,2618.00,1963.50,811.58,2081.31,,both,,full,full,itemized,,mrf,negotiated
+brigham,45388,Colonoscopy Flx Ablation Tumor Polyp/Other Les,2927.00,2195.25,907.37,2326.97,,both,,full,full,itemized,,mrf,negotiated
+brigham,74176,CT Abdomen & Pelvis W/O Contrast,1765.00,1323.75,272.70,1359.05,,both,,full,full,itemized,,mrf,negotiated
+brigham,74177,CT Abdomen & Pevis With Contrast,2840.00,2130.00,402.91,2186.80,,both,,full,full,itemized,,mrf,negotiated
+brigham,74178,CT Abdomen & Pelvis W/O&W Contras,3598.00,2698.50,402.91,2770.46,,both,,full,full,itemized,,mrf,negotiated
+brigham,76700,US Abdomen Cmpl,987.00,740.25,119.97,784.67,,both,,full,full,itemized,,mrf,negotiated
+brigham,76705,US Abdomen Ltd,807.00,605.25,119.97,641.57,,both,,full,full,itemized,,mrf,negotiated
+brigham,88305,Gross & Micro Level IV,501.00,375.75,60.28,398.30,,both,,full,full,itemized,,mrf,negotiated
+brigham,88312,Special Stain I,305.00,228.75,60.28,242.48,,both,,full,full,itemized,,mrf,negotiated
+brigham,91110,Image GI Tract Esoph Ileum W/Rep,4350.00,3262.50,1057.74,3458.25,,both,,full,full,itemized,,mrf,negotiated
+brigham,96910,Photochemotherapy Uvb,342.00,256.50,67.01,271.89,,both,,full,partial,itemized,,mrf,negotiated
+brigham,96920,Laser Skin Disease Psoriasis Tot Area <250 Sq C,869.00,651.75,224.17,690.86,,both,,full,full,itemized,,mrf,negotiated
+brigham,96922,EXCIMER LASER TX PSORIASIS >500 SQ CM,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+brigham,99213,"Office Visit, Established Pat",333.00,249.75,103.23,256.41,,both,,full,full,itemized,,mrf,negotiated
+brigham,99214,"Office Visit, Established Pat",507.00,380.25,145.39,390.39,,both,,full,full,itemized,,mrf,negotiated
+cha,11102,HC Tangntl Bx Skin Single Les,190.00,190.00,110.77,411.83,,both,,full,full,itemized,,mrf,negotiated
+cha,11104,HC Punch Bx Skin Single Lesion,190.00,190.00,110.77,411.83,,both,,full,full,itemized,,mrf,negotiated
+cha,11106,HC Incal Bx Skn Single Les,190.00,190.00,110.77,733.07,,both,,full,full,itemized,,mrf,negotiated
+cha,11300,HC Shaving Lesion 0.5 Cm or Less,160.00,160.00,27.29,411.83,,both,,full,full,itemized,,mrf,negotiated
+cha,11305,"HC Shave Lesion S,N,H,F,Genit <.5cm",220.00,220.00,30.46,411.83,,both,,full,full,itemized,,mrf,negotiated
+cha,11400,HC Exc Ben Lesion < 0.5 Cm,600.00,600.00,63.75,1352.18,,both,,full,full,itemized,,mrf,negotiated
+cha,11401,HC Exc Benign Lesion 0.6-1.0 Cm,750.00,750.00,77.95,750.00,,both,,full,full,itemized,,mrf,negotiated
+cha,11600,"HC Exc Skin Malig <0.5cm Trunk,Arm,Leg",620.00,620.00,93.70,1352.18,,both,,full,full,itemized,,mrf,negotiated
+cha,11602,HC Mal Lesion Exc Trunk 1.1- 2 Cm,1743.00,1743.00,54.28,733.07,,outpatient,,full,full,itemized,,mrf,negotiated
+cha,17110,HC Destruction Benign Lesion 1-14,625.00,625.00,35.44,625.00,,both,,full,full,itemized,,mrf,negotiated
+cha,17111,HC Destruction Benign Les or Flat Warts 15 +,725.00,725.00,65.22,725.00,,both,,full,full,itemized,,mrf,negotiated
+cha,17311,"MOHS MICROGRAPHIC TECHNIQUE, INCL REMOVAL OF ALL GROSS TUMOR,",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+cha,17312,"MOHS MICROGRAPHIC TECHNIQUE, INCL REMOVAL OF ALL GROSS TUMOR,",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+cha,43235,HC Egd Diagnostic,1266.00,1266.00,101.39,1266.00,,both,,full,full,itemized,,mrf,negotiated
+cha,43239,HC Egd W/Biopsy Single or Multipl,4806.60,4806.60,114.30,1169.15,,outpatient,,full,full,itemized,,mrf,negotiated
+cha,43244,Egd Band Ligation Esophgeal/Gastric Varices,3795.72,3795.72,4.44,2786.83,,outpatient,,full,full,itemized,,mrf,negotiated
+cha,43249,HC Esoph Dilation W/Balloon,5764.40,5764.40,125.90,1696.30,,outpatient,,full,full,itemized,,mrf,negotiated
+cha,43255,HC Egd W/Control of Bleeding,6478.80,6478.80,163.43,2716.63,,outpatient,,full,full,itemized,,mrf,negotiated
+cha,43259,Edg US Exam Surgical Alter Stom Duodenum/Jejunum,6569.10,6569.10,183.73,1696.30,,outpatient,,full,full,itemized,,mrf,negotiated
+cha,45378,HC Diagnostic Colonoscopy Flexible,3510.55,3510.55,4.44,1139.70,,outpatient,,full,full,itemized,,mrf,negotiated
+cha,45380,HC Colonoscopy W/ Biopsy,4814.99,4814.99,163.17,1139.70,,outpatient,,full,full,itemized,,mrf,negotiated
+cha,45384,HC Removal Tumor/Polyp Hot Biopsy,5418.82,5418.82,4.44,1120.45,,outpatient,,full,full,itemized,,mrf,negotiated
+cha,45385,HC Removal Tumor/Polyp by Snare,1825.00,1825.00,205.78,1825.00,,both,,full,full,itemized,,mrf,negotiated
+cha,45388,HC Colonoscopy Flx Ablation Tumor Polyp/Other Les,1766.00,1766.00,217.83,1766.00,,both,,full,full,itemized,,mrf,negotiated
+cha,74176,HC CT Abdomen & Pelvis W/O Contr,3085.00,3085.00,285.02,3085.00,,both,,full,full,itemized,,mrf,negotiated
+cha,74177,HC CT Abd & Pelvis W/ Contrast,3825.00,3825.00,477.02,3825.00,,both,,full,full,itemized,,mrf,negotiated
+cha,74178,HC CT Abd & Pelvis WO Cont 1+ Reg,3825.00,3825.00,477.02,3825.00,,both,,full,full,itemized,,mrf,negotiated
+cha,76700,HC Real-Time Abdomen,550.00,550.00,128.66,1129.47,,both,,full,full,itemized,,mrf,negotiated
+cha,76705,HC Echo Exam Abdomen - Limited,550.00,550.00,114.58,1129.47,,both,,full,full,itemized,,mrf,negotiated
+cha,88305,HC Level IV Surg Pathology Gross & Microscopic Exam So,160.00,160.00,54.28,198.73,,both,,full,full,itemized,,mrf,negotiated
+cha,88312,HC Special Stain Group 1 Tc,150.00,150.00,54.28,356.81,,both,,full,full,itemized,,mrf,negotiated
+cha,91110,HC Capsule Endoscopy,3200.00,3200.00,870.88,6838.81,,both,,full,full,itemized,,mrf,negotiated
+cha,96910,PHOTOCHEMOTHERAPY;TAR & ULTRAVIOLET B,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+cha,96920,EXCIMER LASER TX PSORIASIS TOT AREA <250 SQ CM,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+cha,96922,EXCIMER LASER TX PSORIASIS >500 SQ CM,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+cha,99213,Office/Outpatient Established Low Mdm 20 Min,195.00,195.00,9.79,195.00,,both,,full,full,itemized,,mrf,negotiated
+cha,99214,Office/Outpatient Established Mod Mdm 30 Min,285.00,285.00,9.79,285.00,,both,,full,full,itemized,,mrf,negotiated
+childrens,11102,HC TANGENTIAL BIOPSY SKIN SINGLE LESION,403.00,403.00,197.47,425.76,,both,,full,partial,itemized,,mrf,negotiated
+childrens,11104,HC PUNCH BIOPSY SKIN SINGLE LESION,504.00,504.00,246.96,478.80,,both,,full,partial,itemized,,mrf,negotiated
+childrens,11106,INCISIONAL BIOPSY OF SKIN; SINGLE LESION,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+childrens,11300,"SHAVING OF EPIDERMAL OR DERMAL LESION,SINGLE LESION,TRUNK,ARMS",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+childrens,11305,"SHAVING OF EPIDERMAL OR DERMAL LESION,SINGLE LESION,SCALP,NECK",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+childrens,11400,HC EXCISION BENIGN LESION TRUNK/ARM/LEG <=0.5 CM,1765.00,1765.00,864.85,1676.75,,both,,full,partial,itemized,,mrf,negotiated
+childrens,11401,HC EXC SKIN BENIG 0.6-1 CM TRUNKARMLEG,2222.00,2222.00,757.85,2110.90,,both,,full,partial,itemized,,mrf,negotiated
+childrens,11600,"EXCISION MALIG.LESIONS,TRUNK,ARMS,LEGS-UP TO 0.5 CM",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+childrens,11602,"EXCISION MALIG.LESIONS,TRUNK,ARMS,LEGS-1.0 CM TO 2.0 CM",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+childrens,17110,HC DESTRUCTION BENIGN LESIONS UP TO 14,752.00,752.00,368.48,714.40,,both,,full,partial,itemized,,mrf,negotiated
+childrens,17111,"DESTRUC ANY METH FLAT WARTS,MOLL CONT,OR MILIA; 15 OR MORE",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+childrens,17311,"MOHS MICROGRAPHIC TECHNIQUE, INCL REMOVAL OF ALL GROSS TUMOR,",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+childrens,17312,"MOHS MICROGRAPHIC TECHNIQUE, INCL REMOVAL OF ALL GROSS TUMOR,",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+childrens,43235,HC ESOPHAGOGASTRODUODENOSCOPY TRANSORAL DIAGNOSTIC,2577.00,2577.00,1262.73,2448.15,,both,,full,partial,itemized,,mrf,negotiated
+childrens,43239,HC EGD TRANSORAL BIOPSY SINGLE/MULTIPLE - EGD,2916.00,2916.00,1428.84,2770.20,,both,,full,partial,itemized,,mrf,negotiated
+childrens,43244,HC EGD BAND LIGATION ESOPHGEAL/GASTRIC VARICES - EGD,5154.00,5154.00,2525.46,4896.30,,both,,gross_only,partial,itemized,,mrf,gross_only
+childrens,43249,HC EGD BALLOON DILATION ESOPHAGUS <30 MM DIAM - EGD,3227.00,3227.00,1581.23,3579.19,,both,,full,partial,itemized,,mrf,negotiated
+childrens,43255,HC EGD TRANSORAL CONTROL BLEEDING ANY METHOD - EGD,4219.00,4219.00,2067.31,4008.05,,both,,full,partial,itemized,,mrf,negotiated
+childrens,43259,HC EGD US EXAM SURGICAL ALTER STOM DUODENUM/JEJUNUM - EGD,4741.00,4741.00,2323.09,4503.95,,both,,gross_only,partial,itemized,,mrf,gross_only
+childrens,45378,HC COLONOSCOPY FLX DX W/COLLJ SPEC WHEN PFRMD - COLONOSCOPY,1947.00,1947.00,954.03,1849.65,,both,,full,partial,itemized,,mrf,negotiated
+childrens,45380,HC COLONOSCOPY W/BIOPSY SINGLE/MULTIPLE - COLONOSCOPY,2778.00,2778.00,1361.22,2639.10,,both,,full,partial,itemized,,mrf,negotiated
+childrens,45384,HC COLSC FLX W/REMOVAL LESION BY HOT BX FORCEPS - COLONOSCOPY,4828.00,4828.00,2364.15,4586.60,,both,,full,partial,itemized,,mrf,negotiated
+childrens,45385,HC COLSC FLX W/RMVL OF TUMOR POLYP LESION SNARE TQ - COLONOSCOPY,2778.00,2778.00,1361.22,2639.10,,both,,full,partial,itemized,,mrf,negotiated
+childrens,45388,HC COLONOSCOPY FLEX W/ ABLATION TUMOR/POLYP/LESION,5695.00,5695.00,2364.15,5410.25,,both,,full,partial,itemized,,mrf,negotiated
+childrens,74176,HC CT ABDOMEN/PELVIS W/O CONTRAST,2468.00,2468.00,890.45,2344.60,,both,,full,partial,itemized,,mrf,negotiated
+childrens,74177,HC CT ABDOMEN/PELVIS W/ CONTRAST,5195.00,5195.00,1436.74,4935.25,,both,,full,partial,itemized,,mrf,negotiated
+childrens,74178,HC CT ABDOMEN/PELVIS W&W/O CONTRAST,5864.00,5864.00,1436.74,5570.80,,both,,full,partial,itemized,,mrf,negotiated
+childrens,76700,HC US ABDOMENB-SCAN &/OR REAL TIMECOMPLETE,1005.00,1005.00,231.59,954.75,,both,,full,partial,itemized,,mrf,negotiated
+childrens,76705,HC US ABDOMEN LIMITED,766.00,766.00,231.59,727.70,,both,,full,partial,itemized,,mrf,negotiated
+childrens,88305,HC SURG PATH L4 GROSS/MICRO,528.00,528.00,104.94,501.60,,both,,full,partial,itemized,,mrf,negotiated
+childrens,88312,HC SPECIAL STAINSGROUP I,384.00,384.00,104.94,364.80,,both,,full,partial,itemized,,mrf,negotiated
+childrens,91110,HC GI TRACT CAPSULE ENDOSCOPY - SMALL BOWEL CAPSULE ENTEROSCOPY,6018.00,6018.00,1837.56,5717.10,,both,,full,partial,itemized,,mrf,negotiated
+childrens,96910,PHOTOCHEMOTHERAPY;TAR & ULTRAVIOLET B,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+childrens,96920,EXCIMER LASER TX PSORIASIS TOT AREA <250 SQ CM,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+childrens,96922,EXCIMER LASER TX PSORIASIS >500 SQ CM,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+childrens,99213,HC ESTAB PAT OFFICE/OP VISIT LOW MDM 20-29 MIN,464.00,464.00,165.13,464.00,,both,,full,partial,itemized,,mrf,negotiated
+childrens,99214,HC ESTAB PAT OFFICE/OP VISIT MODERATE MDM 30-39 MIN,622.00,622.00,234.37,622.00,,both,,full,partial,itemized,,mrf,negotiated
+dana_farber,11102,Hc Dfci Tangntl Bx Skin Single Les,940.00,705.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,11104,Punch Biopsy Skin Single Lesion,520.00,390.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,11106,Hc Dfci Incisional Biopsy Skin Single Lesion,1688.00,1266.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,11300,Hc Shaving Skin Les 1 Trunk/Arm/Leg Diam 0.5Cm/<,528.00,396.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,11305,Hc Shaving Skin Lesion 1 S/N/H/F/G Diam 0.5 Cm/<,653.00,489.75,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,11400,Hc Dfci Exc B9 Les Mrgn Xcp Sk Tg T/A/L 0.5 Cm/<,6524.00,4893.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,11401,Hc Dfci Exc B9 Les Mrgn Xcp Sk Tg T/A/L 0.6-1.0 Cm,7369.00,5526.75,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,11600,Hc Dfci Excision Mal Lesion Trunk/Arm/Leg 0.5 Cm/<,1866.00,1399.50,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,11602,Hc Excision Mal Lesion Trunk/Arm/Leg 1.1-2.0 Cm,1246.00,934.50,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,17110,Hc Dfci Destruction Benign Lesions Up To 14,1454.00,1090.50,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,17111,Hc Destruction Benign Lesions 15/>,1373.00,1029.75,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,43235,Egd Flex Dx W/Brushing/Washing,2069.00,1551.75,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,43239,Egd Flex Transoral W/Biopsy,3580.00,2685.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,43249,Egd Flex W/Balloon Dilation <30Mm,3128.00,2346.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,43255,Egd W/Control Bleeding,3128.00,2346.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,43259,Egd W/Endo Us Duodenum/Jejunum,3128.00,2346.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,45378,Colonoscopy Flexible,3359.00,2519.25,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,45380,Colonoscopy W/Biopsy Single/Multiple,2276.00,1707.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,45385,Colsc Flx W/Rmvl Of Tumor Polyp Lesion Snare Tq,2276.00,1707.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,74176,Hc Ct Abdomen & Pelvis W/O Contrast Material,1524.00,1143.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,74177,Hc Ct Abdoen & Pelvis W/Contrast Material,4041.00,3030.75,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,74178,Hc Ct Abdomen & Pelvis W/O&W Contras,4443.00,3332.25,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,76700,Hc Us Abdominal Real Time W/Image Documentation,833.00,624.75,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,76705,Hc Ultrasound Abdominal Real Time W/Image Limited,801.00,600.75,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,88305,Hc Dfci Prostate Needle Biopsy,668.00,501.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,88312,Hc Special Stain Group 1 Microorganisms I&R,369.00,276.75,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,91110,Image Gi Tract Esoph Ileum W/Rep,4841.00,3630.75,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,96910,Photochemotherapy with UV-B,,,104.63,104.63,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+dana_farber,96920,Laser tx skin < 250 sq cm,,,355.87,355.87,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+dana_farber,96922,Laser tx skin >500 sq cm,,,721.04,721.04,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+dana_farber,99213,Estab Pt - Medium Level Visit (99213),291.00,218.25,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+dana_farber,99214,Hc Dfci Office Outpatient Est Level 4 Min 30 Mins,716.00,537.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+faulkner,11104,Punch Biopsy Skin Single Lesion,366.00,274.50,176.45,558.82,,both,,full,full,itemized,,mrf,negotiated
+faulkner,11400,Exc Lesn Bgn Trunk/Arm/Leg <0.5cm,1072.00,804.00,459.89,1707.36,,both,,full,full,itemized,,mrf,negotiated
+faulkner,11401,Exc Lesn Bgn Trunk/Arm/Leg .6-1.0cm,1306.00,979.50,314.08,1017.50,,both,,full,full,itemized,,mrf,negotiated
+faulkner,11602,Exc Lesn Mal Trunk/Arm/Leg 1.1-2.0,1306.00,979.50,314.08,1024.56,,outpatient,,full,partial,itemized,,mrf,negotiated
+faulkner,43235,Egd Flex Dx W/Brushing/Washing,2108.00,1581.00,761.55,1538.84,,both,,full,full,itemized,,mrf,negotiated
+faulkner,43239,Egd Flex Transoral W/Biopsy,2248.00,1686.00,761.55,1641.04,,both,,full,full,itemized,,mrf,negotiated
+faulkner,43244,Egd W/Band Ligate Varices Esop/Gast,3206.00,2404.50,1335.02,2906.42,,both,,full,full,itemized,,mrf,negotiated
+faulkner,43249,Egd Flex W/Balloon Dilation <30mm,2577.00,1932.75,1145.48,2906.42,,both,,full,full,itemized,,mrf,negotiated
+faulkner,43255,Egd W/Control Bleeding,3179.00,2384.25,1335.02,2906.42,,both,,full,full,itemized,,mrf,negotiated
+faulkner,43259,Egd W/Endo US Duodenum/Jejunum,3382.00,2536.50,1335.02,2906.42,,both,,full,full,itemized,,mrf,negotiated
+faulkner,45378,Colonoscopy Flexible,3629.00,2721.75,744.89,2649.17,,both,,full,full,itemized,,mrf,negotiated
+faulkner,45380,Colonoscopy W/Biopsy Single/Multiple,2353.00,1764.75,979.79,1919.74,,both,,full,full,itemized,,mrf,negotiated
+faulkner,45385,Colonoscopy Flex W/Rem Tumor Snare,2538.00,1903.50,979.79,1919.74,,both,,full,full,itemized,,mrf,negotiated
+faulkner,45388,Colonoscopy Flx Ablation Tumor Polyp/Other Les,2586.00,1939.50,979.79,2014.75,,both,,gross_only,partial,itemized,,mrf,negotiated
+faulkner,74176,CT Abdomen & Pelvis W/O Contrast,1464.00,1098.00,225.91,1072.75,,both,,full,full,itemized,,mrf,negotiated
+faulkner,74177,CT Abdomen & Pevis With Contrast,2339.00,1754.25,265.02,1730.92,,both,,full,full,itemized,,mrf,negotiated
+faulkner,74178,CT Abdomen & Pelvis W/O&W Contras,3016.00,2262.00,385.88,2201.68,,both,,full,full,itemized,,mrf,negotiated
+faulkner,76700,US Abdomen Cmpl,826.00,619.50,112.51,602.98,,both,,full,full,itemized,,mrf,negotiated
+faulkner,76705,US Abdomen Ltd,667.00,500.25,112.51,486.91,,both,,full,full,itemized,,mrf,negotiated
+faulkner,88305,Gross & Micro Level IV,352.00,264.00,60.28,274.24,,both,,full,full,itemized,,mrf,negotiated
+faulkner,88312,Special Stain I,351.00,263.25,60.28,273.46,,both,,full,partial,itemized,,mrf,negotiated
+faulkner,91110,Image GI Tract Esoph Ileum W/Rep,3408.00,2556.00,761.55,2655.17,,both,,full,full,itemized,,mrf,negotiated
+franciscan,99213,HC ESTAB PAT OFFICE/OP VISIT LOW MDM 20-29 MIN,250.00,200.00,97.09,200.00,,outpatient,,gross_only,partial,itemized,,mrf,gross_only
+franciscan,99214,HC ESTAB PAT OFFICE/OP VISIT MODERATE MDM 30-39 MIN,350.00,280.00,101.00,280.00,,outpatient,,gross_only,partial,itemized,,mrf,gross_only
+mgh,11102,Tangential Biopsy Skin Single Lesion,598.00,448.50,185.38,475.41,,both,,full,full,itemized,,mrf,negotiated
+mgh,11104,Punch Biopsy Skin Single Lesion,598.00,448.50,185.38,593.02,,both,,full,full,itemized,,mrf,negotiated
+mgh,11106,Incisional Biopsy Skin Single Lesion,1043.00,782.25,323.33,908.58,,both,,full,full,itemized,,mrf,negotiated
+mgh,11300,Pf Shave Lesn Trnk/Arm <0.5cm,148.00,111.00,45.88,593.02,,both,,full,full,itemized,,mrf,negotiated
+mgh,11305,Pf Shave Lesn Sclp/Hnd <0.5cm,160.00,120.00,80.00,350.18,,outpatient,,full,full,itemized,,mrf,negotiated
+mgh,11400,Exc Lesn Bgn Trunk/Arm/Leg <0.5cm,1133.00,849.75,351.23,1044.34,,both,,full,full,itemized,,mrf,negotiated
+mgh,11401,Exc Lesn Bgn Trunk/Arm/Leg .6-1.0cm,1432.00,1074.00,443.92,1138.44,,both,,full,full,itemized,,mrf,negotiated
+mgh,11600,Exc Lesn Mal Trunk/Arm/Leg <0.5cm,2368.00,1776.00,734.08,1882.56,,both,,full,full,itemized,,mrf,negotiated
+mgh,11602,Exc Lesn Mal Trunk/Arm/Leg 1.1-2.0,1432.00,1074.00,443.92,1138.44,,both,,full,full,itemized,,mrf,negotiated
+mgh,17110,Destruct Benign Lesion Up to 14 Les,463.00,347.25,143.53,372.25,,both,,full,full,itemized,,mrf,negotiated
+mgh,17111,Destruct Benign Lesions > 15,480.00,360.00,148.80,381.60,,both,,full,full,itemized,,mrf,negotiated
+mgh,17311,"MOHS MICROGRAPHIC TECHNIQUE, INCL REMOVAL OF ALL GROSS TUMOR,",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+mgh,17312,"MOHS MICROGRAPHIC TECHNIQUE, INCL REMOVAL OF ALL GROSS TUMOR,",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+mgh,43235,Egd Flex Dx W/Brushing/Washing,2421.00,1815.75,750.51,1924.70,,both,,full,full,itemized,,mrf,negotiated
+mgh,43239,Egd Flex Transoral W/Biopsy,3692.00,2769.00,1057.74,2935.14,,both,,full,full,itemized,,mrf,negotiated
+mgh,43244,Egd W/Band Ligate Varices Esop/Gast,3611.00,2708.25,1119.41,2906.42,,both,,full,full,itemized,,mrf,negotiated
+mgh,43249,Egd Flex W/Balloon Dilation <30mm,3643.00,2732.25,1129.33,2906.42,,both,,full,full,itemized,,mrf,negotiated
+mgh,43255,Egd W/Control Bleeding,3692.00,2769.00,1144.52,2935.14,,both,,full,full,itemized,,mrf,negotiated
+mgh,43259,Egd W/Endo US Duodenum/Jejunum,3576.00,2682.00,1108.56,2906.42,,both,,full,full,itemized,,mrf,negotiated
+mgh,45378,Colonoscopy Flexible,3883.00,2912.25,1028.57,3086.99,,both,,full,full,itemized,,mrf,negotiated
+mgh,45380,Colonoscopy W/Biopsy Single/Multiple,2621.00,1965.75,812.51,2083.70,,both,,full,full,itemized,,mrf,negotiated
+mgh,45384,"COLONOSCOPY, FLEX.; W/REMOVAL OF TUMOR(S), POLYP(S), OR OTHER",,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+mgh,45385,Colonoscopy Flex W/Rem Tumor Snare,2618.00,1963.50,811.58,2081.31,,both,,full,full,itemized,,mrf,negotiated
+mgh,45388,Colonoscopy Flx Ablation Tumor Polyp/Other Les,2927.00,2195.25,907.37,2326.97,,both,,full,full,itemized,,mrf,negotiated
+mgh,74176,CT Abdomen & Pelvis W/O Contrast,1765.00,1323.75,272.70,1359.05,,both,,full,full,itemized,,mrf,negotiated
+mgh,74177,CT Abdomen & Pevis With Contrast,2840.00,2130.00,1246.76,2257.80,,inpatient,,full,full,itemized,,mrf,negotiated
+mgh,74178,CT Abdomen & Pelvis W/O&W Contras,3598.00,2698.50,402.91,2770.46,,both,,full,full,itemized,,mrf,negotiated
+mgh,76700,US Abdomen Cmpl,987.00,740.25,119.97,784.67,,both,,full,full,itemized,,mrf,negotiated
+mgh,76705,US Abdomen Ltd,807.00,605.25,119.97,641.57,,both,,full,full,itemized,,mrf,negotiated
+mgh,88305,Gross & Micro Level IV,501.00,375.75,277.05,398.30,,inpatient,,full,full,itemized,,mrf,negotiated
+mgh,88312,Special Stain I,305.00,228.75,60.28,242.48,,both,,full,full,itemized,,mrf,negotiated
+mgh,91110,Image GI Tract Esoph Ileum W/Rep,4350.00,3262.50,1057.74,3458.25,,both,,full,full,itemized,,mrf,negotiated
+mgh,96910,PHOTOCHEMOTHERAPY;TAR & ULTRAVIOLET B,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+mgh,96920,EXCIMER LASER TX PSORIASIS TOT AREA <250 SQ CM,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+mgh,96922,EXCIMER LASER TX PSORIASIS >500 SQ CM,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+mgh,99213,"Office Visit, Established Pat",333.00,249.75,103.23,264.74,,both,,full,full,itemized,,mrf,negotiated
+mgh,99214,"Office Visit, Established Pat",507.00,380.25,145.39,403.07,,both,,full,full,itemized,,mrf,negotiated
+mtauburn,11102,HC TANGENTIAL BIOPSY SKIN SINGLE LESION,515.00,515.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,11104,HC PUNCH BIOPSY SKIN SINGLE LESION,515.00,515.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,11106,HC INCISIONAL BIOPSY SKIN SINGLE LESION,515.00,515.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,11300,Shave skin lesion 0.5 cm/<,,,344.64,487.19,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+mtauburn,11305,Shave skin lesion 0.5 cm/<,,,240.45,437.60,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+mtauburn,11400,HC EXC BEN LES TRUNK ARMS OR LEGS 0.5 CM OR LESS,1296.00,1296.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,11401,Exc tr-ext b9+marg 0.6-1 cm,,,487.19,778.92,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+mtauburn,11600,Exc tr-ext mal+marg 0.5 cm/<,,,848.66,1436.76,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+mtauburn,11602,Exc tr-ext mal+marg 1.1-2 cm,,,487.19,778.92,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+mtauburn,17110,HC DESTR BEN LES NOT SKIN TAGS OR VASC PROLIF LES UP TO 14,324.00,324.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,17111,Destruct lesion 15 or more,,,240.45,437.60,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+mtauburn,17311,Mohs 1 stage h/n/hf/g,,,885.74,1197.57,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+mtauburn,17312,Mohs Addl Stage,,,581.42,604.23,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+mtauburn,43235,HC UPPER GI ENDO DIAG BRUSH WASH,1970.00,1970.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,43239,HC UPPER GI ENDO BIOPSY,2139.00,2139.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,43244,HC UPPER GI ENDO BAND LIGATION,5273.00,5273.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,43249,HC UPPER GI ENDO BALLOON DILAT,2647.00,2647.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,43255,HC UPPER GI ENDO CTRL BLEEDING,5273.00,5273.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,43259,HC UPPER GI ENDO US,5734.00,5734.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,45378,HC COLONOSCOPY FLEX DX W SPEC COLL WHEN PFRMD,2097.00,2097.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,45380,HC COLONOSCOPY FLEX W BX SGL OR MULT,2097.00,2097.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,45384,HC COLONOSCOPY FLEX W RMVL TMR POLYP LES HOT BX FORCEPS,3248.00,3248.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,45385,HC COLONOSCOPY FLEX W RMVL TMR POLYP LES SNARE TECH,3248.00,3248.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,45388,HC COLONOSCOPY FLX ABLATION TUMOR POLYP/OTHER LES,3248.00,3248.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,74176,HC CT ABD AND PELVIS WO CONTRAST MATERIAL,1714.00,1714.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,74177,HC CT ABD AND PELVIS W CONTRAST MATERIAL,2432.00,2432.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,74178,HC CT ABD AND PELVIS W/& WO CONTRAST 1 OR MORE BODY REGIONS,2432.00,2432.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,76700,HC US ABDOMINAL REAL TIME W IMAGE DOCUMENTATION,1002.00,1002.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,76705,HC US ABDOMINAL REAL TIME W IMAGE LTD,708.00,708.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,88305,CHG LEVEL IV SURG PATHOLOGY GROSS&MICROSCOPIC EXAM,215.00,215.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,88312,CHG SPECIAL STAIN GROUP 1 MICROORGANISMS I&R,192.00,192.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,91110,HC M2A CAPSULE ENDO,4471.00,4471.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,96910,Photochemotherapy with UV-B,,,70.70,138.63,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+mtauburn,96920,Laser tx skin < 250 sq cm,,,240.45,437.60,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+mtauburn,96922,Laser tx skin >500 sq cm,,,487.19,778.92,,outpatient,,unknown,non_compliant,itemized,,mrf,unknown
+mtauburn,99213,HC OFFICE OR OP VISIT EST PT LEVEL 3,203.00,203.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+mtauburn,99214,HC OFFICE OR OP VISIT EST PT LEVEL 4,281.00,281.00,,,,both,,gross_only,partial,itemized,,mrf,gross_only
+tufts,11102,HC Tangential Biopsy Skin Single Lesion,466.00,326.20,122.37,614.99,,both,,full,full,itemized,,mrf,negotiated
+tufts,11104,HC Punch Biopsy Skin Single Lesion,466.00,326.20,122.37,614.99,,both,,full,full,itemized,,mrf,negotiated
+tufts,11106,HC Incisional Biopsy Skin Single Lesion,754.00,527.80,198.00,986.21,,both,,full,full,itemized,,mrf,negotiated
+tufts,11300,HC Shaving Skin Lesion 1 Trunk/Arm/Leg Diam 0.5cm/,337.00,235.90,88.50,554.05,,both,,full,full,itemized,,mrf,negotiated
+tufts,11305,HC Shaving Skin Lesion 1 S/N/H/F/G Diam 0.5 Cm/<,490.00,343.00,128.67,554.05,,both,,full,full,itemized,,mrf,negotiated
+tufts,11400,HC Exc B9 Lesion Mrgn Xcp Sk Tg T/a/L 0.5 Cm/<,1390.00,973.00,365.01,1390.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,11401,HC Exc B9 Lesion Mrgn Xcp Sk Tg T/a/L 0.6-1.0 Cm,1254.00,877.80,329.30,1282.70,,both,,full,full,itemized,,mrf,negotiated
+tufts,11600,HC Excision Mal Lesion Trunk/Arm/Leg 0.5 Cm/<,2035.00,1424.50,534.39,2035.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,11602,HC Excision Mal Lesion Trunk/Arm/Leg 1.1-2.0 Cm,1254.00,877.80,329.30,1282.70,,both,,full,full,itemized,,mrf,negotiated
+tufts,17110,HC Destruction Benign Lesions Up to 14,466.00,326.20,122.37,554.05,,both,,full,full,itemized,,mrf,negotiated
+tufts,17111,HC Destruction Benign Lesions 15/>,686.00,480.20,180.14,686.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,17311,HC Mohs Micrographic H/N/H/F/G 1st Stage 5 Blocks,1526.00,1068.20,400.73,1526.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,17312,HC Mohs Micrographic H/N/H/F/G Each Addl Stage,1332.00,932.40,349.78,1332.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,43235,HC Esophagogastroduodenoscopy Transoral Diagnostic,2001.00,1400.70,262.73,2391.27,,both,,full,full,itemized,,mrf,negotiated
+tufts,43239,HC Egd Transoral Biopsy Single/Multiple - Egd,2003.00,1402.10,262.99,2391.27,,both,,full,full,itemized,,mrf,negotiated
+tufts,43244,HC Egd Band Ligation Esophgeal/Gastric Varices - E,4497.00,3147.90,1180.91,4792.01,,both,,full,full,itemized,,mrf,negotiated
+tufts,43249,HC Egd Balloon Dilation Esophagus <30 Mm Diam - Eg,2460.00,1722.00,646.00,4191.96,,both,,full,full,itemized,,mrf,negotiated
+tufts,43255,HC Egd Transoral Control Bleeding Any Method - Egd,4497.00,3147.90,1180.91,4792.01,,both,,full,full,itemized,,mrf,negotiated
+tufts,43259,HC Egd US Exam Surgical Alter Stom Duodenum/Jejunu,4497.00,3147.90,1180.91,4792.01,,both,,full,full,itemized,,mrf,negotiated
+tufts,45378,HC Colonoscopy Flx Dx W/Collj Spec When Pfrmd - Co,2587.00,1810.90,339.67,2587.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,45380,HC Colonoscopy W/Biopsy Single/Multiple - Colonosc,2490.00,1743.00,326.94,2490.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,45384,HC Colsc Flx W/Removal Lesion by Hot Bx Forceps -,2802.00,1961.40,735.81,2802.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,45385,HC Colsc Flx W/Rmvl of Tumor Polyp Lesion Snare Tq,2490.00,1743.00,326.94,3076.54,,both,,full,full,itemized,,mrf,negotiated
+tufts,45388,HC Colonoscopy W/Ablation Flex,4164.00,2914.80,1093.47,4164.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,74176,HC CT Abd & Pelvis,1338.00,936.60,115.28,1338.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,74177,HC CT Abd & Pelv W/Contrast,2158.00,1510.60,192.94,2158.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,74178,HC CT Abd & Pelv 1/> Regns WO Contrst,2158.00,1510.60,192.94,2158.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,76700,HC US  Abdom B-Scan &/or Real Time Complete - US A,917.00,641.90,112.51,917.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,76705,HC US  Abdomen Limited - US Abdomen Limited,584.00,408.80,112.51,584.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,88305,HC Surg Path Level IV - Lab Surg Path Level IV,192.00,134.40,50.42,262.93,,both,,full,full,itemized,,mrf,negotiated
+tufts,88312,HC Special Stains Group I - Lab Special Stains Gro,192.00,134.40,50.42,262.93,,both,,full,full,itemized,,mrf,negotiated
+tufts,91110,HC GI Tract Capsule Endoscopy - Small Bowel Capsul,3784.00,2648.80,496.84,4095.71,,both,,full,full,itemized,,mrf,negotiated
+tufts,96910,HC Photochemotx Tar&Uvb/Petrolatum/Uvb,317.00,221.90,83.24,317.00,,both,,full,full,itemized,,mrf,negotiated
+tufts,96920,EXCIMER LASER TX PSORIASIS TOT AREA <250 SQ CM,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+tufts,96922,EXCIMER LASER TX PSORIASIS >500 SQ CM,,,,,institutional,facility,,full,non_compliant,itemized,,mrf,negotiated
+tufts,99213,HC Office O/P Established Pt Level 3|EMPL/RESIDENT,324.90,227.43,13.22,541.50,,both,,full,full,itemized,,mrf,negotiated
+tufts,99214,HC Office O/P Established Pt Level 4,456.00,319.20,23.80,684.00,,both,,full,full,itemized,,mrf,negotiated
