@@ -103,11 +103,12 @@ class ProcedureRecord:
     null_reason: str | None = None
     source_type: str = "mrf"
     rate_quality: str = "unknown"
+    last_updated: str | None = None
 
 
 @dataclass
 class PayerRateRecord:
-    """One negotiated rate for a (hospital, CPT, payer, source_origin, plan_name) combination."""
+    """One negotiated rate for a (hospital, CPT, payer, source_origin, plan_name, rate_year) combination."""
 
     hospital_id: str
     cpt: str
@@ -121,6 +122,8 @@ class PayerRateRecord:
     setting: str = ""
     source_file: str = ""
     rate_methodology: str = ""
+    effective_date: str = ""
+    rate_year: int | None = None
 
 
 @dataclass
@@ -133,6 +136,9 @@ class BenchmarkRecord:
     component: str = "total"
     price: float | None = None
     quality_rating: float | None = None
+    source_file: str = ""
+    effective_date: str = ""
+    data_vintage: str = ""
 
 
 @dataclass

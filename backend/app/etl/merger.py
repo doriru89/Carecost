@@ -152,6 +152,9 @@ def merge_records(
                     component="total",
                     price=turq.get("bundled_price"),
                     quality_rating=turq.get("quality_rating"),
+                    source_file=turq.get("source_file", ""),
+                    effective_date=turq.get("effective_date", ""),
+                    data_vintage=turq.get("data_vintage", ""),
                 ))
 
             mcc = benchmarks.masscomparecare.get(key)
@@ -162,6 +165,9 @@ def merge_records(
                     benchmark_source="masscomparecare",
                     component="total",
                     price=mcc.get("total_paid"),
+                    source_file=mcc.get("source_file", ""),
+                    effective_date=mcc.get("scraped_date", ""),
+                    data_vintage=mcc.get("data_vintage", ""),
                 ))
 
     return result

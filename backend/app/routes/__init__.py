@@ -3,6 +3,7 @@ from fastapi import APIRouter
 from app.routes import (
     auth,
     confirm,
+    cost_components,
     estimate,
     gi_assistant,
     health,
@@ -24,3 +25,4 @@ api_router.include_router(hospitals.router, prefix="/hospitals", tags=["hospital
 api_router.include_router(gi_assistant.router, tags=["gi-assistant"])
 api_router.include_router(users.router, prefix="/users", tags=["users"])
 api_router.include_router(quality.router, tags=["quality"])
+api_router.include_router(cost_components.router, prefix="/cost-components", tags=["cost-components"])

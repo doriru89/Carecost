@@ -11,6 +11,8 @@ from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 
 from app.db.tables import (
+    CptRvuComponent,
+    DataSource,
     HospitalBenchmark,
     HospitalPayerRate,
     HospitalProcedure,
@@ -381,3 +383,91 @@ def import_sample_directory(db: Session, directory: Path) -> dict[str, int]:
     if p.exists():
         counts["insurers"] = import_insurers_csv(db, p)
     return counts
+
+
+def import_cpt_rvu_components(db: Session, rvu_records: list) -> int:
+    """Upsert parsed RVU records into cpt_rvu_components table."""
+    if not rvu_records:
+        return 0
+    rows = [
+        {
+            "cpt": r.cpt,
+            "modifier": r.modifier,
+            "description": r.description,
+            "work_rvu": r.work_rvu,
+            "facility_pe_rvu": r.facility_pe_rvu,
+            "non_facility_pe_rvu": r.non_facility_pe_rvu,
+            "malpractice_rvu": r.malpractice_rvu,
+            "facility_total_rvu": r.facility_total_rvu,
+            "non_facility_total_rvu": r.non_facility_total_rvu,
+            "conversion_factor": r.conversion_factor,
+            "global_surgery": r.global_surgery,
+            "pfs_year": r.pfs_year,
+            "source_file": r.source_file,
+        }
+        for r in rvu_records
+    ]
+    return _upsert_by_constraint(db, CptRvuComponent, rows, "uq_cpt_rvu_natural_key")
+
+
+def seed_data_sources(db: Session) -> int:
+    """Seed the data_sources reference table with known sources."""
+    sources = [
+        {
+            "source_id": "hpt_mrf",
+            "source_type": "mrf",
+            "name": "Hospital Machine-Readable Files",
+            "display_name": "Hospital Price Transparency File",
+            "legal_basis": "45 CFR Part 180",
+            "coverage_scope": "per-hospital, all payers",
+            "update_frequency": "annual",
+        },
+        {
+            "source_id": "tic_bcbs_ma",
+            "source_type": "tic",
+            "name": "BCBS MA Transparency in Coverage",
+            "display_name": "Blue Cross Blue Shield MA",
+            "legal_basis": "45 CFR 147.212",
+            "coverage_scope": "all in-network providers, MA",
+            "update_frequency": "monthly",
+            "state": "MA",
+        },
+        {
+            "source_id": "tic_aetna",
+            "source_type": "tic",
+            "name": "Aetna Transparency in Coverage",
+            "display_name": "Aetna",
+            "legal_basis": "45 CFR 147.212",
+            "coverage_scope": "all in-network providers, national",
+            "update_frequency": "monthly",
+        },
+        {
+            "source_id": "tic_uhc",
+            "source_type": "tic",
+            "name": "UHC Transparency in Coverage",
+            "display_name": "UnitedHealthcare",
+            "legal_basis": "45 CFR 147.212",
+            "coverage_scope": "all in-network providers, national",
+            "update_frequency": "semiannual",
+        },
+        {
+            "source_id": "cms_pfs",
+            "source_type": "government",
+            "name": "CMS Physician Fee Schedule",
+            "display_name": "CMS Fee Schedule (RVU)",
+            "legal_basis": "42 USC 1395w-4",
+            "coverage_scope": "all Medicare CPTs, national",
+            "update_frequency": "annual",
+        },
+        {
+            "source_id": "masscomparecare",
+            "source_type": "benchmark",
+            "name": "MassCompareCare",
+            "display_name": "MassCompareCare (MA APCD)",
+            "legal_basis": "MA Chapter 224",
+            "coverage_scope": "MA providers, bundled procedures",
+            "update_frequency": "annual",
+            "state": "MA",
+        },
+    ]
+    return _upsert_by_pk(db, DataSource, sources)

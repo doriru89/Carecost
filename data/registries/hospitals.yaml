@@ -2,6 +2,7 @@
 # Key = stable hospital_id used in database and API.
 # address_patterns used by CSV import to match provider addresses to hospitals.
 # npi = primary facility NPI (from CMS NPPES registry).
+# facility_type: general_acute (default) | pediatric_acute | cancer_center | rehab
 # source_name_aliases = how each data source refers to this hospital.
 
 hospitals:
@@ -101,6 +102,7 @@ hospitals:
     state: "MA"
     metro_area: "boston"
     neighborhood: "Longwood"
+    facility_type: "pediatric_acute"
     lat: 42.3375
     lng: -71.1064
     npi: "1710087127"
@@ -115,6 +117,7 @@ hospitals:
     state: "MA"
     metro_area: "boston"
     neighborhood: "Longwood"
+    facility_type: "cancer_center"
     lat: 42.3382
     lng: -71.1068
     npi: "1851333686"
@@ -173,6 +176,7 @@ hospitals:
     state: "MA"
     metro_area: "boston"
     neighborhood: "Brighton"
+    facility_type: "rehab"
     lat: 42.3540
     lng: -71.1530
     npi: "1710910427"

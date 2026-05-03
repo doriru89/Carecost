@@ -1,4 +1,7 @@
-"""SQLAlchemy ORM tables for PostgreSQL."""
+"""SQLAlchemy ORM tables for PostgreSQL.
+
+Schema v2: temporal tracking, provenance, RVU decomposition, data source registry.
+"""
 
 from __future__ import annotations
 
@@ -111,6 +114,8 @@ class Hospital(Base):
     lat: Mapped[float | None] = mapped_column(Float, nullable=True)
     lng: Mapped[float | None] = mapped_column(Float, nullable=True)
     npi: Mapped[str] = mapped_column(String(20), nullable=False, default="")
+    facility_type: Mapped[str] = mapped_column(String(32), nullable=False, default="general_acute")
+    is_curated: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
 
 class Payer(Base):
@@ -145,6 +150,7 @@ class HospitalProcedure(Base):
     source: Mapped[str] = mapped_column(Text, nullable=False, default="etl")
     source_type: Mapped[str] = mapped_column(String(32), nullable=False, default="mrf")
     rate_quality: Mapped[str] = mapped_column(String(32), nullable=False, default="unknown")
+    last_updated: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
     __table_args__ = (
         UniqueConstraint("hospital_id", "cpt", name="uq_hospital_procedures_hid_cpt"),
@@ -167,10 +173,12 @@ class HospitalPayerRate(Base):
     setting: Mapped[str] = mapped_column(String(64), nullable=False, default="")
     source_file: Mapped[str] = mapped_column(Text, nullable=False, default="")
     rate_methodology: Mapped[str] = mapped_column(String(32), nullable=False, default="")
+    effective_date: Mapped[str] = mapped_column(String(32), nullable=False, default="")
+    rate_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     __table_args__ = (
         UniqueConstraint(
-            "hospital_id", "cpt", "payer_id", "source_origin", "plan_name",
+            "hospital_id", "cpt", "payer_id", "source_origin", "plan_name", "rate_year",
             name="uq_hospital_payer_rates_natural_key",
         ),
         CheckConstraint(
@@ -191,6 +199,9 @@ class HospitalBenchmark(Base):
     component: Mapped[str] = mapped_column(String(64), nullable=False, default="total")
     price: Mapped[float | None] = mapped_column(Float, nullable=True)
     quality_rating: Mapped[float | None] = mapped_column(Float, nullable=True)
+    source_file: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    effective_date: Mapped[str] = mapped_column(String(32), nullable=False, default="")
+    data_vintage: Mapped[str] = mapped_column(String(32), nullable=False, default="")
 
     __table_args__ = (
         UniqueConstraint(
@@ -198,6 +209,45 @@ class HospitalBenchmark(Base):
             name="uq_hospital_benchmarks_natural_key",
         ),
     )
+
+
+class CptRvuComponent(Base):
+    __tablename__ = "cpt_rvu_components"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    cpt: Mapped[str] = mapped_column(String(32), nullable=False)
+    modifier: Mapped[str] = mapped_column(String(8), nullable=False, default="")
+    description: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    work_rvu: Mapped[float | None] = mapped_column(Float, nullable=True)
+    facility_pe_rvu: Mapped[float | None] = mapped_column(Float, nullable=True)
+    non_facility_pe_rvu: Mapped[float | None] = mapped_column(Float, nullable=True)
+    malpractice_rvu: Mapped[float | None] = mapped_column(Float, nullable=True)
+    facility_total_rvu: Mapped[float | None] = mapped_column(Float, nullable=True)
+    non_facility_total_rvu: Mapped[float | None] = mapped_column(Float, nullable=True)
+    conversion_factor: Mapped[float | None] = mapped_column(Float, nullable=True)
+    global_surgery: Mapped[str] = mapped_column(String(8), nullable=False, default="")
+    pfs_year: Mapped[int] = mapped_column(Integer, nullable=False)
+    source_file: Mapped[str] = mapped_column(Text, nullable=False, default="")
+
+    __table_args__ = (
+        UniqueConstraint("cpt", "modifier", "pfs_year", name="uq_cpt_rvu_natural_key"),
+    )
+
+
+class DataSource(Base):
+    __tablename__ = "data_sources"
+
+    source_id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    source_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    name: Mapped[str] = mapped_column(Text, nullable=False)
+    display_name: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    legal_basis: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    coverage_scope: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    current_vintage: Mapped[str] = mapped_column(String(32), nullable=False, default="")
+    last_updated: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    update_frequency: Mapped[str] = mapped_column(String(32), nullable=False, default="")
+    url: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    state: Mapped[str] = mapped_column(String(8), nullable=False, default="")
 
 
 class User(Base):
@@ -228,3 +278,5 @@ Index("ix_hospital_benchmarks_hid_cpt", HospitalBenchmark.hospital_id, HospitalB
 Index("ix_hospitals_metro_area", Hospital.metro_area)
 Index("ix_hospitals_state", Hospital.state)
 Index("ix_procedures_cpt_codes_gin", Procedure.cpt_codes, postgresql_using="gin")
+Index("ix_cpt_rvu_components_cpt", CptRvuComponent.cpt)
+Index("ix_hospital_payer_rates_rate_year", HospitalPayerRate.rate_year)
