@@ -274,6 +274,9 @@ const ProviderCard = ({
                 <div key={i} className="flex justify-between text-sm">
                   <span className="text-muted-foreground flex items-center gap-1">
                     {src.label}
+                    {src.plan_count != null && src.plan_count > 1 && (
+                      <span className="opacity-50">({src.plan_count} plans)</span>
+                    )}
                     <Tooltip>
                       <TooltipTrigger asChild><Info className="w-3 h-3 cursor-help" /></TooltipTrigger>
                       <TooltipContent className="text-xs max-w-xs">

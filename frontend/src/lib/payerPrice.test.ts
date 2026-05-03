@@ -170,4 +170,46 @@ describe('getAllPriceSources', () => {
     expect(neg).toBeDefined();
     expect(neg!.billing_class).toBe('institutional');
   });
+
+  it('deduplicates same payer+source+rate across plan variants', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC PPO', source_origin: 'mrf', billing_class: 'institutional' },
+        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC HMO/POS', source_origin: 'mrf', billing_class: 'institutional' },
+        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC Alliance PPO A', source_origin: 'mrf', billing_class: 'institutional' },
+        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC Alliance PPO B', source_origin: 'mrf', billing_class: 'institutional' },
+        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC Non Preferred B', source_origin: 'mrf', billing_class: 'institutional' },
+      ],
+      benchmarks: [],
+      discounted_cash: null,
+      de_identified_min: null,
+      de_identified_max: null,
+      gross_charge: null,
+    };
+    const sources = getAllPriceSources(h, 'Harvard Pilgrim');
+    expect(sources).toHaveLength(1);
+    expect(sources[0].price).toBe(762);
+    expect(sources[0].plan_count).toBe(5);
+  });
+
+  it('preserves distinct rates for same payer', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'uhc', negotiated_rate: 762, plan_name: 'UHC PPO', source_origin: 'mrf', billing_class: 'institutional' },
+        { payer_id: 'uhc', negotiated_rate: 762, plan_name: 'UHC HMO', source_origin: 'mrf', billing_class: 'institutional' },
+        { payer_id: 'uhc', negotiated_rate: 1584, plan_name: 'UHC Navigate', source_origin: 'mrf', billing_class: 'institutional' },
+      ],
+      benchmarks: [],
+      discounted_cash: null,
+      de_identified_min: null,
+      de_identified_max: null,
+      gross_charge: null,
+    };
+    const sources = getAllPriceSources(h, 'UHC');
+    expect(sources).toHaveLength(2);
+    expect(sources.find(s => s.price === 762)?.plan_count).toBe(2);
+    expect(sources.find(s => s.price === 1584)?.plan_count).toBe(1);
+  });
 });

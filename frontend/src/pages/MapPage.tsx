@@ -716,7 +716,12 @@ const MapPage = () => {
                                         }`}
                                       >
                                         <div className="flex justify-between items-baseline">
-                                          <span className="text-muted-foreground">{src.label}</span>
+                                          <span className="text-muted-foreground">
+                                            {src.label}
+                                            {src.plan_count != null && src.plan_count > 1 && (
+                                              <span className="opacity-50 ml-1">({src.plan_count} plans)</span>
+                                            )}
+                                          </span>
                                           <span className="font-medium">${Math.round(src.price).toLocaleString()}</span>
                                         </div>
                                         <span className="text-[10px] text-muted-foreground/70">

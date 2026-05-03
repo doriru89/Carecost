@@ -28,6 +28,7 @@ export type PriceSource = {
   kind: 'negotiated' | 'tic' | 'de_identified' | 'gross' | 'cash' | 'benchmark';
   billing_class?: string;
   source?: string;
+  plan_count?: number;
 };
 
 /** Return ALL available price sources for a hospital, from payer_rates + benchmarks + standard fields. */
@@ -35,13 +36,24 @@ export function getAllPriceSources(hospital: HospitalApi, carrier: string): Pric
   const payerId = carrierKeyFromLabel(carrier);
   const sources: PriceSource[] = [];
 
+  const rateGroups = new Map<string, { rate: typeof hospital.payer_rates[0]; count: number }>();
   for (const r of hospital.payer_rates) {
     if (r.negotiated_rate == null) continue;
+    const key = `${r.payer_id}|${r.source_origin}|${r.negotiated_rate}`;
+    const existing = rateGroups.get(key);
+    if (existing) {
+      existing.count++;
+    } else {
+      rateGroups.set(key, { rate: r, count: 1 });
+    }
+  }
+
+  for (const { rate: r, count } of rateGroups.values()) {
     const kind: PriceSource['kind'] = r.source_origin === 'tic' ? 'tic' : 'negotiated';
     const label = r.payer_id === payerId
       ? `${r.payer_id.toUpperCase()} negotiated rate`
       : `${r.payer_id.toUpperCase()} (${r.source_origin})`;
-    sources.push({ label, price: r.negotiated_rate, kind, billing_class: r.billing_class });
+    sources.push({ label, price: r.negotiated_rate!, kind, billing_class: r.billing_class, plan_count: count });
   }
 
   if (hospital.discounted_cash != null)
