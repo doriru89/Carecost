@@ -1,0 +1,31 @@
+# OOP rule classifications — SSOT for both frontend and backend.
+# Adding a rule = YAML edit + regenerate. No source code changes.
+#
+# rule_type values:
+#   preventive       → $0 (ACA mandate, no cost-sharing)
+#   copay_only       → flat copay, deductible does NOT apply
+#   ded_coinsurance  → deductible applies, then coinsurance %
+
+scenario_rules:
+  colonoscopy_screening:
+    rule_type: preventive
+    summary: "Covered at 100% — no cost-sharing"
+    note: >-
+      Preventive screening colonoscopy (age 45+, average risk) is covered at $0
+      under ACA Section 2713. If a polyp is found and removed, some plans
+      reclassify as diagnostic — cost-sharing may apply retroactively.
+
+cpt_rules:
+  "99203":
+    rule_type: copay_only
+    summary: "New patient office visit — specialist copay"
+  "99213":
+    rule_type: copay_only
+    summary: "Established patient office visit — specialist copay"
+  "99214":
+    rule_type: copay_only
+    summary: "Detailed office visit — specialist copay"
+
+default_rule:
+  rule_type: ded_coinsurance
+  summary: "Deductible then coinsurance"

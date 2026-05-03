@@ -5,6 +5,7 @@ Outputs:
     bundles.json      — CPT bundles + specialties (from cpt_bundles.yaml + specialties.yaml)
     payers.json       — payer list for fallback (from payers.yaml)
     plan_configs.json — plan financial defaults (from plan_defaults.yaml)
+    plan_rules.json   — OOP rule classifications (from plan_rules.yaml)
 
 Usage:
     python scripts/generate_frontend_registry.py          # generate all
@@ -73,15 +74,26 @@ def _build_plan_configs() -> list[dict]:
             "oopMax": p["oop_max"],
             "coinsurancePct": p["coinsurance_pct"],
             "copaySpecialist": p["copay_specialist"],
+            "deductibleAppliesToSpecialist": p.get("deductible_applies_to_specialist", False),
         }
         for pid, p in plans_raw.items()
     ]
+
+
+def _build_plan_rules() -> dict:
+    rules_raw = yaml.safe_load((_DATA_DIR / "plan_rules.yaml").read_text())
+    return {
+        "scenario_rules": rules_raw.get("scenario_rules", {}),
+        "cpt_rules": rules_raw.get("cpt_rules", {}),
+        "default_rule": rules_raw.get("default_rule", {"rule_type": "ded_coinsurance", "summary": "Deductible then coinsurance"}),
+    }
 
 
 _OUTPUTS: list[tuple[str, callable]] = [
     ("bundles.json", _build_bundles),
     ("payers.json", _build_payers),
     ("plan_configs.json", _build_plan_configs),
+    ("plan_rules.json", _build_plan_rules),
 ]
 
 

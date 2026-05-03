@@ -8,7 +8,8 @@
     "deductible": 1500,
     "oopMax": 6000,
     "coinsurancePct": 20,
-    "copaySpecialist": 50
+    "copaySpecialist": 50,
+    "deductibleAppliesToSpecialist": true
   },
   {
     "id": "bcbs_hmo",
@@ -19,7 +20,8 @@
     "deductible": 500,
     "oopMax": 4000,
     "coinsurancePct": 10,
-    "copaySpecialist": 40
+    "copaySpecialist": 40,
+    "deductibleAppliesToSpecialist": false
   },
   {
     "id": "aetna_ppo",
@@ -30,7 +32,8 @@
     "deductible": 2000,
     "oopMax": 7000,
     "coinsurancePct": 20,
-    "copaySpecialist": 50
+    "copaySpecialist": 50,
+    "deductibleAppliesToSpecialist": true
   },
   {
     "id": "hp_ppo",
@@ -41,7 +44,8 @@
     "deductible": 1500,
     "oopMax": 6000,
     "coinsurancePct": 20,
-    "copaySpecialist": 50
+    "copaySpecialist": 50,
+    "deductibleAppliesToSpecialist": true
   },
   {
     "id": "hp_hmo",
@@ -52,7 +56,8 @@
     "deductible": 500,
     "oopMax": 4000,
     "coinsurancePct": 10,
-    "copaySpecialist": 40
+    "copaySpecialist": 40,
+    "deductibleAppliesToSpecialist": false
   },
   {
     "id": "uhc_ppo",
@@ -63,6 +68,7 @@
     "deductible": 2000,
     "oopMax": 7500,
     "coinsurancePct": 20,
-    "copaySpecialist": 50
+    "copaySpecialist": 50,
+    "deductibleAppliesToSpecialist": true
   }
 ]
