@@ -4,8 +4,8 @@ Filters by CPT codes from the registry during parsing (never loads full file).
 Supports: standard_csv, cms_v3_csv, cms_json, xlsx, csv_wide.
 
 Public API:
-    parse_hospital_rates(file_path, hospital_id, specialty) -> list[RawMrfRecord]
-    parse_all_hospital_rates(mrf_dir, specialty) -> list[RawMrfRecord]
+    parse_hospital_rates(file_path, hospital_id, target_cpts) -> list[RawMrfRecord]
+    parse_all_hospital_rates(mrf_dir, target_cpts) -> list[RawMrfRecord]
 """
 
 from __future__ import annotations
@@ -31,9 +31,9 @@ logger = logging.getLogger(__name__)
 
 
 def parse_hospital_rates(
-    file_path: Path, hospital_id: str, specialty: str
+    file_path: Path, hospital_id: str, target_cpts: set[str]
 ) -> list[RawMrfRecord]:
-    """Parse a single MRF file, return rows matching the specialty's CPT set."""
+    """Parse a single MRF file, return rows matching the target CPT set."""
     config = load_etl_config()
     sources = config.hospital_mrf_sources
 
@@ -47,7 +47,6 @@ def parse_hospital_rates(
     fmt = source["format"]
     hospital_name = get_hospital(hospital_id).name
 
-    cpt_codes = set(config.cpt_extraction_sets[specialty])
     format_config = config.mrf_formats.get(fmt, {})
 
     # Merge source-level overrides (e.g. skip_header_rows) into format config
@@ -65,13 +64,13 @@ def parse_hospital_rates(
     if handler is None:
         raise ValueError(f"Unknown MRF format: {fmt}")
 
-    return handler(file_path, cpt_codes, hospital_name, merged_config, fmt)
+    return handler(file_path, target_cpts, hospital_name, merged_config, fmt)
 
 
 def parse_all_hospital_rates(
-    mrf_dir: Path, specialty: str
+    mrf_dir: Path, target_cpts: set[str]
 ) -> list[RawMrfRecord]:
-    """Parse all MRF files in the directory for a specialty.
+    """Parse all MRF files in the directory for the given CPT set.
 
     Uses hospital_mrf_sources config to find files.
     Logs warnings for missing files but continues processing.
@@ -93,7 +92,7 @@ def parse_all_hospital_rates(
             continue
 
         try:
-            records = parse_hospital_rates(file_path, hospital_id, specialty)
+            records = parse_hospital_rates(file_path, hospital_id, target_cpts)
             all_records.extend(records)
             logger.info(
                 "%s: extracted %d records", hospital_id, len(records)

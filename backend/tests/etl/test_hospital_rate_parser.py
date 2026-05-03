@@ -21,8 +21,17 @@ from app.etl.types import RawMrfRecord
 # Helpers
 # ---------------------------------------------------------------------------
 
-GI_CPTS_SAMPLE = ["45378", "43239", "45385"]
-DERM_CPTS_SAMPLE = ["99213", "11102"]
+GI_CPTS = {
+    "43235", "43239", "43244", "43249", "43255", "43259",
+    "45378", "45380", "45384", "45385", "45388",
+    "74176", "74177", "74178", "76700", "76705", "91110",
+}
+DERM_CPTS = {
+    "99213", "99214", "11102", "11104", "11106",
+    "11300", "11305", "11400", "11401", "11600", "11602",
+    "17110", "17111", "17311", "17312", "88305", "88312",
+    "96910", "96920", "96922",
+}
 
 
 def _write_csv(path: Path, rows: list[list[str]], encoding: str = "utf-8") -> Path:
@@ -89,7 +98,7 @@ def test_parse_standard_csv_filters_by_cpt(tmp_path: Path):
     csv_path = _write_csv(tmp_path / "mgh_standardcharges.csv", rows)
 
     with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=2):
-        results = parse_hospital_rates(csv_path, "mgh", "gi")
+        results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
 
     assert len(results) == 2
     assert all(isinstance(r, RawMrfRecord) for r in results)
@@ -113,12 +122,12 @@ def test_parse_standard_csv_skips_header_rows(tmp_path: Path):
 
     # With skip=2, should find the matching row
     with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=2):
-        results = parse_hospital_rates(csv_path, "mgh", "gi")
+        results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
     assert len(results) == 1
 
     # With skip=3, should skip the data row too
     with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=3):
-        results = parse_hospital_rates(csv_path, "mgh", "gi")
+        results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
     assert len(results) == 0
 
 
@@ -181,7 +190,7 @@ def test_parse_cms_json_extracts_matching_cpts(tmp_path: Path):
     json_path.write_text(json.dumps(data))
 
     with _mock_hospital_source("bidmc", "cms_json"):
-        results = parse_hospital_rates(json_path, "bidmc", "gi")
+        results = parse_hospital_rates(json_path, "bidmc", GI_CPTS)
 
     assert len(results) == 1
     rec = results[0]
@@ -233,7 +242,7 @@ def test_parse_cms_v3_csv_dynamic_headers(tmp_path: Path):
     csv_path = _write_csv(tmp_path / "tufts.csv", rows)
 
     with _mock_hospital_source("tufts", "cms_v3_csv", skip_header_rows=3):
-        results = parse_hospital_rates(csv_path, "tufts", "gi")
+        results = parse_hospital_rates(csv_path, "tufts", GI_CPTS)
 
     assert len(results) == 1
     rec = results[0]
@@ -275,7 +284,7 @@ def test_parse_csv_wide_unpivots_payer_columns(tmp_path: Path):
     csv_path = _write_csv(tmp_path / "franciscan.csv", rows)
 
     with _mock_hospital_source("franciscan", "csv_wide"):
-        results = parse_hospital_rates(csv_path, "franciscan", "gi")
+        results = parse_hospital_rates(csv_path, "franciscan", GI_CPTS)
 
     assert len(results) == 2
     payer_plans = {(r.payer_raw, r.plan) for r in results}
@@ -301,7 +310,7 @@ def test_empty_file_returns_empty_list(tmp_path: Path):
     csv_path.write_text("")
 
     with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=0):
-        results = parse_hospital_rates(csv_path, "mgh", "gi")
+        results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
 
     assert results == []
 
@@ -321,13 +330,13 @@ def test_both_specialty_cpt_sets_work(tmp_path: Path):
 
     # With gi specialty, only 45378 matches
     with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=0):
-        gi_results = parse_hospital_rates(csv_path, "mgh", "gi")
+        gi_results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
     assert len(gi_results) == 1
     assert gi_results[0].cpt == "45378"
 
     # With derm specialty, only 99213 matches
     with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=0):
-        derm_results = parse_hospital_rates(csv_path, "mgh", "derm")
+        derm_results = parse_hospital_rates(csv_path, "mgh", DERM_CPTS)
     assert len(derm_results) == 1
     assert derm_results[0].cpt == "99213"
 
@@ -340,7 +349,7 @@ def test_parse_all_hospital_rates_warns_on_missing(tmp_path: Path, caplog):
     """Missing MRF file logs a warning but doesn't crash."""
     # Create a directory with NO files for mgh
     with caplog.at_level(logging.WARNING):
-        results = parse_all_hospital_rates(tmp_path, "gi")
+        results = parse_all_hospital_rates(tmp_path, GI_CPTS)
 
     # Should return empty (no files found)
     assert isinstance(results, list)
@@ -359,7 +368,7 @@ def test_unknown_hospital_raises(tmp_path: Path):
     csv_path.write_text("a,b,c")
 
     with pytest.raises(KeyError, match="unknown_hospital_xyz"):
-        parse_hospital_rates(csv_path, "unknown_hospital_xyz", "gi")
+        parse_hospital_rates(csv_path, "unknown_hospital_xyz", GI_CPTS)
 
 
 # ---------------------------------------------------------------------------
@@ -377,7 +386,7 @@ def test_monetary_fields_are_float_or_none(tmp_path: Path):
     csv_path = _write_csv(tmp_path / "test.csv", rows)
 
     with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=0):
-        results = parse_hospital_rates(csv_path, "mgh", "gi")
+        results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
 
     assert len(results) == 1
     rec = results[0]
@@ -401,7 +410,7 @@ def test_source_file_and_mrf_format_populated(tmp_path: Path):
     csv_path = _write_csv(tmp_path / "test.csv", rows)
 
     with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=0):
-        results = parse_hospital_rates(csv_path, "mgh", "gi")
+        results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
 
     assert len(results) == 1
     assert results[0].source_file == str(csv_path)

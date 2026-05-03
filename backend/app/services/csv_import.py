@@ -326,12 +326,17 @@ def import_hospital_payer_rates_csv(db: Session, path: Path) -> int:
     if not raw_rows:
         return 0
     _require_columns(set(raw_rows[0].keys()), PAYER_RATE_COLUMNS, path.name)
-    rows = []
+    _NK = ("hospital_id", "cpt", "payer_id", "source_origin", "plan_name", "rate_year")
+    deduped: dict[tuple, dict] = {}
     for r in raw_rows:
         row = {c: r.get(c, "") for c in PAYER_RATE_COLUMNS}
         for col in _PAYER_RATE_FLOAT_COLS:
             row[col] = _parse_float_cell(row[col])
-        rows.append(row)
+        key = tuple(row.get(k, "") for k in _NK)
+        deduped[key] = row
+    rows = list(deduped.values())
+    if len(rows) < len(raw_rows):
+        _logger.info("Deduplicated payer rates: %d -> %d rows", len(raw_rows), len(rows))
     return _upsert_by_constraint(db, HospitalPayerRate, rows, "uq_hospital_payer_rates_natural_key")
 
 

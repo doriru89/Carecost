@@ -5,7 +5,7 @@ hospital registry. Uses ijson for memory-efficient streaming — these files
 are 111MB+ in production.
 
 Public API:
-    parse_insurer_rates(file_path, insurer_key, specialty) -> list[RawTicRecord]
+    parse_insurer_rates(file_path, insurer_key, target_cpts) -> list[RawTicRecord]
     build_hospital_npi_map() -> dict[str, str]   # NPI -> hospital_name
 """
 
@@ -22,7 +22,7 @@ from typing import IO
 import ijson
 
 from app.etl.types import RawTicRecord
-from app.registries import get_hospital, hospital_all_npis, load_etl_config
+from app.registries import get_hospital, hospital_all_npis
 
 logger = logging.getLogger(__name__)
 
@@ -56,12 +56,11 @@ def build_hospital_npi_map() -> dict[str, str]:
 def parse_insurer_rates(
     file_path: Path,
     insurer_key: str,
-    specialty: str,
+    target_cpts: set[str],
 ) -> list[RawTicRecord]:
     """Two-pass stream parse of TiC file. Returns matched rates for Boston hospitals."""
-    target_cpts = set(load_etl_config().cpt_extraction_sets.get(specialty, []))
     if not target_cpts:
-        logger.warning("No CPT extraction set for specialty %r", specialty)
+        logger.warning("Empty CPT target set — nothing to extract")
         return []
 
     npi_to_name = build_hospital_npi_map()

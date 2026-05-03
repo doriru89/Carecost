@@ -50,17 +50,24 @@ def run_etl(
     tic_dir: Path,
     data_dir: Path,
     output_dir: Path,
-    specialty: str = "gi",
     expected_hospitals: list[str] | None = None,
 ) -> EtlResult:
+    # 0. Compute union of all CPT extraction sets (multi-specialty)
+    config = load_etl_config()
+    all_cpts: set[str] = set()
+    for cpts in config.cpt_extraction_sets.values():
+        all_cpts.update(cpts)
+    logger.info("Target CPTs: %d codes across %d specialties",
+                len(all_cpts), len(config.cpt_extraction_sets))
+
     # 1. Parse hospital MRFs
-    mrf_records = parse_all_hospital_rates(mrf_dir, specialty)
+    mrf_records = parse_all_hospital_rates(mrf_dir, all_cpts)
     logger.info("Extracted %d MRF records", len(mrf_records))
 
     # 2. Parse insurer TiC files
     tic_records = []
     for tic_path, insurer_key in _discover_tic_files(tic_dir):
-        batch = parse_insurer_rates(tic_path, insurer_key, specialty)
+        batch = parse_insurer_rates(tic_path, insurer_key, all_cpts)
         tic_records.extend(batch)
         logger.info("Extracted %d TiC records from %s", len(batch), tic_path.name)
 
@@ -70,7 +77,6 @@ def run_etl(
     logger.info("Normalized %d records", len(normalized))
 
     # 3.5. Check per-hospital CPT coverage against config thresholds
-    config = load_etl_config()
     per_hospital_cpts: dict[str, set[str]] = defaultdict(set)
     for rec in normalized:
         per_hospital_cpts[rec.hospital_id].add(rec.cpt)
@@ -113,7 +119,6 @@ def run_etl(
         _sha256_file(csv_file)
 
     return EtlResult(
-        specialty=specialty,
         mrf_records_extracted=len(mrf_records),
         tic_records_extracted=len(tic_records),
         records_after_normalization=len(normalized),

@@ -25,7 +25,7 @@ class TestRunEtl:
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
         result = run_etl(
             mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir,
-            output_dir=output_dir, specialty="gi",
+            output_dir=output_dir,
         )
         assert result.mrf_records_extracted == 0
         assert result.tic_records_extracted == 0
@@ -36,9 +36,8 @@ class TestRunEtl:
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
         result = run_etl(
             mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir,
-            output_dir=output_dir, specialty="gi",
+            output_dir=output_dir,
         )
-        assert result.specialty == "gi"
         assert result.validation_report is not None
         assert result.run_timestamp != ""
 
@@ -47,7 +46,7 @@ class TestRunEtl:
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
         run_etl(
             mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir,
-            output_dir=output_dir, specialty="gi",
+            output_dir=output_dir,
         )
         assert (output_dir / "hospital_procedures.csv").exists()
         assert (output_dir / "hospital_payer_rates.csv").exists()
@@ -58,7 +57,7 @@ class TestRunEtl:
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
         run_etl(
             mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir,
-            output_dir=output_dir, specialty="gi",
+            output_dir=output_dir,
         )
         assert (output_dir / "hospital_procedures.csv.sha256").exists()
 
@@ -67,7 +66,14 @@ class TestRunEtl:
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
         result = run_etl(
             mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir,
-            output_dir=output_dir, specialty="gi",
+            output_dir=output_dir,
         )
         assert result.validation_report is not None
         assert isinstance(result.validation_report.errors, list)
+
+    def test_no_specialty_parameter(self, tmp_path):
+        """run_etl() no longer accepts a 'specialty' parameter — it processes all."""
+        import inspect
+        from app.etl.pipeline import run_etl
+        sig = inspect.signature(run_etl)
+        assert "specialty" not in sig.parameters

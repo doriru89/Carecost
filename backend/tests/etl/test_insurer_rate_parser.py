@@ -11,6 +11,12 @@ import json
 import zipfile
 from pathlib import Path
 
+GI_CPTS = {
+    "43235", "43239", "43244", "43249", "43255", "43259",
+    "45378", "45380", "45384", "45385", "45388",
+    "74176", "74177", "74178", "76700", "76705", "91110",
+}
+
 
 
 def _make_tic_json(
@@ -105,7 +111,7 @@ class TestTwoPassBasicMatch:
             ],
         )
         f = _write_json(tmp_path, data)
-        results = parse_insurer_rates(f, insurer_key="bcbs", specialty="gi")
+        results = parse_insurer_rates(f, insurer_key="bcbs", target_cpts=GI_CPTS)
 
         assert len(results) == 1
         rec = results[0]
@@ -143,7 +149,7 @@ class TestPercentageTypeFiltered:
             ],
         )
         f = _write_json(tmp_path, data)
-        results = parse_insurer_rates(f, insurer_key="bcbs", specialty="gi")
+        results = parse_insurer_rates(f, insurer_key="bcbs", target_cpts=GI_CPTS)
         assert len(results) == 0
 
 
@@ -167,7 +173,7 @@ class TestChaDualNpiMatching:
             ],
         )
         f = _write_json(tmp_path, data)
-        results = parse_insurer_rates(f, insurer_key="bcbs", specialty="gi")
+        results = parse_insurer_rates(f, insurer_key="bcbs", target_cpts=GI_CPTS)
         assert len(results) == 1
         assert results[0].hospital_name == "CHA Cambridge Hospital"
         assert results[0].matched_npi == "1275839649"
@@ -189,7 +195,7 @@ class TestChaDualNpiMatching:
             ],
         )
         f = _write_json(tmp_path, data)
-        results = parse_insurer_rates(f, insurer_key="bcbs", specialty="gi")
+        results = parse_insurer_rates(f, insurer_key="bcbs", target_cpts=GI_CPTS)
         assert len(results) == 1
         assert results[0].hospital_name == "CHA Cambridge Hospital"
         assert results[0].matched_npi == "1487603585"
@@ -225,7 +231,7 @@ class TestFeeSchedulePreferred:
             ],
         )
         f = _write_json(tmp_path, data)
-        results = parse_insurer_rates(f, insurer_key="bcbs", specialty="gi")
+        results = parse_insurer_rates(f, insurer_key="bcbs", target_cpts=GI_CPTS)
         assert len(results) == 1
         assert results[0].negotiated_rate == 450.0
         assert results[0].negotiated_type == "fee schedule"
@@ -251,7 +257,7 @@ class TestNonMatchingCptExcluded:
             ],
         )
         f = _write_json(tmp_path, data)
-        results = parse_insurer_rates(f, insurer_key="bcbs", specialty="gi")
+        results = parse_insurer_rates(f, insurer_key="bcbs", target_cpts=GI_CPTS)
         assert len(results) == 0
 
 
@@ -277,7 +283,7 @@ class TestNonMatchingNpiExcluded:
             ],
         )
         f = _write_json(tmp_path, data)
-        results = parse_insurer_rates(f, insurer_key="bcbs", specialty="gi")
+        results = parse_insurer_rates(f, insurer_key="bcbs", target_cpts=GI_CPTS)
         assert len(results) == 0
 
 
@@ -304,7 +310,7 @@ class TestGzipFormat:
         with gzip.open(gz_path, "wt", encoding="utf-8") as f:
             json.dump(data, f)
 
-        results = parse_insurer_rates(gz_path, insurer_key="bcbs", specialty="gi")
+        results = parse_insurer_rates(gz_path, insurer_key="bcbs", target_cpts=GI_CPTS)
         assert len(results) == 1
         assert results[0].cpt == "45378"
 
@@ -332,7 +338,7 @@ class TestZipFormat:
         with zipfile.ZipFile(zip_path, "w") as zf:
             zf.writestr("rates.json", json.dumps(data))
 
-        results = parse_insurer_rates(zip_path, insurer_key="bcbs", specialty="gi")
+        results = parse_insurer_rates(zip_path, insurer_key="bcbs", target_cpts=GI_CPTS)
         assert len(results) == 1
         assert results[0].cpt == "45378"
 
@@ -360,5 +366,5 @@ class TestEmptyFile:
 
         data = _make_tic_json(in_network=[], provider_references=[])
         f = _write_json(tmp_path, data)
-        results = parse_insurer_rates(f, insurer_key="bcbs", specialty="gi")
+        results = parse_insurer_rates(f, insurer_key="bcbs", target_cpts=GI_CPTS)
         assert results == []

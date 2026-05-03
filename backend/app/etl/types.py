@@ -188,7 +188,6 @@ class ValidationReport:
 class EtlResult:
     """Summary of a complete ETL pipeline run."""
 
-    specialty: str
     mrf_records_extracted: int
     tic_records_extracted: int
     records_after_normalization: int
