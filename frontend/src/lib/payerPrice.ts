@@ -63,13 +63,3 @@ export function getAllPriceSources(hospital: HospitalApi, carrier: string): Pric
 
   return sources;
 }
-
-/** Estimate patient cost: (negotiated_rate - deductible) * coinsurance%. */
-export function computeYourPlanEstimate(
-  payerPrice: number,
-  deductible: number,
-  coinsurancePct: number,
-): number {
-  const afterDeductible = Math.max(0, payerPrice - deductible);
-  return Math.round(afterDeductible * coinsurancePct / 100);
-}

@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { MapPin, Phone, Bookmark, ExternalLink, Info, ChevronDown, ChevronRight, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
-import { computeYourPlanEstimate, getAllPriceSources } from '@/lib/payerPrice';
+import { getAllPriceSources } from '@/lib/payerPrice';
 import { computeFairHealthTotal } from '@/lib/fairHealth';
-import { computeOop } from '@/lib/oopRules';
+import { computeOop, type OopResult } from '@/lib/oopRules';
 import type { HospitalApi, CostComponentsResponse } from '@/api/client';
 import { fetchCostComponents } from '@/api/client';
 import CostBreakdown from './CostBreakdown';
@@ -18,10 +18,6 @@ interface ProviderCardProps {
   insuranceLabel?: string;
   /** Hospital-level negotiated rate from hospital_rates (primary price source). */
   hospitalPayerPrice?: number | null;
-  /** User's deductible from insurance profile. */
-  deductible?: number;
-  /** User's coinsurance % from insurance profile. */
-  coinsurancePct?: number;
   /** Full hospital record for multi-source transparency display. */
   hospital?: HospitalApi;
   /** Plan config for rule-aware OOP calculation. */
@@ -45,28 +41,26 @@ interface PriceDisplay {
 
 export function buildPriceDisplay(
   hospitalPayerPrice: number | null | undefined,
-  deductible: number | undefined,
-  coinsurancePct: number | undefined,
   estimate: CostEstimate | undefined,
+  oopResult?: OopResult | null,
 ): PriceDisplay {
-  const hasFullPlan = deductible != null && coinsurancePct != null;
-
   // Priority 1: hospital_rates price (most reliable)
   if (hospitalPayerPrice != null) {
-    if (hasFullPlan) {
-      const est = computeYourPlanEstimate(hospitalPayerPrice, deductible, coinsurancePct);
+    if (oopResult) {
       return {
-        label: `$${est.toLocaleString()}`,
+        label: oopResult.ruleType === 'preventive'
+          ? '$0'
+          : `$${oopResult.estimate.toLocaleString()}`,
         sectionTitle: 'Your plan',
         lineLabel: 'Est. cost (your insurance)',
-        tooltip: `Estimated as ($${hospitalPayerPrice.toLocaleString()} negotiated rate − $${deductible.toLocaleString()} deductible) × ${coinsurancePct}% coinsurance. Call your plan to verify.`,
+        tooltip: oopResult.explanation,
       };
     }
     return {
       label: `$${Math.round(hospitalPayerPrice).toLocaleString()}`,
       sectionTitle: 'Negotiated rate',
       lineLabel: 'Base price',
-      tooltip: 'This is the negotiated rate between your insurer and this hospital. Enter your deductible and coinsurance for a personalized estimate.',
+      tooltip: 'Negotiated rate between your insurer and this hospital. Add your insurance info to see your estimated cost.',
     };
   }
 
@@ -74,20 +68,11 @@ export function buildPriceDisplay(
   if (estimate) {
     const allowed = estimate.allowedMaxDollars ?? estimate.allowedMinDollars;
     if (allowed != null && allowed >= 0) {
-      if (hasFullPlan) {
-        const est = computeYourPlanEstimate(allowed, deductible, coinsurancePct);
-        return {
-          label: `$${est.toLocaleString()}`,
-          sectionTitle: 'Your plan',
-          lineLabel: 'Est. cost (your insurance)',
-          tooltip: `Estimated from provider-level rate ($${allowed.toLocaleString()}). Call your plan to verify.`,
-        };
-      }
       return {
         label: `$${allowed.toLocaleString()}`,
         sectionTitle: 'Negotiated rate',
         lineLabel: 'Base price',
-        tooltip: 'Provider-level negotiated rate. Enter your deductible and coinsurance for a personalized estimate.',
+        tooltip: 'Provider-level negotiated rate. Add your insurance info to see your estimated cost.',
       };
     }
   }
@@ -114,8 +99,6 @@ const ProviderCard = ({
   estimate,
   insuranceLabel = 'Your plan',
   hospitalPayerPrice,
-  deductible,
-  coinsurancePct,
   hospital,
   planConfig,
   scenarioId,
@@ -129,7 +112,10 @@ const ProviderCard = ({
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [costData, setCostData] = useState<CostComponentsResponse | null>(null);
   const hasPrice = hospitalPayerPrice != null || estimate?.allowedMaxDollars != null;
-  const price = buildPriceDisplay(hospitalPayerPrice, deductible, coinsurancePct, estimate);
+  const oopResult = hospitalPayerPrice != null && planConfig
+    ? computeOop(hospitalPayerPrice, planConfig, scenarioId ?? null, cptCode ?? null)
+    : null;
+  const price = buildPriceDisplay(hospitalPayerPrice, estimate, oopResult);
 
   useEffect(() => {
     if (!breakdownOpen || !hospital || costData) return;

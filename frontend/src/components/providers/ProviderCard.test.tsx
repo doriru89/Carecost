@@ -1,16 +1,23 @@
 import { describe, expect, it } from 'vitest';
 import { buildPriceDisplay } from './ProviderCard';
 import type { CostEstimate } from '@/types';
+import type { OopResult } from '@/lib/oopRules';
 
-describe('buildPriceDisplay — $0 handling', () => {
+describe('buildPriceDisplay — format-only', () => {
   it('shows "$0" when hospitalPayerPrice is 0 (not "—")', () => {
-    const result = buildPriceDisplay(0, undefined, undefined, undefined);
+    const result = buildPriceDisplay(0, undefined);
     expect(result.label).toBe('$0');
     expect(result.sectionTitle).toBe('Negotiated rate');
   });
 
-  it('shows "$0" with plan estimate when hospitalPayerPrice is 0', () => {
-    const result = buildPriceDisplay(0, 500, 20, undefined);
+  it('shows "$0" with OOP result for preventive', () => {
+    const oop: OopResult = {
+      ruleType: 'preventive',
+      estimate: 0,
+      estimateB: 0,
+      explanation: 'ACA preventive',
+    };
+    const result = buildPriceDisplay(0, undefined, oop);
     expect(result.label).toBe('$0');
     expect(result.sectionTitle).toBe('Your plan');
   });
@@ -21,24 +28,13 @@ describe('buildPriceDisplay — $0 handling', () => {
       patientResponsibility: 0,
       allowedMaxDollars: 0,
     };
-    const result = buildPriceDisplay(null, undefined, undefined, estimate);
+    const result = buildPriceDisplay(null, estimate);
     expect(result.label).toBe('$0');
     expect(result.label).not.toBe('—');
   });
 
-  it('shows "$0" with plan for allowedMaxDollars=0 and full plan config', () => {
-    const estimate: CostEstimate = {
-      providerId: 'test',
-      patientResponsibility: 0,
-      allowedMaxDollars: 0,
-    };
-    const result = buildPriceDisplay(null, 500, 20, estimate);
-    expect(result.label).toBe('$0');
-    expect(result.sectionTitle).toBe('Your plan');
-  });
-
   it('still shows "—" when no price data at all', () => {
-    const result = buildPriceDisplay(null, undefined, undefined, undefined);
+    const result = buildPriceDisplay(null, undefined);
     expect(result.label).toBe('—');
   });
 
@@ -47,13 +43,43 @@ describe('buildPriceDisplay — $0 handling', () => {
       providerId: 'test',
       patientResponsibility: 0,
     };
-    const result = buildPriceDisplay(null, undefined, undefined, estimate);
+    const result = buildPriceDisplay(null, estimate);
     expect(result.label).toBe('—');
   });
 
-  it('shows actual price when hospitalPayerPrice > 0', () => {
-    const result = buildPriceDisplay(1279, undefined, undefined, undefined);
+  it('shows actual price when hospitalPayerPrice > 0 and no OOP', () => {
+    const result = buildPriceDisplay(1279, undefined);
     expect(result.label).toBe('$1,279');
     expect(result.sectionTitle).toBe('Negotiated rate');
+  });
+
+  it('shows OOP estimate when OopResult provided', () => {
+    const oop: OopResult = {
+      ruleType: 'ded_coinsurance',
+      estimate: 578,
+      estimateB: 128,
+      explanation: '$500 deductible then 10% coinsurance',
+    };
+    const result = buildPriceDisplay(1279, undefined, oop);
+    expect(result.label).toBe('$578');
+    expect(result.sectionTitle).toBe('Your plan');
+    expect(result.tooltip).toContain('deductible');
+  });
+
+  it('shows copay estimate for copay_only rule', () => {
+    const oop: OopResult = {
+      ruleType: 'copay_only',
+      estimate: 40,
+      estimateB: 40,
+      explanation: 'Flat $40 specialist copay',
+    };
+    const result = buildPriceDisplay(250, undefined, oop);
+    expect(result.label).toBe('$40');
+    expect(result.sectionTitle).toBe('Your plan');
+  });
+
+  it('shows CTA tooltip when no OOP result for hospital price', () => {
+    const result = buildPriceDisplay(1279, undefined);
+    expect(result.tooltip).toContain('insurance');
   });
 });

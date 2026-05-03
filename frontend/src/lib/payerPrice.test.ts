@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { carrierKeyFromLabel, getPayerPrice, computeYourPlanEstimate, getAllPriceSources } from './payerPrice';
+import { carrierKeyFromLabel, getPayerPrice, getAllPriceSources } from './payerPrice';
 import type { HospitalApi } from '@/api/client';
 
 const mockHospital: HospitalApi = {
@@ -115,24 +115,6 @@ describe('getPayerPrice', () => {
       ],
     };
     expect(getPayerPrice(h, 'Some Unknown Carrier')).toBeNull();
-  });
-});
-
-describe('computeYourPlanEstimate', () => {
-  it('returns 0 when deductible exceeds price', () => {
-    expect(computeYourPlanEstimate(1278, 2000, 20)).toBe(0);
-  });
-
-  it('computes (price - deductible) * coinsurance%', () => {
-    expect(computeYourPlanEstimate(2500, 500, 20)).toBe(400);
-  });
-
-  it('handles zero deductible', () => {
-    expect(computeYourPlanEstimate(1000, 0, 20)).toBe(200);
-  });
-
-  it('rounds to nearest dollar', () => {
-    expect(computeYourPlanEstimate(1278, 500, 20)).toBe(156);
   });
 });
 
