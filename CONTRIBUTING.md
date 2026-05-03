@@ -82,6 +82,40 @@ Review the generated migration before committing — autogenerate is a starting 
 - **Backend**: Python 3.11+, formatted with `ruff`. Run `ruff check --fix` before committing.
 - **Frontend**: TypeScript + React. Linted via ESLint (`npm run lint`).
 
+## Code Visualization
+
+CareCost uses [GitNexus](https://www.npmjs.com/package/gitnexus) for codebase visualization and documentation.
+
+**First-time setup** (after cloning):
+```bash
+make setup          # indexes the repo with gitnexus
+```
+
+**Browse the code graph** (interactive Vercel app):
+```bash
+make serve          # starts local API server on :4747
+open https://gitnexus.vercel.app   # connects to your local server
+```
+
+**View the LEGO module map** (static, committed):
+```bash
+open docs/lego-map.html
+```
+
+**Generate wiki documentation** (requires `GEMINI_API_KEY`):
+```bash
+export GEMINI_API_KEY="your-key"
+make wiki           # generates 14-page wiki in .gitnexus/wiki/
+open .gitnexus/wiki/index.html
+```
+
+**Regenerate after major changes:**
+```bash
+make setup          # re-index
+make lego           # update module map
+make wiki           # update docs
+```
+
 ## Questions
 
 Open an issue or reach out to the team directly.
