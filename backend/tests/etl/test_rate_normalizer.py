@@ -1,5 +1,7 @@
 """TDD tests for rate_normalizer — written BEFORE implementation."""
 
+import logging
+
 from app.etl.types import RawMrfRecord, RawTicRecord
 
 
@@ -146,3 +148,19 @@ class TestNormalizeRecords:
         assert len(result) == 2
         origins = {r.source_origin for r in result}
         assert origins == {"mrf", "tic"}
+
+    def test_unknown_mrf_hospital_logs_warning(self, caplog):
+        from app.etl.rate_normalizer import normalize_records
+        records = [_make_mrf(hospital_name="Unknown Hospital")]
+        with caplog.at_level(logging.WARNING):
+            result = normalize_records(records)
+        assert len(result) == 0
+        assert "Dropping MRF record: unmatched hospital 'Unknown Hospital'" in caplog.text
+
+    def test_unknown_tic_hospital_logs_warning(self, caplog):
+        from app.etl.rate_normalizer import normalize_records
+        records = [_make_tic(hospital_name="Unknown Hospital")]
+        with caplog.at_level(logging.WARNING):
+            result = normalize_records(records)
+        assert len(result) == 0
+        assert "Dropping TiC record: unmatched hospital 'Unknown Hospital'" in caplog.text

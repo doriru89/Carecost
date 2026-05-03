@@ -6,12 +6,16 @@ Falls back to exact name match for hospitals, non_canonical_payers for unknown p
 
 from __future__ import annotations
 
+import logging
+
 from app.etl.types import NormalizedRecord, RawMrfRecord, RawTicRecord
 from app.registries import (
     all_hospitals,
     all_payers,
     load_etl_config,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def normalize_payer_name(raw_payer: str) -> tuple[str | None, bool]:
@@ -74,6 +78,10 @@ def normalize_records(
             source = "mrf"
             hospital_id = normalize_hospital_name(rec.hospital_name, source)
             if hospital_id is None:
+                logger.warning(
+                    "Dropping MRF record: unmatched hospital '%s' (CPT=%s, payer='%s', file=%s)",
+                    rec.hospital_name, rec.cpt, rec.payer_raw, rec.source_file,
+                )
                 continue
             payer_id, include = normalize_payer_name(rec.payer_raw)
             if not include and payer_id is None:
@@ -105,6 +113,10 @@ def normalize_records(
         elif isinstance(rec, RawTicRecord):
             hospital_id = normalize_hospital_name(rec.hospital_name, "tic")
             if hospital_id is None:
+                logger.warning(
+                    "Dropping TiC record: unmatched hospital '%s' (CPT=%s, insurer=%s, file=%s)",
+                    rec.hospital_name, rec.cpt, rec.insurer_key, rec.source_file,
+                )
                 continue
 
             payer_id, _ = normalize_payer_name(rec.insurer_key.upper())
