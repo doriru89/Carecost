@@ -26,5 +26,7 @@ def test_wart_keyword_routes_to_wart_removal() -> None:
 
 
 def test_cryotherapy_still_routes_to_lesion_destruction() -> None:
-    sid = infer_scenario_id({"free_text": "cryotherapy treatment", "specialty": "Dermatology"}, None)
+    sid = infer_scenario_id(
+        {"free_text": "cryotherapy treatment", "specialty": "Dermatology"}, None
+    )
     assert sid == "lesion_destruction_first"

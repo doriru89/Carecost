@@ -25,18 +25,12 @@ class PlanRule:
 
 def _rules_by_scenario() -> dict[str, PlanRule]:
     cfg = get_plan_rules()
-    return {
-        sid: PlanRule(r.rule_type, r.summary, r.note)
-        for sid, r in cfg.scenario_rules.items()
-    }
+    return {sid: PlanRule(r.rule_type, r.summary, r.note) for sid, r in cfg.scenario_rules.items()}
 
 
 def _rules_by_cpt() -> dict[str, PlanRule]:
     cfg = get_plan_rules()
-    return {
-        cpt: PlanRule(r.rule_type, r.summary, r.note)
-        for cpt, r in cfg.cpt_rules.items()
-    }
+    return {cpt: PlanRule(r.rule_type, r.summary, r.note) for cpt, r in cfg.cpt_rules.items()}
 
 
 def _default_rule() -> PlanRule:
