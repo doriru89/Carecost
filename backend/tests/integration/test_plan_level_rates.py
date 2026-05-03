@@ -25,28 +25,32 @@ def _seed_dimensions(db: Session) -> None:
     """Populate hospitals and payers dimension tables from YAML registries."""
     hospitals_data = yaml.safe_load((_DATA_DIR / "hospitals.yaml").read_text())["hospitals"]
     for hid, h in hospitals_data.items():
-        db.add(Hospital(
-            hospital_id=hid,
-            name=h["name"],
-            system_name=h.get("system", ""),
-            state=h["state"],
-            metro_area=h["metro_area"],
-            neighborhood=h.get("neighborhood", ""),
-            lat=h.get("lat"),
-            lng=h.get("lng"),
-            npi=h.get("npi", ""),
-        ))
+        db.add(
+            Hospital(
+                hospital_id=hid,
+                name=h["name"],
+                system_name=h.get("system", ""),
+                state=h["state"],
+                metro_area=h["metro_area"],
+                neighborhood=h.get("neighborhood", ""),
+                lat=h.get("lat"),
+                lng=h.get("lng"),
+                npi=h.get("npi", ""),
+            )
+        )
 
     payers_data = yaml.safe_load((_DATA_DIR / "payers.yaml").read_text())["payers"]
     for pid, p in payers_data.items():
-        db.add(Payer(
-            payer_id=pid,
-            canonical_name=p["label"],
-            parent_brand=p.get("parent_brand", ""),
-            payer_type="commercial",
-            operating_states=p.get("operating_states", []),
-            tic_portal=p.get("tic_portal", ""),
-        ))
+        db.add(
+            Payer(
+                payer_id=pid,
+                canonical_name=p["label"],
+                parent_brand=p.get("parent_brand", ""),
+                payer_type="commercial",
+                operating_states=p.get("operating_states", []),
+                tic_portal=p.get("tic_portal", ""),
+            )
+        )
     db.flush()
 
 
@@ -54,15 +58,17 @@ def _seed_procedures(db: Session) -> None:
     """Populate procedures table from cpt_bundles.yaml."""
     bundles = yaml.safe_load((_DATA_DIR / "cpt_bundles.yaml").read_text())["bundles"]
     for bid, b in bundles.items():
-        db.merge(Procedure(
-            bundle_id=bid,
-            label=b["label"],
-            specialty=b.get("specialty", ""),
-            description=b.get("description", ""),
-            cpt_codes=[b["cpt"]],
-            tags=b.get("tags", []),
-            source="cpt_bundles.yaml",
-        ))
+        db.merge(
+            Procedure(
+                bundle_id=bid,
+                label=b["label"],
+                specialty=b.get("specialty", ""),
+                description=b.get("description", ""),
+                cpt_codes=[b["cpt"]],
+                tags=b.get("tags", []),
+                source="cpt_bundles.yaml",
+            )
+        )
     db.flush()
 
 
@@ -80,24 +86,40 @@ def dim_db(db_session: Session) -> Session:
 
 def test_multiple_plans_per_payer(dim_db: Session) -> None:
     """Insert 3 UHC plans for same hospital/cpt — all 3 stored."""
-    dim_db.add(HospitalProcedure(
-        id="mgh:45378", hospital_id="mgh", cpt="45378", cpt_desc="Colonoscopy",
-        source="test",
-    ))
+    dim_db.add(
+        HospitalProcedure(
+            id="mgh:45378",
+            hospital_id="mgh",
+            cpt="45378",
+            cpt_desc="Colonoscopy",
+            source="test",
+        )
+    )
     dim_db.flush()
 
     plans = ["UHC Choice Plus", "UHC Navigate", "UHC Select"]
     for plan in plans:
-        dim_db.add(HospitalPayerRate(
-            hospital_id="mgh", cpt="45378", payer_id="UHC",
-            negotiated_rate=1500.0 + plans.index(plan) * 100,
-            plan_name=plan, source_origin="mrf",
-        ))
+        dim_db.add(
+            HospitalPayerRate(
+                hospital_id="mgh",
+                cpt="45378",
+                payer_id="UHC",
+                negotiated_rate=1500.0 + plans.index(plan) * 100,
+                plan_name=plan,
+                source_origin="mrf",
+            )
+        )
     dim_db.flush()
 
-    stored = dim_db.query(HospitalPayerRate).filter_by(
-        hospital_id="mgh", cpt="45378", payer_id="UHC",
-    ).all()
+    stored = (
+        dim_db.query(HospitalPayerRate)
+        .filter_by(
+            hospital_id="mgh",
+            cpt="45378",
+            payer_id="UHC",
+        )
+        .all()
+    )
     assert len(stored) == 3
     stored_plans = {r.plan_name for r in stored}
     assert stored_plans == set(plans)
@@ -107,17 +129,30 @@ def test_upsert_idempotent_with_plan(dim_db: Session) -> None:
     """Run upsert twice — counts unchanged."""
     from sqlalchemy.dialects.postgresql import insert as pg_insert
 
-    dim_db.add(HospitalProcedure(
-        id="mgh:45378", hospital_id="mgh", cpt="45378", cpt_desc="Colonoscopy",
-        source="test",
-    ))
+    dim_db.add(
+        HospitalProcedure(
+            id="mgh:45378",
+            hospital_id="mgh",
+            cpt="45378",
+            cpt_desc="Colonoscopy",
+            source="test",
+        )
+    )
     dim_db.flush()
 
     row = {
-        "hospital_id": "mgh", "cpt": "45378", "payer_id": "BCBS_MA",
-        "negotiated_rate": 2000.0, "plan_name": "Blue Care Elect",
-        "source": "test", "source_origin": "mrf", "billing_class": "",
-        "price_source": "", "setting": "", "source_file": "", "rate_methodology": "",
+        "hospital_id": "mgh",
+        "cpt": "45378",
+        "payer_id": "BCBS_MA",
+        "negotiated_rate": 2000.0,
+        "plan_name": "Blue Care Elect",
+        "source": "test",
+        "source_origin": "mrf",
+        "billing_class": "",
+        "price_source": "",
+        "setting": "",
+        "source_file": "",
+        "rate_methodology": "",
         "rate_year": 0,
     }
     table = HospitalPayerRate.__table__
@@ -132,27 +167,47 @@ def test_upsert_idempotent_with_plan(dim_db: Session) -> None:
         dim_db.execute(stmt)
         dim_db.flush()
 
-    count = dim_db.query(HospitalPayerRate).filter_by(
-        hospital_id="mgh", cpt="45378", payer_id="BCBS_MA",
-    ).count()
+    count = (
+        dim_db.query(HospitalPayerRate)
+        .filter_by(
+            hospital_id="mgh",
+            cpt="45378",
+            payer_id="BCBS_MA",
+        )
+        .count()
+    )
     assert count == 1
 
 
 def test_empty_plan_name_not_null(dim_db: Session) -> None:
     """plan_name='' upserts correctly, not duplicated."""
-    dim_db.add(HospitalProcedure(
-        id="mgh:45378", hospital_id="mgh", cpt="45378", cpt_desc="Colonoscopy",
-        source="test",
-    ))
+    dim_db.add(
+        HospitalProcedure(
+            id="mgh:45378",
+            hospital_id="mgh",
+            cpt="45378",
+            cpt_desc="Colonoscopy",
+            source="test",
+        )
+    )
     dim_db.flush()
 
     for _ in range(2):
         from sqlalchemy.dialects.postgresql import insert as pg_insert
+
         row = {
-            "hospital_id": "mgh", "cpt": "45378", "payer_id": "BCBS_MA",
-            "negotiated_rate": 1800.0, "plan_name": "",
-            "source": "test", "source_origin": "mrf", "billing_class": "",
-            "price_source": "", "setting": "", "source_file": "", "rate_methodology": "",
+            "hospital_id": "mgh",
+            "cpt": "45378",
+            "payer_id": "BCBS_MA",
+            "negotiated_rate": 1800.0,
+            "plan_name": "",
+            "source": "test",
+            "source_origin": "mrf",
+            "billing_class": "",
+            "price_source": "",
+            "setting": "",
+            "source_file": "",
+            "rate_methodology": "",
             "rate_year": 0,
         }
         table = HospitalPayerRate.__table__
@@ -166,54 +221,101 @@ def test_empty_plan_name_not_null(dim_db: Session) -> None:
         dim_db.execute(stmt)
         dim_db.flush()
 
-    count = dim_db.query(HospitalPayerRate).filter_by(
-        hospital_id="mgh", cpt="45378", payer_id="BCBS_MA", plan_name="",
-    ).count()
+    count = (
+        dim_db.query(HospitalPayerRate)
+        .filter_by(
+            hospital_id="mgh",
+            cpt="45378",
+            payer_id="BCBS_MA",
+            plan_name="",
+        )
+        .count()
+    )
     assert count == 1
 
 
 def test_mrf_tic_coexist(dim_db: Session) -> None:
     """Same payer from MRF + TiC stored as 2 rows (different source_origin)."""
-    dim_db.add(HospitalProcedure(
-        id="mgh:45378", hospital_id="mgh", cpt="45378", cpt_desc="Colonoscopy",
-        source="test",
-    ))
+    dim_db.add(
+        HospitalProcedure(
+            id="mgh:45378",
+            hospital_id="mgh",
+            cpt="45378",
+            cpt_desc="Colonoscopy",
+            source="test",
+        )
+    )
     dim_db.flush()
 
-    dim_db.add(HospitalPayerRate(
-        hospital_id="mgh", cpt="45378", payer_id="BCBS_MA",
-        negotiated_rate=2000.0, plan_name="", source_origin="mrf",
-    ))
-    dim_db.add(HospitalPayerRate(
-        hospital_id="mgh", cpt="45378", payer_id="BCBS_MA",
-        negotiated_rate=1950.0, plan_name="", source_origin="tic",
-    ))
+    dim_db.add(
+        HospitalPayerRate(
+            hospital_id="mgh",
+            cpt="45378",
+            payer_id="BCBS_MA",
+            negotiated_rate=2000.0,
+            plan_name="",
+            source_origin="mrf",
+        )
+    )
+    dim_db.add(
+        HospitalPayerRate(
+            hospital_id="mgh",
+            cpt="45378",
+            payer_id="BCBS_MA",
+            negotiated_rate=1950.0,
+            plan_name="",
+            source_origin="tic",
+        )
+    )
     dim_db.flush()
 
-    count = dim_db.query(HospitalPayerRate).filter_by(
-        hospital_id="mgh", cpt="45378", payer_id="BCBS_MA",
-    ).count()
+    count = (
+        dim_db.query(HospitalPayerRate)
+        .filter_by(
+            hospital_id="mgh",
+            cpt="45378",
+            payer_id="BCBS_MA",
+        )
+        .count()
+    )
     assert count == 2
 
 
 def test_setting_stored(dim_db: Session) -> None:
     """setting column stores outpatient vs ASC values."""
-    dim_db.add(HospitalProcedure(
-        id="mgh:45378", hospital_id="mgh", cpt="45378", cpt_desc="Colonoscopy",
-        source="test",
-    ))
+    dim_db.add(
+        HospitalProcedure(
+            id="mgh:45378",
+            hospital_id="mgh",
+            cpt="45378",
+            cpt_desc="Colonoscopy",
+            source="test",
+        )
+    )
     dim_db.flush()
 
-    dim_db.add(HospitalPayerRate(
-        hospital_id="mgh", cpt="45378", payer_id="BCBS_MA",
-        negotiated_rate=2000.0, plan_name="Plan A", source_origin="mrf",
-        setting="outpatient",
-    ))
+    dim_db.add(
+        HospitalPayerRate(
+            hospital_id="mgh",
+            cpt="45378",
+            payer_id="BCBS_MA",
+            negotiated_rate=2000.0,
+            plan_name="Plan A",
+            source_origin="mrf",
+            setting="outpatient",
+        )
+    )
     dim_db.flush()
 
-    rate = dim_db.query(HospitalPayerRate).filter_by(
-        hospital_id="mgh", cpt="45378", payer_id="BCBS_MA",
-    ).one()
+    rate = (
+        dim_db.query(HospitalPayerRate)
+        .filter_by(
+            hospital_id="mgh",
+            cpt="45378",
+            payer_id="BCBS_MA",
+        )
+        .one()
+    )
     assert rate.setting == "outpatient"
 
 
@@ -278,16 +380,27 @@ def test_payers_operating_states(dim_db: Session) -> None:
 
 def test_cross_region_payer_isolation(dim_db: Session) -> None:
     """BCBS_MA rates don't appear when filtering for SF hospitals (none exist)."""
-    dim_db.add(HospitalProcedure(
-        id="mgh:45378", hospital_id="mgh", cpt="45378", cpt_desc="Colonoscopy",
-        source="test",
-    ))
+    dim_db.add(
+        HospitalProcedure(
+            id="mgh:45378",
+            hospital_id="mgh",
+            cpt="45378",
+            cpt_desc="Colonoscopy",
+            source="test",
+        )
+    )
     dim_db.flush()
 
-    dim_db.add(HospitalPayerRate(
-        hospital_id="mgh", cpt="45378", payer_id="BCBS_MA",
-        negotiated_rate=2000.0, plan_name="", source_origin="mrf",
-    ))
+    dim_db.add(
+        HospitalPayerRate(
+            hospital_id="mgh",
+            cpt="45378",
+            payer_id="BCBS_MA",
+            negotiated_rate=2000.0,
+            plan_name="",
+            source_origin="mrf",
+        )
+    )
     dim_db.flush()
 
     # Query rates for SF hospitals — should be empty
@@ -295,9 +408,11 @@ def test_cross_region_payer_isolation(dim_db: Session) -> None:
         h.hospital_id for h in dim_db.query(Hospital).filter_by(metro_area="san_francisco").all()
     ]
     if sf_hospital_ids:
-        sf_rates = dim_db.query(HospitalPayerRate).filter(
-            HospitalPayerRate.hospital_id.in_(sf_hospital_ids)
-        ).all()
+        sf_rates = (
+            dim_db.query(HospitalPayerRate)
+            .filter(HospitalPayerRate.hospital_id.in_(sf_hospital_ids))
+            .all()
+        )
         assert len(sf_rates) == 0
     else:
         # No SF hospitals — isolation holds trivially

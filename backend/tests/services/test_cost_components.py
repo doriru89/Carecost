@@ -9,7 +9,9 @@ from app.services.cost_components import (
 )
 
 
-def _mock_rate(*, negotiated_rate=1850.0, source_origin="mrf", effective_date="2026-01-01", rate_year=2026):
+def _mock_rate(
+    *, negotiated_rate=1850.0, source_origin="mrf", effective_date="2026-01-01", rate_year=2026
+):
     rate = MagicMock()
     rate.negotiated_rate = negotiated_rate
     rate.source_origin = source_origin

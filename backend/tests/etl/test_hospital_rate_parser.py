@@ -23,15 +23,45 @@ from app.etl.types import RawMrfRecord
 # ---------------------------------------------------------------------------
 
 GI_CPTS = {
-    "43235", "43239", "43244", "43249", "43255", "43259",
-    "45378", "45380", "45384", "45385", "45388",
-    "74176", "74177", "74178", "76700", "76705", "91110",
+    "43235",
+    "43239",
+    "43244",
+    "43249",
+    "43255",
+    "43259",
+    "45378",
+    "45380",
+    "45384",
+    "45385",
+    "45388",
+    "74176",
+    "74177",
+    "74178",
+    "76700",
+    "76705",
+    "91110",
 }
 DERM_CPTS = {
-    "99213", "99214", "11102", "11104", "11106",
-    "11300", "11305", "11400", "11401", "11600", "11602",
-    "17110", "17111", "17311", "17312", "88305", "88312",
-    "96910", "96920", "96922",
+    "99213",
+    "99214",
+    "11102",
+    "11104",
+    "11106",
+    "11300",
+    "11305",
+    "11400",
+    "11401",
+    "11600",
+    "11602",
+    "17110",
+    "17111",
+    "17311",
+    "17312",
+    "88305",
+    "88312",
+    "96910",
+    "96920",
+    "96922",
 }
 
 
@@ -83,6 +113,7 @@ def _make_standard_csv_row(
 # 1) test_parse_standard_csv_filters_by_cpt
 # ---------------------------------------------------------------------------
 
+
 def test_parse_standard_csv_filters_by_cpt(tmp_path: Path):
     """5 rows, only 2 match GI CPTs — verify filtering."""
     rows = [
@@ -111,6 +142,7 @@ def test_parse_standard_csv_filters_by_cpt(tmp_path: Path):
 # 2) test_parse_standard_csv_skips_header_rows
 # ---------------------------------------------------------------------------
 
+
 def test_parse_standard_csv_skips_header_rows(tmp_path: Path):
     """Verify metadata rows are skipped per skip_header_rows config."""
     rows = [
@@ -135,6 +167,7 @@ def test_parse_standard_csv_skips_header_rows(tmp_path: Path):
 # ---------------------------------------------------------------------------
 # 3) test_parse_cms_json_extracts_matching_cpts
 # ---------------------------------------------------------------------------
+
 
 def test_parse_cms_json_extracts_matching_cpts(tmp_path: Path):
     """Minimal JSON fixture: 3 standard_charge_information items, 1 matches GI."""
@@ -209,18 +242,34 @@ def test_parse_cms_json_extracts_matching_cpts(tmp_path: Path):
 # 4) test_parse_cms_v3_csv_dynamic_headers
 # ---------------------------------------------------------------------------
 
+
 def test_parse_cms_v3_csv_dynamic_headers(tmp_path: Path):
     """CMS v3 with code|1, code|2 columns — CPT in code|2."""
     header = [
-        "description", "code|1", "code|1|type", "code|2", "code|2|type",
-        "modifiers", "setting", "drug_unit_of_measurement",
-        "drug_type_of_measurement", "standard_charge|gross",
-        "standard_charge|discounted_cash", "payer_name", "plan_name",
-        "standard_charge|negotiated_dollar", "standard_charge|negotiated_percentage",
-        "standard_charge|negotiated_algorithm", "median_amount",
-        "10th_percentile", "90th_percentile", "count",
-        "standard_charge|methodology", "standard_charge|min",
-        "standard_charge|max", "additional_generic_notes",
+        "description",
+        "code|1",
+        "code|1|type",
+        "code|2",
+        "code|2|type",
+        "modifiers",
+        "setting",
+        "drug_unit_of_measurement",
+        "drug_type_of_measurement",
+        "standard_charge|gross",
+        "standard_charge|discounted_cash",
+        "payer_name",
+        "plan_name",
+        "standard_charge|negotiated_dollar",
+        "standard_charge|negotiated_percentage",
+        "standard_charge|negotiated_algorithm",
+        "median_amount",
+        "10th_percentile",
+        "90th_percentile",
+        "count",
+        "standard_charge|methodology",
+        "standard_charge|min",
+        "standard_charge|max",
+        "additional_generic_notes",
     ]
     rows = [
         ["META ROW 1"],
@@ -229,15 +278,57 @@ def test_parse_cms_v3_csv_dynamic_headers(tmp_path: Path):
         header,
         # Matching row: code|2 = 45378 (CPT)
         [
-            "Colonoscopy diagnostic", "CDM123", "CDM", "45378", "CPT",
-            "", "outpatient", "", "", "5000", "3000", "BCBS", "PPO",
-            "2500", "", "", "2400", "", "", "", "", "2000", "3000", "",
+            "Colonoscopy diagnostic",
+            "CDM123",
+            "CDM",
+            "45378",
+            "CPT",
+            "",
+            "outpatient",
+            "",
+            "",
+            "5000",
+            "3000",
+            "BCBS",
+            "PPO",
+            "2500",
+            "",
+            "",
+            "2400",
+            "",
+            "",
+            "",
+            "",
+            "2000",
+            "3000",
+            "",
         ],
         # Non-matching row
         [
-            "MRI Brain", "CDM456", "CDM", "70553", "CPT",
-            "", "outpatient", "", "", "8000", "6000", "Aetna", "HMO",
-            "5000", "", "", "", "", "", "", "", "", "", "",
+            "MRI Brain",
+            "CDM456",
+            "CDM",
+            "70553",
+            "CPT",
+            "",
+            "outpatient",
+            "",
+            "",
+            "8000",
+            "6000",
+            "Aetna",
+            "HMO",
+            "5000",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
         ],
     ]
     csv_path = _write_csv(tmp_path / "tufts.csv", rows)
@@ -261,25 +352,40 @@ def test_parse_cms_v3_csv_dynamic_headers(tmp_path: Path):
 # 5) test_parse_csv_wide_unpivots_payer_columns
 # ---------------------------------------------------------------------------
 
+
 def test_parse_csv_wide_unpivots_payer_columns(tmp_path: Path):
     """1 row with 2 payer columns -> 2 RawMrfRecords."""
     header = [
-        "description", "code|1", "code|1|type", "code|2", "code|2|type",
-        "modifiers", "setting",
-        "standard_charge|gross", "standard_charge|discounted_cash",
+        "description",
+        "code|1",
+        "code|1|type",
+        "code|2",
+        "code|2|type",
+        "modifiers",
+        "setting",
+        "standard_charge|gross",
+        "standard_charge|discounted_cash",
         "standard_charge|BCBS|PPO|negotiated_dollar",
         "standard_charge|Aetna|HMO|negotiated_dollar",
-        "standard_charge|min", "standard_charge|max",
+        "standard_charge|min",
+        "standard_charge|max",
     ]
     rows = [
         header,
         [
-            "Colonoscopy diagnostic", "CDM123", "CDM", "45378", "CPT",
-            "", "outpatient",
-            "5000", "3000",
+            "Colonoscopy diagnostic",
+            "CDM123",
+            "CDM",
+            "45378",
+            "CPT",
+            "",
+            "outpatient",
+            "5000",
+            "3000",
             "2500",  # BCBS PPO
             "2800",  # Aetna HMO
-            "2000", "3500",
+            "2000",
+            "3500",
         ],
     ]
     csv_path = _write_csv(tmp_path / "franciscan.csv", rows)
@@ -305,6 +411,7 @@ def test_parse_csv_wide_unpivots_payer_columns(tmp_path: Path):
 # 6) test_empty_file_returns_empty_list
 # ---------------------------------------------------------------------------
 
+
 def test_empty_file_returns_empty_list(tmp_path: Path):
     """Empty CSV should return [] without crashing."""
     csv_path = tmp_path / "empty.csv"
@@ -319,6 +426,7 @@ def test_empty_file_returns_empty_list(tmp_path: Path):
 # ---------------------------------------------------------------------------
 # 7) test_both_specialty_cpt_sets_work
 # ---------------------------------------------------------------------------
+
 
 def test_both_specialty_cpt_sets_work(tmp_path: Path):
     """Same parser works with both gi and derm CPT sets."""
@@ -346,6 +454,7 @@ def test_both_specialty_cpt_sets_work(tmp_path: Path):
 # 8) test_parse_all_hospital_rates_warns_on_missing
 # ---------------------------------------------------------------------------
 
+
 def test_parse_all_hospital_rates_warns_on_missing(tmp_path: Path, caplog):
     """Missing MRF file logs a warning but doesn't crash."""
     # Create a directory with NO files for mgh
@@ -355,13 +464,15 @@ def test_parse_all_hospital_rates_warns_on_missing(tmp_path: Path, caplog):
     # Should return empty (no files found)
     assert isinstance(results, list)
     # Should have logged warnings about missing files
-    assert any("not found" in r.message.lower() or "missing" in r.message.lower()
-               for r in caplog.records)
+    assert any(
+        "not found" in r.message.lower() or "missing" in r.message.lower() for r in caplog.records
+    )
 
 
 # ---------------------------------------------------------------------------
 # 9) test_unknown_hospital_raises
 # ---------------------------------------------------------------------------
+
 
 def test_unknown_hospital_raises(tmp_path: Path):
     """Unknown hospital_id raises KeyError."""
@@ -376,12 +487,18 @@ def test_unknown_hospital_raises(tmp_path: Path):
 # 10) test_parse_float_edge_cases (bonus: validates _parse_float helper)
 # ---------------------------------------------------------------------------
 
+
 def test_monetary_fields_are_float_or_none(tmp_path: Path):
     """Monetary fields parse to float; invalid/empty -> None."""
     rows = [
         _make_standard_csv_row(
-            cpt="45378", gross="5000.50", cash="", negotiated="N/A",
-            estimated="2400", min_val="abc", max_val="3000",
+            cpt="45378",
+            gross="5000.50",
+            cash="",
+            negotiated="N/A",
+            estimated="2400",
+            min_val="abc",
+            max_val="3000",
         ),
     ]
     csv_path = _write_csv(tmp_path / "test.csv", rows)
@@ -402,6 +519,7 @@ def test_monetary_fields_are_float_or_none(tmp_path: Path):
 # ---------------------------------------------------------------------------
 # 11) test_source_file_and_mrf_format_populated
 # ---------------------------------------------------------------------------
+
 
 def test_source_file_and_mrf_format_populated(tmp_path: Path):
     """source_file and mrf_format are set on every record."""
@@ -464,15 +582,45 @@ def _mock_hospital_source(
         }
         cpt_extraction_sets = {
             "gi": [
-                "43235", "43239", "43244", "43249", "43255", "43259",
-                "45378", "45380", "45384", "45385", "45388",
-                "74176", "74177", "74178", "76700", "76705", "91110",
+                "43235",
+                "43239",
+                "43244",
+                "43249",
+                "43255",
+                "43259",
+                "45378",
+                "45380",
+                "45384",
+                "45385",
+                "45388",
+                "74176",
+                "74177",
+                "74178",
+                "76700",
+                "76705",
+                "91110",
             ],
             "derm": [
-                "99213", "99214", "11102", "11104", "11106",
-                "11300", "11305", "11400", "11401", "11600", "11602",
-                "17110", "17111", "17311", "17312", "88305", "88312",
-                "96910", "96920", "96922",
+                "99213",
+                "99214",
+                "11102",
+                "11104",
+                "11106",
+                "11300",
+                "11305",
+                "11400",
+                "11401",
+                "11600",
+                "11602",
+                "17110",
+                "17111",
+                "17311",
+                "17312",
+                "88305",
+                "88312",
+                "96910",
+                "96920",
+                "96922",
             ],
         }
         hospital_mrf_sources = {hospital_id: source_config}
@@ -480,6 +628,8 @@ def _mock_hospital_source(
     class FakeHospital:
         name = "Test Hospital"
 
-    with patch("app.etl.hospital_rate_parser.load_etl_config", return_value=FakeEtlConfig()), \
-         patch("app.etl.hospital_rate_parser.get_hospital", return_value=FakeHospital()):
+    with (
+        patch("app.etl.hospital_rate_parser.load_etl_config", return_value=FakeEtlConfig()),
+        patch("app.etl.hospital_rate_parser.get_hospital", return_value=FakeHospital()),
+    ):
         yield

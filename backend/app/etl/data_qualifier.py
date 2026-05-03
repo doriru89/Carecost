@@ -57,7 +57,8 @@ def qualify_batch(records: list[NormalizedRecord]) -> list[QualifiedRecord]:
 
 
 def derive_data_completeness(
-    records: list[QualifiedRecord], hospital_id: str,
+    records: list[QualifiedRecord],
+    hospital_id: str,
 ) -> str:
     hospital_records = [r for r in records if r.hospital_id == hospital_id]
     if not hospital_records:
@@ -78,7 +79,11 @@ def derive_data_completeness(
 
 
 def compute_compliance_score(
-    *, has_gross: bool, has_cash: bool, has_de_id: bool, payer_count: int,
+    *,
+    has_gross: bool,
+    has_cash: bool,
+    has_de_id: bool,
+    payer_count: int,
 ) -> str:
     if not has_gross:
         return "non_compliant"
@@ -93,7 +98,11 @@ def derive_rate_quality_from_csv_row(row: dict[str, str]) -> str:
     from app.services.csv_import import _parse_float_cell
 
     payer_keys = ("bcbs_price", "aetna_price", "harvard_pilgrim_price", "uhc_price")
-    benchmark_keys = ("turquoise_bundled_price", "masscomparecare_total_paid", "fh_physician_in_network")
+    benchmark_keys = (
+        "turquoise_bundled_price",
+        "masscomparecare_total_paid",
+        "fh_physician_in_network",
+    )
 
     if any(_parse_float_cell(row.get(k, "")) for k in payer_keys):
         return RateQuality.NEGOTIATED.value

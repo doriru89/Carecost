@@ -19,9 +19,7 @@ class TestComputeOopRangeCents:
 
     def test_zero_allowed_returns_zero_oop(self) -> None:
         """Rate=0 (ACA preventive via hospital data) → $0 OOP."""
-        oop_min, oop_max, _ = compute_oop_range_cents(
-            0, 0, 50000, 400000, 10, 0, False
-        )
+        oop_min, oop_max, _ = compute_oop_range_cents(0, 0, 50000, 400000, 10, 0, False)
         assert oop_min == 0
         assert oop_max == 0
 
@@ -34,41 +32,29 @@ class TestComputeOopRangeCents:
 
     def test_oop_max_caps_high_rate(self) -> None:
         """$50,000 rate with $4K OOP max → capped."""
-        _, oop_max, _ = compute_oop_range_cents(
-            5000000, 5000000, 50000, 400000, 10, 0, False
-        )
+        _, oop_max, _ = compute_oop_range_cents(5000000, 5000000, 50000, 400000, 10, 0, False)
         assert oop_max <= 400000
 
     def test_copay_included_in_calculation(self) -> None:
         """$40 copay + coinsurance should exceed coinsurance-only."""
-        with_copay, _, _ = compute_oop_range_cents(
-            127900, 127900, 50000, 400000, 10, 4000, False
-        )
-        without_copay, _, _ = compute_oop_range_cents(
-            127900, 127900, 50000, 400000, 10, 0, False
-        )
+        with_copay, _, _ = compute_oop_range_cents(127900, 127900, 50000, 400000, 10, 4000, False)
+        without_copay, _, _ = compute_oop_range_cents(127900, 127900, 50000, 400000, 10, 0, False)
         assert with_copay > without_copay
 
     def test_zero_deductible_plan(self) -> None:
         """$0 deductible → full coinsurance on entire allowed amount."""
-        oop_min, _, _ = compute_oop_range_cents(
-            127900, 127900, 0, 400000, 10, 0, False
-        )
+        oop_min, _, _ = compute_oop_range_cents(127900, 127900, 0, 400000, 10, 0, False)
         # 127900 * 0.10 = 12790
         assert oop_min == 12790
 
     def test_none_values_treated_as_zero(self) -> None:
         """No plan data (all None) → should still compute without error."""
-        oop_min, oop_max, _ = compute_oop_range_cents(
-            127900, 127900, None, None, None, None, False
-        )
+        oop_min, oop_max, _ = compute_oop_range_cents(127900, 127900, None, None, None, None, False)
         # copay=0, coinsurance=0 → 0
         assert oop_min == 0
         assert oop_max == 0
 
     def test_min_max_range_with_different_allowed(self) -> None:
         """Different min/max allowed amounts produce a range."""
-        oop_min, oop_max, _ = compute_oop_range_cents(
-            100000, 200000, 50000, 400000, 20, 0, False
-        )
+        oop_min, oop_max, _ = compute_oop_range_cents(100000, 200000, 50000, 400000, 20, 0, False)
         assert oop_min < oop_max

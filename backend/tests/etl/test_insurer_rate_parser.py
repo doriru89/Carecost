@@ -12,11 +12,24 @@ import zipfile
 from pathlib import Path
 
 GI_CPTS = {
-    "43235", "43239", "43244", "43249", "43255", "43259",
-    "45378", "45380", "45384", "45385", "45388",
-    "74176", "74177", "74178", "76700", "76705", "91110",
+    "43235",
+    "43239",
+    "43244",
+    "43249",
+    "43255",
+    "43259",
+    "45378",
+    "45380",
+    "45384",
+    "45385",
+    "45388",
+    "74176",
+    "74177",
+    "74178",
+    "76700",
+    "76705",
+    "91110",
 }
-
 
 
 def _make_tic_json(
@@ -277,9 +290,7 @@ class TestNonMatchingNpiExcluded:
                 ),
             ],
             provider_references=[
-                _make_provider_ref(
-                    provider_group_id=1, npis=["9999999999"]
-                ),
+                _make_provider_ref(provider_group_id=1, npis=["9999999999"]),
             ],
         )
         f = _write_json(tmp_path, data)

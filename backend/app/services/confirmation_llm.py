@@ -44,7 +44,9 @@ class OpenAICompatibleClient:
             self._api_key = settings.lava_api_key
             self._base_url = settings.lava_api_base_url.rstrip("/")
             self._model = settings.lava_gemini_model
-            self._json_response_format = False  # Gemini via Lava: rely on prompt; avoid unsupported response_format
+            self._json_response_format = (
+                False  # Gemini via Lava: rely on prompt; avoid unsupported response_format
+            )
         else:
             self._api_key = settings.llm_api_key
             self._base_url = "https://api.openai.com/v1"

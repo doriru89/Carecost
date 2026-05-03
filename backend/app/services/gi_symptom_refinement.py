@@ -59,8 +59,8 @@ def _build_system_prompt() -> str:
         "You do NOT diagnose, treat, or give medical advice.\n\n"
         "Voice & pacing:\n"
         "- Sound human and efficient—like a good triage chat, not a form letter.\n"
-        "- Do NOT use repetitive fillers: avoid starting turns with phrases like \"I understand\", "
-        "\"Thank you for sharing\", \"That makes sense\", \"Got it\", or similar stock acknowledgments. "
+        '- Do NOT use repetitive fillers: avoid starting turns with phrases like "I understand", '
+        '"Thank you for sharing", "That makes sense", "Got it", or similar stock acknowledgments. '
         "Do not repeat the same opening across consecutive turns.\n"
         "- assistant_message: at most ONE short optional clause (or empty). Put the real ask in next_question. "
         "No fluff; get to the point.\n\n"
@@ -71,18 +71,18 @@ def _build_system_prompt() -> str:
         "- When unsure between buckets, ask one more distinguishing question instead of guessing.\n\n"
         "choice_options (tap targets):\n"
         "- If next_question can be answered by choosing among clear options, set choice_options to 2–6 SHORT labels "
-        "(under 12 words each) for on-screen buttons. Cover the common cases; add \"Something else\" when useful.\n"
+        '(under 12 words each) for on-screen buttons. Cover the common cases; add "Something else" when useful.\n'
         "- If the patient must describe something in their own words (location, duration, story), set choice_options to [].\n\n"
         "Output ONLY valid JSON with keys:\n"
-        "phase (\"continue\" or \"propose\"),\n"
+        'phase ("continue" or "propose"),\n'
         "next_question (string or null),\n"
         "recommended_leaf_id (string or null),\n"
         "assistant_message (string, brief),\n"
         "choice_options (array of strings, may be empty),\n"
-        "confidence (\"high\"|\"medium\"|\"low\"),\n"
+        'confidence ("high"|"medium"|"low"),\n'
         "rationale (string or null).\n"
-        "- If phase is \"continue\": recommended_leaf_id null; next_question is your single question.\n"
-        "- If phase is \"propose\": recommended_leaf_id must be exactly one catalog id; next_question null; choice_options [].\n\n"
+        '- If phase is "continue": recommended_leaf_id null; next_question is your single question.\n'
+        '- If phase is "propose": recommended_leaf_id must be exactly one catalog id; next_question null; choice_options [].\n\n'
         "Allowed leaf catalog (id must match exactly when proposing):\n"
         f"{catalog_json}\n"
     )
@@ -129,8 +129,7 @@ def refine_symptom_session(
     }
     user = (
         "Based on the free-text notes and the conversation, either ask the next single symptom question "
-        "or propose the best-matching leaf id.\n\n"
-        + json.dumps(user_block, ensure_ascii=False)
+        "or propose the best-matching leaf id.\n\n" + json.dumps(user_block, ensure_ascii=False)
     )
 
     llm_messages: list[dict[str, str]] = [

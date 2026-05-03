@@ -84,16 +84,30 @@ def _seed_dimension_tables(db: Session) -> None:
     from app.registries import all_hospitals, all_payers
 
     for hid, h in all_hospitals().items():
-        db.merge(Hospital(
-            hospital_id=hid, name=h.name, system_name=h.system,
-            state="MA", metro_area="boston", neighborhood=h.neighborhood,
-            lat=h.lat, lng=h.lng, npi=h.npi or "",
-        ))
+        db.merge(
+            Hospital(
+                hospital_id=hid,
+                name=h.name,
+                system_name=h.system,
+                state="MA",
+                metro_area="boston",
+                neighborhood=h.neighborhood,
+                lat=h.lat,
+                lng=h.lng,
+                npi=h.npi or "",
+            )
+        )
     for pid, p in all_payers().items():
-        db.merge(Payer(
-            payer_id=pid, canonical_name=p.label, parent_brand="",
-            payer_type="commercial", operating_states=[], tic_portal=p.tic_portal or "",
-        ))
+        db.merge(
+            Payer(
+                payer_id=pid,
+                canonical_name=p.label,
+                parent_brand="",
+                payer_type="commercial",
+                operating_states=[],
+                tic_portal=p.tic_portal or "",
+            )
+        )
 
 
 @pytest.fixture

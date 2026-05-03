@@ -11,29 +11,54 @@ CPT = "45378"
 
 
 def _make_hospital(db: Session, hid: str, *, is_curated: bool = True) -> None:
-    db.merge(Hospital(
-        hospital_id=hid, name=f"Hospital {hid}", system_name="Test",
-        state="MA", metro_area="boston", neighborhood="test",
-        lat=42.0, lng=-71.0, npi=f"100000000{hid[-1]}",
-        is_curated=is_curated,
-    ))
-    db.merge(HospitalProcedure(
-        id=f"{hid}_{CPT}", hospital_id=hid, cpt=CPT, cpt_desc="Colonoscopy",
-        gross_charge=5000.0,
-    ))
+    db.merge(
+        Hospital(
+            hospital_id=hid,
+            name=f"Hospital {hid}",
+            system_name="Test",
+            state="MA",
+            metro_area="boston",
+            neighborhood="test",
+            lat=42.0,
+            lng=-71.0,
+            npi=f"100000000{hid[-1]}",
+            is_curated=is_curated,
+        )
+    )
+    db.merge(
+        HospitalProcedure(
+            id=f"{hid}_{CPT}",
+            hospital_id=hid,
+            cpt=CPT,
+            cpt_desc="Colonoscopy",
+            gross_charge=5000.0,
+        )
+    )
     db.flush()
 
 
 def _make_rate(
-    db: Session, hid: str, payer_id: str, rate: float, *,
-    rate_year: int = 0, source_file: str = "test.json",
+    db: Session,
+    hid: str,
+    payer_id: str,
+    rate: float,
+    *,
+    rate_year: int = 0,
+    source_file: str = "test.json",
 ) -> None:
-    db.add(HospitalPayerRate(
-        hospital_id=hid, cpt=CPT, payer_id=payer_id,
-        negotiated_rate=rate, plan_name="Standard",
-        source_origin="mrf", billing_class="institutional",
-        source_file=source_file, rate_year=rate_year,
-    ))
+    db.add(
+        HospitalPayerRate(
+            hospital_id=hid,
+            cpt=CPT,
+            payer_id=payer_id,
+            negotiated_rate=rate,
+            plan_name="Standard",
+            source_origin="mrf",
+            billing_class="institutional",
+            source_file=source_file,
+            rate_year=rate_year,
+        )
+    )
     db.flush()
 
 

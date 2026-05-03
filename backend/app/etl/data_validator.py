@@ -94,14 +94,18 @@ def validate_etl_output(
 
         # 5. No negative prices
         if pr.negotiated_rate is not None and pr.negotiated_rate < 0:
-            errors.append(f"Negative rate {pr.negotiated_rate} for {pr.hospital_id}:{pr.cpt} payer {pr.payer_id}")
+            errors.append(
+                f"Negative rate {pr.negotiated_rate} for {pr.hospital_id}:{pr.cpt} payer {pr.payer_id}"
+            )
 
         # 6. Zero payer rate
         if pr.negotiated_rate is not None and pr.negotiated_rate == 0.0:
             errors.append(f"Zero rate for {pr.hospital_id}:{pr.cpt} payer {pr.payer_id}")
 
         # 7. Price range
-        if pr.negotiated_rate is not None and (pr.negotiated_rate < _PRICE_MIN or pr.negotiated_rate > _PRICE_MAX):
+        if pr.negotiated_rate is not None and (
+            pr.negotiated_rate < _PRICE_MIN or pr.negotiated_rate > _PRICE_MAX
+        ):
             errors.append(
                 f"Rate {pr.negotiated_rate} out of range [{_PRICE_MIN}, {_PRICE_MAX}] "
                 f"for {pr.hospital_id}:{pr.cpt} payer {pr.payer_id}"
@@ -119,7 +123,9 @@ def validate_etl_output(
             errors.append(f"Negative benchmark price {bm.price} for {bm.hospital_id}:{bm.cpt}")
 
     # 8. Gross > negotiated invariant (WARNING)
-    proc_gross = {(p.hospital_id, p.cpt): p.gross_charge for p in result.procedures if p.gross_charge}
+    proc_gross = {
+        (p.hospital_id, p.cpt): p.gross_charge for p in result.procedures if p.gross_charge
+    }
     for pr in result.payer_rates:
         gross = proc_gross.get((pr.hospital_id, pr.cpt))
         if gross and pr.negotiated_rate and pr.negotiated_rate > gross:

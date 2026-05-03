@@ -51,7 +51,9 @@ def test_every_bundle_has_required_fields(registry: dict) -> None:
 def test_bundles_reference_valid_specialties(registry: dict) -> None:
     valid_specialties = set(registry["specialties"].keys())
     for bid, bundle in registry["bundles"].items():
-        assert bundle["specialty"] in valid_specialties, f"Bundle {bid} has unknown specialty: {bundle['specialty']}"
+        assert bundle["specialty"] in valid_specialties, (
+            f"Bundle {bid} has unknown specialty: {bundle['specialty']}"
+        )
 
 
 def test_payers_has_entries(payers: list[dict]) -> None:
@@ -79,7 +81,17 @@ def test_plan_configs_has_entries(plan_configs: list[dict]) -> None:
 
 
 def test_plan_configs_shape(plan_configs: list[dict]) -> None:
-    required = {"id", "payer", "carrierKey", "planName", "planType", "deductible", "oopMax", "coinsurancePct", "copaySpecialist"}
+    required = {
+        "id",
+        "payer",
+        "carrierKey",
+        "planName",
+        "planType",
+        "deductible",
+        "oopMax",
+        "coinsurancePct",
+        "copaySpecialist",
+    }
     for pc in plan_configs:
         missing = required - set(pc.keys())
         assert not missing, f"Plan config {pc.get('id', '?')} missing fields: {missing}"
@@ -87,7 +99,9 @@ def test_plan_configs_shape(plan_configs: list[dict]) -> None:
 
 def test_plan_configs_types(plan_configs: list[dict]) -> None:
     for pc in plan_configs:
-        assert pc["planType"] in ("PPO", "HMO"), f"{pc['id']} has invalid planType: {pc['planType']}"
+        assert pc["planType"] in ("PPO", "HMO"), (
+            f"{pc['id']} has invalid planType: {pc['planType']}"
+        )
         assert isinstance(pc["deductible"], (int, float)), f"{pc['id']} deductible not numeric"
         assert isinstance(pc["oopMax"], (int, float)), f"{pc['id']} oopMax not numeric"
 
@@ -95,6 +109,8 @@ def test_plan_configs_types(plan_configs: list[dict]) -> None:
 def test_check_flag_passes() -> None:
     result = subprocess.run(
         ["python", str(_REPO_ROOT / "scripts" / "generate_frontend_registry.py"), "--check"],
-        capture_output=True, text=True, cwd=str(_REPO_ROOT),
+        capture_output=True,
+        text=True,
+        cwd=str(_REPO_ROOT),
     )
     assert result.returncode == 0, f"--check failed: {result.stdout}{result.stderr}"

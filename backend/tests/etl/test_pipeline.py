@@ -22,9 +22,12 @@ def _setup_synthetic_data(tmp_path):
 class TestRunEtl:
     def test_empty_dirs(self, tmp_path):
         from app.etl.pipeline import run_etl
+
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
         result = run_etl(
-            mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir,
+            mrf_dir=mrf_dir,
+            tic_dir=tic_dir,
+            data_dir=data_dir,
             output_dir=output_dir,
         )
         assert result.mrf_records_extracted == 0
@@ -33,9 +36,12 @@ class TestRunEtl:
 
     def test_result_populated(self, tmp_path):
         from app.etl.pipeline import run_etl
+
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
         result = run_etl(
-            mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir,
+            mrf_dir=mrf_dir,
+            tic_dir=tic_dir,
+            data_dir=data_dir,
             output_dir=output_dir,
         )
         assert result.validation_report is not None
@@ -43,9 +49,12 @@ class TestRunEtl:
 
     def test_csvs_written(self, tmp_path):
         from app.etl.pipeline import run_etl
+
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
         run_etl(
-            mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir,
+            mrf_dir=mrf_dir,
+            tic_dir=tic_dir,
+            data_dir=data_dir,
             output_dir=output_dir,
         )
         assert (output_dir / "hospital_procedures.csv").exists()
@@ -54,18 +63,24 @@ class TestRunEtl:
 
     def test_sha256_sidecar(self, tmp_path):
         from app.etl.pipeline import run_etl
+
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
         run_etl(
-            mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir,
+            mrf_dir=mrf_dir,
+            tic_dir=tic_dir,
+            data_dir=data_dir,
             output_dir=output_dir,
         )
         assert (output_dir / "hospital_procedures.csv.sha256").exists()
 
     def test_validation_report_in_result(self, tmp_path):
         from app.etl.pipeline import run_etl
+
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
         result = run_etl(
-            mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir,
+            mrf_dir=mrf_dir,
+            tic_dir=tic_dir,
+            data_dir=data_dir,
             output_dir=output_dir,
         )
         assert result.validation_report is not None
@@ -75,5 +90,6 @@ class TestRunEtl:
         """run_etl() no longer accepts a 'specialty' parameter — it processes all."""
         import inspect
         from app.etl.pipeline import run_etl
+
         sig = inspect.signature(run_etl)
         assert "specialty" not in sig.parameters

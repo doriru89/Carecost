@@ -42,7 +42,10 @@ async def _lifespan(_app: FastAPI) -> AsyncIterator[None]:
     assert counts["hospitals"] > 0, "No hospitals loaded — check data/registries/hospitals.yaml"
     logger.info(
         "registries loaded: %d bundles, %d hospitals, %d payers, %d specialties",
-        counts["bundles"], counts["hospitals"], counts["payers"], counts["specialties"],
+        counts["bundles"],
+        counts["hospitals"],
+        counts["payers"],
+        counts["specialties"],
     )
     yield
 
@@ -60,7 +63,9 @@ def create_app() -> FastAPI:
     )
 
     @app.middleware("http")
-    async def latency_metrics_middleware(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
+    async def latency_metrics_middleware(
+        request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
         start = time.perf_counter()
         response = await call_next(request)
         elapsed_ms = (time.perf_counter() - start) * 1000

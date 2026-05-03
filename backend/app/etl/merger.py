@@ -23,6 +23,7 @@ from app.registries import get_hospital
 
 logger = logging.getLogger(__name__)
 
+
 @dataclass
 class BenchmarkData:
     turquoise: dict[tuple[str, str], dict] = field(default_factory=dict)
@@ -49,7 +50,8 @@ def load_benchmarks(data_dir: Path) -> BenchmarkData:
 
     logger.info(
         "Loaded benchmarks: turquoise=%d, mcc=%d",
-        len(bd.turquoise), len(bd.masscomparecare),
+        len(bd.turquoise),
+        len(bd.masscomparecare),
     )
     return bd
 
@@ -69,7 +71,9 @@ def merge_records(
         try:
             get_hospital(hospital_id)
         except KeyError:
-            logger.error("Hospital '%s' not in registry, skipping %d records", hospital_id, len(recs))
+            logger.error(
+                "Hospital '%s' not in registry, skipping %d records", hospital_id, len(recs)
+            )
             continue
 
         mrf_recs = [r for r in recs if r.source_origin == "mrf"]
@@ -88,27 +92,26 @@ def merge_records(
             if rate is None or rate <= 0:
                 continue
             canonical_payer_count += 1
-            payer_rates.append(PayerRateRecord(
-                hospital_id=hospital_id,
-                cpt=cpt,
-                payer_id=rec.payer_id,
-                negotiated_rate=rate,
-                plan_name=rec.plan,
-                source=rec.price_source,
-                source_origin=rec.source_origin,
-                billing_class=rec.billing_class,
-                price_source=ps,
-                setting=rec.setting,
-                source_file=rec.source_file,
-                rate_methodology=rec.rate_methodology,
-            ))
+            payer_rates.append(
+                PayerRateRecord(
+                    hospital_id=hospital_id,
+                    cpt=cpt,
+                    payer_id=rec.payer_id,
+                    negotiated_rate=rate,
+                    plan_name=rec.plan,
+                    source=rec.price_source,
+                    source_origin=rec.source_origin,
+                    billing_class=rec.billing_class,
+                    price_source=ps,
+                    setting=rec.setting,
+                    source_file=rec.source_file,
+                    rate_methodology=rec.rate_methodology,
+                )
+            )
 
         has_gross = first_mrf.gross is not None and first_mrf.gross > 0
         has_cash = first_mrf.cash is not None and first_mrf.cash > 0
-        has_de_id = (
-            first_mrf.de_id_min is not None
-            and first_mrf.de_id_max is not None
-        )
+        has_de_id = first_mrf.de_id_min is not None and first_mrf.de_id_max is not None
 
         data_comp = derive_data_completeness(recs, hospital_id)
         comp_score = compute_compliance_score(
@@ -145,29 +148,33 @@ def merge_records(
             key = (hospital_id, cpt)
             turq = benchmarks.turquoise.get(key)
             if turq:
-                result.benchmarks.append(BenchmarkRecord(
-                    hospital_id=hospital_id,
-                    cpt=cpt,
-                    benchmark_source="turquoise",
-                    component="total",
-                    price=turq.get("bundled_price"),
-                    quality_rating=turq.get("quality_rating"),
-                    source_file=turq.get("source_file", ""),
-                    effective_date=turq.get("effective_date", ""),
-                    data_vintage=turq.get("data_vintage", ""),
-                ))
+                result.benchmarks.append(
+                    BenchmarkRecord(
+                        hospital_id=hospital_id,
+                        cpt=cpt,
+                        benchmark_source="turquoise",
+                        component="total",
+                        price=turq.get("bundled_price"),
+                        quality_rating=turq.get("quality_rating"),
+                        source_file=turq.get("source_file", ""),
+                        effective_date=turq.get("effective_date", ""),
+                        data_vintage=turq.get("data_vintage", ""),
+                    )
+                )
 
             mcc = benchmarks.masscomparecare.get(key)
             if mcc:
-                result.benchmarks.append(BenchmarkRecord(
-                    hospital_id=hospital_id,
-                    cpt=cpt,
-                    benchmark_source="masscomparecare",
-                    component="total",
-                    price=mcc.get("total_paid"),
-                    source_file=mcc.get("source_file", ""),
-                    effective_date=mcc.get("scraped_date", ""),
-                    data_vintage=mcc.get("data_vintage", ""),
-                ))
+                result.benchmarks.append(
+                    BenchmarkRecord(
+                        hospital_id=hospital_id,
+                        cpt=cpt,
+                        benchmark_source="masscomparecare",
+                        component="total",
+                        price=mcc.get("total_paid"),
+                        source_file=mcc.get("source_file", ""),
+                        effective_date=mcc.get("scraped_date", ""),
+                        data_vintage=mcc.get("data_vintage", ""),
+                    )
+                )
 
     return result

@@ -36,10 +36,22 @@ def test_list_hospitals_contract_normalized(client):
     assert len(data) > 0
     h = data[0]
     for field in [
-        "name", "hospital_id", "lat", "lng", "doctor_count",
-        "system_name", "metro_area", "neighborhood",
-        "gross_charge", "discounted_cash", "de_identified_min", "de_identified_max",
-        "cpt", "cpt_desc", "payer_rates", "benchmarks",
+        "name",
+        "hospital_id",
+        "lat",
+        "lng",
+        "doctor_count",
+        "system_name",
+        "metro_area",
+        "neighborhood",
+        "gross_charge",
+        "discounted_cash",
+        "de_identified_min",
+        "de_identified_max",
+        "cpt",
+        "cpt_desc",
+        "payer_rates",
+        "benchmarks",
     ]:
         assert field in h, f"Missing field: {field}"
     assert isinstance(h["payer_rates"], list)

@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Query
 
 from app.api.deps import DbDep
@@ -7,6 +6,7 @@ from app.modules.providers.application.use_cases import get_provider as get_prov
 from app.modules.providers.application.use_cases import list_providers as list_providers_use_case
 
 router = APIRouter()
+
 
 @router.get("", response_model=list[ProviderListItem])
 def list_providers(

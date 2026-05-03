@@ -38,8 +38,8 @@ def build_insurance_options(db: Session) -> dict[str, Any]:
     for ins in insurers:
         db_key = slug_to_db_key[ins["key"]]
         raw = [
-            r[0] for r in
-            db.query(distinct(HospitalPayerRate.plan_name))
+            r[0]
+            for r in db.query(distinct(HospitalPayerRate.plan_name))
             .filter(HospitalPayerRate.payer_id == db_key)
             .all()
         ]

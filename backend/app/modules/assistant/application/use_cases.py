@@ -18,13 +18,17 @@ def run_intake(payload: dict) -> tuple[dict, list[str]]:
 
 def run_confirm(fields: dict, llm: LLMClient) -> ConfirmResponse:
     merged = normalize_intake(fields)
-    schema_hint = "missing_fields: string[], follow_up_questions: {id,text}[], suggested_updates: object"
+    schema_hint = (
+        "missing_fields: string[], follow_up_questions: {id,text}[], suggested_updates: object"
+    )
     llm_out = llm.confirm_fields(merged, schema_hint)
     validated = validate_llm_confirm(llm_out.model_dump())
     base_missing = set(missing_required_fields(merged))
     llm_missing = set(validated.missing_fields)
     all_missing = sorted(base_missing | llm_missing)
-    questions = [FollowUpQuestion(id=q["id"], text=q["text"]) for q in validated.follow_up_questions]
+    questions = [
+        FollowUpQuestion(id=q["id"], text=q["text"]) for q in validated.follow_up_questions
+    ]
     return ConfirmResponse(
         missing_fields=all_missing,
         follow_up_questions=questions,
@@ -43,7 +47,9 @@ def apply_confirm(body: ConfirmApplyRequest) -> ConfirmApplyResponse:
     )
 
 
-def run_gi_symptom_refine(*, messages: list[dict[str, str]], symptom_notes: str) -> GiSymptomRefineResponse:
+def run_gi_symptom_refine(
+    *, messages: list[dict[str, str]], symptom_notes: str
+) -> GiSymptomRefineResponse:
     return refine_symptom_session(messages=messages, symptom_notes=symptom_notes)
 
 

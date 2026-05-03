@@ -74,6 +74,7 @@ INSURERS_COLUMNS = (
     "source",
 )
 
+
 def _read_csv(path: Path) -> list[dict[str, str]]:
     with path.open(newline="", encoding="utf-8") as f:
         return list(csv.DictReader(f))
@@ -297,7 +298,12 @@ def _upsert_by_constraint(db: Session, table_cls: type, rows: list[dict], constr
     return len(rows)
 
 
-_PROCEDURE_FLOAT_COLS = {"gross_charge", "discounted_cash", "de_identified_min", "de_identified_max"}
+_PROCEDURE_FLOAT_COLS = {
+    "gross_charge",
+    "discounted_cash",
+    "de_identified_min",
+    "de_identified_max",
+}
 _PAYER_RATE_FLOAT_COLS = {"negotiated_rate"}
 _BENCHMARK_FLOAT_COLS = {"price", "quality_rating"}
 

@@ -80,7 +80,10 @@ def normalize_records(
             if hospital_id is None:
                 logger.warning(
                     "Dropping MRF record: unmatched hospital '%s' (CPT=%s, payer='%s', file=%s)",
-                    rec.hospital_name, rec.cpt, rec.payer_raw, rec.source_file,
+                    rec.hospital_name,
+                    rec.cpt,
+                    rec.payer_raw,
+                    rec.source_file,
                 )
                 continue
             payer_id, include = normalize_payer_name(rec.payer_raw)
@@ -89,55 +92,62 @@ def normalize_records(
             else:
                 payer_id_val = payer_id
 
-            result.append(NormalizedRecord(
-                hospital_id=hospital_id,
-                cpt=rec.cpt,
-                cpt_desc=rec.cpt_desc,
-                description=rec.description,
-                payer_id=payer_id_val,
-                payer_raw=rec.payer_raw,
-                plan=rec.plan,
-                setting=rec.setting,
-                gross=rec.gross,
-                cash=rec.cash,
-                negotiated_dollar=rec.negotiated_dollar,
-                estimated_amount=rec.estimated_amount,
-                de_id_min=rec.de_id_min,
-                de_id_max=rec.de_id_max,
-                billing_class=rec.billing_class,
-                source_file=rec.source_file,
-                source_origin="mrf",
-                mrf_format=rec.mrf_format,
-            ))
+            result.append(
+                NormalizedRecord(
+                    hospital_id=hospital_id,
+                    cpt=rec.cpt,
+                    cpt_desc=rec.cpt_desc,
+                    description=rec.description,
+                    payer_id=payer_id_val,
+                    payer_raw=rec.payer_raw,
+                    plan=rec.plan,
+                    setting=rec.setting,
+                    gross=rec.gross,
+                    cash=rec.cash,
+                    negotiated_dollar=rec.negotiated_dollar,
+                    estimated_amount=rec.estimated_amount,
+                    de_id_min=rec.de_id_min,
+                    de_id_max=rec.de_id_max,
+                    billing_class=rec.billing_class,
+                    source_file=rec.source_file,
+                    source_origin="mrf",
+                    mrf_format=rec.mrf_format,
+                )
+            )
 
         elif isinstance(rec, RawTicRecord):
             hospital_id = normalize_hospital_name(rec.hospital_name, "tic")
             if hospital_id is None:
                 logger.warning(
                     "Dropping TiC record: unmatched hospital '%s' (CPT=%s, insurer=%s, file=%s)",
-                    rec.hospital_name, rec.cpt, rec.insurer_key, rec.source_file,
+                    rec.hospital_name,
+                    rec.cpt,
+                    rec.insurer_key,
+                    rec.source_file,
                 )
                 continue
 
             payer_id, _ = normalize_payer_name(rec.insurer_key.upper())
-            result.append(NormalizedRecord(
-                hospital_id=hospital_id,
-                cpt=rec.cpt,
-                cpt_desc=rec.cpt_desc,
-                description="",
-                payer_id=payer_id,
-                payer_raw=rec.insurer_key,
-                plan=rec.plan,
-                setting=rec.setting,
-                gross=None,
-                cash=None,
-                negotiated_dollar=rec.negotiated_rate,
-                estimated_amount=None,
-                de_id_min=None,
-                de_id_max=None,
-                billing_class=rec.billing_class,
-                source_file=rec.source_file,
-                source_origin="tic",
-            ))
+            result.append(
+                NormalizedRecord(
+                    hospital_id=hospital_id,
+                    cpt=rec.cpt,
+                    cpt_desc=rec.cpt_desc,
+                    description="",
+                    payer_id=payer_id,
+                    payer_raw=rec.insurer_key,
+                    plan=rec.plan,
+                    setting=rec.setting,
+                    gross=None,
+                    cash=None,
+                    negotiated_dollar=rec.negotiated_rate,
+                    estimated_amount=None,
+                    de_id_min=None,
+                    de_id_max=None,
+                    billing_class=rec.billing_class,
+                    source_file=rec.source_file,
+                    source_origin="tic",
+                )
+            )
 
     return result

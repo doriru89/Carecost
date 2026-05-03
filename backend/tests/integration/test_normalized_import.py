@@ -25,32 +25,46 @@ def _seed_dimensions(db: Session) -> None:
 
     hospitals_data = yaml.safe_load((_DATA_DIR / "hospitals.yaml").read_text())["hospitals"]
     for hid, h in hospitals_data.items():
-        db.add(Hospital(
-            hospital_id=hid, name=h["name"], system_name=h.get("system", ""),
-            state=h["state"], metro_area=h["metro_area"],
-            neighborhood=h.get("neighborhood", ""),
-            lat=h.get("lat"), lng=h.get("lng"), npi=h.get("npi", ""),
-        ))
+        db.add(
+            Hospital(
+                hospital_id=hid,
+                name=h["name"],
+                system_name=h.get("system", ""),
+                state=h["state"],
+                metro_area=h["metro_area"],
+                neighborhood=h.get("neighborhood", ""),
+                lat=h.get("lat"),
+                lng=h.get("lng"),
+                npi=h.get("npi", ""),
+            )
+        )
 
     payers_data = yaml.safe_load((_DATA_DIR / "payers.yaml").read_text())["payers"]
     for pid, p in payers_data.items():
-        db.add(Payer(
-            payer_id=pid, canonical_name=p["label"],
-            parent_brand=p.get("parent_brand", ""),
-            payer_type="commercial",
-            operating_states=p.get("operating_states", []),
-            tic_portal=p.get("tic_portal", ""),
-        ))
+        db.add(
+            Payer(
+                payer_id=pid,
+                canonical_name=p["label"],
+                parent_brand=p.get("parent_brand", ""),
+                payer_type="commercial",
+                operating_states=p.get("operating_states", []),
+                tic_portal=p.get("tic_portal", ""),
+            )
+        )
 
     bundles = yaml.safe_load((_DATA_DIR / "cpt_bundles.yaml").read_text())["bundles"]
     for bid, b in bundles.items():
-        db.merge(Procedure(
-            bundle_id=bid, label=b["label"],
-            specialty=b.get("specialty", ""),
-            description=b.get("description", ""),
-            cpt_codes=[b["cpt"]], tags=b.get("tags", []),
-            source="cpt_bundles.yaml",
-        ))
+        db.merge(
+            Procedure(
+                bundle_id=bid,
+                label=b["label"],
+                specialty=b.get("specialty", ""),
+                description=b.get("description", ""),
+                cpt_codes=[b["cpt"]],
+                tags=b.get("tags", []),
+                source="cpt_bundles.yaml",
+            )
+        )
     db.flush()
 
 
@@ -79,13 +93,26 @@ def test_import_procedures_csv(dim_db: Session, tmp_path: Path) -> None:
 
     rows = [
         {c: "" for c in PROCEDURE_COLUMNS}
-        | {"hospital_id": "mgh", "cpt": "45378", "cpt_desc": "Colonoscopy",
-           "gross_charge": "5000.50", "discounted_cash": "2500.25",
-           "data_completeness": "full", "source_type": "mrf", "rate_quality": "negotiated"},
+        | {
+            "hospital_id": "mgh",
+            "cpt": "45378",
+            "cpt_desc": "Colonoscopy",
+            "gross_charge": "5000.50",
+            "discounted_cash": "2500.25",
+            "data_completeness": "full",
+            "source_type": "mrf",
+            "rate_quality": "negotiated",
+        },
         {c: "" for c in PROCEDURE_COLUMNS}
-        | {"hospital_id": "bmc", "cpt": "45378", "cpt_desc": "Colonoscopy",
-           "gross_charge": "4200.00", "data_completeness": "partial",
-           "source_type": "mrf", "rate_quality": "unknown"},
+        | {
+            "hospital_id": "bmc",
+            "cpt": "45378",
+            "cpt_desc": "Colonoscopy",
+            "gross_charge": "4200.00",
+            "data_completeness": "partial",
+            "source_type": "mrf",
+            "rate_quality": "unknown",
+        },
     ]
     _write_csv(csv_path, PROCEDURE_COLUMNS, rows)
 
@@ -107,9 +134,16 @@ def test_import_procedures_idempotent(dim_db: Session, tmp_path: Path) -> None:
     csv_path = tmp_path / "hospital_procedures.csv"
     from app.etl.csv_builder import PROCEDURE_COLUMNS
 
-    rows = [{c: "" for c in PROCEDURE_COLUMNS}
-            | {"hospital_id": "mgh", "cpt": "45378", "cpt_desc": "Colonoscopy",
-               "gross_charge": "5000.50", "source_type": "mrf"}]
+    rows = [
+        {c: "" for c in PROCEDURE_COLUMNS}
+        | {
+            "hospital_id": "mgh",
+            "cpt": "45378",
+            "cpt_desc": "Colonoscopy",
+            "gross_charge": "5000.50",
+            "source_type": "mrf",
+        }
+    ]
     _write_csv(csv_path, PROCEDURE_COLUMNS, rows)
 
     import_hospital_procedures_csv(dim_db, csv_path)
@@ -132,14 +166,26 @@ def test_import_payer_rates_csv(dim_db: Session, tmp_path: Path) -> None:
 
     rows = [
         {c: "" for c in PAYER_RATE_COLUMNS}
-        | {"hospital_id": "mgh", "cpt": "45378", "payer_id": "BCBS_MA",
-           "negotiated_rate": "2000.50", "plan_name": "Blue Care Elect",
-           "source_origin": "mrf", "setting": "outpatient",
-           "source_file": "mgh_standard.zip"},
+        | {
+            "hospital_id": "mgh",
+            "cpt": "45378",
+            "payer_id": "BCBS_MA",
+            "negotiated_rate": "2000.50",
+            "plan_name": "Blue Care Elect",
+            "source_origin": "mrf",
+            "setting": "outpatient",
+            "source_file": "mgh_standard.zip",
+        },
         {c: "" for c in PAYER_RATE_COLUMNS}
-        | {"hospital_id": "mgh", "cpt": "45378", "payer_id": "BCBS_MA",
-           "negotiated_rate": "1800.00", "plan_name": "Blue Care PPO",
-           "source_origin": "mrf", "setting": "both"},
+        | {
+            "hospital_id": "mgh",
+            "cpt": "45378",
+            "payer_id": "BCBS_MA",
+            "negotiated_rate": "1800.00",
+            "plan_name": "Blue Care PPO",
+            "source_origin": "mrf",
+            "setting": "both",
+        },
     ]
     _write_csv(csv_path, PAYER_RATE_COLUMNS, rows)
 
@@ -147,9 +193,15 @@ def test_import_payer_rates_csv(dim_db: Session, tmp_path: Path) -> None:
     dim_db.commit()
 
     assert count == 2
-    stored = dim_db.query(HospitalPayerRate).filter_by(
-        hospital_id="mgh", cpt="45378", payer_id="BCBS_MA",
-    ).all()
+    stored = (
+        dim_db.query(HospitalPayerRate)
+        .filter_by(
+            hospital_id="mgh",
+            cpt="45378",
+            payer_id="BCBS_MA",
+        )
+        .all()
+    )
     assert len(stored) == 2
     plans = {r.plan_name for r in stored}
     assert plans == {"Blue Care Elect", "Blue Care PPO"}
@@ -162,10 +214,17 @@ def test_import_payer_rates_empty_plan_name(dim_db: Session, tmp_path: Path) -> 
     csv_path = tmp_path / "hospital_payer_rates.csv"
     from app.etl.csv_builder import PAYER_RATE_COLUMNS
 
-    rows = [{c: "" for c in PAYER_RATE_COLUMNS}
-            | {"hospital_id": "mgh", "cpt": "45378", "payer_id": "UHC",
-               "negotiated_rate": "1500.00", "plan_name": "",
-               "source_origin": "mrf"}]
+    rows = [
+        {c: "" for c in PAYER_RATE_COLUMNS}
+        | {
+            "hospital_id": "mgh",
+            "cpt": "45378",
+            "payer_id": "UHC",
+            "negotiated_rate": "1500.00",
+            "plan_name": "",
+            "source_origin": "mrf",
+        }
+    ]
     _write_csv(csv_path, PAYER_RATE_COLUMNS, rows)
 
     count = import_hospital_payer_rates_csv(dim_db, csv_path)
@@ -182,10 +241,17 @@ def test_import_payer_rates_idempotent(dim_db: Session, tmp_path: Path) -> None:
     csv_path = tmp_path / "hospital_payer_rates.csv"
     from app.etl.csv_builder import PAYER_RATE_COLUMNS
 
-    rows = [{c: "" for c in PAYER_RATE_COLUMNS}
-            | {"hospital_id": "mgh", "cpt": "45378", "payer_id": "BCBS_MA",
-               "negotiated_rate": "2000.00", "plan_name": "Test Plan",
-               "source_origin": "mrf"}]
+    rows = [
+        {c: "" for c in PAYER_RATE_COLUMNS}
+        | {
+            "hospital_id": "mgh",
+            "cpt": "45378",
+            "payer_id": "BCBS_MA",
+            "negotiated_rate": "2000.00",
+            "plan_name": "Test Plan",
+            "source_origin": "mrf",
+        }
+    ]
     _write_csv(csv_path, PAYER_RATE_COLUMNS, rows)
 
     import_hospital_payer_rates_csv(dim_db, csv_path)
@@ -204,10 +270,18 @@ def test_import_payer_rates_rate_methodology_spaces(dim_db: Session, tmp_path: P
     csv_path = tmp_path / "hospital_payer_rates.csv"
     from app.etl.csv_builder import PAYER_RATE_COLUMNS
 
-    rows = [{c: "" for c in PAYER_RATE_COLUMNS}
-            | {"hospital_id": "mgh", "cpt": "45378", "payer_id": "AETNA",
-               "negotiated_rate": "1800.00", "plan_name": "Aetna HMO",
-               "source_origin": "mrf", "rate_methodology": "fee schedule"}]
+    rows = [
+        {c: "" for c in PAYER_RATE_COLUMNS}
+        | {
+            "hospital_id": "mgh",
+            "cpt": "45378",
+            "payer_id": "AETNA",
+            "negotiated_rate": "1800.00",
+            "plan_name": "Aetna HMO",
+            "source_origin": "mrf",
+            "rate_methodology": "fee schedule",
+        }
+    ]
     _write_csv(csv_path, PAYER_RATE_COLUMNS, rows)
 
     count = import_hospital_payer_rates_csv(dim_db, csv_path)
@@ -229,8 +303,14 @@ def test_import_benchmarks_csv(dim_db: Session, tmp_path: Path) -> None:
 
     rows = [
         {c: "" for c in BENCHMARK_COLUMNS}
-        | {"hospital_id": "mgh", "cpt": "45378", "benchmark_source": "turquoise",
-           "component": "total", "price": "3500.00", "quality_rating": "4.2"},
+        | {
+            "hospital_id": "mgh",
+            "cpt": "45378",
+            "benchmark_source": "turquoise",
+            "component": "total",
+            "price": "3500.00",
+            "quality_rating": "4.2",
+        },
     ]
     _write_csv(csv_path, BENCHMARK_COLUMNS, rows)
 
@@ -251,22 +331,49 @@ def test_import_normalized_directory(dim_db: Session, tmp_path: Path) -> None:
 
     from app.etl.csv_builder import BENCHMARK_COLUMNS, PAYER_RATE_COLUMNS, PROCEDURE_COLUMNS
 
-    _write_csv(tmp_path / "hospital_procedures.csv", PROCEDURE_COLUMNS, [
-        {c: "" for c in PROCEDURE_COLUMNS}
-        | {"hospital_id": "mgh", "cpt": "45378", "cpt_desc": "Colonoscopy",
-           "gross_charge": "5000.00", "source_type": "mrf"},
-    ])
-    _write_csv(tmp_path / "hospital_payer_rates.csv", PAYER_RATE_COLUMNS, [
-        {c: "" for c in PAYER_RATE_COLUMNS}
-        | {"hospital_id": "mgh", "cpt": "45378", "payer_id": "BCBS_MA",
-           "negotiated_rate": "2000.00", "plan_name": "Test",
-           "source_origin": "mrf"},
-    ])
-    _write_csv(tmp_path / "hospital_benchmarks.csv", BENCHMARK_COLUMNS, [
-        {c: "" for c in BENCHMARK_COLUMNS}
-        | {"hospital_id": "mgh", "cpt": "45378", "benchmark_source": "turquoise",
-           "component": "total", "price": "3500.00"},
-    ])
+    _write_csv(
+        tmp_path / "hospital_procedures.csv",
+        PROCEDURE_COLUMNS,
+        [
+            {c: "" for c in PROCEDURE_COLUMNS}
+            | {
+                "hospital_id": "mgh",
+                "cpt": "45378",
+                "cpt_desc": "Colonoscopy",
+                "gross_charge": "5000.00",
+                "source_type": "mrf",
+            },
+        ],
+    )
+    _write_csv(
+        tmp_path / "hospital_payer_rates.csv",
+        PAYER_RATE_COLUMNS,
+        [
+            {c: "" for c in PAYER_RATE_COLUMNS}
+            | {
+                "hospital_id": "mgh",
+                "cpt": "45378",
+                "payer_id": "BCBS_MA",
+                "negotiated_rate": "2000.00",
+                "plan_name": "Test",
+                "source_origin": "mrf",
+            },
+        ],
+    )
+    _write_csv(
+        tmp_path / "hospital_benchmarks.csv",
+        BENCHMARK_COLUMNS,
+        [
+            {c: "" for c in BENCHMARK_COLUMNS}
+            | {
+                "hospital_id": "mgh",
+                "cpt": "45378",
+                "benchmark_source": "turquoise",
+                "component": "total",
+                "price": "3500.00",
+            },
+        ],
+    )
 
     counts = import_normalized_directory(dim_db, tmp_path)
     dim_db.commit()
@@ -282,11 +389,19 @@ def test_import_normalized_directory_partial(dim_db: Session, tmp_path: Path) ->
 
     from app.etl.csv_builder import PROCEDURE_COLUMNS
 
-    _write_csv(tmp_path / "hospital_procedures.csv", PROCEDURE_COLUMNS, [
-        {c: "" for c in PROCEDURE_COLUMNS}
-        | {"hospital_id": "mgh", "cpt": "45378", "cpt_desc": "Colonoscopy",
-           "source_type": "mrf"},
-    ])
+    _write_csv(
+        tmp_path / "hospital_procedures.csv",
+        PROCEDURE_COLUMNS,
+        [
+            {c: "" for c in PROCEDURE_COLUMNS}
+            | {
+                "hospital_id": "mgh",
+                "cpt": "45378",
+                "cpt_desc": "Colonoscopy",
+                "source_type": "mrf",
+            },
+        ],
+    )
 
     counts = import_normalized_directory(dim_db, tmp_path)
     dim_db.commit()

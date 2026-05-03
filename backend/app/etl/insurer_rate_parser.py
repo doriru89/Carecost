@@ -77,8 +77,12 @@ def parse_insurer_rates(
 
     # Join: resolve NPIs to hospitals
     raw_records = _join_rates_to_hospitals(
-        pending_rates, pgid_to_npis, npi_to_name, npi_to_id,
-        insurer_key, source_name,
+        pending_rates,
+        pgid_to_npis,
+        npi_to_name,
+        npi_to_id,
+        insurer_key,
+        source_name,
     )
 
     # Deduplicate: prefer fee_schedule over negotiated for same (hospital, CPT)
@@ -124,15 +128,17 @@ def _pass1_collect_rates(
                     if neg_type == "percentage":
                         continue
 
-                    pending.append(_PendingRate(
-                        billing_code=billing_code,
-                        name=name,
-                        negotiated_rate=float(price.get("negotiated_rate", 0)),
-                        negotiated_type=neg_type,
-                        billing_class=price.get("billing_class", ""),
-                        provider_group_ids=[int(x) for x in provider_ref_ids],
-                        source_file=source_name,
-                    ))
+                    pending.append(
+                        _PendingRate(
+                            billing_code=billing_code,
+                            name=name,
+                            negotiated_rate=float(price.get("negotiated_rate", 0)),
+                            negotiated_type=neg_type,
+                            billing_class=price.get("billing_class", ""),
+                            provider_group_ids=[int(x) for x in provider_ref_ids],
+                            source_file=source_name,
+                        )
+                    )
 
     logger.info("Pass 1: collected %d pending rates from %s", len(pending), source_name)
     return pending
@@ -171,19 +177,21 @@ def _join_rates_to_hospitals(
                 if npi not in npi_to_name:
                     continue
 
-                records.append(RawTicRecord(
-                    hospital_name=npi_to_name[npi],
-                    matched_npi=npi,
-                    cpt=rate.billing_code,
-                    cpt_desc=rate.name,
-                    negotiated_rate=rate.negotiated_rate,
-                    negotiated_type=rate.negotiated_type,
-                    billing_class=rate.billing_class,
-                    setting=_infer_setting(rate.billing_class),
-                    plan="",
-                    insurer_key=insurer_key,
-                    source_file=source_name,
-                ))
+                records.append(
+                    RawTicRecord(
+                        hospital_name=npi_to_name[npi],
+                        matched_npi=npi,
+                        cpt=rate.billing_code,
+                        cpt_desc=rate.name,
+                        negotiated_rate=rate.negotiated_rate,
+                        negotiated_type=rate.negotiated_type,
+                        billing_class=rate.billing_class,
+                        setting=_infer_setting(rate.billing_class),
+                        plan="",
+                        insurer_key=insurer_key,
+                        source_file=source_name,
+                    )
+                )
 
     logger.info("Join: produced %d matched records", len(records))
     return records

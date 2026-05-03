@@ -178,7 +178,12 @@ class HospitalPayerRate(Base):
 
     __table_args__ = (
         UniqueConstraint(
-            "hospital_id", "cpt", "payer_id", "source_origin", "plan_name", "rate_year",
+            "hospital_id",
+            "cpt",
+            "payer_id",
+            "source_origin",
+            "plan_name",
+            "rate_year",
             name="uq_hospital_payer_rates_natural_key",
         ),
         CheckConstraint(
@@ -205,7 +210,10 @@ class HospitalBenchmark(Base):
 
     __table_args__ = (
         UniqueConstraint(
-            "hospital_id", "cpt", "benchmark_source", "component",
+            "hospital_id",
+            "cpt",
+            "benchmark_source",
+            "component",
             name="uq_hospital_benchmarks_natural_key",
         ),
     )
@@ -273,7 +281,12 @@ Index("ix_providers_zip", Provider.zip)
 Index("ix_providers_specialties_gin", Provider.specialties, postgresql_using="gin")
 Index("ix_prices_provider_bundle_payer", Price.provider_id, Price.bundle_id, Price.payer)
 Index("ix_hospital_procedures_hid_cpt", HospitalProcedure.hospital_id, HospitalProcedure.cpt)
-Index("ix_hospital_payer_rates_hid_cpt_payer", HospitalPayerRate.hospital_id, HospitalPayerRate.cpt, HospitalPayerRate.payer_id)
+Index(
+    "ix_hospital_payer_rates_hid_cpt_payer",
+    HospitalPayerRate.hospital_id,
+    HospitalPayerRate.cpt,
+    HospitalPayerRate.payer_id,
+)
 Index("ix_hospital_benchmarks_hid_cpt", HospitalBenchmark.hospital_id, HospitalBenchmark.cpt)
 Index("ix_hospitals_metro_area", Hospital.metro_area)
 Index("ix_hospitals_state", Hospital.state)

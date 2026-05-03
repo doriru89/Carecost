@@ -12,6 +12,7 @@ Phase 10 schema evolution:
  5. Add FKs between tables
  6. Add indexes
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -70,17 +71,19 @@ def upgrade() -> None:
     )
     rows = []
     for hid, h in hospitals_data.items():
-        rows.append({
-            "hospital_id": hid,
-            "name": h["name"],
-            "system_name": h.get("system", ""),
-            "state": h["state"],
-            "metro_area": h["metro_area"],
-            "neighborhood": h.get("neighborhood", ""),
-            "lat": h.get("lat"),
-            "lng": h.get("lng"),
-            "npi": h.get("npi", ""),
-        })
+        rows.append(
+            {
+                "hospital_id": hid,
+                "name": h["name"],
+                "system_name": h.get("system", ""),
+                "state": h["state"],
+                "metro_area": h["metro_area"],
+                "neighborhood": h.get("neighborhood", ""),
+                "lat": h.get("lat"),
+                "lng": h.get("lng"),
+                "npi": h.get("npi", ""),
+            }
+        )
     op.bulk_insert(hospitals_table, rows)
 
     # ── 2. Create payers table ──
@@ -90,7 +93,9 @@ def upgrade() -> None:
         sa.Column("canonical_name", sa.Text(), nullable=False),
         sa.Column("parent_brand", sa.String(length=64), nullable=False, server_default=""),
         sa.Column("payer_type", sa.String(length=32), nullable=False, server_default="commercial"),
-        sa.Column("operating_states", postgresql.ARRAY(sa.Text()), nullable=False, server_default="{}"),
+        sa.Column(
+            "operating_states", postgresql.ARRAY(sa.Text()), nullable=False, server_default="{}"
+        ),
         sa.Column("tic_portal", sa.Text(), nullable=False, server_default=""),
         sa.PrimaryKeyConstraint("payer_id"),
     )
@@ -108,20 +113,27 @@ def upgrade() -> None:
     )
     payer_rows = []
     for pid, p in payers_data.items():
-        payer_rows.append({
-            "payer_id": pid,
-            "canonical_name": p["label"],
-            "parent_brand": p.get("parent_brand", ""),
-            "payer_type": "commercial",
-            "operating_states": p.get("operating_states", []),
-            "tic_portal": p.get("tic_portal", ""),
-        })
+        payer_rows.append(
+            {
+                "payer_id": pid,
+                "canonical_name": p["label"],
+                "parent_brand": p.get("parent_brand", ""),
+                "payer_type": "commercial",
+                "operating_states": p.get("operating_states", []),
+                "tic_portal": p.get("tic_portal", ""),
+            }
+        )
     op.bulk_insert(payers_table, payer_rows)
 
     # ── 3. Evolve procedures table ──
     # Add specialty and description columns
-    op.add_column("procedures", sa.Column("specialty", sa.String(length=64), nullable=False, server_default=""))
-    op.add_column("procedures", sa.Column("description", sa.Text(), nullable=False, server_default=""))
+    op.add_column(
+        "procedures",
+        sa.Column("specialty", sa.String(length=64), nullable=False, server_default=""),
+    )
+    op.add_column(
+        "procedures", sa.Column("description", sa.Text(), nullable=False, server_default="")
+    )
 
     # Change tags from Text to TEXT[] (ARRAY)
     op.execute("ALTER TABLE procedures ALTER COLUMN tags TYPE TEXT[] USING ARRAY[tags]")
@@ -130,7 +142,9 @@ def upgrade() -> None:
     op.execute("ALTER TABLE procedures ALTER COLUMN tags SET DEFAULT '{}'")
 
     # Add GIN index on cpt_codes
-    op.create_index("ix_procedures_cpt_codes_gin", "procedures", ["cpt_codes"], postgresql_using="gin")
+    op.create_index(
+        "ix_procedures_cpt_codes_gin", "procedures", ["cpt_codes"], postgresql_using="gin"
+    )
 
     # Populate procedures from cpt_bundles.yaml (upsert — existing rows get updated)
     bundles_data = _load_yaml("cpt_bundles.yaml")["bundles"]
@@ -159,15 +173,26 @@ def upgrade() -> None:
 
     # ── 4. Evolve hospital_payer_rates ──
     # Add new columns with server_default (existing rows get default)
-    op.add_column("hospital_payer_rates", sa.Column("setting", sa.String(length=64), nullable=False, server_default=""))
-    op.add_column("hospital_payer_rates", sa.Column("source_file", sa.Text(), nullable=False, server_default=""))
-    op.add_column("hospital_payer_rates", sa.Column("rate_methodology", sa.String(length=32), nullable=False, server_default=""))
+    op.add_column(
+        "hospital_payer_rates",
+        sa.Column("setting", sa.String(length=64), nullable=False, server_default=""),
+    )
+    op.add_column(
+        "hospital_payer_rates",
+        sa.Column("source_file", sa.Text(), nullable=False, server_default=""),
+    )
+    op.add_column(
+        "hospital_payer_rates",
+        sa.Column("rate_methodology", sa.String(length=32), nullable=False, server_default=""),
+    )
 
     # Backfill plan_name where NULL → '' (F1 safety)
     op.execute("UPDATE hospital_payer_rates SET plan_name = '' WHERE plan_name IS NULL")
 
     # Drop old unique constraint, create new one with plan_name
-    op.drop_constraint("uq_hospital_payer_rates_natural_key", "hospital_payer_rates", type_="unique")
+    op.drop_constraint(
+        "uq_hospital_payer_rates_natural_key", "hospital_payer_rates", type_="unique"
+    )
     op.create_unique_constraint(
         "uq_hospital_payer_rates_natural_key",
         "hospital_payer_rates",
@@ -185,37 +210,55 @@ def upgrade() -> None:
     # ── 5. Add FKs ──
     op.create_foreign_key(
         "fk_hospital_payer_rates_hospital_id",
-        "hospital_payer_rates", "hospitals",
-        ["hospital_id"], ["hospital_id"],
+        "hospital_payer_rates",
+        "hospitals",
+        ["hospital_id"],
+        ["hospital_id"],
     )
     op.create_foreign_key(
         "fk_hospital_payer_rates_payer_id",
-        "hospital_payer_rates", "payers",
-        ["payer_id"], ["payer_id"],
+        "hospital_payer_rates",
+        "payers",
+        ["payer_id"],
+        ["payer_id"],
     )
     op.create_foreign_key(
         "fk_hospital_procedures_hospital_id",
-        "hospital_procedures", "hospitals",
-        ["hospital_id"], ["hospital_id"],
+        "hospital_procedures",
+        "hospitals",
+        ["hospital_id"],
+        ["hospital_id"],
     )
     op.create_foreign_key(
         "fk_hospital_benchmarks_hospital_id",
-        "hospital_benchmarks", "hospitals",
-        ["hospital_id"], ["hospital_id"],
+        "hospital_benchmarks",
+        "hospitals",
+        ["hospital_id"],
+        ["hospital_id"],
     )
 
 
 def downgrade() -> None:
     """Downgrade schema."""
     # Drop FKs
-    op.drop_constraint("fk_hospital_benchmarks_hospital_id", "hospital_benchmarks", type_="foreignkey")
-    op.drop_constraint("fk_hospital_procedures_hospital_id", "hospital_procedures", type_="foreignkey")
-    op.drop_constraint("fk_hospital_payer_rates_payer_id", "hospital_payer_rates", type_="foreignkey")
-    op.drop_constraint("fk_hospital_payer_rates_hospital_id", "hospital_payer_rates", type_="foreignkey")
+    op.drop_constraint(
+        "fk_hospital_benchmarks_hospital_id", "hospital_benchmarks", type_="foreignkey"
+    )
+    op.drop_constraint(
+        "fk_hospital_procedures_hospital_id", "hospital_procedures", type_="foreignkey"
+    )
+    op.drop_constraint(
+        "fk_hospital_payer_rates_payer_id", "hospital_payer_rates", type_="foreignkey"
+    )
+    op.drop_constraint(
+        "fk_hospital_payer_rates_hospital_id", "hospital_payer_rates", type_="foreignkey"
+    )
 
     # Revert hospital_payer_rates
     op.drop_constraint("ck_hospital_payer_rates_methodology", "hospital_payer_rates", type_="check")
-    op.drop_constraint("uq_hospital_payer_rates_natural_key", "hospital_payer_rates", type_="unique")
+    op.drop_constraint(
+        "uq_hospital_payer_rates_natural_key", "hospital_payer_rates", type_="unique"
+    )
     op.create_unique_constraint(
         "uq_hospital_payer_rates_natural_key",
         "hospital_payer_rates",

@@ -44,7 +44,9 @@ def compute_oop_range_cents(
     if oop_max_cents:
         oop_min = min(oop_min, oop_max_cents)
         oop_max = min(oop_max, oop_max_cents)
-    assumptions.append("OOP computed from plan inputs where provided (FACT); call insurer to verify.")
+    assumptions.append(
+        "OOP computed from plan inputs where provided (FACT); call insurer to verify."
+    )
     return oop_min, oop_max, assumptions
 
 

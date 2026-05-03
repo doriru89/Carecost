@@ -6,7 +6,14 @@ import pytest
 
 from app.etl.rvu_parser import parse_rvu_file
 
-RVU_PATH = Path(__file__).resolve().parent.parent.parent.parent / "data" / "raw" / "government" / "cms_pfs" / "PPRRVU2026_Jan_nonQPP.csv"
+RVU_PATH = (
+    Path(__file__).resolve().parent.parent.parent.parent
+    / "data"
+    / "raw"
+    / "government"
+    / "cms_pfs"
+    / "PPRRVU2026_Jan_nonQPP.csv"
+)
 
 skip_if_no_rvu = pytest.mark.skipif(
     not RVU_PATH.exists(),
@@ -51,9 +58,23 @@ class TestRvuParser:
 
     def test_all_gi_cpts_present(self):
         gi_cpts = {
-            "43235", "43239", "43244", "43249", "43255", "43259",
-            "45378", "45380", "45384", "45385", "45388",
-            "74176", "74177", "74178", "76700", "76705", "91110",
+            "43235",
+            "43239",
+            "43244",
+            "43249",
+            "43255",
+            "43259",
+            "45378",
+            "45380",
+            "45384",
+            "45385",
+            "45388",
+            "74176",
+            "74177",
+            "74178",
+            "76700",
+            "76705",
+            "91110",
         }
         recs = parse_rvu_file(RVU_PATH, gi_cpts)
         found_cpts = {r.cpt for r in recs}

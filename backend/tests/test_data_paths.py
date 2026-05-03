@@ -1,4 +1,5 @@
 """Verify canonical seed data paths exist and contain expected files."""
+
 import pytest
 from pathlib import Path
 

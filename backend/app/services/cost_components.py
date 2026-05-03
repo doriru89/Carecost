@@ -108,14 +108,16 @@ def get_cost_components(
         gpci = BOSTON_GPCI[gpci_key]
         pct = rvu_val / total_rvu if total_rvu else 0
         amount = round(neg_rate * pct, 2)
-        components.append(CostComponent(
-            name=name,
-            amount=amount,
-            rvu=rvu_val,
-            gpci=gpci,
-            pct_of_total=round(pct * 100, 1),
-            provenance=rvu_prov,
-        ))
+        components.append(
+            CostComponent(
+                name=name,
+                amount=amount,
+                rvu=rvu_val,
+                gpci=gpci,
+                pct_of_total=round(pct * 100, 1),
+                provenance=rvu_prov,
+            )
+        )
 
     return CostComponentResponse(
         hospital_id=hospital_id,
@@ -129,7 +131,10 @@ def get_cost_components(
 
 
 def _get_latest_rate(
-    db: Session, hospital_id: str, cpt: str, payer_id: str | None,
+    db: Session,
+    hospital_id: str,
+    cpt: str,
+    payer_id: str | None,
 ) -> HospitalPayerRate | None:
     stmt = (
         select(HospitalPayerRate)

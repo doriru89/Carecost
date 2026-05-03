@@ -60,7 +60,10 @@ def test_hospital_id_by_name():
 
 def test_infer_hospital_from_address():
     assert infer_hospital_from_address("55 FRUIT ST", "Boston") == "Massachusetts General Hospital"
-    assert infer_hospital_from_address("330 BROOKLINE AVE", "Boston") == "Beth Israel Deaconess Medical Center"
+    assert (
+        infer_hospital_from_address("330 BROOKLINE AVE", "Boston")
+        == "Beth Israel Deaconess Medical Center"
+    )
     assert infer_hospital_from_address("unknown", "nowhere") == ""
 
 

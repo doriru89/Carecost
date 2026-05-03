@@ -50,5 +50,3 @@ def list_specialties(db: Session) -> list[dict[str, Any]]:
         }
         for name in all_specialty_names()
     ]
-
-

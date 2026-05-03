@@ -150,8 +150,6 @@ class MergeResult:
     benchmarks: list[BenchmarkRecord] = field(default_factory=list)
 
 
-
-
 @dataclass(frozen=True)
 class MrfFileSpec:
     """Describes one MRF file for extraction."""

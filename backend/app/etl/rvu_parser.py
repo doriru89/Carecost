@@ -83,24 +83,28 @@ def parse_rvu_file(
                 continue
 
             modifier = row[COL_MOD].strip()
-            records.append(RvuRecord(
-                cpt=cpt,
-                modifier=modifier,
-                description=row[COL_DESCRIPTION].strip(),
-                work_rvu=_safe_float(row[COL_WORK_RVU]),
-                facility_pe_rvu=_safe_float(row[COL_FAC_PE_RVU]),
-                non_facility_pe_rvu=_safe_float(row[COL_NON_FAC_PE_RVU]),
-                malpractice_rvu=_safe_float(row[COL_MP_RVU]),
-                facility_total_rvu=_safe_float(row[COL_FAC_TOTAL]),
-                non_facility_total_rvu=_safe_float(row[COL_NON_FAC_TOTAL]),
-                conversion_factor=_safe_float(row[COL_CONV_FACTOR]),
-                global_surgery=row[COL_GLOB_DAYS].strip(),
-                pfs_year=pfs_year,
-                source_file=source_name,
-            ))
+            records.append(
+                RvuRecord(
+                    cpt=cpt,
+                    modifier=modifier,
+                    description=row[COL_DESCRIPTION].strip(),
+                    work_rvu=_safe_float(row[COL_WORK_RVU]),
+                    facility_pe_rvu=_safe_float(row[COL_FAC_PE_RVU]),
+                    non_facility_pe_rvu=_safe_float(row[COL_NON_FAC_PE_RVU]),
+                    malpractice_rvu=_safe_float(row[COL_MP_RVU]),
+                    facility_total_rvu=_safe_float(row[COL_FAC_TOTAL]),
+                    non_facility_total_rvu=_safe_float(row[COL_NON_FAC_TOTAL]),
+                    conversion_factor=_safe_float(row[COL_CONV_FACTOR]),
+                    global_surgery=row[COL_GLOB_DAYS].strip(),
+                    pfs_year=pfs_year,
+                    source_file=source_name,
+                )
+            )
 
     logger.info(
         "Parsed %d RVU records for %d target CPTs from %s",
-        len(records), len(target_cpts), source_name,
+        len(records),
+        len(target_cpts),
+        source_name,
     )
     return records

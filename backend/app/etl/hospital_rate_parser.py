@@ -39,8 +39,7 @@ def parse_hospital_rates(
 
     if hospital_id not in sources:
         raise KeyError(
-            f"Unknown hospital MRF source: {hospital_id}. "
-            f"Available: {list(sources.keys())}"
+            f"Unknown hospital MRF source: {hospital_id}. Available: {list(sources.keys())}"
         )
 
     source = sources[hospital_id]
@@ -67,9 +66,7 @@ def parse_hospital_rates(
     return handler(file_path, target_cpts, hospital_name, merged_config, fmt)
 
 
-def parse_all_hospital_rates(
-    mrf_dir: Path, target_cpts: set[str]
-) -> list[RawMrfRecord]:
+def parse_all_hospital_rates(mrf_dir: Path, target_cpts: set[str]) -> list[RawMrfRecord]:
     """Parse all MRF files in the directory for the given CPT set.
 
     Uses hospital_mrf_sources config to find files.
@@ -86,17 +83,13 @@ def parse_all_hospital_rates(
         file_path = mrf_dir / f"{hospital_id}_standardcharges{ext}"
 
         if not file_path.exists():
-            logger.warning(
-                "MRF file not found for %s: %s", hospital_id, file_path
-            )
+            logger.warning("MRF file not found for %s: %s", hospital_id, file_path)
             continue
 
         try:
             records = parse_hospital_rates(file_path, hospital_id, target_cpts)
             all_records.extend(records)
-            logger.info(
-                "%s: extracted %d records", hospital_id, len(records)
-            )
+            logger.info("%s: extracted %d records", hospital_id, len(records))
         except Exception:
             logger.exception("Error parsing MRF for %s", hospital_id)
 
@@ -150,8 +143,7 @@ def _open_mrf_file(
         with zipfile.ZipFile(file_path) as zf:
             # Find the right file inside the ZIP (skip __MACOSX)
             names = [
-                n for n in zf.namelist()
-                if not n.startswith("__MACOSX") and not n.startswith(".")
+                n for n in zf.namelist() if not n.startswith("__MACOSX") and not n.startswith(".")
             ]
             if not names:
                 yield io.StringIO(""), file_path.name
@@ -165,6 +157,7 @@ def _open_mrf_file(
                 elif fmt == "xlsx":
                     # Write to tmp for openpyxl
                     import tempfile
+
                     with tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False) as tmp:
                         tmp.write(raw.read())
                         tmp_path = Path(tmp.name)
@@ -202,9 +195,7 @@ def _dispatch_standard_csv(
         if isinstance(fh, io.StringIO) and fh.getvalue() == "":
             return []
         reader = csv.reader(fh)  # type: ignore[arg-type]
-        return _parse_standard_csv(
-            reader, cpt_codes, hospital_name, config, str(file_path), fmt
-        )
+        return _parse_standard_csv(reader, cpt_codes, hospital_name, config, str(file_path), fmt)
 
 
 def _dispatch_cms_v3_csv(
@@ -218,9 +209,7 @@ def _dispatch_cms_v3_csv(
         if isinstance(fh, io.StringIO) and fh.getvalue() == "":
             return []
         reader = csv.reader(fh)  # type: ignore[arg-type]
-        return _parse_cms_v3_csv(
-            reader, cpt_codes, hospital_name, config, str(file_path), fmt
-        )
+        return _parse_cms_v3_csv(reader, cpt_codes, hospital_name, config, str(file_path), fmt)
 
 
 def _dispatch_cms_json(
@@ -234,7 +223,12 @@ def _dispatch_cms_json(
         if isinstance(data, (io.StringIO, str)):
             return []
         return _parse_cms_json(
-            data, cpt_codes, hospital_name, config, str(file_path), fmt  # type: ignore[arg-type]
+            data,
+            cpt_codes,
+            hospital_name,
+            config,
+            str(file_path),
+            fmt,  # type: ignore[arg-type]
         )
 
 
@@ -247,7 +241,12 @@ def _dispatch_xlsx(
 ) -> list[RawMrfRecord]:
     with _open_mrf_file(file_path, config) as (xlsx_path, _):
         return _parse_xlsx(
-            xlsx_path, cpt_codes, hospital_name, config, str(file_path), fmt  # type: ignore[arg-type]
+            xlsx_path,
+            cpt_codes,
+            hospital_name,
+            config,
+            str(file_path),
+            fmt,  # type: ignore[arg-type]
         )
 
 
@@ -262,9 +261,7 @@ def _dispatch_csv_wide(
         if isinstance(fh, io.StringIO) and fh.getvalue() == "":
             return []
         reader = csv.reader(fh)  # type: ignore[arg-type]
-        return _parse_csv_wide(
-            reader, cpt_codes, hospital_name, config, str(file_path), fmt
-        )
+        return _parse_csv_wide(reader, cpt_codes, hospital_name, config, str(file_path), fmt)
 
 
 # ---------------------------------------------------------------------------
@@ -391,9 +388,7 @@ def _parse_cms_v3_csv(
                 setting=_get(row, "setting"),
                 gross=_parse_float(_get(row, "standard_charge|gross")),
                 cash=_parse_float(_get(row, "standard_charge|discounted_cash")),
-                negotiated_dollar=_parse_float(
-                    _get(row, "standard_charge|negotiated_dollar")
-                ),
+                negotiated_dollar=_parse_float(_get(row, "standard_charge|negotiated_dollar")),
                 estimated_amount=_parse_float(
                     _get(row, "median_amount") or _get(row, "estimated_amount")
                 ),
@@ -456,8 +451,7 @@ def _parse_cms_json(
                     gross=_parse_float(charge.get("gross_charge")),
                     cash=_parse_float(charge.get("discounted_cash")),
                     negotiated_dollar=_parse_float(
-                        charge.get("standard_charge_dollar")
-                        or charge.get("negotiated_dollar")
+                        charge.get("standard_charge_dollar") or charge.get("negotiated_dollar")
                     ),
                     estimated_amount=_parse_float(charge.get("estimated_amount")),
                     de_id_min=_parse_float(charge.get("minimum")),
@@ -498,10 +492,7 @@ def _parse_xlsx(
         if header is None:
             # Look for header row containing a CPT column identifier
             row_strs = [str(c or "").strip().lower() for c in row]
-            if any(
-                "cpt" in cell or "billing_cd" in cell or "hcpcs" in cell
-                for cell in row_strs
-            ):
+            if any("cpt" in cell or "billing_cd" in cell or "hcpcs" in cell for cell in row_strs):
                 header = row_strs
                 continue
             # Don't scan forever
@@ -537,13 +528,13 @@ def _parse_xlsx(
                 cpt=cpt,
                 cpt_desc="",
                 description=str(
-                    row_dict.get("billing_description", "")
-                    or row_dict.get("description", "")
-                    or ""
+                    row_dict.get("billing_description", "") or row_dict.get("description", "") or ""
                 ),
                 payer_raw=str(row_dict.get("payer", "") or ""),
                 plan=str(row_dict.get("plan", "") or ""),
-                setting=str(row_dict.get("class_nm", "") or row_dict.get("setting", "") or "").lower(),
+                setting=str(
+                    row_dict.get("class_nm", "") or row_dict.get("setting", "") or ""
+                ).lower(),
                 gross=_parse_float(row_dict.get("gross_chg_amt") or row_dict.get("gross_charge")),
                 cash=_parse_float(row_dict.get("disc_chg_amt") or row_dict.get("discounted_cash")),
                 negotiated_dollar=_parse_float(
@@ -598,9 +589,7 @@ def _parse_csv_wide(
     # Find payer columns: standard_charge|<Payer>|<Plan>|negotiated_dollar
     payer_cols: list[tuple[int, str, str]] = []
     for col_name, idx in h.items():
-        if col_name.startswith("standard_charge|") and col_name.endswith(
-            "|negotiated_dollar"
-        ):
+        if col_name.startswith("standard_charge|") and col_name.endswith("|negotiated_dollar"):
             parts = col_name.split("|")
             if len(parts) >= 4:
                 payer = parts[1]
@@ -629,11 +618,7 @@ def _parse_csv_wide(
             type_idx = h_lower.get(f"{code_key}|type", -1)
             if 0 <= idx < len(row):
                 val = row[idx].strip()
-                code_type = (
-                    row[type_idx].strip().upper()
-                    if 0 <= type_idx < len(row)
-                    else ""
-                )
+                code_type = row[type_idx].strip().upper() if 0 <= type_idx < len(row) else ""
                 if val in cpt_codes and code_type in ("CPT", "HCPCS", ""):
                     cpt = val
                     break

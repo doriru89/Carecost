@@ -42,9 +42,7 @@ def query_hospitals(
     hospitals_dim = {h.hospital_id: h for h in q.all()}
 
     if metro_area:
-        hospitals_dim = {
-            hid: h for hid, h in hospitals_dim.items() if h.metro_area == metro_area
-        }
+        hospitals_dim = {hid: h for hid, h in hospitals_dim.items() if h.metro_area == metro_area}
 
     rate_q = db.query(HospitalPayerRate).filter(
         HospitalPayerRate.cpt == cpt,
@@ -78,41 +76,43 @@ def query_hospitals(
             logger.warning("Hospital %s in procedures but missing from dimension table", hid)
             continue
 
-        results.append({
-            "hospital_id": hid,
-            "name": hosp.name,
-            "system_name": hosp.system_name,
-            "metro_area": hosp.metro_area,
-            "neighborhood": hosp.neighborhood,
-            "lat": hosp.lat,
-            "lng": hosp.lng,
-            "cpt": proc.cpt,
-            "cpt_desc": proc.cpt_desc,
-            "gross_charge": proc.gross_charge,
-            "discounted_cash": proc.discounted_cash,
-            "de_identified_min": proc.de_identified_min,
-            "de_identified_max": proc.de_identified_max,
-            "payer_rates": [
-                {
-                    "payer_id": PAYER_ID_TO_SLUG.get(r.payer_id, r.payer_id.lower()),
-                    "negotiated_rate": r.negotiated_rate,
-                    "plan_name": r.plan_name,
-                    "source_origin": r.source_origin,
-                    "billing_class": r.billing_class,
-                    "rate_year": r.rate_year,
-                    "effective_date": r.effective_date,
-                }
-                for r in rates_by_hid.get(hid, [])
-            ],
-            "benchmarks": [
-                {
-                    "benchmark_source": b.benchmark_source,
-                    "component": b.component,
-                    "price": b.price,
-                    "quality_rating": b.quality_rating,
-                }
-                for b in bm_by_hid.get(hid, [])
-            ],
-        })
+        results.append(
+            {
+                "hospital_id": hid,
+                "name": hosp.name,
+                "system_name": hosp.system_name,
+                "metro_area": hosp.metro_area,
+                "neighborhood": hosp.neighborhood,
+                "lat": hosp.lat,
+                "lng": hosp.lng,
+                "cpt": proc.cpt,
+                "cpt_desc": proc.cpt_desc,
+                "gross_charge": proc.gross_charge,
+                "discounted_cash": proc.discounted_cash,
+                "de_identified_min": proc.de_identified_min,
+                "de_identified_max": proc.de_identified_max,
+                "payer_rates": [
+                    {
+                        "payer_id": PAYER_ID_TO_SLUG.get(r.payer_id, r.payer_id.lower()),
+                        "negotiated_rate": r.negotiated_rate,
+                        "plan_name": r.plan_name,
+                        "source_origin": r.source_origin,
+                        "billing_class": r.billing_class,
+                        "rate_year": r.rate_year,
+                        "effective_date": r.effective_date,
+                    }
+                    for r in rates_by_hid.get(hid, [])
+                ],
+                "benchmarks": [
+                    {
+                        "benchmark_source": b.benchmark_source,
+                        "component": b.component,
+                        "price": b.price,
+                        "quality_rating": b.quality_rating,
+                    }
+                    for b in bm_by_hid.get(hid, [])
+                ],
+            }
+        )
 
     return results

@@ -56,14 +56,22 @@ def test_hospitals_excludes_seed_era_rows(seeded_db, client: TestClient) -> None
     from app.db.tables import HospitalPayerRate
 
     seed_row = HospitalPayerRate(
-        hospital_id="bmc", cpt="45378", payer_id="TEST_SEED",
-        negotiated_rate=100.0, plan_name="seed plan",
-        source_file="", source_origin="mrf",
+        hospital_id="bmc",
+        cpt="45378",
+        payer_id="TEST_SEED",
+        negotiated_rate=100.0,
+        plan_name="seed plan",
+        source_file="",
+        source_origin="mrf",
     )
     etl_row = HospitalPayerRate(
-        hospital_id="bmc", cpt="45378", payer_id="TEST_ETL",
-        negotiated_rate=200.0, plan_name="etl plan",
-        source_file="etl_2026.csv", source_origin="mrf",
+        hospital_id="bmc",
+        cpt="45378",
+        payer_id="TEST_ETL",
+        negotiated_rate=200.0,
+        plan_name="etl plan",
+        source_file="etl_2026.csv",
+        source_origin="mrf",
     )
     seeded_db.add_all([seed_row, etl_row])
     seeded_db.commit()

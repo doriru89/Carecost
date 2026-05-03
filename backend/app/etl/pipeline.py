@@ -57,8 +57,11 @@ def run_etl(
     all_cpts: set[str] = set()
     for cpts in config.cpt_extraction_sets.values():
         all_cpts.update(cpts)
-    logger.info("Target CPTs: %d codes across %d specialties",
-                len(all_cpts), len(config.cpt_extraction_sets))
+    logger.info(
+        "Target CPTs: %d codes across %d specialties",
+        len(all_cpts),
+        len(config.cpt_extraction_sets),
+    )
 
     # 1. Parse hospital MRFs
     mrf_records = parse_all_hospital_rates(mrf_dir, all_cpts)
@@ -86,7 +89,9 @@ def run_etl(
         if actual < min_cpts:
             logger.error(
                 "%s: %d unique CPTs < %d minimum (possible format mismatch)",
-                hospital_id, actual, min_cpts,
+                hospital_id,
+                actual,
+                min_cpts,
             )
 
     # 4. Qualify
@@ -99,7 +104,9 @@ def run_etl(
     merge_result = merge_records(qualified, benchmarks)
     logger.info(
         "Merged: %d procedures, %d payer rates, %d benchmarks",
-        len(merge_result.procedures), len(merge_result.payer_rates), len(merge_result.benchmarks),
+        len(merge_result.procedures),
+        len(merge_result.payer_rates),
+        len(merge_result.benchmarks),
     )
 
     # 7. Validate

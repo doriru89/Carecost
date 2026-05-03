@@ -15,15 +15,28 @@ def _make_qualified(hospital_id="mgh", cpt="45378", payer_id=None, **kwargs):
     if payer_id is None:
         payer_id = _DEFAULT_PAYER
     defaults = dict(
-        hospital_id=hospital_id, cpt=cpt, cpt_desc="Colonoscopy",
-        description="HC COLONOSCOPY", payer_id=payer_id,
-        payer_raw="BLUE CROSS", plan="HMO Blue", setting="outpatient",
-        gross=3883.0, cash=2912.0, negotiated_dollar=3411.0,
-        estimated_amount=None, de_id_min=2200.0, de_id_max=5500.0,
-        billing_class="institutional", source_file="mgh_charges.zip",
-        source_origin="mrf", mrf_format="standard_csv",
-        source_type="mrf", rate_quality="negotiated",
-        price_source="negotiated_dollar", rate_methodology="",
+        hospital_id=hospital_id,
+        cpt=cpt,
+        cpt_desc="Colonoscopy",
+        description="HC COLONOSCOPY",
+        payer_id=payer_id,
+        payer_raw="BLUE CROSS",
+        plan="HMO Blue",
+        setting="outpatient",
+        gross=3883.0,
+        cash=2912.0,
+        negotiated_dollar=3411.0,
+        estimated_amount=None,
+        de_id_min=2200.0,
+        de_id_max=5500.0,
+        billing_class="institutional",
+        source_file="mgh_charges.zip",
+        source_origin="mrf",
+        mrf_format="standard_csv",
+        source_type="mrf",
+        rate_quality="negotiated",
+        price_source="negotiated_dollar",
+        rate_methodology="",
         price_granularity="itemized",
     )
     defaults.update(kwargs)
@@ -86,7 +99,9 @@ class TestMergeRecords:
         records = [
             _make_qualified(payer_id="BCBS_MA", source_origin="mrf", negotiated_dollar=3411.0),
             _make_qualified(
-                payer_id="BCBS_MA", source_origin="tic", negotiated_dollar=487.5,
+                payer_id="BCBS_MA",
+                source_origin="tic",
+                negotiated_dollar=487.5,
                 source_type="tic",
             ),
         ]
@@ -118,10 +133,14 @@ class TestMergeRecords:
     def test_estimated_amount_fallback(self):
         from app.etl.merger import merge_records
 
-        records = [_make_qualified(
-            negotiated_dollar=None, estimated_amount=2400.0,
-            rate_quality="negotiated", price_source="estimated_amount",
-        )]
+        records = [
+            _make_qualified(
+                negotiated_dollar=None,
+                estimated_amount=2400.0,
+                rate_quality="negotiated",
+                price_source="estimated_amount",
+            )
+        ]
         result = merge_records(records)
         assert len(result.payer_rates) == 1
         pr = result.payer_rates[0]
@@ -131,10 +150,14 @@ class TestMergeRecords:
     def test_zero_rate_excluded(self):
         from app.etl.merger import merge_records
 
-        records = [_make_qualified(
-            negotiated_dollar=0.0, estimated_amount=None,
-            rate_quality="unknown", price_source="",
-        )]
+        records = [
+            _make_qualified(
+                negotiated_dollar=0.0,
+                estimated_amount=None,
+                rate_quality="unknown",
+                price_source="",
+            )
+        ]
         result = merge_records(records)
         assert len(result.payer_rates) == 0
 
@@ -144,8 +167,13 @@ class TestMergeRecords:
         seed_dir = tmp_path / "seed"
         seed_dir.mkdir()
         turq_data = [
-            {"hospital_name": "MGH", "hospital_id": "mgh", "cpt": "45378",
-             "bundled_price": 5200.0, "quality_rating": 4.2},
+            {
+                "hospital_name": "MGH",
+                "hospital_id": "mgh",
+                "cpt": "45378",
+                "bundled_price": 5200.0,
+                "quality_rating": 4.2,
+            },
         ]
         (seed_dir / "turquoise_data.json").write_text(json.dumps(turq_data))
         benchmarks = load_benchmarks(seed_dir)
@@ -160,21 +188,29 @@ class TestMergeRecords:
     def test_completeness_full(self):
         from app.etl.merger import merge_records
 
-        records = [_make_qualified(
-            payer_id="BCBS_MA", negotiated_dollar=3411.0,
-            rate_quality="negotiated",
-        )]
+        records = [
+            _make_qualified(
+                payer_id="BCBS_MA",
+                negotiated_dollar=3411.0,
+                rate_quality="negotiated",
+            )
+        ]
         result = merge_records(records)
         assert result.procedures[0].data_completeness == "full"
 
     def test_completeness_gross_only(self):
         from app.etl.merger import merge_records
 
-        records = [_make_qualified(
-            payer_id=None, negotiated_dollar=None,
-            estimated_amount=None, gross=2834.0,
-            rate_quality="gross_only", price_source="gross",
-        )]
+        records = [
+            _make_qualified(
+                payer_id=None,
+                negotiated_dollar=None,
+                estimated_amount=None,
+                gross=2834.0,
+                rate_quality="gross_only",
+                price_source="gross",
+            )
+        ]
         result = merge_records(records)
         assert result.procedures[0].data_completeness == "gross_only"
 
@@ -182,10 +218,22 @@ class TestMergeRecords:
         from app.etl.merger import merge_records
 
         records = [
-            _make_qualified(payer_id="BCBS_MA", negotiated_dollar=3411.0,
-                            gross=3883.0, cash=2912.0, de_id_min=2200.0, de_id_max=5500.0),
-            _make_qualified(payer_id="AETNA", negotiated_dollar=2900.0,
-                            gross=3883.0, cash=2912.0, de_id_min=2200.0, de_id_max=5500.0),
+            _make_qualified(
+                payer_id="BCBS_MA",
+                negotiated_dollar=3411.0,
+                gross=3883.0,
+                cash=2912.0,
+                de_id_min=2200.0,
+                de_id_max=5500.0,
+            ),
+            _make_qualified(
+                payer_id="AETNA",
+                negotiated_dollar=2900.0,
+                gross=3883.0,
+                cash=2912.0,
+                de_id_min=2200.0,
+                de_id_max=5500.0,
+            ),
         ]
         result = merge_records(records)
         assert result.procedures[0].compliance_score == "full"
@@ -206,11 +254,15 @@ class TestMergeRecords:
     def test_non_canonical_payer_excluded(self):
         from app.etl.merger import merge_records
 
-        records = [_make_qualified(
-            payer_id=None, payer_raw="Medicare",
-            negotiated_dollar=None, gross=3883.0,
-            rate_quality="gross_only",
-        )]
+        records = [
+            _make_qualified(
+                payer_id=None,
+                payer_raw="Medicare",
+                negotiated_dollar=None,
+                gross=3883.0,
+                rate_quality="gross_only",
+            )
+        ]
         result = merge_records(records)
         assert len(result.payer_rates) == 0
 

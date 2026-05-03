@@ -4,8 +4,6 @@ The key invariant: ACA preventive scenarios must return $0 OOP
 regardless of the user's deductible, coinsurance, or copay inputs.
 """
 
-
-
 from app.services.estimate_service import build_estimate_response
 
 
@@ -53,9 +51,7 @@ class TestEstimateServicePlanRulesWiring:
             None,
             "colonoscopy_diagnostic",
         )
-        estimates_with_prices = [
-            e for e in response.estimates if e.allowed_amount_range.max > 0
-        ]
+        estimates_with_prices = [e for e in response.estimates if e.allowed_amount_range.max > 0]
         if estimates_with_prices:
             has_nonzero = any(e.oop_range.max > 0 for e in estimates_with_prices)
             assert has_nonzero, "Diagnostic with prices should have non-zero OOP"

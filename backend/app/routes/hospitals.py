@@ -32,5 +32,3 @@ def list_hospitals(
 @router.get("/specialties")
 def list_specialties(db: DbDep) -> list[dict[str, Any]]:
     return list_specialties_use_case(db)
-
-

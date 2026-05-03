@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Depends
 
 from app.api.auth_deps import AuthUser, get_current_user_required

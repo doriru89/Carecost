@@ -14,28 +14,57 @@ from typing import Any
 from app.etl.types import MergeResult
 
 PROCEDURE_COLUMNS = (
-    "hospital_id", "cpt", "cpt_desc", "gross_charge", "discounted_cash",
-    "de_identified_min", "de_identified_max", "billing_class", "setting",
-    "rate_methodology", "data_completeness", "compliance_score",
-    "price_granularity", "null_reason", "source_type", "rate_quality",
+    "hospital_id",
+    "cpt",
+    "cpt_desc",
+    "gross_charge",
+    "discounted_cash",
+    "de_identified_min",
+    "de_identified_max",
+    "billing_class",
+    "setting",
+    "rate_methodology",
+    "data_completeness",
+    "compliance_score",
+    "price_granularity",
+    "null_reason",
+    "source_type",
+    "rate_quality",
 )
 
 PAYER_RATE_COLUMNS = (
-    "hospital_id", "cpt", "payer_id", "negotiated_rate", "plan_name",
-    "source", "source_origin", "billing_class", "price_source",
-    "setting", "source_file", "rate_methodology",
+    "hospital_id",
+    "cpt",
+    "payer_id",
+    "negotiated_rate",
+    "plan_name",
+    "source",
+    "source_origin",
+    "billing_class",
+    "price_source",
+    "setting",
+    "source_file",
+    "rate_methodology",
 )
 
 BENCHMARK_COLUMNS = (
-    "hospital_id", "cpt", "benchmark_source", "component", "price",
+    "hospital_id",
+    "cpt",
+    "benchmark_source",
+    "component",
+    "price",
     "quality_rating",
 )
 
 _MONETARY_FIELDS = {
-    "gross_charge", "discounted_cash", "de_identified_min", "de_identified_max",
-    "negotiated_rate", "price", "quality_rating",
+    "gross_charge",
+    "discounted_cash",
+    "de_identified_min",
+    "de_identified_max",
+    "negotiated_rate",
+    "price",
+    "quality_rating",
 }
-
 
 
 def _fmt(val: str | float | None, col: str) -> str:
@@ -61,19 +90,20 @@ def build_csvs(result: MergeResult, output_dir: Path) -> dict[str, int]:
     counts: dict[str, int] = {}
     counts["hospital_procedures.csv"] = _write_csv(
         output_dir / "hospital_procedures.csv",
-        PROCEDURE_COLUMNS, result.procedures,
+        PROCEDURE_COLUMNS,
+        result.procedures,
         lambda r: (r.hospital_id, r.cpt),
     )
     counts["hospital_payer_rates.csv"] = _write_csv(
         output_dir / "hospital_payer_rates.csv",
-        PAYER_RATE_COLUMNS, result.payer_rates,
+        PAYER_RATE_COLUMNS,
+        result.payer_rates,
         lambda r: (r.hospital_id, r.cpt, r.payer_id),
     )
     counts["hospital_benchmarks.csv"] = _write_csv(
         output_dir / "hospital_benchmarks.csv",
-        BENCHMARK_COLUMNS, result.benchmarks,
+        BENCHMARK_COLUMNS,
+        result.benchmarks,
         lambda r: (r.hospital_id, r.cpt, r.benchmark_source),
     )
     return counts
-
-
