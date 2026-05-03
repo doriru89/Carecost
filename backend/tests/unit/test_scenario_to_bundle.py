@@ -18,3 +18,13 @@ def test_unknown_scenario_returns_itself_not_gi_default() -> None:
     """Unknown scenario_id should pass through, not silently become colonoscopy_screening."""
     assert scenario_to_bundle_id("some_future_scenario") == "some_future_scenario"
     assert scenario_to_bundle_id("some_future_scenario") != "colonoscopy_screening"
+
+
+def test_wart_keyword_routes_to_wart_removal() -> None:
+    sid = infer_scenario_id({"free_text": "wart removal", "specialty": "Dermatology"}, None)
+    assert sid == "wart_removal"
+
+
+def test_cryotherapy_still_routes_to_lesion_destruction() -> None:
+    sid = infer_scenario_id({"free_text": "cryotherapy treatment", "specialty": "Dermatology"}, None)
+    assert sid == "lesion_destruction_first"

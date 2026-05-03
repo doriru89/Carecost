@@ -59,7 +59,9 @@ def _infer_gi_scenario(text: str, merged: dict[str, Any]) -> str:
 def _infer_derm_scenario(text: str) -> str:
     if any(x in text for x in ("mohs",)):
         return "mohs_surgery_head_neck"
-    if any(x in text for x in ("wart", "cryo", "freeze", "destroy")):
+    if "wart" in text:
+        return "wart_removal"
+    if any(x in text for x in ("cryo", "freeze", "destroy")):
         return "lesion_destruction_first"
     if any(x in text for x in ("mole", "excision")):
         if "malig" in text:

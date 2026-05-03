@@ -1,8 +1,6 @@
 """Service-specific plan rules for OOP estimation.
 
-Not all services follow the same cost-sharing path. This module maps
-each service type to its cost-sharing rule, so the OOP calculator
-applies the correct logic per service.
+Rules are loaded from data/registries/plan_rules.yaml (SSOT shared with frontend).
 
 Rule types:
   - "preventive"    → $0 (ACA mandate, no cost-sharing)
@@ -15,6 +13,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from app.registries import get_plan_rules
+
 
 @dataclass(frozen=True)
 class PlanRule:
@@ -23,33 +23,25 @@ class PlanRule:
     note: str | None = None
 
 
-# Service category → rule mapping
-# Keys are scenario_ids or CPT codes; looked up in order: scenario_id → CPT → default
-_RULES_BY_SCENARIO: dict[str, PlanRule] = {
-    # Preventive — $0 under ACA
-    "colonoscopy_screening": PlanRule(
-        "preventive",
-        "Covered at 100% — no cost-sharing",
-        "Preventive screening colonoscopy (age 45+, average risk) is covered at $0 under ACA Section 2713. "
-        "If a polyp is found and removed, some plans reclassify as diagnostic — cost-sharing may apply retroactively.",
-    ),
-}
+def _rules_by_scenario() -> dict[str, PlanRule]:
+    cfg = get_plan_rules()
+    return {
+        sid: PlanRule(r.rule_type, r.summary, r.note)
+        for sid, r in cfg.scenario_rules.items()
+    }
 
-_RULES_BY_CPT: dict[str, PlanRule] = {
-    # Office visits — copay only (for plans where deductible doesn't apply to specialist)
-    "99213": PlanRule(
-        "copay_only",
-        "Specialist copay",
-        "Office visit — copay applies, deductible typically does not.",
-    ),
-    "99214": PlanRule(
-        "copay_only",
-        "Specialist copay",
-        "Office visit — copay applies, deductible typically does not.",
-    ),
-}
 
-_DEFAULT_RULE = PlanRule("ded_coinsurance", "Deductible then coinsurance")
+def _rules_by_cpt() -> dict[str, PlanRule]:
+    cfg = get_plan_rules()
+    return {
+        cpt: PlanRule(r.rule_type, r.summary, r.note)
+        for cpt, r in cfg.cpt_rules.items()
+    }
+
+
+def _default_rule() -> PlanRule:
+    cfg = get_plan_rules()
+    return PlanRule(cfg.default_rule.rule_type, cfg.default_rule.summary, cfg.default_rule.note)
 
 
 def get_plan_rule(
@@ -63,13 +55,14 @@ def get_plan_rule(
     Plan config can further refine (e.g., HMO specialist = no deductible).
     """
     # Scenario-level override (e.g., preventive colonoscopy)
-    if scenario_id and scenario_id in _RULES_BY_SCENARIO:
-        return _RULES_BY_SCENARIO[scenario_id]
+    by_scenario = _rules_by_scenario()
+    if scenario_id and scenario_id in by_scenario:
+        return by_scenario[scenario_id]
 
     # CPT-level rule
-    if cpt_code and cpt_code in _RULES_BY_CPT:
-        rule = _RULES_BY_CPT[cpt_code]
-        # Check if plan says deductible DOES apply to specialist (overrides copay_only)
+    by_cpt = _rules_by_cpt()
+    if cpt_code and cpt_code in by_cpt:
+        rule = by_cpt[cpt_code]
         if rule.rule_type == "copay_only" and plan_config:
             if plan_config.get("deductible_applies_to_specialist", False):
                 return PlanRule(
@@ -79,7 +72,7 @@ def get_plan_rule(
                 )
         return rule
 
-    return _DEFAULT_RULE
+    return _default_rule()
 
 
 def estimate_patient_cost_cents(

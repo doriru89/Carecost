@@ -34,6 +34,14 @@ class TestGetPlanRule:
         rule = get_plan_rule(None, "99213", BCBS_PPO_CONFIG)
         assert rule.rule_type == "ded_coinsurance"
 
+    def test_office_visit_99203_returns_copay_for_hmo(self) -> None:
+        rule = get_plan_rule(None, "99203", BCBS_HMO_CONFIG)
+        assert rule.rule_type == "copay_only"
+
+    def test_office_visit_99203_returns_ded_coinsurance_for_ppo(self) -> None:
+        rule = get_plan_rule(None, "99203", BCBS_PPO_CONFIG)
+        assert rule.rule_type == "ded_coinsurance"
+
     def test_diagnostic_returns_ded_coinsurance(self) -> None:
         rule = get_plan_rule("colonoscopy_diagnostic", "45380")
         assert rule.rule_type == "ded_coinsurance"

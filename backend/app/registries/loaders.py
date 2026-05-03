@@ -220,6 +220,28 @@ def hospital_name_for_source(hospital_id: str, source: str) -> str | None:
     return h.source_name_aliases.get(source)
 
 
+class PlanRuleEntry(BaseModel):
+    rule_type: str
+    summary: str
+    note: str | None = None
+
+
+class PlanRulesConfig(BaseModel):
+    scenario_rules: dict[str, PlanRuleEntry]
+    cpt_rules: dict[str, PlanRuleEntry]
+    default_rule: PlanRuleEntry
+
+
+@functools.lru_cache(maxsize=1)
+def _load_plan_rules() -> PlanRulesConfig:
+    raw = yaml.safe_load((_DATA_DIR / "plan_rules.yaml").read_text())
+    return PlanRulesConfig(**raw)
+
+
+def get_plan_rules() -> PlanRulesConfig:
+    return _load_plan_rules()
+
+
 def validate_all_registries() -> dict[str, int]:
     """Load and validate all registries. Returns counts. Raises on any error."""
     bundles = _load_bundles()
