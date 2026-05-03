@@ -119,6 +119,7 @@ def test_upsert_idempotent_with_plan(dim_db: Session) -> None:
         "negotiated_rate": 2000.0, "plan_name": "Blue Care Elect",
         "source": "test", "source_origin": "mrf", "billing_class": "",
         "price_source": "", "setting": "", "source_file": "", "rate_methodology": "",
+        "rate_year": 0,
     }
     table = HospitalPayerRate.__table__
     for _ in range(2):
@@ -153,6 +154,7 @@ def test_empty_plan_name_not_null(dim_db: Session) -> None:
             "negotiated_rate": 1800.0, "plan_name": "",
             "source": "test", "source_origin": "mrf", "billing_class": "",
             "price_source": "", "setting": "", "source_file": "", "rate_methodology": "",
+            "rate_year": 0,
         }
         table = HospitalPayerRate.__table__
         stmt = pg_insert(table).values([row])

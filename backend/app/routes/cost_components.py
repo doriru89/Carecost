@@ -5,9 +5,12 @@ from typing import Any
 from fastapi import APIRouter, Query
 
 from app.api.deps import DbDep
+from app.registries import all_payers
 from app.services.cost_components import get_cost_components
 
 router = APIRouter()
+
+_SLUG_TO_PAYER_ID: dict[str, str] = {p.slug: pid for pid, p in all_payers().items()}
 
 
 @router.get("/{hospital_id}/{cpt}")
@@ -15,9 +18,10 @@ def cost_components(
     hospital_id: str,
     cpt: str,
     db: DbDep,
-    payer_id: str | None = Query(None, description="Payer ID for specific rate"),
+    payer_id: str | None = Query(None, description="Payer ID or slug for specific rate"),
 ) -> dict[str, Any]:
-    result = get_cost_components(db, hospital_id, cpt, payer_id)
+    db_payer_id = _SLUG_TO_PAYER_ID.get(payer_id, payer_id) if payer_id else None
+    result = get_cost_components(db, hospital_id, cpt, db_payer_id)
     return {
         "hospital_id": result.hospital_id,
         "cpt": result.cpt,

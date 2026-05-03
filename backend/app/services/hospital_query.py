@@ -14,13 +14,20 @@ logger = logging.getLogger(__name__)
 
 
 def query_hospitals(
-    db: Session, cpt: str, *, metro_area: str | None = None
+    db: Session,
+    cpt: str,
+    *,
+    metro_area: str | None = None,
+    include_uncurated: bool = False,
+    rate_year: int | None = None,
 ) -> list[dict[str, Any]]:
     """Normalized hospital data with dimension enrichment.
 
     JOINs Hospital dimension for lat, lng, metro_area, system_name, neighborhood.
     Filters by metro_area when provided.
+    Excludes uncurated hospitals by default (is_curated=True filter).
     Excludes seed-era payer_rates (source_file = '').
+    Filters to specific rate_year when provided.
     Skips hospitals missing from dimension table (logs warning).
     """
     procs = db.query(HospitalProcedure).filter(HospitalProcedure.cpt == cpt).all()
@@ -29,25 +36,24 @@ def query_hospitals(
 
     hospital_ids = [p.hospital_id for p in procs]
 
-    hospitals_dim = {
-        h.hospital_id: h
-        for h in db.query(Hospital).filter(Hospital.hospital_id.in_(hospital_ids)).all()
-    }
+    q = db.query(Hospital).filter(Hospital.hospital_id.in_(hospital_ids))
+    if not include_uncurated:
+        q = q.filter(Hospital.is_curated.is_(True))
+    hospitals_dim = {h.hospital_id: h for h in q.all()}
 
     if metro_area:
         hospitals_dim = {
             hid: h for hid, h in hospitals_dim.items() if h.metro_area == metro_area
         }
 
-    rates_raw = (
-        db.query(HospitalPayerRate)
-        .filter(
-            HospitalPayerRate.cpt == cpt,
-            HospitalPayerRate.hospital_id.in_(list(hospitals_dim.keys())),
-            HospitalPayerRate.source_file != "",
-        )
-        .all()
+    rate_q = db.query(HospitalPayerRate).filter(
+        HospitalPayerRate.cpt == cpt,
+        HospitalPayerRate.hospital_id.in_(list(hospitals_dim.keys())),
+        HospitalPayerRate.source_file != "",
     )
+    if rate_year is not None:
+        rate_q = rate_q.filter(HospitalPayerRate.rate_year == rate_year)
+    rates_raw = rate_q.all()
     rates_by_hid: dict[str, list[HospitalPayerRate]] = {}
     for r in rates_raw:
         rates_by_hid.setdefault(r.hospital_id, []).append(r)
@@ -93,6 +99,8 @@ def query_hospitals(
                     "plan_name": r.plan_name,
                     "source_origin": r.source_origin,
                     "billing_class": r.billing_class,
+                    "rate_year": r.rate_year,
+                    "effective_date": r.effective_date,
                 }
                 for r in rates_by_hid.get(hid, [])
             ],

@@ -200,6 +200,8 @@ export type PayerRate = {
   plan_name: string;
   source_origin: string;
   billing_class: string;
+  rate_year: number | null;
+  effective_date: string;
 };
 
 export type Benchmark = {
@@ -323,4 +325,44 @@ export async function fetchQualityStatus(): Promise<QualityStatusApi> {
   } catch {
     return json<QualityStatusApi>('/quality-status.json', { cache: 'no-store' });
   }
+}
+
+// --- Cost Components (RVU decomposition + provenance) ---
+
+export type CostProvenance = {
+  source: string;
+  source_display: string;
+  effective_date: string;
+  rate_year: number | null;
+  data_vintage: string;
+};
+
+export type CostComponent = {
+  name: string;
+  amount: number | null;
+  rvu: number | null;
+  gpci: number | null;
+  pct_of_total: number | null;
+  provenance: CostProvenance;
+};
+
+export type CostComponentsResponse = {
+  hospital_id: string;
+  cpt: string;
+  payer_id: string | null;
+  negotiated_rate: number | null;
+  data_tier: 'full' | 'gross_only' | 'no_rate';
+  rate_provenance: CostProvenance | null;
+  components: CostComponent[];
+};
+
+export async function fetchCostComponents(
+  hospitalId: string, cpt: string, payerId?: string,
+): Promise<CostComponentsResponse> {
+  const q = new URLSearchParams();
+  if (payerId) q.set('payer_id', payerId);
+  const qs = q.toString();
+  return json<CostComponentsResponse>(
+    `/api/cost-components/${hospitalId}/${cpt}${qs ? `?${qs}` : ''}`,
+  );
 }

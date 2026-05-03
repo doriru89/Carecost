@@ -1,11 +1,13 @@
-import { useState } from 'react';
-import { MapPin, Phone, Bookmark, ExternalLink, Info, ChevronDown, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MapPin, Phone, Bookmark, ExternalLink, Info, ChevronDown, ChevronRight, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { computeYourPlanEstimate, getAllPriceSources } from '@/lib/payerPrice';
 import { computeFairHealthTotal } from '@/lib/fairHealth';
 import { computeOop } from '@/lib/oopRules';
-import type { HospitalApi } from '@/api/client';
+import type { HospitalApi, CostComponentsResponse } from '@/api/client';
+import { fetchCostComponents } from '@/api/client';
+import CostBreakdown from './CostBreakdown';
 import type { PlanConfig } from '@/lib/planConfig';
 import type { Provider, CostEstimate } from '@/types';
 
@@ -124,8 +126,18 @@ const ProviderCard = ({
   onRequestInsurance,
 }: ProviderCardProps) => {
   const [sourcesOpen, setSourcesOpen] = useState(false);
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [costData, setCostData] = useState<CostComponentsResponse | null>(null);
   const hasPrice = hospitalPayerPrice != null || (estimate?.allowedMaxDollars ?? 0) > 0;
   const price = buildPriceDisplay(hospitalPayerPrice, deductible, coinsurancePct, estimate);
+
+  useEffect(() => {
+    if (!breakdownOpen || !hospital || costData) return;
+    const payerId = hospital.payer_rates.find(r => r.negotiated_rate != null)?.payer_id;
+    fetchCostComponents(hospital.hospital_id, hospital.cpt, payerId)
+      .then(setCostData)
+      .catch(() => {});
+  }, [breakdownOpen, hospital, costData]);
 
   return (
     <div className="bg-card rounded-2xl border border-border shadow-card p-5 animate-fade-in">
@@ -318,6 +330,30 @@ const ProviderCard = ({
 
               {getAllPriceSources(hospital, insuranceLabel).length === 0 && (
                 <p className="text-xs text-muted-foreground italic">No price sources available for this hospital.</p>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Cost component breakdown (RVU decomposition + provenance) */}
+      {!compact && hospital && (
+        <div className="mb-4">
+          <button
+            type="button"
+            onClick={() => setBreakdownOpen(!breakdownOpen)}
+            className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors w-full"
+          >
+            {breakdownOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+            <Layers className="w-3.5 h-3.5" />
+            Cost breakdown
+          </button>
+          {breakdownOpen && (
+            <div className="bg-muted/50 rounded-xl p-4 mt-2">
+              {costData ? (
+                <CostBreakdown data={costData} />
+              ) : (
+                <p className="text-xs text-muted-foreground animate-pulse">Loading cost breakdown…</p>
               )}
             </div>
           )}

@@ -174,7 +174,7 @@ class HospitalPayerRate(Base):
     source_file: Mapped[str] = mapped_column(Text, nullable=False, default="")
     rate_methodology: Mapped[str] = mapped_column(String(32), nullable=False, default="")
     effective_date: Mapped[str] = mapped_column(String(32), nullable=False, default="")
-    rate_year: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    rate_year: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     __table_args__ = (
         UniqueConstraint(
