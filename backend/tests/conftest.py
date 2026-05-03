@@ -63,6 +63,8 @@ def db_session(engine: Engine) -> Generator[Session, None, None]:
 
 @pytest.fixture
 def seeded_db(db_session: Session) -> Session:
+    if not _ETL_OUTPUT.is_dir():
+        pytest.skip("ETL output not available (data/intermediate/etl_output/)")
     import_normalized_directory(db_session, _ETL_OUTPUT)
     import_az_providers_csv(db_session, _SEED_DIR / "providers.csv")
     p = _SEED_DIR / "procedures.csv"
