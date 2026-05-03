@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from app.services.cost_components import (
-    CostComponentResponse,
     get_cost_components,
 )
 

@@ -4,9 +4,7 @@ The key invariant: ACA preventive scenarios must return $0 OOP
 regardless of the user's deductible, coinsurance, or copay inputs.
 """
 
-from unittest.mock import patch
 
-import pytest
 
 from app.services.estimate_service import build_estimate_response
 

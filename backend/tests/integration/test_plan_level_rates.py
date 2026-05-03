@@ -12,7 +12,6 @@ from sqlalchemy.orm import Session
 
 from app.db.tables import (
     Hospital,
-    HospitalBenchmark,
     HospitalPayerRate,
     HospitalProcedure,
     Payer,

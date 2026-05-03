@@ -8,6 +8,7 @@ from __future__ import annotations
 import csv
 import json
 import logging
+from contextlib import contextmanager
 from pathlib import Path
 from unittest.mock import patch
 
@@ -420,8 +421,6 @@ def test_source_file_and_mrf_format_populated(tmp_path: Path):
 # ---------------------------------------------------------------------------
 # Mock helper — patches registry lookups for test isolation
 # ---------------------------------------------------------------------------
-
-from contextlib import contextmanager
 
 
 @contextmanager

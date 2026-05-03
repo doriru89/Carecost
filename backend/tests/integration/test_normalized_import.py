@@ -10,8 +10,6 @@ import csv
 from pathlib import Path
 
 import pytest
-from sqlalchemy import text
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.db.tables import HospitalBenchmark, HospitalPayerRate, HospitalProcedure
