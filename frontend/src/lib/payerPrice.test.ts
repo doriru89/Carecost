@@ -84,6 +84,29 @@ describe('getPayerPrice', () => {
     expect(getPayerPrice(h, 'BCBS')).toBeNull();
   });
 
+  it('returns 0 (not null) when negotiated_rate is 0', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'bcbs', negotiated_rate: 0, plan_name: 'BCBS PPO', source_origin: 'mrf', billing_class: 'institutional' },
+      ],
+    };
+    const result = getPayerPrice(h, 'BCBS');
+    expect(result).toBe(0);
+    expect(result).not.toBeNull();
+  });
+
+  it('returns 0 for rate=0 with MRF source preference', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'bcbs', negotiated_rate: 0, plan_name: 'BCBS MRF', source_origin: 'mrf', billing_class: 'institutional' },
+        { payer_id: 'bcbs', negotiated_rate: 500, plan_name: 'BCBS TiC', source_origin: 'tic', billing_class: 'institutional' },
+      ],
+    };
+    expect(getPayerPrice(h, 'BCBS')).toBe(0);
+  });
+
   it('returns null for unknown payer with no matching rates', () => {
     const h: HospitalApi = {
       ...mockHospital,

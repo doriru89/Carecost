@@ -17,6 +17,7 @@ from app.models.api import (
 )
 from app.services.intake import missing_required_fields, normalize_intake
 from app.services.oop import compute_oop_range_cents, deductible_remaining_unknown_from_intake
+from app.services.plan_rules import get_plan_rule
 from app.services.payer_mapping import insurance_carrier_to_payer
 from app.services.pricing import (
     avg_confidence,
@@ -81,6 +82,8 @@ def build_estimate_response(
     scenario_id = explicit_scenario_id or infer_scenario_id(intake, confirmed)
     bundle_id = explicit_bundle_id or scenario_to_bundle_id(scenario_id)
 
+    plan_rule = get_plan_rule(scenario_id, None)
+
     specialty = merged.get("specialty") or merged.get("care_focus") or "Gastroenterology"
     provider_rows = db.query(Provider).filter(Provider.specialties.contains([specialty])).all()
 
@@ -96,6 +99,11 @@ def build_estimate_response(
     wanted_payer = insurance_carrier_to_payer(merged.get("insurance_carrier"))
 
     def _oop_tuple(amin: int, amax: int) -> tuple[int, int, list[str]]:
+        if plan_rule.rule_type == "preventive":
+            return 0, 0, ["ACA preventive: $0 cost-sharing under Section 2713."]
+        if plan_rule.rule_type == "copay_only":
+            c = int(copay) if copay is not None else 0
+            return c, c, [f"Copay only: ${c // 100} specialist copay, deductible does not apply."]
         o_min, o_max, oop_asm = compute_oop_range_cents(
             amin,
             amax,

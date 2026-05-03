@@ -43,7 +43,7 @@ interface PriceDisplay {
   tooltip: string;
 }
 
-function buildPriceDisplay(
+export function buildPriceDisplay(
   hospitalPayerPrice: number | null | undefined,
   deductible: number | undefined,
   coinsurancePct: number | undefined,
@@ -73,7 +73,7 @@ function buildPriceDisplay(
   // Priority 2: estimate pipeline's allowed amount (fallback)
   if (estimate) {
     const allowed = estimate.allowedMaxDollars ?? estimate.allowedMinDollars;
-    if (allowed != null && allowed > 0) {
+    if (allowed != null && allowed >= 0) {
       if (hasFullPlan) {
         const est = computeYourPlanEstimate(allowed, deductible, coinsurancePct);
         return {
@@ -128,7 +128,7 @@ const ProviderCard = ({
   const [sourcesOpen, setSourcesOpen] = useState(false);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [costData, setCostData] = useState<CostComponentsResponse | null>(null);
-  const hasPrice = hospitalPayerPrice != null || (estimate?.allowedMaxDollars ?? 0) > 0;
+  const hasPrice = hospitalPayerPrice != null || estimate?.allowedMaxDollars != null;
   const price = buildPriceDisplay(hospitalPayerPrice, deductible, coinsurancePct, estimate);
 
   useEffect(() => {

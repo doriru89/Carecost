@@ -79,4 +79,4 @@ def _infer_derm_scenario(text: str) -> str:
 def scenario_to_bundle_id(scenario_id: str) -> str:
     if scenario_id in SCENARIO_IDS:
         return scenario_id
-    return "colonoscopy_screening"
+    return scenario_id
