@@ -18,7 +18,7 @@ import type { Provider } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 import { fetchProviders, fetchHospitals, postEstimate, type ProviderApi, type HospitalApi } from '@/api/client';
 import { apiEstimateToCostEstimate } from '@/lib/mapEstimate';
-import { getPayerPrice, computeYourPlanEstimate, carrierKeyFromLabel, getAllPriceSources } from '@/lib/payerPrice';
+import { getPayerPrice, carrierKeyFromLabel, getAllPriceSources } from '@/lib/payerPrice';
 import { computeOop } from '@/lib/oopRules';
 import { PLAN_CONFIGS, type PlanConfig } from '@/lib/planConfig';
 import { buildEstimateFallback } from '@/lib/estimateFallback';
@@ -133,6 +133,7 @@ const MapPage = () => {
         oopMax: Number(insurance.oopMax ?? 0),
         coinsurancePct: Number(insurance.coinsurance),
         copaySpecialist: Number(insurance.copay ?? 50),
+        deductibleAppliesToSpecialist: (insurance.planType as string)?.toUpperCase() === 'PPO',
       };
     }
     return undefined;
@@ -560,8 +561,6 @@ const MapPage = () => {
                   planConfig={activePlanConfig}
                   scenarioId={selectedCrt?.bundleId ?? null}
                   cptCode={selectedCrt?.cpt ?? null}
-                  deductible={insurance?.deductible}
-                  coinsurancePct={insurance?.coinsurance}
                   onSave={() => toggleSave(selectedProvider.id)}
                   saved={savedIds.has(selectedProvider.id)}
                   onRequestInsurance={() => setInsuranceDialogOpen(true)}
@@ -572,11 +571,8 @@ const MapPage = () => {
                 const isCollapsed = collapsedHospitals.has(hospitalName);
                 const hData = hospitals.find(h => h.name === hospitalName);
                 const hospitalPayerPrice = hData ? getPayerPrice(hData, insuranceCarrierLabel) : null;
-                const yourPlanEst = hospitalPayerPrice != null && hasFullPlanData
-                  ? computeYourPlanEstimate(hospitalPayerPrice, insurance!.deductible, insurance!.coinsurance!)
-                  : null;
-                const hospitalOop = hospitalPayerPrice != null && activePlanConfig && selectedCrt?.bundleId
-                  ? computeOop(hospitalPayerPrice, activePlanConfig, selectedCrt.bundleId, selectedCrt?.cpt ?? null)
+                const hospitalOop = hospitalPayerPrice != null && activePlanConfig
+                  ? computeOop(hospitalPayerPrice, activePlanConfig, selectedCrt?.bundleId ?? null, selectedCrt?.cpt ?? null)
                   : null;
                 return (
                   <div
@@ -615,10 +611,6 @@ const MapPage = () => {
                             ) : (
                               <>You pay ${hospitalOop.estimate.toLocaleString()}</>
                             )}
-                          </span>
-                        ) : yourPlanEst != null ? (
-                          <span className="text-xs text-primary ml-2">
-                            You pay ${yourPlanEst.toLocaleString()}
                           </span>
                         ) : (
                           <span
@@ -778,8 +770,9 @@ const MapPage = () => {
                               estimate={estimateById.get(String(p.id))}
                               insuranceLabel={insuranceCarrierLabel}
                               hospitalPayerPrice={hospitalPayerPrice}
-                              deductible={insurance?.deductible}
-                              coinsurancePct={insurance?.coinsurance}
+                              planConfig={activePlanConfig}
+                              scenarioId={selectedCrt?.bundleId ?? null}
+                              cptCode={selectedCrt?.cpt ?? null}
                               onSave={() => toggleSave(p.id)}
                               saved={savedIds.has(p.id)}
                               onRequestInsurance={() => setInsuranceDialogOpen(true)}
