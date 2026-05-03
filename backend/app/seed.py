@@ -29,4 +29,7 @@ def run_seed() -> None:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+    if not SEED_DIR.is_dir():
+        _log.error("SEED_DIR %s not found — aborting deploy", SEED_DIR)
+        raise SystemExit(1)
     run_seed()

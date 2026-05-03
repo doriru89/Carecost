@@ -3,6 +3,22 @@
 > Megaplan (`AIOS/WORK/PROJECTS/carecost-release-megaplan.md`) is SSOT for phase-assigned work.
 > This file captures items that need research, scoping, or don't fit a phase yet.
 
+## Critical (pre-launch blockers)
+
+### SEC-1: Auth enforcement on healthcare data endpoints
+**Priority:** Critical — top of backlog
+**Status:** Identified by 7-lens audit (2026-05-03). Pre-existing, not introduced by SSOT OOP refactor.
+**Problem:** Most API routes (`/hospitals`, `/estimate`, `/intake`, `/confirm`, `/gi-assistant`, `/providers`, `/cost-components`) have NO auth dependency. Only `/users/me` and `/users/password` require `get_current_user_required`. Healthcare pricing data is fully unauthenticated.
+**Fix:** Add `Depends(get_current_user_required)` to all data endpoints. Consider read-only public access vs authenticated-only. OWASP A01:2021.
+**Files:** `backend/app/routes/hospitals.py`, `backend/app/routes/estimate.py`, `backend/app/routes/providers.py`, all route files.
+
+### MapPage.tsx god file decomposition
+**Priority:** High — tech debt, scaling risk
+**Status:** 811 lines, 7+ responsibilities, zero test coverage. Identified by L3 Unix/LEGO audit (2026-05-03).
+**Problem:** Map rendering, provider grouping, hospital grouping, OOP invocation, payer labels, procedure picker, marker rendering, insurance dialog, specialty switching, CRT persistence, search/filter — all in one file.
+**Fix:** Extract into hooks (`useMapMarkers`, `useHospitalGrouping`) and components (`ProcedurePicker`, `HospitalGroup`, `PayerComparisonBar`).
+**Files:** `frontend/src/pages/MapPage.tsx`
+
 ## Research Needed (before coding)
 
 ### Per-Hospital Cost Component Breakdown (megaplan 60.14-60.16)

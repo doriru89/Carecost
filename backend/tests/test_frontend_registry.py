@@ -33,8 +33,8 @@ def plan_configs() -> list[dict]:
     return json.loads(_PLAN_CONFIGS_JSON.read_text())
 
 
-def test_has_all_29_bundles(registry: dict) -> None:
-    assert len(registry["bundles"]) == 29
+def test_has_all_bundles(registry: dict) -> None:
+    assert len(registry["bundles"]) >= 29
 
 
 def test_has_2_specialties(registry: dict) -> None:

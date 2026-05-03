@@ -133,7 +133,7 @@ const MapPage = () => {
         oopMax: Number(insurance.oopMax ?? 0),
         coinsurancePct: Number(insurance.coinsurance),
         copaySpecialist: Number(insurance.copay ?? 50),
-        deductibleAppliesToSpecialist: (insurance.planType as string)?.toUpperCase() === 'PPO',
+        deductibleAppliesToSpecialist: PLAN_CONFIGS.find(p => p.planType === insurance.planType)?.deductibleAppliesToSpecialist ?? false,
       };
     }
     return undefined;
