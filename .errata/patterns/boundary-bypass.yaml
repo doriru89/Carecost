@@ -1,0 +1,15 @@
+id: boundary-bypass
+pattern: Importing DB/SQLAlchemy models in route files or cross-module imports
+detection: |
+  python scripts/check_backend_boundaries.py --strict
+  4 rules checked: routes can't import DB, services can't import routes,
+  domain layers can't import FastAPI/SQLAlchemy, modules can't import other modules.
+prevention: |
+  Routes call services. Services call domain. Domain calls shared.
+  Only shared/ can be imported across module boundaries.
+  If you need data from another module, expose it through shared/.
+example: |
+  Session 10: proposed importing hospitals module's query function from pricing module.
+  Fix: moved shared query to shared/registry_access.py.
+  Impact: circular imports + untestable coupling between modules.
+severity: high

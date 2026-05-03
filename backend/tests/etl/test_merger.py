@@ -31,53 +31,24 @@ def _make_qualified(hospital_id="mgh", cpt="45378", payer_id=None, **kwargs):
 
 
 class TestLoadBenchmarks:
-    def test_fair_health(self, tmp_path):
+    def test_turquoise(self, tmp_path):
         from app.etl.merger import load_benchmarks
 
-        ppt_data = [
-            {
-                "hospital_id": "mgh", "cpt": "45378", "specialty": "Gastroenterology",
-                "fh_physician_in_network": 604.0,
-                "fh_anesthesia_in_network": None,
-                "fh_facility_hosp_in_network": 1359.0,
-                "fh_pathology_in_network": None,
-            },
-        ]
         seed_dir = tmp_path / "seed"
         seed_dir.mkdir()
-        (seed_dir / "plan_payment_table.json").write_text(json.dumps(ppt_data))
-        benchmarks = load_benchmarks(seed_dir, "Gastroenterology")
-        fh = benchmarks.fair_health.get(("mgh", "45378"))
-        assert fh is not None
-        assert fh["fh_physician_in_network"] == 604.0
-        assert fh["fh_facility_hosp_in_network"] == 1359.0
+        turq_data = [{"hospital_id": "mgh", "cpt": "45378", "bundled_price": 5200.0}]
+        (seed_dir / "turquoise_data.json").write_text(json.dumps(turq_data))
+        benchmarks = load_benchmarks(seed_dir)
+        assert benchmarks.turquoise.get(("mgh", "45378")) is not None
 
     def test_missing_files_graceful(self, tmp_path):
         from app.etl.merger import load_benchmarks
 
         seed_dir = tmp_path / "seed"
         seed_dir.mkdir()
-        (seed_dir / "plan_payment_table.json").write_text("[]")
-        benchmarks = load_benchmarks(seed_dir, "Gastroenterology")
+        benchmarks = load_benchmarks(seed_dir)
         assert benchmarks.turquoise == {}
         assert benchmarks.masscomparecare == {}
-
-
-class TestBenchmarkWarnings:
-    def test_missing_benchmark_files_warn(self, tmp_path, caplog):
-        import logging
-        from app.etl.merger import load_benchmarks
-
-        seed_dir = tmp_path / "empty"
-        seed_dir.mkdir()
-        with caplog.at_level(logging.WARNING, logger="app.etl.merger"):
-            bd = load_benchmarks(seed_dir, "Gastroenterology")
-        assert bd.fair_health == {}
-        assert bd.turquoise == {}
-        assert bd.masscomparecare == {}
-        assert "Fair Health benchmark file not found" in caplog.text
-        assert "Turquoise benchmark file not found" in caplog.text
-        assert "MassCompareCare benchmark file not found" in caplog.text
 
 
 class TestMergeRecords:
@@ -167,30 +138,6 @@ class TestMergeRecords:
         result = merge_records(records)
         assert len(result.payer_rates) == 0
 
-    def test_benchmark_fh_components(self, tmp_path):
-        from app.etl.merger import load_benchmarks, merge_records
-
-        ppt_data = [
-            {
-                "hospital_id": "mgh", "cpt": "45378", "specialty": "Gastroenterology",
-                "fh_physician_in_network": 604.0,
-                "fh_anesthesia_in_network": 200.0,
-                "fh_facility_hosp_in_network": 1359.0,
-                "fh_pathology_in_network": 150.0,
-            },
-        ]
-        seed_dir = tmp_path / "seed"
-        seed_dir.mkdir()
-        (seed_dir / "plan_payment_table.json").write_text(json.dumps(ppt_data))
-        benchmarks = load_benchmarks(seed_dir, "Gastroenterology")
-        records = [_make_qualified()]
-        result = merge_records(records, benchmarks)
-        fh_benchmarks = [b for b in result.benchmarks if b.benchmark_source == "fair_health"]
-        assert len(fh_benchmarks) == 4
-        components = {b.component for b in fh_benchmarks}
-        assert "physician_in_network" in components
-        assert "facility_hosp_in_network" in components
-
     def test_benchmark_turquoise(self, tmp_path):
         from app.etl.merger import load_benchmarks, merge_records
 
@@ -201,7 +148,7 @@ class TestMergeRecords:
              "bundled_price": 5200.0, "quality_rating": 4.2},
         ]
         (seed_dir / "turquoise_data.json").write_text(json.dumps(turq_data))
-        benchmarks = load_benchmarks(seed_dir, "Gastroenterology")
+        benchmarks = load_benchmarks(seed_dir)
         records = [_make_qualified()]
         result = merge_records(records, benchmarks)
         turq = [b for b in result.benchmarks if b.benchmark_source == "turquoise"]
@@ -209,28 +156,6 @@ class TestMergeRecords:
         assert turq[0].price == 5200.0
         assert turq[0].quality_rating == 4.2
         assert turq[0].component == "total"
-
-    def test_missing_fh_fields(self, tmp_path):
-        from app.etl.merger import load_benchmarks, merge_records
-
-        ppt_data = [
-            {
-                "hospital_id": "mgh", "cpt": "45378", "specialty": "Gastroenterology",
-                "fh_physician_in_network": 604.0,
-                "fh_anesthesia_in_network": None,
-                "fh_facility_hosp_in_network": None,
-                "fh_pathology_in_network": None,
-            },
-        ]
-        seed_dir = tmp_path / "seed"
-        seed_dir.mkdir()
-        (seed_dir / "plan_payment_table.json").write_text(json.dumps(ppt_data))
-        benchmarks = load_benchmarks(seed_dir, "Gastroenterology")
-        records = [_make_qualified()]
-        result = merge_records(records, benchmarks)
-        fh = [b for b in result.benchmarks if b.benchmark_source == "fair_health"]
-        assert len(fh) == 1
-        assert fh[0].component == "physician_in_network"
 
     def test_completeness_full(self):
         from app.etl.merger import merge_records

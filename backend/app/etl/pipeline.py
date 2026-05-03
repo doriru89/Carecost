@@ -87,7 +87,7 @@ def run_etl(
     qualified = qualify_batch(normalized)
 
     # 5. Load benchmarks
-    benchmarks = load_benchmarks(data_dir, specialty)
+    benchmarks = load_benchmarks(data_dir)
 
     # 6. Merge
     merge_result = merge_records(qualified, benchmarks)

@@ -1,0 +1,17 @@
+id: payer-id-slug-mismatch
+pattern: Backend returns registry payer_id (BCBS_MA) but frontend expects slug (bcbs)
+detection: |
+  Compare API response payer_id values against frontend payer slug usage.
+  Check PAYER_ID_TO_SLUG mapping in hospital_query.py is complete.
+prevention: |
+  The API boundary normalizes payer_ids to frontend-compatible slugs via
+  PAYER_ID_TO_SLUG in hospital_query.py. When adding a new payer:
+  1. Add to data/registries/payers.yaml
+  2. Add slug mapping to PAYER_ID_TO_SLUG in hospital_query.py
+  3. Regenerate frontend registry
+example: |
+  Session 8: Playwright E2E showed $0 for all BCBS prices.
+  Root cause: API returned "BCBS_MA", frontend filtered by "bcbs".
+  Fix: PAYER_ID_TO_SLUG mapping at API boundary.
+  3 independent code audits MISSED this — only Playwright caught it.
+severity: high

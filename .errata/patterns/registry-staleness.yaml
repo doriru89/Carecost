@@ -1,0 +1,15 @@
+id: registry-staleness
+pattern: Generated frontend JSON out of sync with YAML registries
+detection: |
+  python scripts/generate_frontend_registry.py --check
+  This is also enforced in CI (registry-validation gate).
+prevention: |
+  After editing any file in data/registries/*.yaml, run:
+    python scripts/generate_frontend_registry.py
+  The pre-commit hook blocks commits if YAML changed but generated files are stale.
+  Never edit frontend/src/generated/*.json directly.
+example: |
+  Session 7: Added new bundle to cpt_bundles.yaml but forgot to regenerate.
+  Frontend showed stale procedure list until CI caught it.
+  Fix: pre-commit hook + CI --check gate added in Phase 40.
+severity: medium

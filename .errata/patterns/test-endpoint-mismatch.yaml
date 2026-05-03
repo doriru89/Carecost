@@ -1,0 +1,16 @@
+id: test-endpoint-mismatch
+pattern: Tests asserting against stale API shapes or endpoints that no longer exist
+detection: |
+  Run pytest. Failing tests ARE bugs — never dismiss as "pre-existing".
+  Check test fixtures against actual API response shapes.
+prevention: |
+  When changing an API response shape:
+  1. Update the endpoint implementation
+  2. Update ALL tests that consume that endpoint
+  3. Update frontend TypeScript types (if applicable)
+  Stale tests that pass are more dangerous than stale tests that fail.
+example: |
+  Session 8: 23 tests still referenced HospitalRate (deleted table).
+  Root cause: tests imported old fixtures, not the normalized import path.
+  Fix: refactored conftest to use import_normalized_directory().
+severity: high

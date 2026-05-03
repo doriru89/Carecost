@@ -23,37 +23,15 @@ from app.registries import get_hospital
 
 logger = logging.getLogger(__name__)
 
-_FH_COMPONENTS = (
-    "fh_physician_in_network",
-    "fh_anesthesia_in_network",
-    "fh_facility_hosp_in_network",
-    "fh_pathology_in_network",
-)
-
-
 @dataclass
 class BenchmarkData:
-    fair_health: dict[tuple[str, str], dict] = field(default_factory=dict)
     turquoise: dict[tuple[str, str], dict] = field(default_factory=dict)
     masscomparecare: dict[tuple[str, str], dict] = field(default_factory=dict)
 
 
-def load_benchmarks(data_dir: Path, specialty: str) -> BenchmarkData:
+def load_benchmarks(data_dir: Path) -> BenchmarkData:
+    """Load benchmark JSON files produced by Phase 60 scraping skills."""
     bd = BenchmarkData()
-
-    ppt_path = data_dir / "plan_payment_table.json"
-    if ppt_path.exists():
-        rows = json.loads(ppt_path.read_text())
-        for row in rows:
-            if row.get("specialty") and row["specialty"] != specialty:
-                continue
-            key = (row.get("hospital_id", ""), row.get("cpt", ""))
-            if key[0] and key[1] and key not in bd.fair_health:
-                fh = {k: row.get(k) for k in _FH_COMPONENTS if row.get(k) is not None}
-                if fh:
-                    bd.fair_health[key] = fh
-    else:
-        logger.warning("Fair Health benchmark file not found: %s", ppt_path)
 
     turq_path = data_dir / "turquoise_data.json"
     if turq_path.exists():
@@ -61,8 +39,6 @@ def load_benchmarks(data_dir: Path, specialty: str) -> BenchmarkData:
             key = (row.get("hospital_id", ""), row.get("cpt", ""))
             if key[0] and key[1]:
                 bd.turquoise[key] = row
-    else:
-        logger.warning("Turquoise benchmark file not found: %s", turq_path)
 
     mcc_path = data_dir / "masscomparecare_data.json"
     if mcc_path.exists():
@@ -70,12 +46,10 @@ def load_benchmarks(data_dir: Path, specialty: str) -> BenchmarkData:
             key = (row.get("hospital_id", ""), row.get("cpt", ""))
             if key[0] and key[1]:
                 bd.masscomparecare[key] = row
-    else:
-        logger.warning("MassCompareCare benchmark file not found: %s", mcc_path)
 
     logger.info(
-        "Loaded benchmarks: FH=%d, turquoise=%d, mcc=%d",
-        len(bd.fair_health), len(bd.turquoise), len(bd.masscomparecare),
+        "Loaded benchmarks: turquoise=%d, mcc=%d",
+        len(bd.turquoise), len(bd.masscomparecare),
     )
     return bd
 
@@ -169,18 +143,6 @@ def merge_records(
 
         if benchmarks:
             key = (hospital_id, cpt)
-            fh = benchmarks.fair_health.get(key)
-            if fh:
-                for fh_field, fh_val in fh.items():
-                    component = fh_field.removeprefix("fh_")
-                    result.benchmarks.append(BenchmarkRecord(
-                        hospital_id=hospital_id,
-                        cpt=cpt,
-                        benchmark_source="fair_health",
-                        component=component,
-                        price=fh_val,
-                    ))
-
             turq = benchmarks.turquoise.get(key)
             if turq:
                 result.benchmarks.append(BenchmarkRecord(

@@ -2,15 +2,28 @@
 
 10 checks aligned with the handoff specification.
 Missing hospital = ERROR (healthcare data integrity).
+Unknown CPTs/payers = ERROR (SSOT integrity).
 """
 
 from __future__ import annotations
 
+import os
+
 from app.etl.types import MergeResult, ValidationReport
+from app.registries import all_hospitals, all_payers
+from app.registries.loaders import _load_bundles
 
 _PRICE_MIN = 1.0
 _PRICE_MAX = 500_000.0
 _CROSS_VALIDATION_THRESHOLD = 0.15
+
+
+def _known_cpts() -> set[str]:
+    return {b.cpt for b in _load_bundles().values()}
+
+
+def _discovery_mode() -> bool:
+    return os.environ.get("ETL_DISCOVERY_MODE", "").lower() in ("1", "true", "yes")
 
 
 def validate_etl_output(
@@ -31,10 +44,28 @@ def validate_etl_output(
             if h not in found:
                 errors.append(f"Expected hospital '{h}' missing from output")
 
+    # Registry sets for SSOT validation
+    known_cpts = _known_cpts()
+    known_hospitals = set(all_hospitals().keys())
+    known_payers = set(all_payers().keys())
+    discovery = _discovery_mode()
+
     for proc in result.procedures:
         # 3. CPT format
         if not proc.cpt or not proc.cpt.isdigit() or len(proc.cpt) != 5:
             errors.append(f"Invalid CPT '{proc.cpt}' for hospital {proc.hospital_id}")
+
+        # 3b. CPT in registry (SSOT gate)
+        if proc.cpt and proc.cpt not in known_cpts:
+            msg = f"Unknown CPT '{proc.cpt}' not in registry for hospital {proc.hospital_id}"
+            if discovery:
+                warnings.append(msg)
+            else:
+                errors.append(msg)
+
+        # 4. Hospital in registry
+        if proc.hospital_id and proc.hospital_id not in known_hospitals:
+            errors.append(f"Unknown hospital '{proc.hospital_id}' not in registry")
 
         # 6. Required fields
         if not proc.hospital_id:
@@ -53,6 +84,14 @@ def validate_etl_output(
     # Payer rate checks
     rate_keys: set[tuple[str, str, str, str, str]] = set()
     for pr in result.payer_rates:
+        # 4b. Payer in registry
+        if pr.payer_id and pr.payer_id not in known_payers:
+            msg = f"Unknown payer '{pr.payer_id}' not in registry for {pr.hospital_id}:{pr.cpt}"
+            if discovery:
+                warnings.append(msg)
+            else:
+                errors.append(msg)
+
         # 5. No negative prices
         if pr.negotiated_rate is not None and pr.negotiated_rate < 0:
             errors.append(f"Negative rate {pr.negotiated_rate} for {pr.hospital_id}:{pr.cpt} payer {pr.payer_id}")

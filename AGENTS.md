@@ -17,11 +17,12 @@
 - Verify: `python scripts/check_backend_boundaries.py --strict`
 
 ## Errata — Known Failure Patterns
-Before writing code in these areas, check known patterns:
-- CPT codes: ONLY from `data/registries/cpt_bundles.yaml` (never hardcode)
-- Boundary bypass: don't import DB models in routes
-- Test-endpoint mismatch: stale tests are real bugs, not pre-existing failures
-- Registry staleness: generated JSON must match YAML source
+Before writing code in these areas, check `.errata/patterns/` for detailed YAML files:
+- `cpt-ssot-violation` — ONLY import CPTs from registry (never hardcode)
+- `boundary-bypass` — don't import DB models in routes
+- `test-endpoint-mismatch` — stale tests are real bugs, not pre-existing failures
+- `registry-staleness` — generated JSON must match YAML source
+- `payer-id-slug-mismatch` — backend IDs vs frontend slugs at API boundary
 
 ## Tiers
 **Always:** lint (`ruff`), test (`pytest`), registry freshness check, boundary check

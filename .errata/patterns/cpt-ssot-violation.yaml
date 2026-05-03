@@ -1,0 +1,14 @@
+id: cpt-ssot-violation
+pattern: Hardcoding CPT codes instead of importing from registry
+detection: |
+  grep for 5-digit strings in quotes that look like CPTs (e.g., "45378", "43239")
+  in files outside data/registries/ and tests/fixtures/
+prevention: |
+  Import CPTs from app.registries:
+    from app.registries import get_cpt_for_bundle, all_bundle_ids
+  Never write a literal CPT code in application logic.
+example: |
+  Session 5: gi_symptom_refinement.py had hardcoded GI leaf IDs.
+  Fix: _GI_LEAF_IDS = list(bundles_for_specialty("Gastroenterology").keys())
+  Impact: Adding a new GI procedure would silently be excluded from refinement.
+severity: high

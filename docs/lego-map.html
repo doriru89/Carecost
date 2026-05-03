@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CareCost LEGO Module Map</title>
+<style>
+  body { margin: 0; font-family: system-ui, sans-serif; background: #0d1117; color: #c9d1d9; }
+  h1 { text-align: center; padding: 1rem; margin: 0; font-size: 1.4rem; }
+  .info { text-align: center; font-size: 0.85rem; color: #8b949e; margin-bottom: 1rem; }
+  svg { display: block; margin: 0 auto; }
+  .node circle { stroke: #30363d; stroke-width: 1.5px; cursor: pointer; }
+  .node text { font-size: 10px; fill: #c9d1d9; pointer-events: none; }
+  .link { stroke: #30363d; stroke-opacity: 0.4; }
+  .tooltip { position: absolute; background: #161b22; border: 1px solid #30363d;
+              padding: 8px 12px; border-radius: 6px; font-size: 12px; pointer-events: none;
+              display: none; }
+</style>
+</head>
+<body>
+<h1>CareCost LEGO Module Map</h1>
+<p class="info">Derived from GitNexus knowledge graph. 30 modules, 12 import edges. Regenerate: <code>make lego</code></p>
+<div class="tooltip" id="tooltip"></div>
+<svg width="900" height="600"></svg>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+const communities = [{"id": "comm_13", "label": "Ui", "cohesion": 0.967741935483871, "symbols": 31}, {"id": "comm_38", "label": "Etl", "cohesion": 1.0, "symbols": 17}, {"id": "comm_39", "label": "Etl", "cohesion": 1.0, "symbols": 15}, {"id": "comm_12", "label": "Pages", "cohesion": 0.85, "symbols": 14}, {"id": "comm_45", "label": "Etl", "cohesion": 1.0, "symbols": 14}, {"id": "comm_103", "label": "Etl", "cohesion": 1.0, "symbols": 14}, {"id": "comm_57", "label": "Services", "cohesion": 0.8181818181818182, "symbols": 11}, {"id": "comm_106", "label": "Db", "cohesion": 1.0, "symbols": 11}, {"id": "comm_15", "label": "Pages", "cohesion": 0.7777777777777778, "symbols": 10}, {"id": "comm_20", "label": "Components", "cohesion": 0.782608695652174, "symbols": 10}, {"id": "comm_34", "label": "Integration", "cohesion": 1.0, "symbols": 10}, {"id": "comm_22", "label": "Hooks", "cohesion": 1.0, "symbols": 9}, {"id": "comm_25", "label": "Api", "cohesion": 0.56, "symbols": 8}, {"id": "comm_71", "label": "Registries", "cohesion": 0.9333333333333333, "symbols": 8}, {"id": "comm_101", "label": "Etl", "cohesion": 1.0, "symbols": 8}, {"id": "comm_4", "label": "Scripts", "cohesion": 1.0, "symbols": 7}, {"id": "comm_26", "label": "Api", "cohesion": 0.6, "symbols": 7}, {"id": "comm_36", "label": "Etl", "cohesion": 1.0, "symbols": 7}, {"id": "comm_43", "label": "Etl", "cohesion": 0.631578947368421, "symbols": 7}, {"id": "comm_44", "label": "Etl", "cohesion": 0.631578947368421, "symbols": 7}, {"id": "comm_72", "label": "Registries", "cohesion": 0.9411764705882353, "symbols": 7}, {"id": "comm_21", "label": "Components", "cohesion": 0.8, "symbols": 6}, {"id": "comm_37", "label": "Etl", "cohesion": 1.0, "symbols": 6}, {"id": "comm_46", "label": "Etl", "cohesion": 1.0, "symbols": 6}, {"id": "comm_1", "label": "Scripts", "cohesion": 1.0, "symbols": 5}, {"id": "comm_3", "label": "Scripts", "cohesion": 1.0, "symbols": 5}, {"id": "comm_17", "label": "Pages", "cohesion": 0.625, "symbols": 5}, {"id": "comm_18", "label": "Providers", "cohesion": 0.7272727272727273, "symbols": 5}, {"id": "comm_48", "label": "Services", "cohesion": 1.0, "symbols": 5}, {"id": "comm_56", "label": "Services", "cohesion": 1.0, "symbols": 5}];
+const edges = [{"source": "comm_17", "target": "comm_15", "weight": 1}, {"source": "comm_15", "target": "comm_17", "weight": 1}, {"source": "comm_15", "target": "comm_25", "weight": 2}, {"source": "comm_12", "target": "comm_25", "weight": 3}, {"source": "comm_12", "target": "comm_18", "weight": 2}, {"source": "comm_26", "target": "comm_25", "weight": 3}, {"source": "comm_20", "target": "comm_25", "weight": 2}, {"source": "comm_26", "target": "comm_15", "weight": 3}, {"source": "comm_26", "target": "comm_17", "weight": 2}, {"source": "comm_21", "target": "comm_13", "weight": 1}, {"source": "comm_20", "target": "comm_21", "weight": 2}, {"source": "comm_20", "target": "comm_13", "weight": 1}];
+
+const colorScale = d3.scaleOrdinal(d3.schemeTableau10);
+const sizeScale = d3.scaleSqrt().domain([1, 50]).range([6, 24]);
+
+const svg = d3.select("svg");
+const width = +svg.attr("width");
+const height = +svg.attr("height");
+
+const simulation = d3.forceSimulation(communities)
+  .force("link", d3.forceLink(edges).id(d => d.id).distance(80))
+  .force("charge", d3.forceManyBody().strength(-200))
+  .force("center", d3.forceCenter(width / 2, height / 2))
+  .force("collision", d3.forceCollide().radius(d => sizeScale(d.symbols) + 4));
+
+const link = svg.append("g")
+  .selectAll("line")
+  .data(edges)
+  .enter().append("line")
+  .attr("class", "link");
+
+const node = svg.append("g")
+  .selectAll("g")
+  .data(communities)
+  .enter().append("g")
+  .attr("class", "node")
+  .call(d3.drag()
+    .on("start", dragstarted)
+    .on("drag", dragged)
+    .on("end", dragended));
+
+node.append("circle")
+  .attr("r", d => sizeScale(d.symbols))
+  .attr("fill", d => colorScale(d.label));
+
+node.append("text")
+  .attr("dy", d => sizeScale(d.symbols) + 12)
+  .attr("text-anchor", "middle")
+  .text(d => d.label + (communities.filter(c => c.label === d.label).length > 1 ? ` (${d.symbols})` : ""));
+
+const tooltip = d3.select("#tooltip");
+node.on("mouseover", (event, d) => {
+  tooltip.style("display", "block")
+    .html(`<strong>${d.label}</strong><br>Symbols: ${d.symbols}<br>Cohesion: ${(d.cohesion * 100).toFixed(0)}%`);
+}).on("mousemove", (event) => {
+  tooltip.style("left", (event.pageX + 12) + "px").style("top", (event.pageY - 28) + "px");
+}).on("mouseout", () => tooltip.style("display", "none"));
+
+simulation.on("tick", () => {
+  link.attr("x1", d => d.source.x).attr("y1", d => d.source.y)
+      .attr("x2", d => d.target.x).attr("y2", d => d.target.y);
+  node.attr("transform", d => `translate(${d.x},${d.y})`);
+});
+
+function dragstarted(event, d) { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }
+function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
+function dragended(event, d) { if (!event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }
+</script>
+</body>
+</html>
