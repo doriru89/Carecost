@@ -44,10 +44,15 @@ export function getPayerPrice(hospital: HospitalApi, carrier: string, settingFil
   return rates[0].negotiated_rate;
 }
 
+export const SETTING_FILTER_MAP: Record<string, string[]> = {
+  facility_only: ['outpatient', 'facility'],
+};
+
 /** Filter payer_rates by setting. 'facility_only' matches both outpatient and facility. */
 export function filterRatesBySetting<T extends { setting: string }>(rates: T[], settingFilter?: string): T[] {
   if (!settingFilter || settingFilter === 'all') return rates;
-  if (settingFilter === 'facility_only') return rates.filter(r => r.setting === 'outpatient' || r.setting === 'facility');
+  const mapped = SETTING_FILTER_MAP[settingFilter];
+  if (mapped) return rates.filter(r => mapped.includes(r.setting));
   return rates.filter(r => r.setting === settingFilter);
 }
 

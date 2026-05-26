@@ -698,10 +698,8 @@ const MapPage = () => {
                           };
 
                           const sortedSources = [...sources].sort((a, b) => {
-                            const aIsFairHealth = a.label.includes('FAIR Health');
-                            const bIsFairHealth = b.label.includes('FAIR Health');
-                            if (aIsFairHealth && !bIsFairHealth) return 1;
-                            if (!aIsFairHealth && bIsFairHealth) return -1;
+                            if (a.kind === 'benchmark' && b.kind !== 'benchmark') return 1;
+                            if (a.kind !== 'benchmark' && b.kind === 'benchmark') return -1;
                             return a.price - b.price;
                           });
 
@@ -712,7 +710,7 @@ const MapPage = () => {
                             harvard_pilgrim: ['harvard pilgrim', 'harvard'],
                             uhc: ['uhc', 'united'],
                           };
-                          const matchTokens = carrierLabels[userCarrierKey] ?? [];
+                          const matchTokens = userCarrierKey ? (carrierLabels[userCarrierKey] ?? []) : [];
 
                           return (
                             <div className="bg-muted/30 rounded-lg px-3 py-2 text-xs">
@@ -775,7 +773,6 @@ const MapPage = () => {
                             <p className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px] mb-1.5">All insurers</p>
                             <div className="flex overflow-x-auto gap-1.5 text-center">
                               {(() => {
-                                const PAYER_LABELS = PAYER_SHORT;
                                 const ratesByPayer = new Map<string, number | null>();
                                 for (const r of filterRatesBySetting(hData.payer_rates, settingFilter)) {
                                   if (!ratesByPayer.has(r.payer_id) || r.source_origin === 'mrf') {
@@ -783,7 +780,7 @@ const MapPage = () => {
                                   }
                                 }
                                 const entries = [...ratesByPayer.entries()].map(([key, price]) => ({
-                                  key, label: PAYER_LABELS[key] ?? key.toUpperCase(), price,
+                                  key, label: PAYER_SHORT[key] ?? key.toUpperCase(), price,
                                 }));
                                 const prices = entries.map(e => e.price).filter((p): p is number => p != null);
                                 const lowest = prices.length > 0 ? Math.min(...prices) : null;

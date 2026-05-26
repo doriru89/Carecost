@@ -271,10 +271,11 @@ const ProviderCard = ({
             {sourcesOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
             All price sources
           </button>
-          {sourcesOpen && (
+          {sourcesOpen && (() => {
+            const sources = getAllPriceSources(hospital, insuranceLabel, settingFilter);
+            return (
             <div className="bg-muted/50 rounded-xl p-4 mt-2 space-y-1.5 max-h-[400px] overflow-y-auto">
               {(() => {
-                const sources = getAllPriceSources(hospital, insuranceLabel, settingFilter);
                 const negotiated = sources.filter(s => s.kind === 'negotiated' || s.kind === 'tic');
                 const other = sources.filter(s => s.kind !== 'negotiated' && s.kind !== 'tic');
                 const byPayer = new Map<string, PriceSource[]>();
@@ -363,11 +364,12 @@ const ProviderCard = ({
                 );
               })()}
 
-              {getAllPriceSources(hospital, insuranceLabel, settingFilter).length === 0 && (
+              {sources.length === 0 && (
                 <p className="text-xs text-muted-foreground italic">No price sources available for this hospital.</p>
               )}
             </div>
-          )}
+            );
+          })()}
         </div>
       )}
 

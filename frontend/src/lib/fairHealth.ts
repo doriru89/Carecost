@@ -10,6 +10,7 @@ export type FairHealthBreakdown = {
   components: FairHealthComponent[];
 };
 
+// In-network hospital components only. physician_oon and facility_asc_in_network are alternatives, not additive.
 export const COMPONENT_LABELS: Record<string, string> = {
   physician_in_network: 'Physician',
   facility_hosp_in_network: 'Facility',
