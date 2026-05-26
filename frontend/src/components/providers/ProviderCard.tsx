@@ -363,7 +363,7 @@ const ProviderCard = ({
                 );
               })()}
 
-              {getAllPriceSources(hospital, insuranceLabel).length === 0 && (
+              {getAllPriceSources(hospital, insuranceLabel, settingFilter).length === 0 && (
                 <p className="text-xs text-muted-foreground italic">No price sources available for this hospital.</p>
               )}
             </div>

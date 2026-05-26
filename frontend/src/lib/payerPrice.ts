@@ -1,4 +1,5 @@
 import type { HospitalApi } from '@/api/client';
+import { COMPONENT_LABELS } from '@/lib/fairHealth';
 
 export const SETTING_LABELS: Record<string, string> = {
   both: 'Bundled',
@@ -13,14 +14,21 @@ export const PAYER_DISPLAY: Record<string, string> = {
   uhc: 'UnitedHealthcare',
 };
 
-/** Map an insurance carrier label to a payer key. */
-export function carrierKeyFromLabel(carrier: string): string {
+export const PAYER_SHORT: Record<string, string> = {
+  bcbs: 'BCBS',
+  aetna: 'Aetna',
+  harvard_pilgrim: 'Harvard Pilgrim',
+  uhc: 'UHC',
+};
+
+/** Map an insurance carrier label to a payer key. Returns null if no match found. */
+export function carrierKeyFromLabel(carrier: string): string | null {
   const c = carrier.toLowerCase();
   if (c.includes('blue cross') || c.includes('bcbs')) return 'bcbs';
   if (c.includes('aetna')) return 'aetna';
   if (c.includes('harvard') || c.includes('pilgrim')) return 'harvard_pilgrim';
   if (c.includes('united') || c.includes('uhc') || c.includes('unitedhealth')) return 'uhc';
-  return 'bcbs';
+  return null;
 }
 
 /** Get the negotiated price for the user's payer from payer_rates[]. MRF preferred, TiC fallback. */
@@ -93,6 +101,7 @@ export function getAllPriceSources(hospital: HospitalApi, carrier: string, setti
 
   for (const b of hospital.benchmarks) {
     if (b.price == null) continue;
+    if (b.benchmark_source === 'fair_health' && b.component in COMPONENT_LABELS) continue;
     const srcLabel = b.benchmark_source === 'fair_health'
       ? `FAIR Health ${b.component.replace(/_/g, ' ')}`
       : `${b.benchmark_source} ${b.component}`;

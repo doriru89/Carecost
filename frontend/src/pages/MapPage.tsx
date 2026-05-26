@@ -18,7 +18,7 @@ import type { Provider } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 import { fetchProviders, fetchHospitals, postEstimate, type ProviderApi, type HospitalApi } from '@/api/client';
 import { apiEstimateToCostEstimate } from '@/lib/mapEstimate';
-import { getPayerPrice, carrierKeyFromLabel, getAllPriceSources, filterRatesBySetting, SETTING_LABELS } from '@/lib/payerPrice';
+import { getPayerPrice, carrierKeyFromLabel, getAllPriceSources, filterRatesBySetting, SETTING_LABELS, PAYER_SHORT } from '@/lib/payerPrice';
 import { computeFairHealthTotal } from '@/lib/fairHealth';
 import { computeOop } from '@/lib/oopRules';
 import { PLAN_CONFIGS, type PlanConfig } from '@/lib/planConfig';
@@ -61,13 +61,8 @@ const createPricePinIcon = (priceLabel: string) => {
 /** Payer key → human label for display. */
 function payerDisplayLabel(carrier: string): string {
   const key = carrierKeyFromLabel(carrier);
-  const labels: Record<string, string> = {
-    bcbs: 'BCBS',
-    aetna: 'Aetna',
-    harvard_pilgrim: 'Harvard Pilgrim',
-    uhc: 'UHC',
-  };
-  return labels[key] ?? 'BCBS';
+  if (!key) return carrier;
+  return PAYER_SHORT[key] ?? key.toUpperCase();
 }
 
 const MapPage = () => {
@@ -124,7 +119,7 @@ const MapPage = () => {
     }
     // Fallback: build from insurance profile
     if (insurance?.deductible != null && insurance?.coinsurance != null) {
-      const carrierKey = carrierKeyFromLabel(insuranceCarrierLabel);
+      const carrierKey = carrierKeyFromLabel(insuranceCarrierLabel) ?? 'unknown';
       return {
         id: 'user_custom',
         payer: insuranceCarrierLabel,
@@ -241,7 +236,7 @@ const MapPage = () => {
       setScrollToHospital(cheapest.name);
     }
     setCollapsedHospitals(all);
-  }, [hospitals, insuranceCarrierLabel]);
+  }, [hospitals, insuranceCarrierLabel, settingFilter]);
 
   // Scroll to hospital after pin click — wait for expand animation, then scroll header to top
   useEffect(() => {
@@ -348,7 +343,7 @@ const MapPage = () => {
         });
       markersRef.current!.addLayer(marker);
     });
-  }, [hospitals, insuranceCarrierLabel]);
+  }, [hospitals, insuranceCarrierLabel, settingFilter]);
 
   const toggleSave = (id: string) => {
     setSavedIds(s => {
@@ -780,9 +775,7 @@ const MapPage = () => {
                             <p className="font-semibold text-muted-foreground uppercase tracking-wider text-[10px] mb-1.5">All insurers</p>
                             <div className="flex overflow-x-auto gap-1.5 text-center">
                               {(() => {
-                                const PAYER_LABELS: Record<string, string> = {
-                                  bcbs: 'BCBS', aetna: 'Aetna', harvard_pilgrim: 'Harvard Pilgrim', uhc: 'UHC',
-                                };
+                                const PAYER_LABELS = PAYER_SHORT;
                                 const ratesByPayer = new Map<string, number | null>();
                                 for (const r of filterRatesBySetting(hData.payer_rates, settingFilter)) {
                                   if (!ratesByPayer.has(r.payer_id) || r.source_origin === 'mrf') {

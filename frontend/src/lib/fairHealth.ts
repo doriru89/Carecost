@@ -10,7 +10,7 @@ export type FairHealthBreakdown = {
   components: FairHealthComponent[];
 };
 
-const COMPONENT_LABELS: Record<string, string> = {
+export const COMPONENT_LABELS: Record<string, string> = {
   physician_in_network: 'Physician',
   facility_hosp_in_network: 'Facility',
   anesthesia_in_network: 'Anesthesia',

@@ -51,8 +51,9 @@ describe('carrierKeyFromLabel', () => {
     expect(carrierKeyFromLabel('UHC')).toBe('uhc');
   });
 
-  it('falls back to bcbs for unknown', () => {
-    expect(carrierKeyFromLabel('Some Unknown Carrier')).toBe('bcbs');
+  it('returns null for unknown carrier', () => {
+    expect(carrierKeyFromLabel('Some Unknown Carrier')).toBeNull();
+    expect(carrierKeyFromLabel('Oscar Health')).toBeNull();
   });
 });
 
@@ -119,14 +120,15 @@ describe('getPayerPrice', () => {
 });
 
 describe('getAllPriceSources', () => {
-  it('returns sources from payer_rates + standard fields + benchmarks', () => {
+  it('returns sources from payer_rates + standard fields + benchmarks (FAIR Health components excluded)', () => {
     const sources = getAllPriceSources(mockHospital, 'Blue Cross');
-    expect(sources.length).toBeGreaterThanOrEqual(8);
+    expect(sources.length).toBeGreaterThanOrEqual(6);
     expect(sources.filter(s => s.kind === 'negotiated').length).toBeGreaterThanOrEqual(1);
     expect(sources.filter(s => s.kind === 'de_identified')).toHaveLength(2);
     expect(sources.filter(s => s.kind === 'gross')).toHaveLength(1);
     expect(sources.filter(s => s.kind === 'cash')).toHaveLength(1);
     expect(sources.filter(s => s.kind === 'benchmark').length).toBeGreaterThanOrEqual(2);
+    expect(sources.filter(s => s.label.includes('FAIR Health')).length).toBe(0);
   });
 
   it('omits null rates silently', () => {
@@ -259,6 +261,31 @@ describe('getAllPriceSources with settingFilter', () => {
     const both = getAllPriceSources(h, 'BCBS', 'both');
     expect(both.filter(s => s.kind === 'negotiated')).toHaveLength(1);
     expect(both.find(s => s.kind === 'negotiated')?.price).toBe(1000);
+  });
+});
+
+describe('FAIR Health deduplication', () => {
+  it('excludes composited FAIR Health components from getAllPriceSources', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [],
+      discounted_cash: null,
+      de_identified_min: null,
+      de_identified_max: null,
+      gross_charge: null,
+      benchmarks: [
+        { benchmark_source: 'fair_health', component: 'physician_in_network', price: 604, quality_rating: null },
+        { benchmark_source: 'fair_health', component: 'facility_hosp_in_network', price: 2133, quality_rating: null },
+        { benchmark_source: 'fair_health', component: 'anesthesia_in_network', price: 853, quality_rating: null },
+        { benchmark_source: 'fair_health', component: 'physician_oon', price: 1118, quality_rating: null },
+        { benchmark_source: 'turquoise', component: 'total', price: 2800, quality_rating: 4.2 },
+      ],
+    };
+    const sources = getAllPriceSources(h, 'BCBS');
+    const fhSources = sources.filter(s => s.label.includes('FAIR Health'));
+    expect(fhSources).toHaveLength(1);
+    expect(fhSources[0].label).toContain('physician oon');
+    expect(sources.find(s => s.label.includes('turquoise'))).toBeDefined();
   });
 });
 
