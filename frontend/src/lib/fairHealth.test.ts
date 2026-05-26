@@ -50,4 +50,18 @@ describe('computeFairHealthTotal', () => {
     expect(labels).toContain('Facility');
     expect(labels).toContain('Anesthesia');
   });
+
+  it('excludes out-of-network and ASC alternative components', () => {
+    const benchmarks: Benchmark[] = [
+      { benchmark_source: 'fair_health', component: 'physician_in_network', price: 735, quality_rating: null },
+      { benchmark_source: 'fair_health', component: 'physician_oon', price: 1118, quality_rating: null },
+      { benchmark_source: 'fair_health', component: 'facility_hosp_in_network', price: 1923, quality_rating: null },
+      { benchmark_source: 'fair_health', component: 'facility_asc_in_network', price: 908, quality_rating: null },
+      { benchmark_source: 'fair_health', component: 'anesthesia_in_network', price: 770, quality_rating: null },
+    ];
+    const result = computeFairHealthTotal(benchmarks);
+    expect(result!.total).toBe(735 + 1923 + 770);
+    expect(result!.components).toHaveLength(3);
+    expect(result!.components.every(c => !c.label.includes('oon') && !c.label.includes('asc'))).toBe(true);
+  });
 });

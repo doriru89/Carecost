@@ -202,6 +202,7 @@ export type PayerRate = {
   billing_class: string;
   rate_year: number | null;
   effective_date: string;
+  setting: string;
 };
 
 export type Benchmark = {

@@ -45,6 +45,8 @@ def _make_rate(
     *,
     rate_year: int = 0,
     source_file: str = "test.json",
+    setting: str = "both",
+    source_origin: str = "mrf",
 ) -> None:
     db.add(
         HospitalPayerRate(
@@ -53,10 +55,11 @@ def _make_rate(
             payer_id=payer_id,
             negotiated_rate=rate,
             plan_name="Standard",
-            source_origin="mrf",
+            source_origin=source_origin,
             billing_class="institutional",
             source_file=source_file,
             rate_year=rate_year,
+            setting=setting,
         )
     )
     db.flush()
@@ -122,3 +125,27 @@ class TestRateYearFilter:
         results = query_hospitals(db_session, CPT)
         rate = results[0]["payer_rates"][0]
         assert rate["rate_year"] == 2026
+
+
+class TestSettingInResponse:
+    def test_setting_included_in_payer_rates(self, db_session: Session):
+        _make_hospital(db_session, "hosp_a")
+        _make_rate(db_session, "hosp_a", "bcbs_ma", 3000.0, setting="outpatient")
+        db_session.commit()
+
+        results = query_hospitals(db_session, CPT)
+        rate = results[0]["payer_rates"][0]
+        assert rate["setting"] == "outpatient"
+
+    def test_all_setting_values_preserved(self, db_session: Session):
+        _make_hospital(db_session, "hosp_a")
+        _make_rate(db_session, "hosp_a", "bcbs_ma", 1000.0, setting="both")
+        _make_rate(db_session, "hosp_a", "aetna", 2000.0, setting="outpatient")
+        _make_rate(
+            db_session, "hosp_a", "uhc", 1500.0, setting="facility", source_origin="tic"
+        )
+        db_session.commit()
+
+        results = query_hospitals(db_session, CPT)
+        settings = {r["setting"] for r in results[0]["payer_rates"]}
+        assert settings == {"both", "outpatient", "facility"}

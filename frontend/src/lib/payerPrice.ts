@@ -1,5 +1,18 @@
 import type { HospitalApi } from '@/api/client';
 
+export const SETTING_LABELS: Record<string, string> = {
+  both: 'Bundled',
+  outpatient: 'Facility only',
+  facility: 'Facility only',
+};
+
+export const PAYER_DISPLAY: Record<string, string> = {
+  bcbs: 'Blue Cross Blue Shield',
+  aetna: 'Aetna',
+  harvard_pilgrim: 'Harvard Pilgrim',
+  uhc: 'UnitedHealthcare',
+};
+
 /** Map an insurance carrier label to a payer key. */
 export function carrierKeyFromLabel(carrier: string): string {
   const c = carrier.toLowerCase();
@@ -11,15 +24,23 @@ export function carrierKeyFromLabel(carrier: string): string {
 }
 
 /** Get the negotiated price for the user's payer from payer_rates[]. MRF preferred, TiC fallback. */
-export function getPayerPrice(hospital: HospitalApi, carrier: string): number | null {
+export function getPayerPrice(hospital: HospitalApi, carrier: string, settingFilter?: string): number | null {
   const payerId = carrierKeyFromLabel(carrier);
-  const rates = hospital.payer_rates.filter(r => r.payer_id === payerId && r.negotiated_rate != null);
+  const filtered = filterRatesBySetting(hospital.payer_rates, settingFilter);
+  const rates = filtered.filter(r => r.payer_id === payerId && r.negotiated_rate != null);
   if (rates.length === 0) return null;
   const mrf = rates.find(r => r.source_origin === 'mrf');
   if (mrf) return mrf.negotiated_rate;
   const tic = rates.find(r => r.source_origin === 'tic');
   if (tic) return tic.negotiated_rate;
   return rates[0].negotiated_rate;
+}
+
+/** Filter payer_rates by setting. 'facility_only' matches both outpatient and facility. */
+export function filterRatesBySetting<T extends { setting: string }>(rates: T[], settingFilter?: string): T[] {
+  if (!settingFilter || settingFilter === 'all') return rates;
+  if (settingFilter === 'facility_only') return rates.filter(r => r.setting === 'outpatient' || r.setting === 'facility');
+  return rates.filter(r => r.setting === settingFilter);
 }
 
 export type PriceSource = {
@@ -29,31 +50,36 @@ export type PriceSource = {
   billing_class?: string;
   source?: string;
   plan_count?: number;
+  setting?: string;
+  payer_id?: string;
+  plan_name?: string;
 };
 
 /** Return ALL available price sources for a hospital, from payer_rates + benchmarks + standard fields. */
-export function getAllPriceSources(hospital: HospitalApi, carrier: string): PriceSource[] {
+export function getAllPriceSources(hospital: HospitalApi, carrier: string, settingFilter?: string): PriceSource[] {
   const payerId = carrierKeyFromLabel(carrier);
   const sources: PriceSource[] = [];
+  const filteredRates = filterRatesBySetting(hospital.payer_rates, settingFilter);
 
-  const rateGroups = new Map<string, { rate: typeof hospital.payer_rates[0]; count: number }>();
-  for (const r of hospital.payer_rates) {
+  const rateGroups = new Map<string, { rate: typeof hospital.payer_rates[0]; count: number; plans: string[] }>();
+  for (const r of filteredRates) {
     if (r.negotiated_rate == null) continue;
     const key = `${r.payer_id}|${r.source_origin}|${r.negotiated_rate}`;
     const existing = rateGroups.get(key);
     if (existing) {
       existing.count++;
+      if (r.plan_name) existing.plans.push(r.plan_name);
     } else {
-      rateGroups.set(key, { rate: r, count: 1 });
+      rateGroups.set(key, { rate: r, count: 1, plans: r.plan_name ? [r.plan_name] : [] });
     }
   }
 
-  for (const { rate: r, count } of rateGroups.values()) {
+  for (const { rate: r, count, plans } of rateGroups.values()) {
     const kind: PriceSource['kind'] = r.source_origin === 'tic' ? 'tic' : 'negotiated';
     const label = r.payer_id === payerId
       ? `${r.payer_id.toUpperCase()} negotiated rate`
       : `${r.payer_id.toUpperCase()} (${r.source_origin})`;
-    sources.push({ label, price: r.negotiated_rate!, kind, billing_class: r.billing_class, plan_count: count });
+    sources.push({ label, price: r.negotiated_rate!, kind, billing_class: r.billing_class, plan_count: count, setting: r.setting, payer_id: r.payer_id, plan_name: count === 1 ? plans[0] : plans.join(', ') });
   }
 
   if (hospital.discounted_cash != null)

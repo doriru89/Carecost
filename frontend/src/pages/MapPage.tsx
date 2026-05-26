@@ -18,7 +18,8 @@ import type { Provider } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 import { fetchProviders, fetchHospitals, postEstimate, type ProviderApi, type HospitalApi } from '@/api/client';
 import { apiEstimateToCostEstimate } from '@/lib/mapEstimate';
-import { getPayerPrice, carrierKeyFromLabel, getAllPriceSources } from '@/lib/payerPrice';
+import { getPayerPrice, carrierKeyFromLabel, getAllPriceSources, filterRatesBySetting, SETTING_LABELS } from '@/lib/payerPrice';
+import { computeFairHealthTotal } from '@/lib/fairHealth';
 import { computeOop } from '@/lib/oopRules';
 import { PLAN_CONFIGS, type PlanConfig } from '@/lib/planConfig';
 import { buildEstimateFallback } from '@/lib/estimateFallback';
@@ -99,6 +100,7 @@ const MapPage = () => {
   const [showList, setShowList] = useState(false);
   const [collapsedHospitals, setCollapsedHospitals] = useState<Set<string>>(new Set());
   const [expandedSources, setExpandedSources] = useState<Set<string>>(new Set());
+  const [settingFilter, setSettingFilter] = useState<string>('all');
   const [scrollToHospital, setScrollToHospital] = useState<string | null>(null);
   const hospitalRefsMap = useRef<Map<string, HTMLDivElement>>(new Map());
 
@@ -228,7 +230,7 @@ const MapPage = () => {
     const all = new Set(hospitals.map(h => h.name));
     all.add('Independent Providers');
 
-    const priceFor = (h: HospitalApi) => getPayerPrice(h, insuranceCarrierLabel) ?? h.discounted_cash;
+    const priceFor = (h: HospitalApi) => getPayerPrice(h, insuranceCarrierLabel, settingFilter) ?? h.discounted_cash;
     const cheapest = [...hospitals]
       .filter(h => priceFor(h) != null)
       .sort((a, b) => (priceFor(a) ?? Infinity) - (priceFor(b) ?? Infinity))[0];
@@ -318,7 +320,7 @@ const MapPage = () => {
     const payerLabel = payerDisplayLabel(insuranceCarrierLabel);
 
     hospitals.forEach(h => {
-      const payerPrice = getPayerPrice(h, insuranceCarrierLabel);
+      const payerPrice = getPayerPrice(h, insuranceCarrierLabel, settingFilter);
       const priceLabel = payerPrice != null ? `$${Math.round(payerPrice).toLocaleString()}` : '—';
       const icon = createPricePinIcon(priceLabel);
 
@@ -541,6 +543,34 @@ const MapPage = () => {
                 <RefreshCw className={`w-4 h-4 ${providersQuery.isFetching ? 'animate-spin' : ''}`} />
               </Button>
             </div>
+            <div className="flex items-center gap-1.5 mt-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider cursor-help flex items-center gap-0.5">
+                    Rate type <Info className="w-3 h-3" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent className="text-xs max-w-xs">
+                  <p className="font-semibold mb-1">What do these mean?</p>
+                  <p><strong>Bundled</strong> — facility + professional fees in one rate</p>
+                  <p><strong>Facility only</strong> — hospital facility fee; professional fees may be billed separately</p>
+                </TooltipContent>
+              </Tooltip>
+              {[{ key: 'all', label: 'All' }, { key: 'both', label: 'Bundled' }, { key: 'facility_only', label: 'Facility only' }].map(({ key, label }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setSettingFilter(key)}
+                  className={`text-[11px] px-2 py-0.5 rounded-full border transition-colors ${
+                    settingFilter === key
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-muted/50 text-muted-foreground border-border hover:bg-muted'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="p-4 space-y-3">
@@ -555,12 +585,13 @@ const MapPage = () => {
                   insuranceLabel={insuranceCarrierLabel}
                   hospitalPayerPrice={(() => {
                     const h = hospitals.find(x => x.name === selectedProvider.hospital);
-                    return h ? getPayerPrice(h, insuranceCarrierLabel) : null;
+                    return h ? getPayerPrice(h, insuranceCarrierLabel, settingFilter) : null;
                   })()}
                   hospital={hospitals.find(x => x.name === selectedProvider.hospital)}
                   planConfig={activePlanConfig}
                   scenarioId={selectedCrt?.bundleId ?? null}
                   cptCode={selectedCrt?.cpt ?? null}
+                  settingFilter={settingFilter}
                   onSave={() => toggleSave(selectedProvider.id)}
                   saved={savedIds.has(selectedProvider.id)}
                   onRequestInsurance={() => setInsuranceDialogOpen(true)}
@@ -570,7 +601,7 @@ const MapPage = () => {
               groupedByHospital.map(([hospitalName, hospitalProviders]) => {
                 const isCollapsed = collapsedHospitals.has(hospitalName);
                 const hData = hospitals.find(h => h.name === hospitalName);
-                const hospitalPayerPrice = hData ? getPayerPrice(hData, insuranceCarrierLabel) : null;
+                const hospitalPayerPrice = hData ? getPayerPrice(hData, insuranceCarrierLabel, settingFilter) : null;
                 const hospitalOop = hospitalPayerPrice != null && activePlanConfig
                   ? computeOop(hospitalPayerPrice, activePlanConfig, selectedCrt?.bundleId ?? null, selectedCrt?.cpt ?? null)
                   : null;
@@ -623,6 +654,15 @@ const MapPage = () => {
                             You pay —
                           </span>
                         )}
+                        {(() => {
+                          const fh = hData ? computeFairHealthTotal(hData.benchmarks) : null;
+                          if (!fh) return null;
+                          return (
+                            <span className="block text-[10px] text-muted-foreground/70 mt-0.5">
+                              Typical total: {fh.components.map(c => `${c.label} $${c.amount.toLocaleString()}`).join(' + ')} = ${fh.total.toLocaleString()}
+                            </span>
+                          );
+                        })()}
                       </div>
                       <span className="text-xs text-muted-foreground">{hospitalProviders.length}</span>
                     </button>
@@ -649,7 +689,7 @@ const MapPage = () => {
                         )}
                         {/* Collapsible price sources at hospital level */}
                         {hData && (() => {
-                          const sources = getAllPriceSources(hData, insuranceCarrierLabel);
+                          const sources = getAllPriceSources(hData, insuranceCarrierLabel, settingFilter);
                           if (sources.length === 0) return null;
                           const isSourcesOpen = expandedSources.has(hospitalName);
 
@@ -744,7 +784,7 @@ const MapPage = () => {
                                   bcbs: 'BCBS', aetna: 'Aetna', harvard_pilgrim: 'Harvard Pilgrim', uhc: 'UHC',
                                 };
                                 const ratesByPayer = new Map<string, number | null>();
-                                for (const r of hData.payer_rates) {
+                                for (const r of filterRatesBySetting(hData.payer_rates, settingFilter)) {
                                   if (!ratesByPayer.has(r.payer_id) || r.source_origin === 'mrf') {
                                     ratesByPayer.set(r.payer_id, r.negotiated_rate);
                                   }
@@ -778,6 +818,7 @@ const MapPage = () => {
                               planConfig={activePlanConfig}
                               scenarioId={selectedCrt?.bundleId ?? null}
                               cptCode={selectedCrt?.cpt ?? null}
+                              settingFilter={settingFilter}
                               onSave={() => toggleSave(p.id)}
                               saved={savedIds.has(p.id)}
                               onRequestInsurance={() => setInsuranceDialogOpen(true)}

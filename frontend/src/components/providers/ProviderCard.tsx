@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, Phone, Bookmark, ExternalLink, Info, ChevronDown, ChevronRight, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
-import { getAllPriceSources } from '@/lib/payerPrice';
+import { getAllPriceSources, SETTING_LABELS, PAYER_DISPLAY, type PriceSource } from '@/lib/payerPrice';
 import { computeFairHealthTotal } from '@/lib/fairHealth';
 import { computeOop, type OopResult } from '@/lib/oopRules';
 import type { HospitalApi, CostComponentsResponse } from '@/api/client';
@@ -26,6 +26,8 @@ interface ProviderCardProps {
   scenarioId?: string | null;
   /** Selected CPT code. */
   cptCode?: string | null;
+  /** Active setting filter from map controls. */
+  settingFilter?: string;
   onSave?: () => void;
   saved?: boolean;
   compact?: boolean;
@@ -103,6 +105,7 @@ const ProviderCard = ({
   planConfig,
   scenarioId,
   cptCode,
+  settingFilter,
   onSave,
   saved = false,
   compact = false,
@@ -269,25 +272,68 @@ const ProviderCard = ({
             All price sources
           </button>
           {sourcesOpen && (
-            <div className="bg-muted/50 rounded-xl p-4 mt-2 space-y-1.5 max-h-[300px] overflow-y-auto">
-              {getAllPriceSources(hospital, insuranceLabel).map((src, i) => (
-                <div key={i} className="flex justify-between text-sm">
-                  <span className="text-muted-foreground flex items-center gap-1">
-                    {src.label}
-                    {src.plan_count != null && src.plan_count > 1 && (
-                      <span className="opacity-50">({src.plan_count} plans)</span>
-                    )}
-                    <Tooltip>
-                      <TooltipTrigger asChild><Info className="w-3 h-3 cursor-help" /></TooltipTrigger>
-                      <TooltipContent className="text-xs max-w-xs">
-                        <p>{SOURCE_TIPS[src.kind] ?? 'Price data from public transparency filings.'}</p>
-                        {src.billing_class && <p className="mt-1">Billing class: {src.billing_class}</p>}
-                      </TooltipContent>
-                    </Tooltip>
-                  </span>
-                  <span className="font-medium">${Math.round(src.price).toLocaleString()}</span>
-                </div>
-              ))}
+            <div className="bg-muted/50 rounded-xl p-4 mt-2 space-y-1.5 max-h-[400px] overflow-y-auto">
+              {(() => {
+                const sources = getAllPriceSources(hospital, insuranceLabel, settingFilter);
+                const negotiated = sources.filter(s => s.kind === 'negotiated' || s.kind === 'tic');
+                const other = sources.filter(s => s.kind !== 'negotiated' && s.kind !== 'tic');
+                const byPayer = new Map<string, PriceSource[]>();
+                for (const s of negotiated) {
+                  const pid = s.payer_id ?? 'other';
+                  if (!byPayer.has(pid)) byPayer.set(pid, []);
+                  byPayer.get(pid)!.push(s);
+                }
+                return (
+                  <>
+                    {[...byPayer.entries()].map(([pid, rates]) => (
+                      <div key={pid} className="mb-2">
+                        <p className="text-[11px] font-semibold text-foreground/80 uppercase tracking-wider mb-1">
+                          {PAYER_DISPLAY[pid] ?? pid.toUpperCase()}
+                        </p>
+                        {rates.map((src, i) => (
+                          <div key={i} className="flex justify-between text-sm pl-2">
+                            <span className="text-muted-foreground flex items-center gap-1 min-w-0">
+                              {src.setting && (
+                                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted border border-border font-medium shrink-0">{SETTING_LABELS[src.setting] ?? src.setting}</span>
+                              )}
+                              {src.plan_count != null && src.plan_count > 1 ? (
+                                <Tooltip>
+                                  <TooltipTrigger asChild><span className="opacity-60 cursor-help text-xs">{src.plan_count} plans</span></TooltipTrigger>
+                                  <TooltipContent className="text-xs max-w-xs"><p>{src.plan_name}</p></TooltipContent>
+                                </Tooltip>
+                              ) : src.plan_name ? (
+                                <span className="opacity-50 text-xs truncate">{src.plan_name}</span>
+                              ) : null}
+                              <Tooltip>
+                                <TooltipTrigger asChild><Info className="w-3 h-3 cursor-help shrink-0" /></TooltipTrigger>
+                                <TooltipContent className="text-xs max-w-xs">
+                                  <p>{SOURCE_TIPS[src.kind] ?? 'Price data from public transparency filings.'}</p>
+                                  {src.billing_class && <p className="mt-1">Billing class: {src.billing_class}</p>}
+                                </TooltipContent>
+                              </Tooltip>
+                            </span>
+                            <span className="font-medium shrink-0">${Math.round(src.price).toLocaleString()}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                    {other.map((src, i) => (
+                      <div key={`o${i}`} className="flex justify-between text-sm">
+                        <span className="text-muted-foreground flex items-center gap-1">
+                          {src.label}
+                          <Tooltip>
+                            <TooltipTrigger asChild><Info className="w-3 h-3 cursor-help" /></TooltipTrigger>
+                            <TooltipContent className="text-xs max-w-xs">
+                              <p>{SOURCE_TIPS[src.kind] ?? 'Price data from public transparency filings.'}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </span>
+                        <span className="font-medium">${Math.round(src.price).toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </>
+                );
+              })()}
 
               {/* FAIR Health 80th percentile breakdown */}
               {(() => {

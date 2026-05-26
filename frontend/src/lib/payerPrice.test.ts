@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { carrierKeyFromLabel, getPayerPrice, getAllPriceSources } from './payerPrice';
+import { carrierKeyFromLabel, getPayerPrice, getAllPriceSources, filterRatesBySetting } from './payerPrice';
 import type { HospitalApi } from '@/api/client';
 
 const mockHospital: HospitalApi = {
@@ -18,11 +18,11 @@ const mockHospital: HospitalApi = {
   de_identified_min: 1010,
   de_identified_max: 3264,
   payer_rates: [
-    { payer_id: 'bcbs', negotiated_rate: 1278, plan_name: 'BCBS PPO', source_origin: 'mrf', billing_class: 'institutional' },
-    { payer_id: 'bcbs', negotiated_rate: 1644, plan_name: 'BCBS TiC', source_origin: 'tic', billing_class: 'institutional' },
-    { payer_id: 'aetna', negotiated_rate: 1349, plan_name: 'Aetna PPO', source_origin: 'mrf', billing_class: 'institutional' },
-    { payer_id: 'harvard_pilgrim', negotiated_rate: 1644, plan_name: 'HP PPO', source_origin: 'mrf', billing_class: 'institutional' },
-    { payer_id: 'uhc', negotiated_rate: 1644, plan_name: 'UHC PPO', source_origin: 'mrf', billing_class: 'institutional' },
+    { payer_id: 'bcbs', negotiated_rate: 1278, plan_name: 'BCBS PPO', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
+    { payer_id: 'bcbs', negotiated_rate: 1644, plan_name: 'BCBS TiC', source_origin: 'tic', billing_class: 'institutional', setting: 'facility' },
+    { payer_id: 'aetna', negotiated_rate: 1349, plan_name: 'Aetna PPO', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
+    { payer_id: 'harvard_pilgrim', negotiated_rate: 1644, plan_name: 'HP PPO', source_origin: 'mrf', billing_class: 'institutional', setting: 'outpatient' },
+    { payer_id: 'uhc', negotiated_rate: 1644, plan_name: 'UHC PPO', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
   ],
   benchmarks: [
     { benchmark_source: 'turquoise', component: 'total', price: 2800, quality_rating: 4.2 },
@@ -73,7 +73,7 @@ describe('getPayerPrice', () => {
     const h: HospitalApi = {
       ...mockHospital,
       payer_rates: [
-        { payer_id: 'bcbs', negotiated_rate: 1644, plan_name: 'TiC', source_origin: 'tic', billing_class: 'institutional' },
+        { payer_id: 'bcbs', negotiated_rate: 1644, plan_name: 'TiC', source_origin: 'tic', billing_class: 'institutional', setting: 'facility' },
       ],
     };
     expect(getPayerPrice(h, 'BCBS')).toBe(1644);
@@ -88,7 +88,7 @@ describe('getPayerPrice', () => {
     const h: HospitalApi = {
       ...mockHospital,
       payer_rates: [
-        { payer_id: 'bcbs', negotiated_rate: 0, plan_name: 'BCBS PPO', source_origin: 'mrf', billing_class: 'institutional' },
+        { payer_id: 'bcbs', negotiated_rate: 0, plan_name: 'BCBS PPO', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
       ],
     };
     const result = getPayerPrice(h, 'BCBS');
@@ -100,8 +100,8 @@ describe('getPayerPrice', () => {
     const h: HospitalApi = {
       ...mockHospital,
       payer_rates: [
-        { payer_id: 'bcbs', negotiated_rate: 0, plan_name: 'BCBS MRF', source_origin: 'mrf', billing_class: 'institutional' },
-        { payer_id: 'bcbs', negotiated_rate: 500, plan_name: 'BCBS TiC', source_origin: 'tic', billing_class: 'institutional' },
+        { payer_id: 'bcbs', negotiated_rate: 0, plan_name: 'BCBS MRF', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
+        { payer_id: 'bcbs', negotiated_rate: 500, plan_name: 'BCBS TiC', source_origin: 'tic', billing_class: 'institutional', setting: 'facility' },
       ],
     };
     expect(getPayerPrice(h, 'BCBS')).toBe(0);
@@ -111,7 +111,7 @@ describe('getPayerPrice', () => {
     const h: HospitalApi = {
       ...mockHospital,
       payer_rates: [
-        { payer_id: 'aetna', negotiated_rate: 1349, plan_name: '', source_origin: 'mrf', billing_class: '' },
+        { payer_id: 'aetna', negotiated_rate: 1349, plan_name: '', source_origin: 'mrf', billing_class: '', setting: 'both' },
       ],
     };
     expect(getPayerPrice(h, 'Some Unknown Carrier')).toBeNull();
@@ -133,7 +133,7 @@ describe('getAllPriceSources', () => {
     const sparse: HospitalApi = {
       ...mockHospital,
       payer_rates: [
-        { payer_id: 'aetna', negotiated_rate: null, plan_name: '', source_origin: 'mrf', billing_class: '' },
+        { payer_id: 'aetna', negotiated_rate: null, plan_name: '', source_origin: 'mrf', billing_class: '', setting: 'both' },
       ],
       discounted_cash: null,
       gross_charge: null,
@@ -175,11 +175,11 @@ describe('getAllPriceSources', () => {
     const h: HospitalApi = {
       ...mockHospital,
       payer_rates: [
-        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC PPO', source_origin: 'mrf', billing_class: 'institutional' },
-        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC HMO/POS', source_origin: 'mrf', billing_class: 'institutional' },
-        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC Alliance PPO A', source_origin: 'mrf', billing_class: 'institutional' },
-        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC Alliance PPO B', source_origin: 'mrf', billing_class: 'institutional' },
-        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC Non Preferred B', source_origin: 'mrf', billing_class: 'institutional' },
+        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC PPO', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
+        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC HMO/POS', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
+        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC Alliance PPO A', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
+        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC Alliance PPO B', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
+        { payer_id: 'harvard_pilgrim', negotiated_rate: 762, plan_name: 'HPHC Non Preferred B', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
       ],
       benchmarks: [],
       discounted_cash: null,
@@ -197,9 +197,9 @@ describe('getAllPriceSources', () => {
     const h: HospitalApi = {
       ...mockHospital,
       payer_rates: [
-        { payer_id: 'uhc', negotiated_rate: 762, plan_name: 'UHC PPO', source_origin: 'mrf', billing_class: 'institutional' },
-        { payer_id: 'uhc', negotiated_rate: 762, plan_name: 'UHC HMO', source_origin: 'mrf', billing_class: 'institutional' },
-        { payer_id: 'uhc', negotiated_rate: 1584, plan_name: 'UHC Navigate', source_origin: 'mrf', billing_class: 'institutional' },
+        { payer_id: 'uhc', negotiated_rate: 762, plan_name: 'UHC PPO', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
+        { payer_id: 'uhc', negotiated_rate: 762, plan_name: 'UHC HMO', source_origin: 'mrf', billing_class: 'institutional', setting: 'both' },
+        { payer_id: 'uhc', negotiated_rate: 1584, plan_name: 'UHC Navigate', source_origin: 'mrf', billing_class: 'institutional', setting: 'outpatient' },
       ],
       benchmarks: [],
       discounted_cash: null,
@@ -211,5 +211,80 @@ describe('getAllPriceSources', () => {
     expect(sources).toHaveLength(2);
     expect(sources.find(s => s.price === 762)?.plan_count).toBe(2);
     expect(sources.find(s => s.price === 1584)?.plan_count).toBe(1);
+  });
+});
+
+describe('getPayerPrice with settingFilter', () => {
+  it('without filter returns same as before (backward compatible)', () => {
+    expect(getPayerPrice(mockHospital, 'Blue Cross')).toBe(1278);
+    expect(getPayerPrice(mockHospital, 'Blue Cross', undefined)).toBe(1278);
+    expect(getPayerPrice(mockHospital, 'Blue Cross', 'all')).toBe(1278);
+  });
+
+  it('setting filter narrows to matching rates', () => {
+    expect(getPayerPrice(mockHospital, 'Blue Cross', 'both')).toBe(1278);
+    expect(getPayerPrice(mockHospital, 'Blue Cross', 'facility')).toBe(1644);
+  });
+
+  it('returns null when no rates match the filter', () => {
+    expect(getPayerPrice(mockHospital, 'Blue Cross', 'outpatient')).toBeNull();
+  });
+
+  it('MRF preference still applies after setting filter', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'bcbs', negotiated_rate: 900, plan_name: 'TiC', source_origin: 'tic', billing_class: 'institutional', setting: 'outpatient' },
+        { payer_id: 'bcbs', negotiated_rate: 1200, plan_name: 'MRF', source_origin: 'mrf', billing_class: '', setting: 'outpatient' },
+      ],
+    };
+    expect(getPayerPrice(h, 'BCBS', 'outpatient')).toBe(1200);
+  });
+});
+
+describe('getAllPriceSources with settingFilter', () => {
+  it('respects setting filter', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'bcbs', negotiated_rate: 1000, plan_name: 'A', source_origin: 'mrf', billing_class: '', setting: 'both' },
+        { payer_id: 'aetna', negotiated_rate: 2000, plan_name: 'B', source_origin: 'mrf', billing_class: '', setting: 'outpatient' },
+      ],
+      benchmarks: [],
+      discounted_cash: null,
+      de_identified_min: null,
+      de_identified_max: null,
+      gross_charge: null,
+    };
+    const both = getAllPriceSources(h, 'BCBS', 'both');
+    expect(both.filter(s => s.kind === 'negotiated')).toHaveLength(1);
+    expect(both.find(s => s.kind === 'negotiated')?.price).toBe(1000);
+  });
+});
+
+describe('filterRatesBySetting', () => {
+  const rates = [
+    { setting: 'both', price: 100 },
+    { setting: 'outpatient', price: 200 },
+    { setting: 'facility', price: 300 },
+  ];
+
+  it('returns all when filter is undefined or "all"', () => {
+    expect(filterRatesBySetting(rates)).toHaveLength(3);
+    expect(filterRatesBySetting(rates, 'all')).toHaveLength(3);
+  });
+
+  it('filters to matching setting', () => {
+    expect(filterRatesBySetting(rates, 'both')).toHaveLength(1);
+    expect(filterRatesBySetting(rates, 'outpatient')[0].price).toBe(200);
+  });
+
+  it('returns empty for nonexistent setting', () => {
+    expect(filterRatesBySetting(rates, 'inpatient')).toHaveLength(0);
+  });
+
+  it('facility_only matches both outpatient and facility', () => {
+    expect(filterRatesBySetting(rates, 'facility_only')).toHaveLength(2);
+    expect(filterRatesBySetting(rates, 'facility_only').map(r => r.setting)).toEqual(['outpatient', 'facility']);
   });
 });
