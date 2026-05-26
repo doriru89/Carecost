@@ -325,13 +325,17 @@ def import_hospital_procedures_csv(db: Session, path: Path) -> int:
     return _upsert_by_constraint(db, HospitalProcedure, rows, "uq_hospital_procedures_hid_cpt")
 
 
+_PAYER_RATE_OPTIONAL_COLUMNS = {"plan_type", "payer_raw"}
+
+
 def import_hospital_payer_rates_csv(db: Session, path: Path) -> int:
     from app.etl.csv_builder import PAYER_RATE_COLUMNS
 
     raw_rows = _read_csv(path)
     if not raw_rows:
         return 0
-    _require_columns(set(raw_rows[0].keys()), PAYER_RATE_COLUMNS, path.name)
+    required = tuple(c for c in PAYER_RATE_COLUMNS if c not in _PAYER_RATE_OPTIONAL_COLUMNS)
+    _require_columns(set(raw_rows[0].keys()), required, path.name)
     _NK = ("hospital_id", "cpt", "payer_id", "source_origin", "plan_name", "rate_year")
     deduped: dict[tuple, dict] = {}
     for r in raw_rows:

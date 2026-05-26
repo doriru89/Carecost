@@ -101,6 +101,8 @@ def query_hospitals(
                         "rate_year": r.rate_year,
                         "effective_date": r.effective_date,
                         "setting": r.setting,
+                        "plan_type": r.plan_type,
+                        "payer_raw": r.payer_raw,
                     }
                     for r in rates_by_hid.get(hid, [])
                 ],

@@ -139,6 +139,19 @@ etl:
       skip_header_rows: 2
       min_expected_cpts: 0
 
+  # Plan type classification — applied to plan_name at normalization time.
+  # Exclusions checked FIRST (they contain trigger keywords but aren't that type).
+  # Then patterns checked in order: medicare, medicaid.
+  # No match → "unknown" (absence of evidence, not "commercial").
+  plan_type_classification:
+    exclusions:
+      - "MEDICARE ADVANTAGE"
+    medicare:
+      - "MEDICARE"
+      - "MANAGED CARE"
+    medicaid:
+      - "MEDICAID"
+
   # Non-canonical payers the ETL encounters but aren't in payers.yaml
   non_canonical_payers:
     "Cigna": { map_to: null, include_in_output: false }

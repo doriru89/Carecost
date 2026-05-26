@@ -110,6 +110,19 @@ class TestQualifyRecord:
         q = qualify_record(_make_normalized())
         assert q.price_granularity == "itemized"
 
+    def test_plan_type_preserved_through_qualify(self):
+        from app.etl.data_qualifier import qualify_record
+
+        rec = _make_normalized(plan_type="medicare")
+        q = qualify_record(rec)
+        assert q.plan_type == "medicare"
+
+    def test_plan_type_defaults_to_unknown(self):
+        from app.etl.data_qualifier import qualify_record
+
+        q = qualify_record(_make_normalized())
+        assert q.plan_type == "unknown"
+
 
 class TestQualifyBatch:
     def test_preserves_order(self):

@@ -21,3 +21,13 @@ def test_payer_rate_record_covers_payer_rate_table():
     dc_fields = {f.name for f in dataclasses.fields(PayerRateRecord)}
     missing = orm_cols - dc_fields
     assert not missing, f"ORM columns missing from PayerRateRecord: {missing}"
+
+
+def test_payer_rate_csv_columns_subset_of_orm():
+    from app.db.tables import HospitalPayerRate
+    from app.etl.csv_builder import PAYER_RATE_COLUMNS
+
+    orm_cols = {c.name for c in HospitalPayerRate.__table__.columns} - {"id"}
+    csv_cols = set(PAYER_RATE_COLUMNS)
+    missing = csv_cols - orm_cols
+    assert not missing, f"CSV columns not in ORM: {missing}"

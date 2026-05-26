@@ -181,11 +181,18 @@ def default_specialty() -> str:
     return next(iter(_load_specialties()))
 
 
+class PlanTypeClassification(BaseModel):
+    exclusions: list[str] = []
+    medicare: list[str] = []
+    medicaid: list[str] = []
+
+
 class EtlConfig(BaseModel):
     mrf_formats: dict[str, dict]
     cpt_extraction_sets: dict[str, list[str]]
     hospital_mrf_sources: dict[str, dict] = {}
     non_canonical_payers: dict[str, dict]
+    plan_type_classification: PlanTypeClassification = PlanTypeClassification()
 
 
 @functools.lru_cache(maxsize=1)

@@ -45,6 +45,8 @@ PAYER_RATE_COLUMNS = (
     "setting",
     "source_file",
     "rate_methodology",
+    "plan_type",
+    "payer_raw",
 )
 
 BENCHMARK_COLUMNS = (

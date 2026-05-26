@@ -114,6 +114,64 @@ class TestNormalizePayer:
         assert include is False
 
 
+    def test_hp_plan_never_resolves_to_uhc(self):
+        from app.etl.rate_normalizer import normalize_payer_name
+
+        hp_strings = [
+            "HARVARD PILGRIM HEALTH CARE",
+            "HPHC",
+            "Harvard Pilgrim HMO",
+        ]
+        for raw in hp_strings:
+            payer_id, include = normalize_payer_name(raw)
+            assert payer_id == "HARVARD_PILGRIM", f"'{raw}' got {payer_id}"
+            assert include is True
+
+    def test_uhc_still_matches_united(self):
+        from app.etl.rate_normalizer import normalize_payer_name
+
+        payer_id, _ = normalize_payer_name("UNITED [2025]")
+        assert payer_id == "UHC"
+
+    def test_pattern_priority_longest_wins(self):
+        from app.etl.rate_normalizer import normalize_payer_name
+
+        payer_id, _ = normalize_payer_name("BLUE CROSS BLUE SHIELD")
+        assert payer_id == "BCBS_MA"
+
+
+class TestClassifyPlanType:
+    def test_medicare_replacement(self):
+        from app.etl.rate_normalizer import classify_plan_type
+
+        assert classify_plan_type("HB MGH AETNA MEDICARE REPLACEMENT") == "medicare"
+
+    def test_managed_care(self):
+        from app.etl.rate_normalizer import classify_plan_type
+
+        assert classify_plan_type("CHA HB MEDICARE MANAGED CARE 100 PCT") == "medicare"
+
+    def test_medicaid(self):
+        from app.etl.rate_normalizer import classify_plan_type
+
+        assert classify_plan_type("HB XR UHC SCO MEDICAID TMC") == "medicaid"
+
+    def test_medicare_advantage_excluded(self):
+        from app.etl.rate_normalizer import classify_plan_type
+
+        assert classify_plan_type("HB XR BCBSMA MEDICARE ADVANTAGE TMC") == "unknown"
+
+    def test_commercial_plan_is_unknown(self):
+        from app.etl.rate_normalizer import classify_plan_type
+
+        assert classify_plan_type("AETNA HMO POS") == "unknown"
+
+    def test_empty_string(self):
+        from app.etl.rate_normalizer import classify_plan_type
+
+        assert classify_plan_type("") == "unknown"
+
+
 class TestNormalizeHospital:
     def test_by_source_alias_tic(self):
         from app.etl.rate_normalizer import normalize_hospital_name
@@ -206,3 +264,46 @@ class TestNormalizeRecords:
             result = normalize_records(records)
         assert len(result) == 0
         assert "Dropping TiC record: unmatched hospital 'Unknown Hospital'" in caplog.text
+
+    def test_plan_type_propagated_for_mrf(self):
+        from app.etl.rate_normalizer import normalize_records
+
+        records = [_make_mrf(plan="HB MGH AETNA MEDICARE REPLACEMENT")]
+        result = normalize_records(records)
+        assert result[0].plan_type == "medicare"
+
+    def test_plan_type_unknown_for_commercial(self):
+        from app.etl.rate_normalizer import normalize_records
+
+        records = [_make_mrf(plan="HB MGH BCBS HMO BLUE")]
+        result = normalize_records(records)
+        assert result[0].plan_type == "unknown"
+
+    def test_reconcile_hp_plan_under_uhc_payer_raw(self):
+        """Group B: payer_raw says UNITED but plan says HARVARD PILGRIM."""
+        from app.etl.rate_normalizer import normalize_records
+
+        records = [_make_mrf(payer_raw="UNITED [2025]", plan="BMC HB HARVARD PILGRIM")]
+        result = normalize_records(records)
+        assert result[0].payer_id == "HARVARD_PILGRIM", (
+            f"Expected HARVARD_PILGRIM, got {result[0].payer_id}"
+        )
+
+    def test_reconcile_does_not_override_when_no_conflict(self):
+        """payer_raw and plan agree on payer — no override."""
+        from app.etl.rate_normalizer import normalize_records
+
+        records = [_make_mrf(payer_raw="AETNA [1234]", plan="HB MGH AETNA HMO POS")]
+        result = normalize_records(records)
+        assert result[0].payer_id == "AETNA"
+
+    def test_reconcile_hphc_plan_under_united_healthcare(self):
+        """Real MRF case: UNITED HEALTHCARE [1016] with HPHC plan."""
+        from app.etl.rate_normalizer import normalize_records
+
+        records = [_make_mrf(
+            payer_raw="UNITED HEALTHCARE [1016]",
+            plan="HB CH HPHC PPO / PREFERRED A",
+        )]
+        result = normalize_records(records)
+        assert result[0].payer_id == "HARVARD_PILGRIM"

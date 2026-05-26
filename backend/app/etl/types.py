@@ -70,6 +70,7 @@ class NormalizedRecord:
     source_file: str
     source_origin: str
     mrf_format: str = ""
+    plan_type: str = "unknown"
 
 
 @dataclass
@@ -124,6 +125,8 @@ class PayerRateRecord:
     rate_methodology: str = ""
     effective_date: str = ""
     rate_year: int | None = None
+    plan_type: str = "unknown"
+    payer_raw: str = ""
 
 
 @dataclass

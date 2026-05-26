@@ -106,6 +106,8 @@ def merge_records(
                     setting=rec.setting,
                     source_file=rec.source_file,
                     rate_methodology=rec.rate_methodology,
+                    plan_type=rec.plan_type,
+                    payer_raw=rec.payer_raw,
                 )
             )
 

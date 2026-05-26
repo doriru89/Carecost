@@ -175,6 +175,8 @@ class HospitalPayerRate(Base):
     rate_methodology: Mapped[str] = mapped_column(String(32), nullable=False, default="")
     effective_date: Mapped[str] = mapped_column(String(32), nullable=False, default="")
     rate_year: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    plan_type: Mapped[str] = mapped_column(String(32), nullable=False, default="unknown")
+    payer_raw: Mapped[str] = mapped_column(Text, nullable=False, default="")
 
     __table_args__ = (
         UniqueConstraint(
@@ -190,6 +192,10 @@ class HospitalPayerRate(Base):
             "rate_methodology IN ('negotiated', 'derived', 'fee schedule', 'percentage', "
             "'per diem', 'case rate', 'capitation', 'other', '')",
             name="ck_hospital_payer_rates_methodology",
+        ),
+        CheckConstraint(
+            "plan_type IN ('commercial', 'medicare', 'medicaid', 'unknown')",
+            name="ck_hospital_payer_rates_plan_type",
         ),
     )
 

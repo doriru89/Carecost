@@ -45,6 +45,7 @@ def qualify_record(rec: NormalizedRecord) -> QualifiedRecord:
         source_file=rec.source_file,
         source_origin=rec.source_origin,
         mrf_format=rec.mrf_format,
+        plan_type=rec.plan_type,
         source_type=source_type,
         rate_quality=rate_quality,
         price_source=price_source,
