@@ -56,12 +56,17 @@ etl:
       - "11305"  # Shave removal benign 0.6-1.0cm
       - "11400"  # Excision benign 0.5cm trunk/ext
       - "11401"  # Excision benign 0.6-1.0cm
+      - "11402"  # Excision benign 1.1-2.0cm
       - "11600"  # Excision malignant 0.5cm trunk/ext
+      - "11601"  # Excision malignant 0.6-1.0cm
       - "11602"  # Excision malignant 1.1-2.0cm
+      - "17000"  # Destruction premalignant first
+      - "17003"  # Destruction premalignant additional
       - "17110"  # Destruction benign up to 14
       - "17111"  # Destruction benign 15+
       - "17311"  # Mohs 1st stage head/neck
       - "17312"  # Mohs additional stage
+      - "17313"  # Mohs 1st stage trunk/ext
       - "88305"  # Surgical pathology level 4
       - "88312"  # Special stains
       - "96910"  # Photochemotherapy (PUVA)
