@@ -113,12 +113,13 @@ def parse_all_hospital_rates(mrf_dir: Path, target_cpts: set[str]) -> list[RawMr
 
 
 def _deduplicate_mrf_records(records: list[RawMrfRecord]) -> list[RawMrfRecord]:
-    """Collapse rows sharing (cpt, payer_raw, plan), keeping the highest negotiated_dollar.
+    """Collapse rows sharing (cpt, payer_raw, plan), keeping the best record.
 
     Hospital MRFs emit multiple rows per (CPT, payer, plan) — chargemaster description
     aliases, facility/professional fee splits, inpatient/outpatient variants. These are
     component-level line items, not distinct prices. We keep the max negotiated_dollar
-    (the facility component) as the primary consumer-facing rate.
+    (the facility component) as the primary consumer-facing rate. On ties, prefer the
+    record with more populated base fields (gross, cash, de_id) to avoid data loss.
     """
     best: dict[tuple[str, str, str], RawMrfRecord] = {}
     for rec in records:
@@ -131,7 +132,14 @@ def _deduplicate_mrf_records(records: list[RawMrfRecord]) -> list[RawMrfRecord]:
             old_rate = existing.negotiated_dollar or 0.0
             if new_rate > old_rate:
                 best[key] = rec
+            elif new_rate == old_rate and _field_richness(rec) > _field_richness(existing):
+                best[key] = rec
     return list(best.values())
+
+
+def _field_richness(rec: RawMrfRecord) -> int:
+    """Count non-None base price fields for tiebreaking."""
+    return sum(1 for v in (rec.gross, rec.cash, rec.de_id_min, rec.de_id_max) if v is not None)
 
 
 def _parse_float(val: Any) -> float | None:

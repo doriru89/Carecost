@@ -229,7 +229,8 @@ def _deduplicate_normalized(records: list[NormalizedRecord]) -> list[NormalizedR
 
     Multiple payer_raw entities (e.g., "HARVARD PILGRIM [120001]" and
     "HARVARD PILGRIM ALTERNATE [120002]") map to the same payer_id under the same plan.
-    Keep the record with the highest negotiated_dollar.
+    Keep the record with the highest negotiated_dollar. On ties, prefer the record
+    with more populated base fields to avoid gross/cash data loss.
     """
     best: dict[tuple[str, str, str | None, str, str], NormalizedRecord] = {}
     for rec in records:
@@ -242,4 +243,11 @@ def _deduplicate_normalized(records: list[NormalizedRecord]) -> list[NormalizedR
             old_rate = existing.negotiated_dollar or 0.0
             if new_rate > old_rate:
                 best[key] = rec
+            elif new_rate == old_rate and _norm_field_richness(rec) > _norm_field_richness(existing):
+                best[key] = rec
     return list(best.values())
+
+
+def _norm_field_richness(rec: NormalizedRecord) -> int:
+    """Count non-None base price fields for tiebreaking."""
+    return sum(1 for v in (rec.gross, rec.cash, rec.de_id_min, rec.de_id_max) if v is not None)

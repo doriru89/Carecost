@@ -72,6 +72,41 @@ class TestValidationGate:
         assert "3 error(s)" in str(exc_info.value)
 
 
+    def test_duplicate_payer_rate_raises_without_force(self, tmp_path: Path) -> None:
+        """Duplicate payer rates are now ERROR — pipeline must raise when force=False."""
+        from app.etl.types import MergeResult, PayerRateRecord, ProcedureRecord
+
+        mrf_dir, tic_dir, data_dir, output_dir = _setup_dirs(tmp_path)
+
+        dupe_result = MergeResult(
+            procedures=[ProcedureRecord(
+                hospital_id="mgh", cpt="45378", cpt_desc="Colonoscopy",
+                gross_charge=5000.0, discounted_cash=3000.0,
+                de_identified_min=2000.0, de_identified_max=6000.0,
+            )],
+            payer_rates=[
+                PayerRateRecord(
+                    hospital_id="mgh", cpt="45378", payer_id="BCBS_MA",
+                    negotiated_rate=3411.0, source_origin="mrf", plan_name="PPO",
+                ),
+                PayerRateRecord(
+                    hospital_id="mgh", cpt="45378", payer_id="BCBS_MA",
+                    negotiated_rate=3411.0, source_origin="mrf", plan_name="PPO",
+                ),
+            ],
+            benchmarks=[],
+        )
+        with patch("app.etl.pipeline.merge_records", return_value=dupe_result):
+            with patch("app.etl.pipeline.parse_all_hospital_rates", return_value=[]):
+                with patch("app.etl.pipeline.normalize_records", return_value=[]):
+                    with patch("app.etl.pipeline.qualify_batch", return_value=[]):
+                        with pytest.raises(EtlValidationError, match="Duplicate payer rate"):
+                            run_etl(
+                                mrf_dir=mrf_dir, tic_dir=tic_dir,
+                                data_dir=data_dir, output_dir=output_dir,
+                            )
+
+
 class TestRecordCountRegression:
     def test_no_regression_no_errors(self) -> None:
         previous = {"mgh": 30, "bmc": 20, "tufts": 15}

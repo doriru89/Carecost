@@ -691,6 +691,43 @@ def test_dedup_all_none_negotiated_keeps_first(tmp_path: Path):
     assert results[0].gross == 5000.0
 
 
+# ---------------------------------------------------------------------------
+# 17) test_dedup_tiebreaker_prefers_richer_record
+# ---------------------------------------------------------------------------
+
+
+def test_dedup_tiebreaker_prefers_richer_record(tmp_path: Path):
+    """Same rate but one record has gross charge — keep the richer one."""
+    rows = [
+        _make_standard_csv_row(
+            cpt="45378",
+            description="Colonoscopy B",
+            payer="BCBS",
+            plan="PPO",
+            negotiated="2500.00",
+            gross="",
+            cash="",
+        ),
+        _make_standard_csv_row(
+            cpt="45378",
+            description="Colonoscopy A",
+            payer="BCBS",
+            plan="PPO",
+            negotiated="2500.00",
+            gross="5000.00",
+            cash="3000.00",
+        ),
+    ]
+    csv_path = _write_csv(tmp_path / "test.csv", rows)
+
+    with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=0):
+        results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
+
+    assert len(results) == 1
+    assert results[0].gross == 5000.0
+    assert results[0].cash == 3000.0
+
+
 @contextmanager
 def _mock_hospital_source(
     hospital_id: str,
