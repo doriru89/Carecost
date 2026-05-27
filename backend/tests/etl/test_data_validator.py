@@ -166,6 +166,35 @@ class TestValidateEtlOutput:
         assert not report.passed
         assert any("duplicate" in e.lower() for e in report.errors)
 
+    def test_duplicate_payer_rate_is_error(self):
+        from app.etl.data_validator import validate_etl_output
+
+        result = MergeResult(
+            procedures=[_make_proc()],
+            payer_rates=[
+                _make_payer_rate(plan_name="PPO"),
+                _make_payer_rate(plan_name="PPO"),
+            ],
+            benchmarks=[],
+        )
+        report = validate_etl_output(result)
+        assert not report.passed
+        assert any("duplicate payer rate" in e.lower() for e in report.errors)
+
+    def test_different_plan_payer_rates_not_duplicate(self):
+        from app.etl.data_validator import validate_etl_output
+
+        result = MergeResult(
+            procedures=[_make_proc()],
+            payer_rates=[
+                _make_payer_rate(plan_name="HMO"),
+                _make_payer_rate(plan_name="PPO"),
+            ],
+            benchmarks=[],
+        )
+        report = validate_etl_output(result)
+        assert report.passed
+
     def test_missing_required_fields_fails(self):
         from app.etl.data_validator import validate_etl_output
 

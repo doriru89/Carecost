@@ -307,3 +307,64 @@ class TestNormalizeRecords:
         )]
         result = normalize_records(records)
         assert result[0].payer_id == "HARVARD_PILGRIM"
+
+    def test_post_normalization_dedup_collapses_payer_aliases(self):
+        """Two payer_raw entities mapping to the same payer_id+plan are deduped."""
+        from app.etl.rate_normalizer import normalize_records
+
+        records = [
+            _make_mrf(
+                payer_raw="HARVARD PILGRIM [120001]",
+                plan="HPHC ALLIANCE PPO PREFERRED A",
+                negotiated_dollar=979.79,
+            ),
+            _make_mrf(
+                payer_raw="HARVARD PILGRIM ALTERNATE [120002]",
+                plan="HPHC ALLIANCE PPO PREFERRED A",
+                negotiated_dollar=979.79,
+            ),
+        ]
+        result = normalize_records(records)
+        hphc = [r for r in result if r.payer_id == "HARVARD_PILGRIM"]
+        assert len(hphc) == 1
+
+    def test_post_normalization_dedup_keeps_max_rate(self):
+        """When payer aliases have different rates, keep the higher one."""
+        from app.etl.rate_normalizer import normalize_records
+
+        records = [
+            _make_mrf(
+                payer_raw="HARVARD PILGRIM [120001]",
+                plan="HPHC ALLIANCE PPO",
+                negotiated_dollar=1500.0,
+            ),
+            _make_mrf(
+                payer_raw="HARVARD PILGRIM ALTERNATE [120002]",
+                plan="HPHC ALLIANCE PPO",
+                negotiated_dollar=1200.0,
+            ),
+        ]
+        result = normalize_records(records)
+        hphc = [r for r in result if r.payer_id == "HARVARD_PILGRIM"]
+        assert len(hphc) == 1
+        assert hphc[0].negotiated_dollar == 1500.0
+
+    def test_post_normalization_dedup_preserves_different_plans(self):
+        """Same payer_id but different plans must NOT be deduped."""
+        from app.etl.rate_normalizer import normalize_records
+
+        records = [
+            _make_mrf(
+                payer_raw="HARVARD PILGRIM [120001]",
+                plan="HPHC HMO",
+                negotiated_dollar=900.0,
+            ),
+            _make_mrf(
+                payer_raw="HARVARD PILGRIM [120001]",
+                plan="HPHC PPO",
+                negotiated_dollar=1100.0,
+            ),
+        ]
+        result = normalize_records(records)
+        hphc = [r for r in result if r.payer_id == "HARVARD_PILGRIM"]
+        assert len(hphc) == 2

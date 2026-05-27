@@ -541,6 +541,156 @@ def test_source_file_and_mrf_format_populated(tmp_path: Path):
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# 12) test_dedup_collapses_description_aliases
+# ---------------------------------------------------------------------------
+
+
+def test_dedup_collapses_description_aliases(tmp_path: Path):
+    """Two rows with same (cpt, payer, plan) but different descriptions are deduped."""
+    rows = [
+        _make_standard_csv_row(
+            cpt="45385",
+            description="Colonoscopy Flex W/Rem Tumor Snare",
+            payer="AETNA",
+            plan="HMO",
+            negotiated="1442.09",
+        ),
+        _make_standard_csv_row(
+            cpt="45385",
+            description="Colsc Flx W/Rmvl of Tumor Polyp Lesion",
+            payer="AETNA",
+            plan="HMO",
+            negotiated="1442.09",
+        ),
+    ]
+    csv_path = _write_csv(tmp_path / "test.csv", rows)
+
+    with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=0):
+        results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
+
+    assert len(results) == 1
+    assert results[0].cpt == "45385"
+    assert results[0].negotiated_dollar == 1442.09
+
+
+# ---------------------------------------------------------------------------
+# 13) test_dedup_keeps_max_negotiated_rate
+# ---------------------------------------------------------------------------
+
+
+def test_dedup_keeps_max_negotiated_rate(tmp_path: Path):
+    """Facility ($769) vs professional ($182) fee rows: keep higher rate."""
+    rows = [
+        _make_standard_csv_row(
+            cpt="11106",
+            description="Incisional Biopsy Skin",
+            payer="WELLPOINT",
+            plan="PPO",
+            negotiated="769.53",
+        ),
+        _make_standard_csv_row(
+            cpt="11106",
+            description="Pf Incisional Biopsy Skin",
+            payer="WELLPOINT",
+            plan="PPO",
+            negotiated="182.24",
+        ),
+    ]
+    csv_path = _write_csv(tmp_path / "test.csv", rows)
+
+    with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=0):
+        results = parse_hospital_rates(csv_path, "mgh", DERM_CPTS)
+
+    assert len(results) == 1
+    assert results[0].negotiated_dollar == 769.53
+
+
+# ---------------------------------------------------------------------------
+# 14) test_dedup_preserves_different_plans
+# ---------------------------------------------------------------------------
+
+
+def test_dedup_preserves_different_plans(tmp_path: Path):
+    """Same CPT+payer but different plans must NOT be deduped."""
+    rows = [
+        _make_standard_csv_row(
+            cpt="45378", payer="BCBS", plan="HMO", negotiated="2500.00"
+        ),
+        _make_standard_csv_row(
+            cpt="45378", payer="BCBS", plan="PPO", negotiated="3200.00"
+        ),
+    ]
+    csv_path = _write_csv(tmp_path / "test.csv", rows)
+
+    with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=0):
+        results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
+
+    assert len(results) == 2
+    plans = {r.plan for r in results}
+    assert plans == {"HMO", "PPO"}
+
+
+# ---------------------------------------------------------------------------
+# 15) test_dedup_preserves_different_payers
+# ---------------------------------------------------------------------------
+
+
+def test_dedup_preserves_different_payers(tmp_path: Path):
+    """Same CPT+plan but different payers must NOT be deduped."""
+    rows = [
+        _make_standard_csv_row(
+            cpt="45378", payer="BCBS", plan="PPO", negotiated="2500.00"
+        ),
+        _make_standard_csv_row(
+            cpt="45378", payer="AETNA", plan="PPO", negotiated="3000.00"
+        ),
+    ]
+    csv_path = _write_csv(tmp_path / "test.csv", rows)
+
+    with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=0):
+        results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
+
+    assert len(results) == 2
+    payers = {r.payer_raw for r in results}
+    assert payers == {"BCBS", "AETNA"}
+
+
+# ---------------------------------------------------------------------------
+# 16) test_dedup_all_none_negotiated_keeps_first
+# ---------------------------------------------------------------------------
+
+
+def test_dedup_all_none_negotiated_keeps_first(tmp_path: Path):
+    """When all records have None negotiated_dollar, keep first seen."""
+    rows = [
+        _make_standard_csv_row(
+            cpt="45378",
+            description="Colonoscopy A",
+            payer="BCBS",
+            plan="PPO",
+            negotiated="",
+            gross="5000.00",
+        ),
+        _make_standard_csv_row(
+            cpt="45378",
+            description="Colonoscopy B",
+            payer="BCBS",
+            plan="PPO",
+            negotiated="",
+            gross="5000.00",
+        ),
+    ]
+    csv_path = _write_csv(tmp_path / "test.csv", rows)
+
+    with _mock_hospital_source("mgh", "standard_csv", skip_header_rows=0):
+        results = parse_hospital_rates(csv_path, "mgh", GI_CPTS)
+
+    assert len(results) == 1
+    assert results[0].negotiated_dollar is None
+    assert results[0].gross == 5000.0
+
+
 @contextmanager
 def _mock_hospital_source(
     hospital_id: str,

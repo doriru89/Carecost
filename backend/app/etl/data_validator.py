@@ -119,10 +119,10 @@ def validate_etl_output(
                 f"for {pr.hospital_id}:{pr.cpt} payer {pr.payer_id}"
             )
 
-        # 10. Duplicate detection — payer rates (identical records from same source = dedup, not error)
+        # 10. Duplicate detection — payer rates
         rk = (pr.hospital_id, pr.cpt, pr.payer_id, pr.source_origin, pr.plan_name)
         if rk in rate_keys:
-            warnings.append(f"Duplicate payer rate {rk}")
+            errors.append(f"Duplicate payer rate {rk}")
         rate_keys.add(rk)
 
     # 5. No negative benchmark prices

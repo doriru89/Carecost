@@ -212,4 +212,34 @@ def normalize_records(
                 )
             )
 
+    before = len(result)
+    result = _deduplicate_normalized(result)
+    if before > len(result):
+        logger.info(
+            "Post-normalization dedup: %d -> %d records (%d collapsed from payer alias convergence)",
+            before,
+            len(result),
+            before - len(result),
+        )
     return result
+
+
+def _deduplicate_normalized(records: list[NormalizedRecord]) -> list[NormalizedRecord]:
+    """Collapse records sharing (hospital_id, cpt, payer_id, plan) after payer normalization.
+
+    Multiple payer_raw entities (e.g., "HARVARD PILGRIM [120001]" and
+    "HARVARD PILGRIM ALTERNATE [120002]") map to the same payer_id under the same plan.
+    Keep the record with the highest negotiated_dollar.
+    """
+    best: dict[tuple[str, str, str | None, str, str], NormalizedRecord] = {}
+    for rec in records:
+        key = (rec.hospital_id, rec.cpt, rec.payer_id, rec.plan, rec.source_origin)
+        existing = best.get(key)
+        if existing is None:
+            best[key] = rec
+        else:
+            new_rate = rec.negotiated_dollar or 0.0
+            old_rate = existing.negotiated_dollar or 0.0
+            if new_rate > old_rate:
+                best[key] = rec
+    return list(best.values())

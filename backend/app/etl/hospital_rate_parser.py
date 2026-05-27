@@ -63,7 +63,18 @@ def parse_hospital_rates(
     if handler is None:
         raise ValueError(f"Unknown MRF format: {fmt}")
 
-    return handler(file_path, target_cpts, hospital_name, merged_config, fmt)
+    records = handler(file_path, target_cpts, hospital_name, merged_config, fmt)
+    before = len(records)
+    records = _deduplicate_mrf_records(records)
+    if before > len(records):
+        logger.info(
+            "%s: deduplicated %d -> %d records (%d collapsed)",
+            hospital_id,
+            before,
+            len(records),
+            before - len(records),
+        )
+    return records
 
 
 def parse_all_hospital_rates(mrf_dir: Path, target_cpts: set[str]) -> list[RawMrfRecord]:
@@ -99,6 +110,28 @@ def parse_all_hospital_rates(mrf_dir: Path, target_cpts: set[str]) -> list[RawMr
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+
+def _deduplicate_mrf_records(records: list[RawMrfRecord]) -> list[RawMrfRecord]:
+    """Collapse rows sharing (cpt, payer_raw, plan), keeping the highest negotiated_dollar.
+
+    Hospital MRFs emit multiple rows per (CPT, payer, plan) — chargemaster description
+    aliases, facility/professional fee splits, inpatient/outpatient variants. These are
+    component-level line items, not distinct prices. We keep the max negotiated_dollar
+    (the facility component) as the primary consumer-facing rate.
+    """
+    best: dict[tuple[str, str, str], RawMrfRecord] = {}
+    for rec in records:
+        key = (rec.cpt, rec.payer_raw, rec.plan)
+        existing = best.get(key)
+        if existing is None:
+            best[key] = rec
+        else:
+            new_rate = rec.negotiated_dollar or 0.0
+            old_rate = existing.negotiated_dollar or 0.0
+            if new_rate > old_rate:
+                best[key] = rec
+    return list(best.values())
 
 
 def _parse_float(val: Any) -> float | None:
