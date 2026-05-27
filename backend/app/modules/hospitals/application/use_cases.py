@@ -22,9 +22,8 @@ def list_hospitals(
     cpt: str,
     specialty: str | None = None,
     metro_area: str | None = None,
-    include_government: bool = False,
 ) -> list[dict[str, Any]]:
-    hospitals = query_hospitals(db, cpt, metro_area=metro_area, include_government=include_government)
+    hospitals = query_hospitals(db, cpt, metro_area=metro_area)
     counts = _provider_counts(db, specialty)
     for h in hospitals:
         h["doctor_count"] = counts.get(h["name"], 0)

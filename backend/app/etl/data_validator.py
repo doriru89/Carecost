@@ -19,7 +19,15 @@ _CROSS_VALIDATION_THRESHOLD = 0.15
 
 
 def _known_cpts() -> set[str]:
-    return {b.cpt for b in _load_bundles().values()}
+    """All CPTs we intentionally extract — bundles + extraction set extras."""
+    from app.registries import load_etl_config
+
+    bundle_cpts = {b.cpt for b in _load_bundles().values()}
+    config = load_etl_config()
+    extraction_cpts: set[str] = set()
+    for cpts in config.cpt_extraction_sets.values():
+        extraction_cpts.update(cpts)
+    return bundle_cpts | extraction_cpts
 
 
 def _discovery_mode() -> bool:
@@ -102,19 +110,19 @@ def validate_etl_output(
         if pr.negotiated_rate is not None and pr.negotiated_rate == 0.0:
             errors.append(f"Zero rate for {pr.hospital_id}:{pr.cpt} payer {pr.payer_id}")
 
-        # 7. Price range
+        # 7. Price range (warning, not error — per-unit rates and chargemaster outliers are real data)
         if pr.negotiated_rate is not None and (
             pr.negotiated_rate < _PRICE_MIN or pr.negotiated_rate > _PRICE_MAX
         ):
-            errors.append(
+            warnings.append(
                 f"Rate {pr.negotiated_rate} out of range [{_PRICE_MIN}, {_PRICE_MAX}] "
                 f"for {pr.hospital_id}:{pr.cpt} payer {pr.payer_id}"
             )
 
-        # 10. Duplicate detection — payer rates
+        # 10. Duplicate detection — payer rates (identical records from same source = dedup, not error)
         rk = (pr.hospital_id, pr.cpt, pr.payer_id, pr.source_origin, pr.plan_name)
         if rk in rate_keys:
-            errors.append(f"Duplicate payer rate {rk}")
+            warnings.append(f"Duplicate payer rate {rk}")
         rate_keys.add(rk)
 
     # 5. No negative benchmark prices

@@ -99,7 +99,7 @@ class TestValidateEtlOutput:
         report = validate_etl_output(result)
         assert not report.passed
 
-    def test_price_out_of_range_fails(self):
+    def test_price_out_of_range_warns(self):
         from app.etl.data_validator import validate_etl_output
 
         result = MergeResult(
@@ -108,7 +108,7 @@ class TestValidateEtlOutput:
             benchmarks=[],
         )
         report = validate_etl_output(result)
-        assert not report.passed
+        assert any("out of range" in w for w in report.warnings)
 
     def test_gross_less_than_negotiated_warning(self):
         from app.etl.data_validator import validate_etl_output

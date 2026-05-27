@@ -20,7 +20,6 @@ def query_hospitals(
     metro_area: str | None = None,
     include_uncurated: bool = False,
     rate_year: int | None = None,
-    include_government: bool = False,
 ) -> list[dict[str, Any]]:
     """Normalized hospital data with dimension enrichment.
 
@@ -50,8 +49,6 @@ def query_hospitals(
         HospitalPayerRate.hospital_id.in_(list(hospitals_dim.keys())),
         HospitalPayerRate.source_file != "",
     )
-    if not include_government:
-        rate_q = rate_q.filter(HospitalPayerRate.plan_type.notin_(["medicare", "medicaid"]))
     if rate_year is not None:
         rate_q = rate_q.filter(HospitalPayerRate.rate_year == rate_year)
     rates_raw = rate_q.all()

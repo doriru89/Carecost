@@ -25,11 +25,8 @@ def list_hospitals(
     cpt: str = Query(..., description="CPT code for pricing"),
     specialty: str | None = Query(None, description="Filter providers by specialty"),
     metro_area: str | None = Query(None, description="Filter by metro area"),
-    include_government: bool = Query(False, description="Include Medicare/Medicaid rates"),
 ) -> list[dict[str, Any]]:
-    return list_hospitals_use_case(
-        db, cpt=cpt, specialty=specialty, metro_area=metro_area, include_government=include_government,
-    )
+    return list_hospitals_use_case(db, cpt=cpt, specialty=specialty, metro_area=metro_area)
 
 
 @router.get("/specialties")
