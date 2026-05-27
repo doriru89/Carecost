@@ -31,17 +31,19 @@ export function carrierKeyFromLabel(carrier: string): string | null {
   return null;
 }
 
-/** Get the negotiated price for the user's payer from payer_rates[]. MRF preferred, TiC fallback. */
+/** Get the negotiated price for the user's payer from payer_rates[]. MRF preferred, TiC fallback. Excludes medicare/medicaid rates. */
 export function getPayerPrice(hospital: HospitalApi, carrier: string, settingFilter?: string): number | null {
   const payerId = carrierKeyFromLabel(carrier);
   const filtered = filterRatesBySetting(hospital.payer_rates, settingFilter);
-  const rates = filtered.filter(r => r.payer_id === payerId && r.negotiated_rate != null);
-  if (rates.length === 0) return null;
-  const mrf = rates.find(r => r.source_origin === 'mrf');
+  const commercial = filtered.filter(r =>
+    r.payer_id === payerId && r.negotiated_rate != null && r.plan_type !== 'medicare' && r.plan_type !== 'medicaid',
+  );
+  if (commercial.length === 0) return null;
+  const mrf = commercial.find(r => r.source_origin === 'mrf');
   if (mrf) return mrf.negotiated_rate;
-  const tic = rates.find(r => r.source_origin === 'tic');
+  const tic = commercial.find(r => r.source_origin === 'tic');
   if (tic) return tic.negotiated_rate;
-  return rates[0].negotiated_rate;
+  return commercial[0].negotiated_rate;
 }
 
 export const SETTING_FILTER_MAP: Record<string, string[]> = {

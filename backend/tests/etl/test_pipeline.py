@@ -2,6 +2,8 @@
 
 import json
 
+import pytest
+
 
 def _setup_synthetic_data(tmp_path):
     """Create minimal synthetic MRF + benchmark data for end-to-end test."""
@@ -20,16 +22,18 @@ def _setup_synthetic_data(tmp_path):
 
 
 class TestRunEtl:
-    def test_empty_dirs(self, tmp_path):
+    def test_empty_dirs_raises(self, tmp_path):
+        from app.etl.pipeline import EtlValidationError, run_etl
+
+        mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
+        with pytest.raises(EtlValidationError):
+            run_etl(mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir, output_dir=output_dir)
+
+    def test_empty_dirs_force(self, tmp_path):
         from app.etl.pipeline import run_etl
 
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
-        result = run_etl(
-            mrf_dir=mrf_dir,
-            tic_dir=tic_dir,
-            data_dir=data_dir,
-            output_dir=output_dir,
-        )
+        result = run_etl(mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir, output_dir=output_dir, force=True)
         assert result.mrf_records_extracted == 0
         assert result.tic_records_extracted == 0
         assert result.merged_rows == 0
@@ -38,12 +42,7 @@ class TestRunEtl:
         from app.etl.pipeline import run_etl
 
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
-        result = run_etl(
-            mrf_dir=mrf_dir,
-            tic_dir=tic_dir,
-            data_dir=data_dir,
-            output_dir=output_dir,
-        )
+        result = run_etl(mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir, output_dir=output_dir, force=True)
         assert result.validation_report is not None
         assert result.run_timestamp != ""
 
@@ -51,12 +50,7 @@ class TestRunEtl:
         from app.etl.pipeline import run_etl
 
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
-        run_etl(
-            mrf_dir=mrf_dir,
-            tic_dir=tic_dir,
-            data_dir=data_dir,
-            output_dir=output_dir,
-        )
+        run_etl(mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir, output_dir=output_dir, force=True)
         assert (output_dir / "hospital_procedures.csv").exists()
         assert (output_dir / "hospital_payer_rates.csv").exists()
         assert (output_dir / "hospital_benchmarks.csv").exists()
@@ -65,24 +59,14 @@ class TestRunEtl:
         from app.etl.pipeline import run_etl
 
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
-        run_etl(
-            mrf_dir=mrf_dir,
-            tic_dir=tic_dir,
-            data_dir=data_dir,
-            output_dir=output_dir,
-        )
+        run_etl(mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir, output_dir=output_dir, force=True)
         assert (output_dir / "hospital_procedures.csv.sha256").exists()
 
     def test_validation_report_in_result(self, tmp_path):
         from app.etl.pipeline import run_etl
 
         mrf_dir, tic_dir, data_dir, output_dir = _setup_synthetic_data(tmp_path)
-        result = run_etl(
-            mrf_dir=mrf_dir,
-            tic_dir=tic_dir,
-            data_dir=data_dir,
-            output_dir=output_dir,
-        )
+        result = run_etl(mrf_dir=mrf_dir, tic_dir=tic_dir, data_dir=data_dir, output_dir=output_dir, force=True)
         assert result.validation_report is not None
         assert isinstance(result.validation_report.errors, list)
 

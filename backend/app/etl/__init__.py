@@ -8,7 +8,7 @@ from app.etl.csv_builder import build_csvs
 from app.etl.data_qualifier import qualify_batch
 from app.etl.data_validator import validate_etl_output
 from app.etl.merger import load_benchmarks, merge_records
-from app.etl.pipeline import run_etl
+from app.etl.pipeline import EtlValidationError, run_etl
 from app.etl.types import (
     BenchmarkRecord,
     EtlResult,
@@ -22,6 +22,7 @@ from app.etl.types import (
 __all__ = [
     "BenchmarkRecord",
     "EtlResult",
+    "EtlValidationError",
     "MergeResult",
     "PayerRateRecord",
     "ProcedureRecord",

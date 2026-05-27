@@ -244,6 +244,50 @@ describe('getPayerPrice with settingFilter', () => {
   });
 });
 
+describe('getPayerPrice excludes medicare/medicaid', () => {
+  it('excludes medicare plan_type from commercial price', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'aetna', negotiated_rate: 1115, plan_name: 'MEDICARE - NO IME', source_origin: 'mrf', billing_class: '', setting: 'both', plan_type: 'medicare', payer_raw: '' },
+        { payer_id: 'aetna', negotiated_rate: 990, plan_name: 'HB AETNA', source_origin: 'mrf', billing_class: '', setting: 'both', plan_type: 'unknown', payer_raw: '' },
+      ],
+    };
+    expect(getPayerPrice(h, 'Aetna')).toBe(990);
+  });
+
+  it('returns null when all rates are medicare', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'aetna', negotiated_rate: 1115, plan_name: 'MEDICARE', source_origin: 'mrf', billing_class: '', setting: 'both', plan_type: 'medicare', payer_raw: '' },
+      ],
+    };
+    expect(getPayerPrice(h, 'Aetna')).toBeNull();
+  });
+
+  it('excludes medicaid plan_type', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'bcbs', negotiated_rate: 500, plan_name: 'MEDICAID', source_origin: 'mrf', billing_class: '', setting: 'both', plan_type: 'medicaid', payer_raw: '' },
+        { payer_id: 'bcbs', negotiated_rate: 1278, plan_name: 'BCBS PPO', source_origin: 'mrf', billing_class: '', setting: 'both', plan_type: 'unknown', payer_raw: '' },
+      ],
+    };
+    expect(getPayerPrice(h, 'BCBS')).toBe(1278);
+  });
+
+  it('works with rates that have no plan_type field', () => {
+    const h: HospitalApi = {
+      ...mockHospital,
+      payer_rates: [
+        { payer_id: 'aetna', negotiated_rate: 1349, plan_name: 'Aetna PPO', source_origin: 'mrf', billing_class: '', setting: 'both' } as any,
+      ],
+    };
+    expect(getPayerPrice(h, 'Aetna')).toBe(1349);
+  });
+});
+
 describe('getAllPriceSources with settingFilter', () => {
   it('respects setting filter', () => {
     const h: HospitalApi = {

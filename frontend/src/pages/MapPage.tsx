@@ -212,6 +212,12 @@ const MapPage = () => {
         independentProviders.push(...provs);
       }
     }
+    // Include hospitals with price data but no affiliated providers
+    for (const h of hospitals) {
+      if (!groups.has(h.name) && h.payer_rates.length > 0) {
+        hospitalGroups.push([h.name, []]);
+      }
+    }
     hospitalGroups.sort((a, b) => b[1].length - a[1].length);
     if (independentProviders.length > 0) {
       hospitalGroups.push(['Independent Providers', independentProviders]);

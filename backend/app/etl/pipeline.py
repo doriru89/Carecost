@@ -6,6 +6,7 @@ Deterministic 10-step sequence. No AI intelligence — that goes on top via /ref
 from __future__ import annotations
 
 import hashlib
+import json
 import logging
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -21,6 +22,14 @@ from app.etl.rate_normalizer import normalize_records
 from app.etl.types import EtlResult
 from app.registries import load_etl_config
 
+
+class EtlValidationError(Exception):
+    """Raised when ETL validation finds errors and force=False."""
+
+    def __init__(self, errors: list[str]) -> None:
+        self.errors = errors
+        super().__init__(f"ETL validation failed with {len(errors)} error(s): {errors[0]}")
+
 logger = logging.getLogger(__name__)
 
 
@@ -32,6 +41,40 @@ def _sha256_file(path: Path) -> str:
     digest = h.hexdigest()
     path.with_suffix(path.suffix + ".sha256").write_text(f"{digest}  {path.name}\n")
     return digest
+
+
+_REGRESSION_THRESHOLD = 0.20
+
+
+def _load_manifest(output_dir: Path) -> dict[str, int] | None:
+    p = output_dir / "manifest.json"
+    if not p.exists():
+        return None
+    return json.loads(p.read_text()).get("hospital_record_counts", {})
+
+
+def _write_manifest(output_dir: Path, counts: dict[str, int]) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "manifest.json").write_text(
+        json.dumps({"hospital_record_counts": counts}, indent=2, sort_keys=True) + "\n"
+    )
+
+
+def _check_regression(
+    current: dict[str, int], previous: dict[str, int],
+) -> list[str]:
+    errors: list[str] = []
+    for hospital_id, prev_count in previous.items():
+        curr_count = current.get(hospital_id, 0)
+        if prev_count == 0:
+            continue
+        drop = (prev_count - curr_count) / prev_count
+        if drop >= _REGRESSION_THRESHOLD:
+            errors.append(
+                f"Record count regression for {hospital_id}: "
+                f"{prev_count} → {curr_count} ({drop:.0%} drop, threshold {_REGRESSION_THRESHOLD:.0%})"
+            )
+    return errors
 
 
 def _discover_tic_files(tic_dir: Path) -> list[tuple[Path, str]]:
@@ -51,6 +94,7 @@ def run_etl(
     data_dir: Path,
     output_dir: Path,
     expected_hospitals: list[str] | None = None,
+    force: bool = False,
 ) -> EtlResult:
     # 0. Compute union of all CPT extraction sets (multi-specialty)
     config = load_etl_config()
@@ -109,21 +153,37 @@ def run_etl(
         len(merge_result.benchmarks),
     )
 
+    # 6.5. Record-count regression check
+    current_counts = defaultdict(int)
+    for p in merge_result.procedures:
+        current_counts[p.hospital_id] += 1
+    previous_counts = _load_manifest(output_dir)
+    regression_errors: list[str] = []
+    if previous_counts is not None:
+        regression_errors = _check_regression(dict(current_counts), previous_counts)
+        for err in regression_errors:
+            logger.error("Regression: %s", err)
+
     # 7. Validate
     validation = validate_etl_output(merge_result, expected_hospitals)
+    validation.errors.extend(regression_errors)
+    for warn in validation.warnings:
+        logger.warning("Validation warning: %s", warn)
     if validation.errors:
         for err in validation.errors:
             logger.error("Validation error: %s", err)
-    for warn in validation.warnings:
-        logger.warning("Validation warning: %s", warn)
+        if not force:
+            raise EtlValidationError(validation.errors)
+        logger.warning("--force: %d validation error(s) overridden", len(validation.errors))
 
     # 8. Build normalized CSVs
     output_dir.mkdir(parents=True, exist_ok=True)
     csv_counts = build_csvs(merge_result, output_dir)
 
-    # 9. SHA256 provenance
+    # 9. SHA256 provenance + manifest
     for csv_file in output_dir.glob("*.csv"):
         _sha256_file(csv_file)
+    _write_manifest(output_dir, dict(current_counts))
 
     return EtlResult(
         mrf_records_extracted=len(mrf_records),
