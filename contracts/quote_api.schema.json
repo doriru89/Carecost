@@ -1,0 +1,2142 @@
+{
+  "$defs": {
+    "BillComponent": {
+      "description": "which part of the bill",
+      "enum": [
+        "facility",
+        "professional",
+        "drug",
+        "supply",
+        "unknown"
+      ],
+      "type": "string"
+    },
+    "BookingOption": {
+      "additionalProperties": false,
+      "description": "D7: links only. The app never posts to these systems and never scrapes them.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "deep_link",
+            "iframe_mgb",
+            "walk_in",
+            "call"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "description": "Button text, e.g. 'Reserve a spot'",
+          "title": "Label",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "provider": {
+          "enum": [
+            "on_my_way",
+            "solv",
+            "clockwise",
+            "zocdoc",
+            "mychart_open_scheduling",
+            "operator_site",
+            "phone",
+            "none"
+          ],
+          "title": "Provider",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        }
+      },
+      "required": [
+        "kind",
+        "provider",
+        "label",
+        "url",
+        "phone"
+      ],
+      "title": "BookingOption",
+      "type": "object"
+    },
+    "CarePathRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9_]+_v[0-9]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "review_status": {
+          "description": "Not 'approved' -> the UI shows a draft banner",
+          "enum": [
+            "pending_austin",
+            "changes_requested",
+            "approved"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "title",
+        "review_status"
+      ],
+      "title": "CarePathRef",
+      "type": "object"
+    },
+    "CashPayment": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "cash",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "CashPayment",
+      "type": "object"
+    },
+    "Cell": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/Money"
+        },
+        {
+          "$ref": "#/$defs/NotPublished"
+        },
+        {
+          "$ref": "#/$defs/NotLoaded"
+        },
+        {
+          "$ref": "#/$defs/NoSource"
+        },
+        {
+          "$ref": "#/$defs/PercentOnly"
+        },
+        {
+          "$ref": "#/$defs/Conflict"
+        }
+      ]
+    },
+    "CertaintyTier": {
+      "description": "D8 display gradient",
+      "enum": [
+        "certain",
+        "likely",
+        "possible",
+        "not_in_public_data"
+      ],
+      "type": "string"
+    },
+    "ChiaBadge": {
+      "additionalProperties": false,
+      "description": "Rung 8: ordering only, no dollars (CHIA relative price).",
+      "properties": {
+        "band": {
+          "enum": [
+            "top_quarter",
+            "above_median",
+            "below_median",
+            "bottom_quarter"
+          ],
+          "title": "Band",
+          "type": "string"
+        },
+        "payer_id": {
+          "pattern": "^[A-Z][A-Z0-9_]*$",
+          "title": "Payer Id",
+          "type": "string"
+        },
+        "report_year": {
+          "title": "Report Year",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "payer_id",
+        "band",
+        "report_year"
+      ],
+      "title": "ChiaBadge",
+      "type": "object"
+    },
+    "Conflict": {
+      "additionalProperties": false,
+      "description": "Two sources disagree; both numbers are shown.",
+      "properties": {
+        "a": {
+          "$ref": "#/$defs/Money"
+        },
+        "b": {
+          "$ref": "#/$defs/Money"
+        },
+        "kind": {
+          "const": "conflict",
+          "default": "conflict",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "a",
+        "b"
+      ],
+      "title": "Conflict",
+      "type": "object"
+    },
+    "Coordinates": {
+      "additionalProperties": false,
+      "properties": {
+        "geocoded_at": {
+          "format": "date",
+          "title": "Geocoded At",
+          "type": "string"
+        },
+        "geocoded_by": {
+          "enum": [
+            "census_batch",
+            "operator_page",
+            "manual",
+            "hospital_registry"
+          ],
+          "title": "Geocoded By",
+          "type": "string"
+        },
+        "lat": {
+          "description": "Greater Boston scope guard",
+          "maximum": 43.5,
+          "minimum": 41.0,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": -69.5,
+          "minimum": -72.5,
+          "title": "Lon",
+          "type": "number"
+        }
+      },
+      "required": [
+        "lat",
+        "lon",
+        "geocoded_by",
+        "geocoded_at"
+      ],
+      "title": "Coordinates",
+      "type": "object"
+    },
+    "DataVersion": {
+      "additionalProperties": false,
+      "description": "Shown in 'Sources & dates'. Lets the UI say how old the whole answer is.",
+      "properties": {
+        "build_date": {
+          "format": "date",
+          "title": "Build Date",
+          "type": "string"
+        },
+        "build_id": {
+          "description": "ETL build id, e.g. 20261024-1cb8089d",
+          "title": "Build Id",
+          "type": "string"
+        },
+        "care_paths_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Care Paths Version"
+        },
+        "sites_version": {
+          "title": "Sites Version",
+          "type": "integer"
+        },
+        "tic_release": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "e.g. tic-2026-11; None = TiC not loaded yet",
+          "title": "Tic Release"
+        }
+      },
+      "required": [
+        "build_id",
+        "build_date",
+        "tic_release",
+        "sites_version",
+        "care_paths_version"
+      ],
+      "title": "DataVersion",
+      "type": "object"
+    },
+    "DoctorFee": {
+      "additionalProperties": false,
+      "description": "Present on professional lines priced by the 8-rung ladder (plan §2.4, D5, D6).",
+      "properties": {
+        "by_npi": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/NpiPrice"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "D6: per doctor when the NPI is known and prices differ",
+          "title": "By Npi"
+        },
+        "chia_badge": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChiaBadge"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "explanation_key": {
+          "enum": [
+            "fee.rung_1_npi",
+            "fee.rung_2_group",
+            "fee.rung_3_hospital_file",
+            "fee.rung_4_masshealth",
+            "fee.rung_5_medicare",
+            "fee.rung_6_estimate",
+            "fee.rung_7_medicare_reference",
+            "fee.rung_8_chia_badge",
+            "fee.self_pay_no_source"
+          ],
+          "title": "Explanation Key",
+          "type": "string"
+        },
+        "group_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Physician group, e.g. 'MGPO'",
+          "title": "Group Name"
+        },
+        "group_tin": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{2}-[0-9]{7}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Tin"
+        },
+        "multiple": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Multiple"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "npi_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Npi Count"
+        },
+        "rung": {
+          "anyOf": [
+            {
+              "maximum": 8,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "None only for self-pay (no public source)",
+          "title": "Rung"
+        }
+      },
+      "required": [
+        "rung",
+        "explanation_key",
+        "group_name",
+        "group_tin",
+        "npi_count",
+        "multiple",
+        "chia_badge",
+        "by_npi"
+      ],
+      "title": "DoctorFee",
+      "type": "object"
+    },
+    "ElsewhereOption": {
+      "additionalProperties": false,
+      "description": "A site that does offer a service this site does not. The browser picks the nearest.",
+      "properties": {
+        "cell": {
+          "discriminator": {
+            "mapping": {
+              "conflict": "#/$defs/Conflict",
+              "money": "#/$defs/Money",
+              "no_source": "#/$defs/NoSource",
+              "not_loaded": "#/$defs/NotLoaded",
+              "not_published": "#/$defs/NotPublished",
+              "percent_only": "#/$defs/PercentOnly"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "$ref": "#/$defs/NotPublished"
+            },
+            {
+              "$ref": "#/$defs/NotLoaded"
+            },
+            {
+              "$ref": "#/$defs/NoSource"
+            },
+            {
+              "$ref": "#/$defs/PercentOnly"
+            },
+            {
+              "$ref": "#/$defs/Conflict"
+            }
+          ],
+          "title": "Cell"
+        },
+        "lat": {
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "title": "Lon",
+          "type": "number"
+        },
+        "site_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Site Id",
+          "type": "string"
+        },
+        "site_name": {
+          "title": "Site Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "site_name",
+        "lat",
+        "lon",
+        "cell"
+      ],
+      "title": "ElsewhereOption",
+      "type": "object"
+    },
+    "ExcludedLine": {
+      "additionalProperties": false,
+      "properties": {
+        "line_id": {
+          "title": "Line Id",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "possible_tier",
+            "ai_suggested",
+            "no_dollar_amount",
+            "conflict",
+            "not_offered_here",
+            "repeats",
+            "reference_only"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "line_id",
+        "reason"
+      ],
+      "title": "ExcludedLine",
+      "type": "object"
+    },
+    "ExcludedReason": {
+      "description": "why a line is not summed",
+      "enum": [
+        "possible_tier",
+        "ai_suggested",
+        "no_dollar_amount",
+        "conflict",
+        "not_offered_here",
+        "repeats",
+        "reference_only"
+      ],
+      "type": "string"
+    },
+    "Freshness": {
+      "additionalProperties": false,
+      "description": "How current one data source is. Explicit fields, never free text.\n\n``late_to_refresh`` is computed by whoever builds the payload (ETL / quote engine) as\n``as_of > expected_by``. A late source is still shown, with the \"late to refresh\" label.",
+      "properties": {
+        "expected_by": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "When a newer version was due under `rule`. None = no deadline known.",
+          "title": "Expected By"
+        },
+        "last_updated": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The source's own date: file last_updated_on, fee schedule effective date, or the day a posted price was last checked. None = the source does not say.",
+          "title": "Last Updated"
+        },
+        "late_to_refresh": {
+          "title": "Late To Refresh",
+          "type": "boolean"
+        },
+        "rule": {
+          "enum": [
+            "etl_warn_after_days",
+            "cms_annual",
+            "tic_monthly",
+            "fee_schedule_effective",
+            "posted_price_weekly_check",
+            "hours_weekly_check"
+          ],
+          "title": "Rule",
+          "type": "string"
+        }
+      },
+      "required": [
+        "last_updated",
+        "expected_by",
+        "late_to_refresh",
+        "rule"
+      ],
+      "title": "Freshness",
+      "type": "object"
+    },
+    "FreshnessRule": {
+      "description": "how expected_by was set",
+      "enum": [
+        "etl_warn_after_days",
+        "cms_annual",
+        "tic_monthly",
+        "fee_schedule_effective",
+        "posted_price_weekly_check",
+        "hours_weekly_check"
+      ],
+      "type": "string"
+    },
+    "Gap": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/NotPublished"
+        },
+        {
+          "$ref": "#/$defs/NotLoaded"
+        },
+        {
+          "$ref": "#/$defs/NoSource"
+        },
+        {
+          "$ref": "#/$defs/PercentOnly"
+        },
+        {
+          "$ref": "#/$defs/Conflict"
+        }
+      ]
+    },
+    "Hours": {
+      "additionalProperties": false,
+      "properties": {
+        "checked_at": {
+          "format": "date",
+          "title": "Checked At",
+          "type": "string"
+        },
+        "may_close_early": {
+          "default": false,
+          "description": "Operator warns hours vary with clinical capacity",
+          "title": "May Close Early",
+          "type": "boolean"
+        },
+        "source": {
+          "enum": [
+            "on_my_way",
+            "operator_html",
+            "operator_schema_org",
+            "manual"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source Url"
+        },
+        "weekly": {
+          "description": "Empty = by appointment / unknown",
+          "items": {
+            "$ref": "#/$defs/HoursSpan"
+          },
+          "title": "Weekly",
+          "type": "array"
+        }
+      },
+      "required": [
+        "source",
+        "source_url",
+        "checked_at",
+        "weekly",
+        "may_close_early"
+      ],
+      "title": "Hours",
+      "type": "object"
+    },
+    "HoursSpan": {
+      "additionalProperties": false,
+      "properties": {
+        "closes": {
+          "pattern": "^([01][0-9]|2[0-4]):[0-5][0-9]$",
+          "title": "Closes",
+          "type": "string"
+        },
+        "days": {
+          "items": {
+            "enum": [
+              "mon",
+              "tue",
+              "wed",
+              "thu",
+              "fri",
+              "sat",
+              "sun"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Days",
+          "type": "array"
+        },
+        "opens": {
+          "pattern": "^([01][0-9]|2[0-3]):[0-5][0-9]$",
+          "title": "Opens",
+          "type": "string"
+        }
+      },
+      "required": [
+        "days",
+        "opens",
+        "closes"
+      ],
+      "title": "HoursSpan",
+      "type": "object"
+    },
+    "InsurancePayment": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "insurance",
+          "title": "Kind",
+          "type": "string"
+        },
+        "network": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Optional named network inside the product (TiC network id), e.g. hmo_blue",
+          "title": "Network"
+        },
+        "payer_id": {
+          "description": "payer_aliases.yaml id, e.g. BCBS_MA",
+          "pattern": "^[A-Z][A-Z0-9_]*$",
+          "title": "Payer Id",
+          "type": "string"
+        },
+        "product": {
+          "description": "payer_aliases.yaml `products`: HMO, PPO, POS, EPO ...",
+          "pattern": "^[A-Z]+$",
+          "title": "Product",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "payer_id",
+        "product",
+        "network"
+      ],
+      "title": "InsurancePayment",
+      "type": "object"
+    },
+    "LadderExplanation": {
+      "description": "doctor-fee copy key",
+      "enum": [
+        "fee.rung_1_npi",
+        "fee.rung_2_group",
+        "fee.rung_3_hospital_file",
+        "fee.rung_4_masshealth",
+        "fee.rung_5_medicare",
+        "fee.rung_6_estimate",
+        "fee.rung_7_medicare_reference",
+        "fee.rung_8_chia_badge",
+        "fee.self_pay_no_source"
+      ],
+      "type": "string"
+    },
+    "LearnMore": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label",
+        "url"
+      ],
+      "title": "LearnMore",
+      "type": "object"
+    },
+    "Likelihood": {
+      "description": "care path likelihood_tier",
+      "enum": [
+        "certain",
+        "likely",
+        "possible",
+        "rare"
+      ],
+      "type": "string"
+    },
+    "MassHealthPayment": {
+      "additionalProperties": false,
+      "description": "MassHealth fee-for-service rates. ACO / MCO plans may pay differently (shown as a note).",
+      "properties": {
+        "kind": {
+          "const": "masshealth",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "MassHealthPayment",
+      "type": "object"
+    },
+    "MedicarePayment": {
+      "additionalProperties": false,
+      "description": "Traditional Medicare (FFS). Medicare Advantage is an InsurancePayment (e.g. HUMANA).",
+      "properties": {
+        "kind": {
+          "const": "medicare",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "MedicarePayment",
+      "type": "object"
+    },
+    "Method": {
+      "description": "How the number in a ``Money`` was obtained.",
+      "enum": [
+        "stated",
+        "derived_pct_x_gross",
+        "computed_fee_schedule",
+        "estimate_medicare_multiple",
+        "ai_drafted"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "Money": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "$ref": "#/$defs/PriceBasis"
+        },
+        "high": {
+          "minimum": 0,
+          "title": "High",
+          "type": "number"
+        },
+        "kind": {
+          "const": "money",
+          "default": "money",
+          "title": "Kind",
+          "type": "string"
+        },
+        "low": {
+          "minimum": 0,
+          "title": "Low",
+          "type": "number"
+        },
+        "prov": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "kind",
+        "low",
+        "high",
+        "basis",
+        "prov"
+      ],
+      "title": "Money",
+      "type": "object"
+    },
+    "Multiple": {
+      "additionalProperties": false,
+      "description": "Rung 6: Medicare x the same group's own typical multiple (>= 5 matched codes, D5).",
+      "properties": {
+        "high": {
+          "exclusiveMinimum": 0,
+          "title": "High",
+          "type": "number"
+        },
+        "low": {
+          "exclusiveMinimum": 0,
+          "title": "Low",
+          "type": "number"
+        },
+        "n_codes": {
+          "minimum": 5,
+          "title": "N Codes",
+          "type": "integer"
+        },
+        "payer_id": {
+          "pattern": "^[A-Z][A-Z0-9_]*$",
+          "title": "Payer Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "n_codes",
+        "payer_id"
+      ],
+      "title": "Multiple",
+      "type": "object"
+    },
+    "NoSource": {
+      "additionalProperties": false,
+      "description": "No public source exists at all (e.g. self-pay physician fee).",
+      "properties": {
+        "ask": {
+          "title": "Ask",
+          "type": "string"
+        },
+        "kind": {
+          "const": "no_source",
+          "default": "no_source",
+          "title": "Kind",
+          "type": "string"
+        },
+        "what": {
+          "title": "What",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "what",
+        "ask"
+      ],
+      "title": "NoSource",
+      "type": "object"
+    },
+    "NotLoaded": {
+      "additionalProperties": false,
+      "description": "A source exists and we have not imported it yet (e.g. UHC TiC).",
+      "properties": {
+        "eta": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eta"
+        },
+        "kind": {
+          "const": "not_loaded",
+          "default": "not_loaded",
+          "title": "Kind",
+          "type": "string"
+        },
+        "what": {
+          "title": "What",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "what",
+        "eta"
+      ],
+      "title": "NotLoaded",
+      "type": "object"
+    },
+    "NotPublished": {
+      "additionalProperties": false,
+      "description": "The source type exists but this provider did not list this item (in dollars).",
+      "properties": {
+        "ask": {
+          "title": "Ask",
+          "type": "string"
+        },
+        "kind": {
+          "const": "not_published",
+          "default": "not_published",
+          "title": "Kind",
+          "type": "string"
+        },
+        "what": {
+          "title": "What",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "what",
+        "ask"
+      ],
+      "title": "NotPublished",
+      "type": "object"
+    },
+    "NpiPrice": {
+      "additionalProperties": false,
+      "properties": {
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public NPPES name; None when only an NPI block is known",
+          "title": "Display Name"
+        },
+        "money": {
+          "$ref": "#/$defs/Money"
+        },
+        "npi": {
+          "pattern": "^[0-9]{10}$",
+          "title": "Npi",
+          "type": "string"
+        }
+      },
+      "required": [
+        "npi",
+        "display_name",
+        "money"
+      ],
+      "title": "NpiPrice",
+      "type": "object"
+    },
+    "OtherPayerRange": {
+      "additionalProperties": false,
+      "description": "Range bar (PriceRangeBar.tsx): same service, same site, every payer we have + cash.",
+      "properties": {
+        "cash": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "conflict": "#/$defs/Conflict",
+                  "money": "#/$defs/Money",
+                  "no_source": "#/$defs/NoSource",
+                  "not_loaded": "#/$defs/NotLoaded",
+                  "not_published": "#/$defs/NotPublished",
+                  "percent_only": "#/$defs/PercentOnly"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/Money"
+                },
+                {
+                  "$ref": "#/$defs/NotPublished"
+                },
+                {
+                  "$ref": "#/$defs/NotLoaded"
+                },
+                {
+                  "$ref": "#/$defs/NoSource"
+                },
+                {
+                  "$ref": "#/$defs/PercentOnly"
+                },
+                {
+                  "$ref": "#/$defs/Conflict"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Self-pay price at this site if known; None = not asked",
+          "title": "Cash"
+        },
+        "code": {
+          "pattern": "^([0-9]{4}[0-9A-Z]|[A-Z][0-9]{4})$",
+          "title": "Code",
+          "type": "string"
+        },
+        "line_id": {
+          "title": "Line Id",
+          "type": "string"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/PayerPoint"
+          },
+          "minItems": 1,
+          "title": "Points",
+          "type": "array"
+        },
+        "yours": {
+          "description": "Whether the person's own payer is one of the points",
+          "enum": [
+            "in_points",
+            "not_in_points"
+          ],
+          "title": "Yours",
+          "type": "string"
+        }
+      },
+      "required": [
+        "line_id",
+        "code",
+        "points",
+        "cash",
+        "yours"
+      ],
+      "title": "OtherPayerRange",
+      "type": "object"
+    },
+    "PayerPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "description": "Payer + plan as shown, e.g. 'Harvard Pilgrim · self-insured'",
+          "title": "Label",
+          "type": "string"
+        },
+        "money": {
+          "$ref": "#/$defs/Money"
+        },
+        "payer_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z][A-Z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "None when the file's payer is not mapped to a registry id",
+          "title": "Payer Id"
+        },
+        "product": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Product"
+        }
+      },
+      "required": [
+        "payer_id",
+        "label",
+        "product",
+        "money"
+      ],
+      "title": "PayerPoint",
+      "type": "object"
+    },
+    "Payment": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/InsurancePayment"
+        },
+        {
+          "$ref": "#/$defs/MedicarePayment"
+        },
+        {
+          "$ref": "#/$defs/MassHealthPayment"
+        },
+        {
+          "$ref": "#/$defs/CashPayment"
+        }
+      ]
+    },
+    "PercentOnly": {
+      "additionalProperties": false,
+      "description": "Only 'X% of charges' is published and the base charge is not.",
+      "properties": {
+        "kind": {
+          "const": "percent_only",
+          "default": "percent_only",
+          "title": "Kind",
+          "type": "string"
+        },
+        "of": {
+          "title": "Of",
+          "type": "string"
+        },
+        "pct": {
+          "minimum": 0,
+          "title": "Pct",
+          "type": "number"
+        }
+      },
+      "required": [
+        "kind",
+        "pct",
+        "of"
+      ],
+      "title": "PercentOnly",
+      "type": "object"
+    },
+    "PortalLink": {
+      "additionalProperties": false,
+      "description": "D7: the health system's patient portal (MyChart, MGB Patient Gateway). Link only.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "mychart",
+            "patient_gateway"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "system_id": {
+          "description": "e.g. mgb, bilh, bmc",
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "System Id",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "system_id",
+        "label",
+        "url"
+      ],
+      "title": "PortalLink",
+      "type": "object"
+    },
+    "PriceBasis": {
+      "description": "What the amount *is* (as opposed to how we got it).",
+      "enum": [
+        "negotiated",
+        "gross",
+        "discounted_cash",
+        "min_negotiated",
+        "max_negotiated",
+        "median_allowed",
+        "fee_schedule",
+        "posted_self_pay",
+        "estimate"
+      ],
+      "title": "PriceBasis",
+      "type": "string"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "$ref": "#/$defs/Method"
+        },
+        "row_ref": {
+          "description": "<source_id>:<sha256[:12]>:<staged row ordinal>",
+          "title": "Row Ref",
+          "type": "string"
+        },
+        "source_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The file's own last_updated_on (ISO).",
+          "title": "Source Date"
+        },
+        "source_file": {
+          "description": "Basename only; never an absolute or relative path.",
+          "title": "Source File",
+          "type": "string"
+        },
+        "source_kind": {
+          "$ref": "#/$defs/SourceKind"
+        },
+        "source_sha256": {
+          "title": "Source Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_kind",
+        "source_file",
+        "source_sha256",
+        "source_date",
+        "method",
+        "row_ref"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "QuoteRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "answers": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": "Chip answers keyed by questions.yaml id (Q14 -> referral layer, tier modifiers). Ids and values only; never free text.",
+          "title": "Answers",
+          "type": "object"
+        },
+        "care_path_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9_]+_v[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Care Path Id"
+        },
+        "payment": {
+          "discriminator": {
+            "mapping": {
+              "cash": "#/$defs/CashPayment",
+              "insurance": "#/$defs/InsurancePayment",
+              "masshealth": "#/$defs/MassHealthPayment",
+              "medicare": "#/$defs/MedicarePayment"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/InsurancePayment"
+            },
+            {
+              "$ref": "#/$defs/MedicarePayment"
+            },
+            {
+              "$ref": "#/$defs/MassHealthPayment"
+            },
+            {
+              "$ref": "#/$defs/CashPayment"
+            }
+          ],
+          "title": "Payment"
+        },
+        "service_codes": {
+          "description": "D3 manual picker: CPT/HCPCS codes from the catalog",
+          "items": {
+            "type": "string"
+          },
+          "title": "Service Codes",
+          "type": "array"
+        },
+        "site_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Only these sites; None = every site that offers the services",
+          "title": "Site Ids"
+        }
+      },
+      "required": [
+        "payment",
+        "care_path_id",
+        "answers",
+        "service_codes",
+        "site_ids"
+      ],
+      "title": "QuoteRequest",
+      "type": "object"
+    },
+    "QuoteResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "care_path": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CarePathRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "data_version": {
+          "$ref": "#/$defs/DataVersion"
+        },
+        "notices": {
+          "items": {
+            "enum": [
+              "care_path_draft",
+              "tic_not_loaded",
+              "late_to_refresh_sources",
+              "masshealth_aco_may_differ",
+              "medicare_advantage_is_insurance"
+            ],
+            "type": "string"
+          },
+          "title": "Notices",
+          "type": "array"
+        },
+        "payment": {
+          "discriminator": {
+            "mapping": {
+              "cash": "#/$defs/CashPayment",
+              "insurance": "#/$defs/InsurancePayment",
+              "masshealth": "#/$defs/MassHealthPayment",
+              "medicare": "#/$defs/MedicarePayment"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/InsurancePayment"
+            },
+            {
+              "$ref": "#/$defs/MedicarePayment"
+            },
+            {
+              "$ref": "#/$defs/MassHealthPayment"
+            },
+            {
+              "$ref": "#/$defs/CashPayment"
+            }
+          ],
+          "title": "Payment"
+        },
+        "service_codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Service Codes",
+          "type": "array"
+        },
+        "sites": {
+          "items": {
+            "$ref": "#/$defs/SiteQuote"
+          },
+          "title": "Sites",
+          "type": "array"
+        },
+        "sites_without_service": {
+          "description": "Sites filtered out because they offer none of it",
+          "items": {
+            "type": "string"
+          },
+          "title": "Sites Without Service",
+          "type": "array"
+        }
+      },
+      "required": [
+        "payment",
+        "care_path",
+        "service_codes",
+        "data_version",
+        "sites",
+        "sites_without_service",
+        "notices"
+      ],
+      "title": "QuoteResponse",
+      "type": "object"
+    },
+    "Receipt": {
+      "additionalProperties": false,
+      "properties": {
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/ReceiptLine"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "totals": {
+          "$ref": "#/$defs/Totals"
+        }
+      },
+      "required": [
+        "lines",
+        "totals"
+      ],
+      "title": "Receipt",
+      "type": "object"
+    },
+    "ReceiptLine": {
+      "additionalProperties": false,
+      "properties": {
+        "ai_suggested": {
+          "default": false,
+          "title": "Ai Suggested",
+          "type": "boolean"
+        },
+        "availability": {
+          "default": "offered",
+          "enum": [
+            "offered",
+            "not_offered",
+            "unknown"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "cell": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "conflict": "#/$defs/Conflict",
+                  "money": "#/$defs/Money",
+                  "no_source": "#/$defs/NoSource",
+                  "not_loaded": "#/$defs/NotLoaded",
+                  "not_published": "#/$defs/NotPublished",
+                  "percent_only": "#/$defs/PercentOnly"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/Money"
+                },
+                {
+                  "$ref": "#/$defs/NotPublished"
+                },
+                {
+                  "$ref": "#/$defs/NotLoaded"
+                },
+                {
+                  "$ref": "#/$defs/NoSource"
+                },
+                {
+                  "$ref": "#/$defs/PercentOnly"
+                },
+                {
+                  "$ref": "#/$defs/Conflict"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "None only when availability == not_offered",
+          "title": "Cell"
+        },
+        "codes": {
+          "description": "technical detail only, never the label",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Codes",
+          "type": "array"
+        },
+        "component": {
+          "enum": [
+            "facility",
+            "professional",
+            "drug",
+            "supply",
+            "unknown"
+          ],
+          "title": "Component",
+          "type": "string"
+        },
+        "component_confirmed": {
+          "description": "False when the price file does not say facility vs professional (e.g. CHA)",
+          "title": "Component Confirmed",
+          "type": "boolean"
+        },
+        "doctor_fee": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DoctorFee"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "elsewhere": {
+          "description": "Cheapest sites that offer it, when not offered here",
+          "items": {
+            "$ref": "#/$defs/ElsewhereOption"
+          },
+          "title": "Elsewhere",
+          "type": "array"
+        },
+        "glossary_keys": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Glossary Keys",
+          "type": "array"
+        },
+        "in_total": {
+          "title": "In Total",
+          "type": "boolean"
+        },
+        "learn_more": {
+          "items": {
+            "$ref": "#/$defs/LearnMore"
+          },
+          "title": "Learn More",
+          "type": "array"
+        },
+        "likelihood": {
+          "enum": [
+            "certain",
+            "likely",
+            "possible",
+            "rare"
+          ],
+          "title": "Likelihood",
+          "type": "string"
+        },
+        "line_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Line Id",
+          "type": "string"
+        },
+        "modifier": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9A-Z]{2}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modifier"
+        },
+        "plain_name": {
+          "description": "Primary label (D8)",
+          "title": "Plain Name",
+          "type": "string"
+        },
+        "sources": {
+          "description": "One chip per number shown (two for a conflict)",
+          "items": {
+            "$ref": "#/$defs/SourceChip"
+          },
+          "title": "Sources",
+          "type": "array"
+        },
+        "step_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "care path step",
+          "title": "Step Id"
+        },
+        "technical_name": {
+          "description": "Small text (D8), e.g. 'Shoulder X-ray'",
+          "title": "Technical Name",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "certain",
+            "likely",
+            "possible",
+            "not_in_public_data"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "unit": {
+          "default": "once",
+          "enum": [
+            "once",
+            "per_visit",
+            "per_15_minutes"
+          ],
+          "title": "Unit",
+          "type": "string"
+        },
+        "why": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "One sentence, from the care path; None on manual picks",
+          "title": "Why"
+        }
+      },
+      "required": [
+        "line_id",
+        "tier",
+        "likelihood",
+        "step_id",
+        "codes",
+        "modifier",
+        "plain_name",
+        "technical_name",
+        "why",
+        "glossary_keys",
+        "component",
+        "component_confirmed",
+        "unit",
+        "availability",
+        "cell",
+        "sources",
+        "doctor_fee",
+        "ai_suggested",
+        "in_total",
+        "elsewhere",
+        "learn_more"
+      ],
+      "title": "ReceiptLine",
+      "type": "object"
+    },
+    "SiteQuote": {
+      "additionalProperties": false,
+      "properties": {
+        "other_payers": {
+          "items": {
+            "$ref": "#/$defs/OtherPayerRange"
+          },
+          "title": "Other Payers",
+          "type": "array"
+        },
+        "receipt": {
+          "$ref": "#/$defs/Receipt"
+        },
+        "site": {
+          "$ref": "#/$defs/SiteSummary"
+        }
+      },
+      "required": [
+        "site",
+        "receipt",
+        "other_payers"
+      ],
+      "title": "SiteQuote",
+      "type": "object"
+    },
+    "SiteSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "address_line": {
+          "title": "Address Line",
+          "type": "string"
+        },
+        "billing_type": {
+          "enum": [
+            "office_visit",
+            "hospital_outpatient",
+            "unknown"
+          ],
+          "title": "Billing Type",
+          "type": "string"
+        },
+        "booking": {
+          "items": {
+            "$ref": "#/$defs/BookingOption"
+          },
+          "title": "Booking",
+          "type": "array"
+        },
+        "coords": {
+          "$ref": "#/$defs/Coordinates"
+        },
+        "hours": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Hours"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "hours_label": {
+          "enum": [
+            "live_by_operator",
+            "posted_hours",
+            "may_close_early",
+            "unknown"
+          ],
+          "title": "Hours Label",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Phone"
+        },
+        "portal_links": {
+          "items": {
+            "$ref": "#/$defs/PortalLink"
+          },
+          "title": "Portal Links",
+          "type": "array"
+        },
+        "price_freshness": {
+          "$ref": "#/$defs/Freshness",
+          "description": "Per site: the oldest price source behind this receipt ('late to refresh')"
+        },
+        "price_label": {
+          "enum": [
+            "price_file",
+            "posted_price",
+            "price_on_request",
+            "mixed"
+          ],
+          "title": "Price Label",
+          "type": "string"
+        },
+        "service_areas": {
+          "items": {
+            "enum": [
+              "ortho",
+              "skin",
+              "gi",
+              "urgent_care"
+            ],
+            "type": "string"
+          },
+          "title": "Service Areas",
+          "type": "array"
+        },
+        "site_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Site Id",
+          "type": "string"
+        },
+        "site_type": {
+          "enum": [
+            "urgent_care",
+            "hospital_outpatient",
+            "ortho_walk_in",
+            "specialist_office",
+            "primary_care_office",
+            "imaging_center",
+            "ambulatory_surgery_center"
+          ],
+          "title": "Site Type",
+          "type": "string"
+        },
+        "system_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "System Id"
+        }
+      },
+      "required": [
+        "site_id",
+        "name",
+        "site_type",
+        "system_id",
+        "coords",
+        "address_line",
+        "phone",
+        "billing_type",
+        "booking",
+        "portal_links",
+        "hours",
+        "hours_label",
+        "price_label",
+        "price_freshness",
+        "service_areas"
+      ],
+      "title": "SiteSummary",
+      "type": "object"
+    },
+    "SourceChip": {
+      "additionalProperties": false,
+      "description": "What the source chip on a line shows (hover text keys off source_kind, plan §2.2).",
+      "properties": {
+        "freshness": {
+          "$ref": "#/$defs/Freshness",
+          "description": "Per data point: a stale price carries its own flag"
+        },
+        "label_key": {
+          "description": "fixed copy key: source.<source_kind>",
+          "pattern": "^source\\.[a-z0-9_]+$",
+          "title": "Label Key",
+          "type": "string"
+        },
+        "publisher": {
+          "description": "Who published it, e.g. 'Mount Auburn Hospital', 'BCBS MA', 'CMS'",
+          "title": "Publisher",
+          "type": "string"
+        },
+        "rows": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "price-file rows behind the number",
+          "title": "Rows"
+        },
+        "source_kind": {
+          "$ref": "#/$defs/SourceKind"
+        }
+      },
+      "required": [
+        "source_kind",
+        "publisher",
+        "label_key",
+        "freshness",
+        "rows"
+      ],
+      "title": "SourceChip",
+      "type": "object"
+    },
+    "SourceKind": {
+      "enum": [
+        "hospital_mrf",
+        "insurer_tic",
+        "medicare_pfs",
+        "medicare_opps",
+        "medicare_asc",
+        "masshealth_fs",
+        "clinic_posted",
+        "chia_rp",
+        "estimate",
+        "ai_potential"
+      ],
+      "title": "SourceKind",
+      "type": "string"
+    },
+    "SummedAmount": {
+      "additionalProperties": false,
+      "description": "A sum of line Money values. Not a ``Money``: a sum has no single Provenance; each part's\nprovenance stays on its line (``line_ids``).",
+      "properties": {
+        "high": {
+          "minimum": 0,
+          "title": "High",
+          "type": "number"
+        },
+        "includes_estimate": {
+          "description": "True when a rung-6 estimate is in the sum",
+          "title": "Includes Estimate",
+          "type": "boolean"
+        },
+        "includes_late_source": {
+          "description": "True when a 'late to refresh' price is in it",
+          "title": "Includes Late Source",
+          "type": "boolean"
+        },
+        "line_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Line Ids",
+          "type": "array"
+        },
+        "low": {
+          "minimum": 0,
+          "title": "Low",
+          "type": "number"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "line_ids",
+        "includes_estimate",
+        "includes_late_source"
+      ],
+      "title": "SummedAmount",
+      "type": "object"
+    },
+    "Totals": {
+      "additionalProperties": false,
+      "properties": {
+        "complete": {
+          "description": "False when a certain/likely line has no dollar amount (the total is a floor)",
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "excluded": {
+          "items": {
+            "$ref": "#/$defs/ExcludedLine"
+          },
+          "title": "Excluded",
+          "type": "array"
+        },
+        "likely": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SummedAmount"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "certain + likely Money lines with in_total; None when nothing can be summed"
+        },
+        "you_pay": {
+          "$ref": "#/$defs/YouPay"
+        }
+      },
+      "required": [
+        "likely",
+        "complete",
+        "excluded",
+        "you_pay"
+      ],
+      "title": "Totals",
+      "type": "object"
+    },
+    "YouPay": {
+      "additionalProperties": false,
+      "description": "What the person actually owes depends on their plan; we say how, never guess the number.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "deductible_then_coinsurance",
+            "medicare_20_percent",
+            "masshealth_small_or_no_copay",
+            "cash_full_amount"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "note_key": {
+          "pattern": "^youpay\\.[a-z0-9_]+$",
+          "title": "Note Key",
+          "type": "string"
+        },
+        "portal_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Portal Label"
+        },
+        "portal_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Insurer member portal, e.g. MyBlue",
+          "title": "Portal Url"
+        }
+      },
+      "required": [
+        "kind",
+        "note_key",
+        "portal_label",
+        "portal_url"
+      ],
+      "title": "YouPay",
+      "type": "object"
+    }
+  },
+  "$id": "https://carecost.local/contracts/quote_api.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/QuoteRequest"
+    },
+    {
+      "$ref": "#/$defs/QuoteResponse"
+    }
+  ],
+  "title": "QuoteApi"
+}

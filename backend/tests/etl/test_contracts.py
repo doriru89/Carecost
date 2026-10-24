@@ -33,6 +33,7 @@ def test_source_kind_enum_is_exactly_the_plan_list():
         "insurer_tic",
         "medicare_pfs",
         "medicare_opps",
+        "medicare_asc",
         "masshealth_fs",
         "clinic_posted",
         "chia_rp",
@@ -102,9 +103,15 @@ def test_cell_is_money_or_gap_only():
 
 def test_exported_schemas_match_committed_contracts():
     """contracts/*.schema.json are generated; drift fails CI."""
+    from app.api_contracts import SPECS as API_CONTRACTS
+    from app.care_paths.schema_export import CONTRACT_FILE as CARE_PATH_CONTRACT
+
     generated = c.json_schemas()
     committed_dir = REPO / "contracts"
-    assert set(generated) == {p.name for p in committed_dir.glob("*.schema.json")}
+    # Every committed schema has exactly one generator: the ETL contracts, the care-path exporter
+    # or the wave-2 API contracts (app.api_contracts).
+    other_generators = {CARE_PATH_CONTRACT.name, *API_CONTRACTS}
+    assert set(generated) | other_generators == {p.name for p in committed_dir.glob("*.schema.json")}
     for name, schema in generated.items():
         committed = json.loads((committed_dir / name).read_text())
         assert committed == schema, f"{name} is stale: run python -m app.etl.contracts"

@@ -73,7 +73,7 @@ def run_build(
 ) -> BuildResult:
     today = today or date.today()
     present: dict[str, dict[str, Any]] = {}
-    for spec in sources.sources:
+    for spec in sources.rate_row_sources:
         rec = current(paths, spec.source_id)
         if rec is None:
             continue
@@ -110,7 +110,9 @@ def run_build(
 
     # gates
     results: list[gates.GateResult] = []
-    results += gates.check_sources_present([s.source_id for s in sources.sources], set(present))
+    results += gates.check_sources_present(
+        [s.source_id for s in sources.rate_row_sources], set(present)
+    )
     for sid, p in present.items():  # NPI check: file must still carry the registry NPIs
         missing = [n for n in sources.get(sid).npis if n not in p["type_2_npis"]]
         results.append(

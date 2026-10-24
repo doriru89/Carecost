@@ -36,6 +36,7 @@ class SourceKind(StrEnum):
     insurer_tic = "insurer_tic"
     medicare_pfs = "medicare_pfs"
     medicare_opps = "medicare_opps"
+    medicare_asc = "medicare_asc"
     masshealth_fs = "masshealth_fs"
     clinic_posted = "clinic_posted"
     chia_rp = "chia_rp"

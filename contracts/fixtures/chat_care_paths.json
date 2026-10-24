@@ -1,0 +1,27 @@
+{
+  "_fixture": true,
+  "_schema": "ChatResponse",
+  "conversation_id": "c_7f3a9d2e41b8c605",
+  "llm_called": true,
+  "budget": {
+    "state": "near_soft_cap",
+    "soft_cap_usd": 1.0,
+    "hard_cap_usd": 2.0,
+    "spent_today_usd": 0.83,
+    "wallet": "ok",
+    "resets_at": "2026-10-25T00:00:00Z"
+  },
+  "reply": {
+    "kind": "care_paths",
+    "text": "This sounds like shoulder pain that built up over time. Here is what a visit usually involves.",
+    "candidates": [
+      {
+        "path_id": "shoulder_chronic_clicking_v1",
+        "title": "Shoulder pain that came on gradually, often with painful clicking",
+        "match": "entry_matched",
+        "review_status": "pending_austin"
+      }
+    ],
+    "card_ids": []
+  }
+}

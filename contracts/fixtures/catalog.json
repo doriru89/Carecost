@@ -1,0 +1,731 @@
+{
+  "_fixture": true,
+  "_schema": "Catalog",
+  "version": "0.1.0",
+  "care_paths": [
+    {
+      "id": "ankle_sprain_urgent_care_v1",
+      "title": "Twisted or sprained ankle (urgent care)",
+      "area": "msk_ankle",
+      "review_status": "pending_austin"
+    },
+    {
+      "id": "back_new_pain_v1",
+      "title": "New low back pain without warning signs",
+      "area": "msk_back",
+      "review_status": "pending_austin"
+    },
+    {
+      "id": "back_persistent_pain_v1",
+      "title": "Low back pain that hasn't improved after 6 weeks of treatment",
+      "area": "msk_back",
+      "review_status": "pending_austin"
+    },
+    {
+      "id": "colon_diagnostic_v1",
+      "title": "Colonoscopy because of symptoms (diagnostic)",
+      "area": "gi_lower",
+      "review_status": "pending_austin"
+    },
+    {
+      "id": "colon_screening_v1",
+      "title": "Colon cancer screening with a colonoscopy (no symptoms)",
+      "area": "gi_lower",
+      "review_status": "pending_austin"
+    },
+    {
+      "id": "gerd_heartburn_v1",
+      "title": "Heartburn or acid reflux without warning signs",
+      "area": "gi_upper",
+      "review_status": "pending_austin"
+    },
+    {
+      "id": "knee_chronic_v1",
+      "title": "Knee pain that came on gradually",
+      "area": "msk_knee",
+      "review_status": "pending_austin"
+    },
+    {
+      "id": "shoulder_acute_injury_v1",
+      "title": "Shoulder pain after a fall or injury",
+      "area": "msk_shoulder",
+      "review_status": "pending_austin"
+    },
+    {
+      "id": "shoulder_chronic_clicking_v1",
+      "title": "Shoulder pain that came on gradually, often with painful clicking",
+      "area": "msk_shoulder",
+      "review_status": "pending_austin"
+    },
+    {
+      "id": "skin_changing_mole_v1",
+      "title": "A mole or spot that is new or changing",
+      "area": "skin",
+      "review_status": "pending_austin"
+    }
+  ],
+  "services": [
+    {
+      "service_id": "svc_00731",
+      "plain_name": "Medicine so you sleep through it",
+      "technical_name": "Anesthesia for upper endoscopy",
+      "kind": "anesthesia",
+      "areas": [
+        "gi"
+      ],
+      "codes": [
+        {
+          "code": "00731",
+          "role": "primary",
+          "description": "Anesthesia for upper GI endoscopy; not in research list"
+        }
+      ],
+      "care_paths": [
+        "gerd_heartburn_v1"
+      ],
+      "glossary_keys": [
+        "anesthesia",
+        "upper_endoscopy"
+      ]
+    },
+    {
+      "service_id": "svc_00811",
+      "plain_name": "Medicine so you sleep through it",
+      "technical_name": "Anesthesia for colonoscopy",
+      "kind": "anesthesia",
+      "areas": [
+        "gi"
+      ],
+      "codes": [
+        {
+          "code": "00811",
+          "role": "primary",
+          "description": "Anesthesia, lower GI endoscopy"
+        }
+      ],
+      "care_paths": [
+        "colon_diagnostic_v1"
+      ],
+      "glossary_keys": [
+        "anesthesia",
+        "colonoscopy"
+      ]
+    },
+    {
+      "service_id": "svc_00812",
+      "plain_name": "Medicine so you sleep through it",
+      "technical_name": "Anesthesia for screening colonoscopy",
+      "kind": "anesthesia",
+      "areas": [
+        "gi"
+      ],
+      "codes": [
+        {
+          "code": "00812",
+          "role": "primary",
+          "description": "Anesthesia, screening colonoscopy"
+        }
+      ],
+      "care_paths": [
+        "colon_screening_v1"
+      ],
+      "glossary_keys": [
+        "anesthesia",
+        "colonoscopy"
+      ]
+    },
+    {
+      "service_id": "svc_11102",
+      "plain_name": "Removing the spot, or a piece of it, to test",
+      "technical_name": "Skin biopsy (shave, punch or excision)",
+      "kind": "procedure",
+      "areas": [
+        "skin"
+      ],
+      "codes": [
+        {
+          "code": "11102",
+          "role": "primary",
+          "description": "Tangential (shave) skin biopsy, single lesion"
+        },
+        {
+          "code": "11104",
+          "role": "alternative",
+          "description": "Punch skin biopsy, single lesion"
+        },
+        {
+          "code": "11106",
+          "role": "alternative",
+          "description": "Incisional biopsy, first lesion"
+        },
+        {
+          "code": "11401",
+          "role": "alternative",
+          "description": "If the whole spot is cut out: benign-excision series by size (here 0.6-1.0 cm); the final code depends on the lab result and size"
+        },
+        {
+          "code": "11601",
+          "role": "alternative",
+          "description": "Malignant-excision series by size (here 0.6-1.0 cm), used if the lab finds cancer"
+        }
+      ],
+      "care_paths": [
+        "skin_changing_mole_v1"
+      ],
+      "glossary_keys": [
+        "biopsy"
+      ]
+    },
+    {
+      "service_id": "svc_11602",
+      "plain_name": "Wider removal around the spot",
+      "technical_name": "Re-excision",
+      "kind": "procedure",
+      "areas": [
+        "skin"
+      ],
+      "codes": [
+        {
+          "code": "11602",
+          "role": "primary",
+          "description": "Excision, malignant lesion, by size; exact code depends on size"
+        },
+        {
+          "code": "11402",
+          "role": "alternative",
+          "description": "Excision, benign lesion, by size"
+        }
+      ],
+      "care_paths": [
+        "skin_changing_mole_v1"
+      ],
+      "glossary_keys": []
+    },
+    {
+      "service_id": "svc_20610",
+      "plain_name": "Shot of anti-inflammatory and numbing medicine",
+      "technical_name": "Corticosteroid shoulder injection",
+      "kind": "procedure",
+      "areas": [
+        "ortho"
+      ],
+      "codes": [
+        {
+          "code": "20610",
+          "role": "primary",
+          "description": "Joint injection/aspiration, major joint"
+        },
+        {
+          "code": "20611",
+          "role": "alternative",
+          "description": "Joint injection/aspiration, major joint, with ultrasound guidance"
+        }
+      ],
+      "care_paths": [
+        "shoulder_chronic_clicking_v1"
+      ],
+      "glossary_keys": [
+        "steroid_injection",
+        "ultrasound"
+      ]
+    },
+    {
+      "service_id": "svc_43235",
+      "plain_name": "Camera check of the food pipe and stomach",
+      "technical_name": "Upper endoscopy (EGD)",
+      "kind": "procedure",
+      "areas": [
+        "gi"
+      ],
+      "codes": [
+        {
+          "code": "43235",
+          "role": "primary",
+          "description": "Diagnostic EGD"
+        },
+        {
+          "code": "43239",
+          "role": "alternative",
+          "description": "Upper endoscopy (EGD) with biopsy"
+        }
+      ],
+      "care_paths": [
+        "gerd_heartburn_v1"
+      ],
+      "glossary_keys": [
+        "upper_endoscopy"
+      ]
+    },
+    {
+      "service_id": "svc_45378",
+      "plain_name": "Camera check of the whole colon",
+      "technical_name": "Diagnostic colonoscopy",
+      "kind": "procedure",
+      "areas": [
+        "gi"
+      ],
+      "codes": [
+        {
+          "code": "45378",
+          "role": "primary",
+          "description": "Colonoscopy, diagnostic"
+        },
+        {
+          "code": "G0121",
+          "role": "primary",
+          "description": "Medicare screening colonoscopy, not high risk"
+        }
+      ],
+      "care_paths": [
+        "colon_diagnostic_v1",
+        "colon_screening_v1"
+      ],
+      "glossary_keys": [
+        "colonoscopy"
+      ]
+    },
+    {
+      "service_id": "svc_45380",
+      "plain_name": "Taking samples or removing growths",
+      "technical_name": "Colonoscopy with biopsy or polyp removal",
+      "kind": "procedure",
+      "areas": [
+        "gi"
+      ],
+      "codes": [
+        {
+          "code": "45380",
+          "role": "primary",
+          "description": "Colonoscopy with biopsy"
+        },
+        {
+          "code": "45385",
+          "role": "alternative",
+          "description": "Colonoscopy with polyp removal (snare)"
+        }
+      ],
+      "care_paths": [
+        "colon_diagnostic_v1"
+      ],
+      "glossary_keys": [
+        "biopsy",
+        "colonoscopy",
+        "polyp"
+      ]
+    },
+    {
+      "service_id": "svc_45385",
+      "plain_name": "Removing growths found during the check",
+      "technical_name": "Polyp removal (polypectomy)",
+      "kind": "procedure",
+      "areas": [
+        "gi"
+      ],
+      "codes": [
+        {
+          "code": "45385",
+          "role": "primary",
+          "description": "Colonoscopy with polyp removal (snare)"
+        },
+        {
+          "code": "45380",
+          "role": "alternative",
+          "description": "Colonoscopy with biopsy"
+        }
+      ],
+      "care_paths": [
+        "colon_screening_v1"
+      ],
+      "glossary_keys": [
+        "polyp"
+      ]
+    },
+    {
+      "service_id": "svc_72100",
+      "plain_name": "Picture of the lower spine bones",
+      "technical_name": "Lumbar spine X-ray",
+      "kind": "imaging",
+      "areas": [
+        "ortho"
+      ],
+      "codes": [
+        {
+          "code": "72100",
+          "role": "primary",
+          "description": "Lumbar spine, 2-3 views"
+        }
+      ],
+      "care_paths": [
+        "back_new_pain_v1",
+        "back_persistent_pain_v1"
+      ],
+      "glossary_keys": [
+        "xray"
+      ]
+    },
+    {
+      "service_id": "svc_72148",
+      "plain_name": "Detailed scan of the lower spine",
+      "technical_name": "Lumbar spine MRI (no contrast)",
+      "kind": "imaging",
+      "areas": [
+        "ortho"
+      ],
+      "codes": [
+        {
+          "code": "72148",
+          "role": "primary",
+          "description": "Lumbar MRI without contrast"
+        }
+      ],
+      "care_paths": [
+        "back_new_pain_v1",
+        "back_persistent_pain_v1"
+      ],
+      "glossary_keys": [
+        "mri"
+      ]
+    },
+    {
+      "service_id": "svc_73030",
+      "plain_name": "Quick picture of the shoulder bones",
+      "technical_name": "Shoulder X-ray",
+      "kind": "imaging",
+      "areas": [
+        "ortho"
+      ],
+      "codes": [
+        {
+          "code": "73030",
+          "role": "primary",
+          "description": "X-ray shoulder, 2+ views"
+        }
+      ],
+      "care_paths": [
+        "shoulder_acute_injury_v1",
+        "shoulder_chronic_clicking_v1"
+      ],
+      "glossary_keys": [
+        "xray"
+      ]
+    },
+    {
+      "service_id": "svc_73221",
+      "plain_name": "Detailed scan of tendons & cartilage",
+      "technical_name": "Shoulder MRI (no contrast)",
+      "kind": "imaging",
+      "areas": [
+        "ortho"
+      ],
+      "codes": [
+        {
+          "code": "73221",
+          "role": "primary",
+          "description": "MRI shoulder (joint) without contrast"
+        }
+      ],
+      "care_paths": [
+        "shoulder_acute_injury_v1",
+        "shoulder_chronic_clicking_v1"
+      ],
+      "glossary_keys": [
+        "mri",
+        "xray"
+      ]
+    },
+    {
+      "service_id": "svc_73222",
+      "plain_name": "Detailed scan with dye in the joint",
+      "technical_name": "Shoulder MR arthrogram",
+      "kind": "imaging",
+      "areas": [
+        "ortho"
+      ],
+      "codes": [
+        {
+          "code": "73222",
+          "role": "primary",
+          "description": "MRI shoulder (joint) with contrast"
+        },
+        {
+          "code": "23350",
+          "role": "add_on",
+          "description": "Injection for shoulder arthrography"
+        },
+        {
+          "code": "77002",
+          "role": "guidance",
+          "description": "Fluoroscopic needle guidance"
+        }
+      ],
+      "care_paths": [
+        "shoulder_chronic_clicking_v1"
+      ],
+      "glossary_keys": [
+        "mr_arthrogram",
+        "labrum",
+        "xray"
+      ]
+    },
+    {
+      "service_id": "svc_73562",
+      "plain_name": "Quick picture of the knee bones",
+      "technical_name": "Knee X-ray",
+      "kind": "imaging",
+      "areas": [
+        "ortho"
+      ],
+      "codes": [
+        {
+          "code": "73562",
+          "role": "primary",
+          "description": "Knee, 3 views"
+        },
+        {
+          "code": "73560",
+          "role": "alternative",
+          "description": "1-2 views"
+        },
+        {
+          "code": "73564",
+          "role": "alternative",
+          "description": "4 or more views"
+        }
+      ],
+      "care_paths": [
+        "knee_chronic_v1"
+      ],
+      "glossary_keys": [
+        "xray"
+      ]
+    },
+    {
+      "service_id": "svc_73610",
+      "plain_name": "Quick picture of the ankle bones",
+      "technical_name": "Ankle X-ray",
+      "kind": "imaging",
+      "areas": [
+        "ortho",
+        "urgent_care"
+      ],
+      "codes": [
+        {
+          "code": "73610",
+          "role": "primary",
+          "description": "Ankle, 3 views"
+        },
+        {
+          "code": "73600",
+          "role": "alternative",
+          "description": "2 views"
+        }
+      ],
+      "care_paths": [
+        "ankle_sprain_urgent_care_v1"
+      ],
+      "glossary_keys": [
+        "xray"
+      ]
+    },
+    {
+      "service_id": "svc_73721",
+      "plain_name": "Detailed scan of the ankle's soft parts",
+      "technical_name": "Ankle MRI (no contrast)",
+      "kind": "imaging",
+      "areas": [
+        "ortho",
+        "urgent_care"
+      ],
+      "codes": [
+        {
+          "code": "73721",
+          "role": "primary",
+          "description": "MRI lower-extremity joint without contrast"
+        }
+      ],
+      "care_paths": [
+        "ankle_sprain_urgent_care_v1",
+        "knee_chronic_v1"
+      ],
+      "glossary_keys": [
+        "mri",
+        "xray"
+      ]
+    },
+    {
+      "service_id": "svc_76881",
+      "plain_name": "Live sound-wave picture of the tendons",
+      "technical_name": "Shoulder ultrasound",
+      "kind": "imaging",
+      "areas": [
+        "ortho"
+      ],
+      "codes": [
+        {
+          "code": "76881",
+          "role": "primary",
+          "description": "Ultrasound joint, complete"
+        },
+        {
+          "code": "76882",
+          "role": "alternative",
+          "description": "Ultrasound joint, limited"
+        }
+      ],
+      "care_paths": [
+        "shoulder_acute_injury_v1",
+        "shoulder_chronic_clicking_v1"
+      ],
+      "glossary_keys": [
+        "ultrasound",
+        "xray"
+      ]
+    },
+    {
+      "service_id": "svc_88305",
+      "plain_name": "Lab check of the samples",
+      "technical_name": "Surgical pathology (tissue exam)",
+      "kind": "lab",
+      "areas": [
+        "gi",
+        "skin"
+      ],
+      "codes": [
+        {
+          "code": "88305",
+          "role": "primary",
+          "description": "Surgical pathology, level IV (tissue exam)"
+        }
+      ],
+      "care_paths": [
+        "colon_diagnostic_v1",
+        "colon_screening_v1",
+        "gerd_heartburn_v1",
+        "skin_changing_mole_v1"
+      ],
+      "glossary_keys": [
+        "pathology"
+      ]
+    },
+    {
+      "service_id": "svc_97161",
+      "plain_name": "Guided exercise program for the ankle",
+      "technical_name": "Physical therapy evaluation and visits",
+      "kind": "therapy",
+      "areas": [
+        "ortho",
+        "urgent_care"
+      ],
+      "codes": [
+        {
+          "code": "97161",
+          "role": "primary",
+          "description": "Physical therapy evaluation, low complexity"
+        },
+        {
+          "code": "97162",
+          "role": "alternative",
+          "description": "Physical therapy evaluation, moderate complexity"
+        },
+        {
+          "code": "97110",
+          "role": "add_on",
+          "description": "Therapeutic exercise, each 15 min"
+        },
+        {
+          "code": "97163",
+          "role": "alternative",
+          "description": "Physical therapy evaluation, high complexity"
+        }
+      ],
+      "care_paths": [
+        "ankle_sprain_urgent_care_v1",
+        "back_new_pain_v1",
+        "back_persistent_pain_v1",
+        "knee_chronic_v1",
+        "shoulder_acute_injury_v1",
+        "shoulder_chronic_clicking_v1"
+      ],
+      "glossary_keys": [
+        "pt_evaluation"
+      ]
+    },
+    {
+      "service_id": "svc_99203",
+      "plain_name": "Same-day check at urgent care",
+      "technical_name": "Urgent-care visit",
+      "kind": "visit",
+      "areas": [
+        "ortho",
+        "urgent_care",
+        "gi",
+        "skin"
+      ],
+      "codes": [
+        {
+          "code": "99203",
+          "role": "primary",
+          "description": "New patient office visit, level 3"
+        },
+        {
+          "code": "99213",
+          "role": "alternative",
+          "description": "Established patient office visit, level 3"
+        },
+        {
+          "code": "99204",
+          "role": "alternative",
+          "description": "New patient office visit, level 4"
+        }
+      ],
+      "care_paths": [
+        "ankle_sprain_urgent_care_v1",
+        "back_new_pain_v1",
+        "back_persistent_pain_v1",
+        "colon_diagnostic_v1",
+        "colon_screening_v1",
+        "gerd_heartburn_v1",
+        "knee_chronic_v1",
+        "shoulder_acute_injury_v1",
+        "shoulder_chronic_clicking_v1",
+        "skin_changing_mole_v1"
+      ],
+      "glossary_keys": []
+    },
+    {
+      "service_id": "svc_99213",
+      "plain_name": "Visit with your main doctor first",
+      "technical_name": "Primary-care referral visit",
+      "kind": "referral",
+      "areas": [
+        "ortho",
+        "urgent_care",
+        "gi",
+        "skin"
+      ],
+      "codes": [
+        {
+          "code": "99213",
+          "role": "primary",
+          "description": "Established patient office visit, level 3"
+        }
+      ],
+      "care_paths": [
+        "ankle_sprain_urgent_care_v1",
+        "back_new_pain_v1",
+        "back_persistent_pain_v1",
+        "colon_diagnostic_v1",
+        "colon_screening_v1",
+        "gerd_heartburn_v1",
+        "knee_chronic_v1",
+        "shoulder_acute_injury_v1",
+        "shoulder_chronic_clicking_v1",
+        "skin_changing_mole_v1"
+      ],
+      "glossary_keys": [
+        "referral",
+        "hmo"
+      ]
+    }
+  ]
+}

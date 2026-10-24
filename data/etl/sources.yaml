@@ -7,6 +7,9 @@
 # url = the file itself. discovery = the cms-hpt.txt that points at it. url: null means we
 # cannot fetch it automatically yet (fetch reports it; stage uses the last stored copy).
 # legacy_filename = the name under the old carecost/data/raw/hospital_mrfs/ (fetch --import-dir).
+#
+# More sources live in data/etl/sources.d/*.yaml (one file per stream, e.g. tic.yaml, government.yaml).
+# Fragment format: {version, allowed_domains: [...], sources: [...]}; a duplicate source_id fails.
 
 version: 1
 

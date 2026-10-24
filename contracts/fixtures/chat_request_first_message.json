@@ -1,0 +1,15 @@
+{
+  "_fixture": true,
+  "_schema": "ChatRequest",
+  "conversation_id": null,
+  "text": "My shoulder has hurt for a few months and it clicks when I lift my arm.",
+  "payment": {
+    "kind": "insurance",
+    "payer_id": "BCBS_MA",
+    "product": "HMO",
+    "network": null
+  },
+  "email": "someone@example.com",
+  "answers": {},
+  "locale": "en"
+}

@@ -12,7 +12,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:watch": "vitest --watch"
+    "test:watch": "vitest --watch",
+    "contracts:generate": "cd ../backend && uv run python -m app.api_contracts",
+    "contracts:check": "cd ../backend && uv run python -m app.api_contracts --check",
+    "typecheck:contracts": "tsc -p tsconfig.contracts.json"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

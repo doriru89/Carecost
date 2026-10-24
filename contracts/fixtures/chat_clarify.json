@@ -1,0 +1,83 @@
+{
+  "_fixture": true,
+  "_schema": "ChatResponse",
+  "conversation_id": "c_7f3a9d2e41b8c605",
+  "llm_called": true,
+  "budget": {
+    "state": "ok",
+    "soft_cap_usd": 1.0,
+    "hard_cap_usd": 2.0,
+    "spent_today_usd": 0.06,
+    "wallet": "ok",
+    "resets_at": "2026-10-25T00:00:00Z"
+  },
+  "reply": {
+    "kind": "clarify",
+    "lead_in": "Thanks. Two quick questions so I can narrow this down.",
+    "questions": [
+      {
+        "question_id": "Q2",
+        "text": {
+          "en": "Did it start with an injury, like a fall, a twist or a hit?",
+          "zh": "是不是因为受伤开始的，比如摔倒、扭伤或撞击？"
+        },
+        "multi": false,
+        "answers": [
+          {
+            "value": "injury",
+            "label": {
+              "en": "Yes, an injury",
+              "zh": "是，受过伤"
+            }
+          },
+          {
+            "value": "no_injury",
+            "label": {
+              "en": "No, it came on gradually",
+              "zh": "没有，慢慢出现的"
+            }
+          }
+        ]
+      },
+      {
+        "question_id": "Q4",
+        "text": {
+          "en": "Have you already tried about 6 weeks of physical therapy, exercises or medicines, and it's still bad?",
+          "zh": "是否已经做过大约 6 周的物理治疗、锻炼或用药，但仍然不好？"
+        },
+        "multi": false,
+        "answers": [
+          {
+            "value": "yes_still_bad",
+            "label": {
+              "en": "Yes, and it's still bad",
+              "zh": "是的，还是不好"
+            }
+          },
+          {
+            "value": "no",
+            "label": {
+              "en": "No, not yet",
+              "zh": "还没有"
+            }
+          }
+        ]
+      }
+    ],
+    "candidates": [
+      {
+        "path_id": "shoulder_chronic_clicking_v1",
+        "title": "Shoulder pain that came on gradually, often with painful clicking",
+        "match": "ai_ranked",
+        "review_status": "pending_austin"
+      },
+      {
+        "path_id": "shoulder_acute_injury_v1",
+        "title": "Shoulder pain after a fall or injury",
+        "match": "ai_ranked",
+        "review_status": "pending_austin"
+      }
+    ],
+    "card_ids": []
+  }
+}

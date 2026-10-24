@@ -1,0 +1,695 @@
+{
+  "$defs": {
+    "AiPausedReply": {
+      "additionalProperties": false,
+      "properties": {
+        "browse_prices_available": {
+          "const": true,
+          "default": true,
+          "title": "Browse Prices Available",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "ai_paused",
+          "title": "Kind",
+          "type": "string"
+        },
+        "message_key": {
+          "enum": [
+            "ai.paused_ip_cap",
+            "ai.paused_wallet",
+            "ai.paused_provider"
+          ],
+          "title": "Message Key",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "ip_daily_cap",
+            "wallet_exhausted",
+            "provider_unavailable"
+          ],
+          "title": "Reason",
+          "type": "string"
+        },
+        "resumes_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "UTC; None when unknown (wallet / provider)",
+          "title": "Resumes At"
+        }
+      },
+      "required": [
+        "kind",
+        "reason",
+        "message_key",
+        "resumes_at",
+        "browse_prices_available"
+      ],
+      "title": "AiPausedReply",
+      "type": "object"
+    },
+    "BudgetStatus": {
+      "additionalProperties": false,
+      "description": "D2. Per hashed IP per UTC day; the wallet is the prepaid ceiling (~$10).",
+      "properties": {
+        "hard_cap_usd": {
+          "exclusiveMinimum": 0,
+          "title": "Hard Cap Usd",
+          "type": "number"
+        },
+        "resets_at": {
+          "format": "date-time",
+          "title": "Resets At",
+          "type": "string"
+        },
+        "soft_cap_usd": {
+          "exclusiveMinimum": 0,
+          "title": "Soft Cap Usd",
+          "type": "number"
+        },
+        "spent_today_usd": {
+          "minimum": 0,
+          "title": "Spent Today Usd",
+          "type": "number"
+        },
+        "state": {
+          "enum": [
+            "ok",
+            "near_soft_cap",
+            "over_soft_cap",
+            "paused"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "wallet": {
+          "enum": [
+            "ok",
+            "low",
+            "exhausted"
+          ],
+          "title": "Wallet",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state",
+        "soft_cap_usd",
+        "hard_cap_usd",
+        "spent_today_usd",
+        "wallet",
+        "resets_at"
+      ],
+      "title": "BudgetStatus",
+      "type": "object"
+    },
+    "CandidatePath": {
+      "additionalProperties": false,
+      "properties": {
+        "match": {
+          "description": "entry_matched: the answers satisfy the path's entry rule (deterministic). ai_ranked: the LLM picked it from the catalog.",
+          "enum": [
+            "entry_matched",
+            "ai_ranked"
+          ],
+          "title": "Match",
+          "type": "string"
+        },
+        "path_id": {
+          "pattern": "^[a-z0-9_]+_v[0-9]+$",
+          "title": "Path Id",
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "pending_austin",
+            "changes_requested",
+            "approved"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path_id",
+        "title",
+        "match",
+        "review_status"
+      ],
+      "title": "CandidatePath",
+      "type": "object"
+    },
+    "CarePathsReply": {
+      "additionalProperties": false,
+      "properties": {
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/CandidatePath"
+          },
+          "minItems": 1,
+          "title": "Candidates",
+          "type": "array"
+        },
+        "card_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Card Ids",
+          "type": "array"
+        },
+        "kind": {
+          "const": "care_paths",
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "text",
+        "candidates",
+        "card_ids"
+      ],
+      "title": "CarePathsReply",
+      "type": "object"
+    },
+    "CashPayment": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "cash",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "CashPayment",
+      "type": "object"
+    },
+    "ChatReply": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RedFlagReply"
+        },
+        {
+          "$ref": "#/$defs/ClarifyReply"
+        },
+        {
+          "$ref": "#/$defs/CarePathsReply"
+        },
+        {
+          "$ref": "#/$defs/TextReply"
+        },
+        {
+          "$ref": "#/$defs/AiPausedReply"
+        }
+      ]
+    },
+    "ChatRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "answers": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "description": "Chip answers so far, questions.yaml id -> answer values (client keeps state)",
+          "title": "Answers",
+          "type": "object"
+        },
+        "conversation_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9_-]{16,64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Opaque, issued by the server on the first reply; None on the first message",
+          "title": "Conversation Id"
+        },
+        "email": {
+          "description": "D2: required before AI use, deliberately unverified. The only personal field in any CareCost contract.",
+          "format": "email",
+          "title": "Email",
+          "type": "string"
+        },
+        "locale": {
+          "enum": [
+            "en",
+            "zh"
+          ],
+          "title": "Locale",
+          "type": "string"
+        },
+        "payment": {
+          "discriminator": {
+            "mapping": {
+              "cash": "#/$defs/CashPayment",
+              "insurance": "#/$defs/InsurancePayment",
+              "masshealth": "#/$defs/MassHealthPayment",
+              "medicare": "#/$defs/MedicarePayment"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/InsurancePayment"
+            },
+            {
+              "$ref": "#/$defs/MedicarePayment"
+            },
+            {
+              "$ref": "#/$defs/MassHealthPayment"
+            },
+            {
+              "$ref": "#/$defs/CashPayment"
+            }
+          ],
+          "title": "Payment"
+        },
+        "text": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "text",
+        "payment",
+        "email",
+        "answers",
+        "locale"
+      ],
+      "title": "ChatRequest",
+      "type": "object"
+    },
+    "ChatResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "budget": {
+          "$ref": "#/$defs/BudgetStatus"
+        },
+        "conversation_id": {
+          "pattern": "^[A-Za-z0-9_-]{16,64}$",
+          "title": "Conversation Id",
+          "type": "string"
+        },
+        "llm_called": {
+          "description": "False for red-flag, ai_paused and cached replies",
+          "title": "Llm Called",
+          "type": "boolean"
+        },
+        "reply": {
+          "discriminator": {
+            "mapping": {
+              "ai_paused": "#/$defs/AiPausedReply",
+              "care_paths": "#/$defs/CarePathsReply",
+              "clarify": "#/$defs/ClarifyReply",
+              "red_flag": "#/$defs/RedFlagReply",
+              "text": "#/$defs/TextReply"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/RedFlagReply"
+            },
+            {
+              "$ref": "#/$defs/ClarifyReply"
+            },
+            {
+              "$ref": "#/$defs/CarePathsReply"
+            },
+            {
+              "$ref": "#/$defs/TextReply"
+            },
+            {
+              "$ref": "#/$defs/AiPausedReply"
+            }
+          ],
+          "title": "Reply"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "reply",
+        "budget",
+        "llm_called"
+      ],
+      "title": "ChatResponse",
+      "type": "object"
+    },
+    "ChipAnswer": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/Title"
+        },
+        "value": {
+          "pattern": "^[a-z0-9_]+$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "label"
+      ],
+      "title": "ChipAnswer",
+      "type": "object"
+    },
+    "ChipQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "answers": {
+          "items": {
+            "$ref": "#/$defs/ChipAnswer"
+          },
+          "minItems": 1,
+          "title": "Answers",
+          "type": "array"
+        },
+        "multi": {
+          "title": "Multi",
+          "type": "boolean"
+        },
+        "question_id": {
+          "pattern": "^Q[0-9]+$",
+          "title": "Question Id",
+          "type": "string"
+        },
+        "text": {
+          "$ref": "#/$defs/Title"
+        }
+      },
+      "required": [
+        "question_id",
+        "text",
+        "multi",
+        "answers"
+      ],
+      "title": "ChipQuestion",
+      "type": "object"
+    },
+    "ClarifyReply": {
+      "additionalProperties": false,
+      "properties": {
+        "candidates": {
+          "description": "Prices can show from turn one; questions only refine",
+          "items": {
+            "$ref": "#/$defs/CandidatePath"
+          },
+          "title": "Candidates",
+          "type": "array"
+        },
+        "card_ids": {
+          "description": "questions.yaml card ids",
+          "items": {
+            "type": "string"
+          },
+          "title": "Card Ids",
+          "type": "array"
+        },
+        "kind": {
+          "const": "clarify",
+          "title": "Kind",
+          "type": "string"
+        },
+        "lead_in": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Short assistant sentence before the chips",
+          "title": "Lead In"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/$defs/ChipQuestion"
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "title": "Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "lead_in",
+        "questions",
+        "candidates",
+        "card_ids"
+      ],
+      "title": "ClarifyReply",
+      "type": "object"
+    },
+    "Disposition": {
+      "description": "redflags.json dispositions",
+      "enum": [
+        "call_911",
+        "er_today",
+        "seen_today",
+        "routine"
+      ],
+      "type": "string"
+    },
+    "InsurancePayment": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "insurance",
+          "title": "Kind",
+          "type": "string"
+        },
+        "network": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Optional named network inside the product (TiC network id), e.g. hmo_blue",
+          "title": "Network"
+        },
+        "payer_id": {
+          "description": "payer_aliases.yaml id, e.g. BCBS_MA",
+          "pattern": "^[A-Z][A-Z0-9_]*$",
+          "title": "Payer Id",
+          "type": "string"
+        },
+        "product": {
+          "description": "payer_aliases.yaml `products`: HMO, PPO, POS, EPO ...",
+          "pattern": "^[A-Z]+$",
+          "title": "Product",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "payer_id",
+        "product",
+        "network"
+      ],
+      "title": "InsurancePayment",
+      "type": "object"
+    },
+    "MassHealthPayment": {
+      "additionalProperties": false,
+      "description": "MassHealth fee-for-service rates. ACO / MCO plans may pay differently (shown as a note).",
+      "properties": {
+        "kind": {
+          "const": "masshealth",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "MassHealthPayment",
+      "type": "object"
+    },
+    "MedicarePayment": {
+      "additionalProperties": false,
+      "description": "Traditional Medicare (FFS). Medicare Advantage is an InsurancePayment (e.g. HUMANA).",
+      "properties": {
+        "kind": {
+          "const": "medicare",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "title": "MedicarePayment",
+      "type": "object"
+    },
+    "Payment": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/InsurancePayment"
+        },
+        {
+          "$ref": "#/$defs/MedicarePayment"
+        },
+        {
+          "$ref": "#/$defs/MassHealthPayment"
+        },
+        {
+          "$ref": "#/$defs/CashPayment"
+        }
+      ]
+    },
+    "RedFlagReply": {
+      "additionalProperties": false,
+      "description": "Full-page stop (plan §4.1). Copy is copied verbatim from redflags.json `dispositions`.",
+      "properties": {
+        "disposition": {
+          "enum": [
+            "call_911",
+            "er_today",
+            "seen_today",
+            "routine"
+          ],
+          "title": "Disposition",
+          "type": "string"
+        },
+        "flag_ids": {
+          "description": "redflags.json flag ids (rf_*)",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Flag Ids",
+          "type": "array"
+        },
+        "headline": {
+          "$ref": "#/$defs/Title"
+        },
+        "kind": {
+          "const": "red_flag",
+          "title": "Kind",
+          "type": "string"
+        },
+        "prices_withheld": {
+          "const": true,
+          "default": true,
+          "title": "Prices Withheld",
+          "type": "boolean"
+        },
+        "text": {
+          "$ref": "#/$defs/Title"
+        }
+      },
+      "required": [
+        "kind",
+        "disposition",
+        "flag_ids",
+        "headline",
+        "text",
+        "prices_withheld"
+      ],
+      "title": "RedFlagReply",
+      "type": "object"
+    },
+    "TextReply": {
+      "additionalProperties": false,
+      "description": "Anything else: out of scope, 'not covered yet', a follow-up answer. No prices in text.",
+      "properties": {
+        "card_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Card Ids",
+          "type": "array"
+        },
+        "kind": {
+          "const": "text",
+          "title": "Kind",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "text",
+        "card_ids"
+      ],
+      "title": "TextReply",
+      "type": "object"
+    },
+    "Title": {
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "zh": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zh"
+        }
+      },
+      "required": [
+        "en",
+        "zh"
+      ],
+      "title": "Title",
+      "type": "object"
+    }
+  },
+  "$id": "https://carecost.local/contracts/chat_api.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "anyOf": [
+    {
+      "$ref": "#/$defs/ChatRequest"
+    },
+    {
+      "$ref": "#/$defs/ChatResponse"
+    }
+  ],
+  "title": "ChatApi"
+}

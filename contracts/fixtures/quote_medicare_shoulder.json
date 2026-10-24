@@ -1,0 +1,482 @@
+{
+  "_fixture": true,
+  "_schema": "QuoteResponse",
+  "payment": {
+    "kind": "medicare"
+  },
+  "care_path": {
+    "id": "shoulder_chronic_clicking_v1",
+    "version": "1.0.0",
+    "title": "Shoulder pain that came on gradually, often with painful clicking",
+    "review_status": "pending_austin"
+  },
+  "service_codes": [],
+  "data_version": {
+    "build_id": "20261024-1cb8089d",
+    "build_date": "2026-10-24",
+    "tic_release": null,
+    "sites_version": 1,
+    "care_paths_version": "1.0.0"
+  },
+  "sites": [
+    {
+      "site": {
+        "site_id": "brigham_and_womens_hospital",
+        "name": "Brigham and Women's Hospital",
+        "site_type": "hospital_outpatient",
+        "system_id": "mgb",
+        "coords": {
+          "lat": 42.3358,
+          "lon": -71.1065,
+          "geocoded_by": "hospital_registry",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "75 Francis St, Boston, MA 02115",
+        "phone": null,
+        "billing_type": "hospital_outpatient",
+        "booking": [],
+        "portal_links": [
+          {
+            "kind": "patient_gateway",
+            "system_id": "mgb",
+            "label": "MGB Patient Gateway",
+            "url": "https://patientgateway.massgeneralbrigham.org/"
+          }
+        ],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_freshness": {
+          "last_updated": "2026-03-27",
+          "expected_by": "2026-09-23",
+          "late_to_refresh": true,
+          "rule": "etl_warn_after_days"
+        },
+        "service_areas": [
+          "ortho",
+          "skin",
+          "gi"
+        ]
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "visit_facility",
+            "tier": "not_in_public_data",
+            "likelihood": "certain",
+            "step_id": "visit",
+            "codes": [
+              "99203"
+            ],
+            "modifier": null,
+            "plain_name": "Visit with a bone & joint doctor",
+            "technical_name": "New-patient orthopedic or sports-medicine visit",
+            "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
+            "glossary_keys": [],
+            "component": "facility",
+            "component_confirmed": false,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "Brigham's Medicare facility rate for a new-patient visit",
+              "ask": "Ask Brigham billing what the hospital facility fee is."
+            },
+            "sources": [
+              {
+                "source_kind": "hospital_mrf",
+                "publisher": "Brigham and Women's Hospital",
+                "label_key": "source.hospital_mrf",
+                "freshness": {
+                  "last_updated": "2026-03-27",
+                  "expected_by": "2026-09-23",
+                  "late_to_refresh": true,
+                  "rule": "etl_warn_after_days"
+                },
+                "rows": 0
+              }
+            ],
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "visit_doctor",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": "visit",
+            "codes": [
+              "99203"
+            ],
+            "modifier": null,
+            "plain_name": "Doctor's fee for the visit",
+            "technical_name": "Professional fee, new-patient visit (hospital setting)",
+            "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 75.54,
+              "high": 75.54,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_kind": "medicare_pfs",
+                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
+                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
+                "source_date": "2026-01-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "medicare_pfs:9a15cb9cc117:99203"
+              }
+            },
+            "sources": [
+              {
+                "source_kind": "medicare_pfs",
+                "publisher": "CMS (Medicare, Boston 2026)",
+                "label_key": "source.medicare_pfs",
+                "freshness": {
+                  "last_updated": "2026-01-01",
+                  "expected_by": "2027-01-01",
+                  "late_to_refresh": false,
+                  "rule": "fee_schedule_effective"
+                },
+                "rows": null
+              }
+            ],
+            "doctor_fee": {
+              "rung": 5,
+              "explanation_key": "fee.rung_5_medicare",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "xray_facility",
+            "tier": "not_in_public_data",
+            "likelihood": "likely",
+            "step_id": "xray",
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while.",
+            "glossary_keys": [
+              "xray"
+            ],
+            "component": "facility",
+            "component_confirmed": false,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "Brigham's Medicare facility rate for a shoulder X-ray",
+              "ask": "Ask Brigham billing for the outpatient X-ray price."
+            },
+            "sources": [
+              {
+                "source_kind": "hospital_mrf",
+                "publisher": "Brigham and Women's Hospital",
+                "label_key": "source.hospital_mrf",
+                "freshness": {
+                  "last_updated": "2026-03-27",
+                  "expected_by": "2026-09-23",
+                  "late_to_refresh": true,
+                  "rule": "etl_warn_after_days"
+                },
+                "rows": 0
+              }
+            ],
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: X-Rays",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: bone X-ray",
+                "url": "https://www.radiologyinfo.org/en/info/bonerad"
+              }
+            ]
+          },
+          {
+            "line_id": "xray_reading",
+            "tier": "likely",
+            "likelihood": "likely",
+            "step_id": "xray",
+            "codes": [
+              "73030"
+            ],
+            "modifier": "26",
+            "plain_name": "A radiologist reads the X-ray",
+            "technical_name": "X-ray interpretation (professional)",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while.",
+            "glossary_keys": [
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 9.75,
+              "high": 9.75,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_kind": "medicare_pfs",
+                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
+                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
+                "source_date": "2026-01-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "medicare_pfs:9a15cb9cc117:73030-26"
+              }
+            },
+            "sources": [
+              {
+                "source_kind": "medicare_pfs",
+                "publisher": "CMS (Medicare, Boston 2026)",
+                "label_key": "source.medicare_pfs",
+                "freshness": {
+                  "last_updated": "2026-01-01",
+                  "expected_by": "2027-01-01",
+                  "late_to_refresh": false,
+                  "rule": "fee_schedule_effective"
+                },
+                "rows": null
+              }
+            ],
+            "doctor_fee": {
+              "rung": 5,
+              "explanation_key": "fee.rung_5_medicare",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: X-Rays",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: bone X-ray",
+                "url": "https://www.radiologyinfo.org/en/info/bonerad"
+              }
+            ]
+          },
+          {
+            "line_id": "steroid_injection",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
+            "codes": [
+              "20610"
+            ],
+            "modifier": null,
+            "plain_name": "Shot of anti-inflammatory and numbing medicine",
+            "technical_name": "Corticosteroid shoulder injection",
+            "why": "It can calm the pain for a while so you can do your exercises.",
+            "glossary_keys": [
+              "steroid_injection",
+              "ultrasound"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 350.52,
+              "high": 350.52,
+              "basis": "negotiated",
+              "prov": {
+                "source_kind": "hospital_mrf",
+                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "brigham_mrf:188337340e25:4007"
+              }
+            },
+            "sources": [
+              {
+                "source_kind": "hospital_mrf",
+                "publisher": "Brigham and Women's Hospital",
+                "label_key": "source.hospital_mrf",
+                "freshness": {
+                  "last_updated": "2026-03-27",
+                  "expected_by": "2026-09-23",
+                  "late_to_refresh": true,
+                  "rule": "etl_warn_after_days"
+                },
+                "rows": 1
+              }
+            ],
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "injection_doctor",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
+            "codes": [
+              "20610"
+            ],
+            "modifier": null,
+            "plain_name": "Doctor's fee for the shot",
+            "technical_name": "Professional fee, joint injection",
+            "why": "It can calm the pain for a while so you can do your exercises.",
+            "glossary_keys": [
+              "steroid_injection",
+              "ultrasound"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "conflict",
+              "a": {
+                "kind": "money",
+                "low": 350.52,
+                "high": 350.52,
+                "basis": "negotiated",
+                "prov": {
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:4026"
+                }
+              },
+              "b": {
+                "kind": "money",
+                "low": 42.2,
+                "high": 42.2,
+                "basis": "fee_schedule",
+                "prov": {
+                  "source_kind": "medicare_pfs",
+                  "source_file": "PPRRVU2026_Jan_nonQPP.csv",
+                  "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
+                  "source_date": "2026-01-01",
+                  "method": "computed_fee_schedule",
+                  "row_ref": "medicare_pfs:9a15cb9cc117:20610"
+                }
+              }
+            },
+            "sources": [
+              {
+                "source_kind": "hospital_mrf",
+                "publisher": "Brigham and Women's Hospital",
+                "label_key": "source.hospital_mrf",
+                "freshness": {
+                  "last_updated": "2026-03-27",
+                  "expected_by": "2026-09-23",
+                  "late_to_refresh": true,
+                  "rule": "etl_warn_after_days"
+                },
+                "rows": 1
+              },
+              {
+                "source_kind": "medicare_pfs",
+                "publisher": "CMS (Medicare, Boston 2026)",
+                "label_key": "source.medicare_pfs",
+                "freshness": {
+                  "last_updated": "2026-01-01",
+                  "expected_by": "2027-01-01",
+                  "late_to_refresh": false,
+                  "rule": "fee_schedule_effective"
+                },
+                "rows": null
+              }
+            ],
+            "doctor_fee": {
+              "rung": 5,
+              "explanation_key": "fee.rung_5_medicare",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 85.29,
+            "high": 85.29,
+            "line_ids": [
+              "visit_doctor",
+              "xray_reading"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false
+          },
+          "complete": false,
+          "excluded": [
+            {
+              "line_id": "visit_facility",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "xray_facility",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "steroid_injection",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "injection_doctor",
+              "reason": "conflict"
+            }
+          ],
+          "you_pay": {
+            "kind": "medicare_20_percent",
+            "note_key": "youpay.medicare_20_percent",
+            "portal_label": "Check what you've paid toward your deductible at Medicare.gov",
+            "portal_url": "https://www.medicare.gov/account/login"
+          }
+        }
+      },
+      "other_payers": []
+    }
+  ],
+  "sites_without_service": [],
+  "notices": [
+    "care_path_draft",
+    "late_to_refresh_sources"
+  ]
+}

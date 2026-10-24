@@ -1,0 +1,21 @@
+{
+  "_fixture": true,
+  "_schema": "ChatResponse",
+  "conversation_id": "c_7f3a9d2e41b8c605",
+  "llm_called": false,
+  "budget": {
+    "state": "paused",
+    "soft_cap_usd": 1.0,
+    "hard_cap_usd": 2.0,
+    "spent_today_usd": 2.01,
+    "wallet": "ok",
+    "resets_at": "2026-10-25T00:00:00Z"
+  },
+  "reply": {
+    "kind": "ai_paused",
+    "reason": "ip_daily_cap",
+    "message_key": "ai.paused_ip_cap",
+    "resumes_at": "2026-10-25T00:00:00Z",
+    "browse_prices_available": true
+  }
+}

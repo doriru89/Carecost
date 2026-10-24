@@ -1,0 +1,189 @@
+{
+  "$defs": {
+    "Catalog": {
+      "additionalProperties": false,
+      "properties": {
+        "care_paths": {
+          "items": {
+            "$ref": "#/$defs/CatalogPath"
+          },
+          "title": "Care Paths",
+          "type": "array"
+        },
+        "services": {
+          "items": {
+            "$ref": "#/$defs/CatalogService"
+          },
+          "title": "Services",
+          "type": "array"
+        },
+        "version": {
+          "title": "Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "care_paths",
+        "services"
+      ],
+      "title": "Catalog",
+      "type": "object"
+    },
+    "CatalogCode": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^([0-9]{4}[0-9A-Z]|[A-Z][0-9]{4})$",
+          "title": "Code",
+          "type": "string"
+        },
+        "description": {
+          "description": "Our own short words (no AMA descriptor text)",
+          "title": "Description",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "primary",
+            "alternative",
+            "add_on",
+            "drug",
+            "guidance"
+          ],
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "role",
+        "description"
+      ],
+      "title": "CatalogCode",
+      "type": "object"
+    },
+    "CatalogPath": {
+      "additionalProperties": false,
+      "properties": {
+        "area": {
+          "description": "care_paths Scope.area, e.g. msk_shoulder",
+          "title": "Area",
+          "type": "string"
+        },
+        "id": {
+          "pattern": "^[a-z0-9_]+_v[0-9]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "review_status": {
+          "enum": [
+            "pending_austin",
+            "changes_requested",
+            "approved"
+          ],
+          "title": "Review Status",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "area",
+        "review_status"
+      ],
+      "title": "CatalogPath",
+      "type": "object"
+    },
+    "CatalogService": {
+      "additionalProperties": false,
+      "properties": {
+        "areas": {
+          "items": {
+            "enum": [
+              "ortho",
+              "skin",
+              "gi",
+              "urgent_care"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Areas",
+          "type": "array"
+        },
+        "care_paths": {
+          "description": "care path ids that include this service",
+          "items": {
+            "type": "string"
+          },
+          "title": "Care Paths",
+          "type": "array"
+        },
+        "codes": {
+          "items": {
+            "$ref": "#/$defs/CatalogCode"
+          },
+          "minItems": 1,
+          "title": "Codes",
+          "type": "array"
+        },
+        "glossary_keys": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Glossary Keys",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "referral",
+            "visit",
+            "imaging",
+            "procedure",
+            "lab",
+            "anesthesia",
+            "therapy",
+            "medication",
+            "supply"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "plain_name": {
+          "title": "Plain Name",
+          "type": "string"
+        },
+        "service_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Service Id",
+          "type": "string"
+        },
+        "technical_name": {
+          "title": "Technical Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_id",
+        "plain_name",
+        "technical_name",
+        "kind",
+        "areas",
+        "codes",
+        "care_paths",
+        "glossary_keys"
+      ],
+      "title": "CatalogService",
+      "type": "object"
+    }
+  },
+  "$id": "https://carecost.local/contracts/catalog.schema.json",
+  "$ref": "#/$defs/Catalog",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CatalogApi"
+}

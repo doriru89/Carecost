@@ -28,7 +28,9 @@ def test_every_registry_hospital_has_exactly_one_mrf_source():
     assert sorted(mrf) == sorted(all_hospitals())
 
 
-@pytest.mark.parametrize("spec", SOURCES.sources, ids=lambda s: s.source_id)
+@pytest.mark.parametrize(
+    "spec", [s for s in SOURCES.sources if s.kind == "hospital_mrf"], ids=lambda s: s.source_id
+)
 def test_registry_npis_match_the_file_type_2_npi(spec):
     """E6: 5 of 12 hospitals.yaml NPIs did not match the file. Both registries must agree."""
     meta = stage.read_meta(

@@ -252,7 +252,7 @@ def normalize_file(
             else:
                 amount, amount_method, basis = None, "none", "none"
             nk_parts = [
-                spec.entity_id, ctype, code, mods, canonical_billing_class(lf["billing_class"]), setting,
+                spec.hospital_entity, ctype, code, mods, canonical_billing_class(lf["billing_class"]), setting,
                 component, rc, payer_raw, plan_raw, meth, cdm, (lf["description"] or "").strip(),
             ]  # fmt: skip
             nk = hashlib.sha1("\x1f".join(nk_parts).encode()).hexdigest()[:16]
@@ -266,7 +266,7 @@ def normalize_file(
                 "nk_ordinal": ordinal,
                 "source_id": spec.source_id,
                 "source_kind": spec.kind.value,
-                "entity_id": spec.entity_id,
+                "entity_id": spec.hospital_entity,
                 "row_kind": row_kind,
                 "billing_npis": npis,
                 "code_type": ctype,

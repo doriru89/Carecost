@@ -1,0 +1,21 @@
+{
+  "_fixture": true,
+  "_schema": "QuoteRequest",
+  "payment": {
+    "kind": "cash"
+  },
+  "care_path_id": "shoulder_chronic_clicking_v1",
+  "answers": {
+    "Q1": [
+      "shoulder"
+    ],
+    "Q2": [
+      "no_injury"
+    ],
+    "Q14": [
+      "cash"
+    ]
+  },
+  "service_codes": [],
+  "site_ids": null
+}

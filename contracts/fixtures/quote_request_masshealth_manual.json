@@ -1,0 +1,14 @@
+{
+  "_fixture": true,
+  "_schema": "QuoteRequest",
+  "payment": {
+    "kind": "masshealth"
+  },
+  "care_path_id": null,
+  "answers": {},
+  "service_codes": [
+    "73030",
+    "73221"
+  ],
+  "site_ids": null
+}

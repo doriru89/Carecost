@@ -39,7 +39,7 @@ def build_report(
 ) -> dict[str, Any]:
     manifest = json.loads((build_dir / "manifest.json").read_text())
     rows = pq.read_table(build_dir / "rate_row.parquet", columns=COLS).to_pylist()
-    entities = [s.entity_id for s in sources.sources if s.kind.value == "hospital_mrf"]
+    entities = [s.hospital_entity for s in sources.rate_row_sources]
     n_h = len(entities)
     target = sorted(codes.codes, key=lambda c: (codes.domains_for(c)[0], c))
 
@@ -167,15 +167,15 @@ def build_report(
         f"{len(target)} | placeholders dropped |"
     )
     L.append("|---|---|---|---|---|---|---|---|")
-    for s in sources.sources:
+    for s in sources.rate_row_sources:
         m = manifest["sources"].get(s.source_id)
         if not m:
-            L.append(f"| {s.entity_id} | — | not built | — | — | — | — | — |")
+            L.append(f"| {s.hospital_entity} | — | not built | — | — | — | — | — |")
             continue
         L.append(
-            f"| {s.entity_id} | {m['last_updated_on']} | {m['staged_rows']:,} (= {m['independent_count']:,}) | "
-            f"{m['rate_rows']:,} | {by_h_rows.get(s.entity_id, 0):,} | {len(by_h_payers.get(s.entity_id, ()))} | "
-            f"{len(by_h_codes.get(s.entity_id, ()))} | {sum(m['placeholders_dropped'].values())} |"
+            f"| {s.hospital_entity} | {m['last_updated_on']} | {m['staged_rows']:,} (= {m['independent_count']:,}) | "
+            f"{m['rate_rows']:,} | {by_h_rows.get(s.hospital_entity, 0):,} | {len(by_h_payers.get(s.hospital_entity, ()))} | "
+            f"{len(by_h_codes.get(s.hospital_entity, ()))} | {sum(m['placeholders_dropped'].values())} |"
         )
     L.append("")
 

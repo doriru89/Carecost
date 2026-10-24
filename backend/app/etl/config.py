@@ -17,14 +17,15 @@ from __future__ import annotations
 
 import functools
 import os
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from app.etl.contracts import SourceKind
+from app.etl.contracts import SourceKind, StrEnum
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CONFIG_DIR = REPO_ROOT / "data" / "etl"
@@ -67,22 +68,137 @@ class FetchSettings(BaseModel):
     timeout_s: float = 600
 
 
-SourceFormat = Literal["cms_v3_csv_tall", "cms_v3_csv_wide", "cms_v3_json"]
+class ReferenceKind(StrEnum):
+    """Sources that carry no consumer price: who a provider is, where, who bills for whom.
+
+    Kept out of ``SourceKind`` on purpose: ``SourceKind`` is the price provenance a ``Money``
+    can carry (the source chip); a reference row never becomes a ``Money``.
+    """
+
+    provider_registry = "provider_registry"  # NPPES (NPI -> name, taxonomy, practice locations)
+    provider_directory = (
+        "provider_directory"  # payer public FHIR Provider Directory (network membership)
+    )
+    facility_registry = "facility_registry"  # DPH licensed facilities, CMS Provider of Services
+    clinician_directory = (
+        "clinician_directory"  # CMS Doctors & Clinicians (NPI -> group PAC id, affiliations)
+    )
+    billing_relationship = (
+        "billing_relationship"  # CMS Reassignment (individual NPI -> billing group)
+    )
+    utilization = "utilization"  # CMS Physician & Other Practitioners by Provider and Service
+    plan_benefits = "plan_benefits"  # CMS QHP PUF (deductibles, plan ids)
+
+
+SourceFormat = Literal[
+    # hospital price transparency files (the rate_row pipeline: stage -> normalize -> build)
+    "cms_v3_csv_tall",
+    "cms_v3_csv_wide",
+    "cms_v3_json",
+    # insurer Transparency in Coverage
+    "tic_table_of_contents",  # the index JSON that lists in_network file URLs
+    "tic_in_network",  # one in_network .json.gz, read with HTTP Range against a seek index
+    # registries and directories (no prices)
+    "nppes_monthly",  # NPPES monthly zip: main + pl_pfile + othername_pfile + endpoint_pfile CSVs
+    "dph_xlsx",  # MA DPH facility lists
+    "fhir_provider_directory",  # payer public Provider Directory FHIR API, paged Bundles, no auth
+    "cms_dataset_csv",  # data.cms.gov dataset as a CSV download
+    "cms_dataset_api",  # data.cms.gov data API (paged JSON, filters e.g. state=MA)
+    # government fee schedules
+    "cms_pfs_rvu",  # PFS relative value file (PPRRVU + GPCI), zip of csv/xlsx
+    "cms_pfs_anes",  # PFS anesthesia conversion factors (ANES)
+    "cms_opps_addendum",  # OPPS Addendum B / AA
+    "cms_asc_addendum",  # ASC Addendum AA / BB
+    "masshealth_fee_schedule",  # 101 CMR 316/317/318 tables (pdf or xlsx)
+    # a clinic's own posted self-pay page
+    "html_price_page",
+]
+
+MRF_FORMATS: frozenset[str] = frozenset({"cms_v3_csv_tall", "cms_v3_csv_wide", "cms_v3_json"})
+"""The only formats the rate_row pipeline (stage / normalize / build / report) reads today."""
+
+Media = Literal["csv", "json", "xlsx", "pdf", "html"]
+Access = Literal["download", "http_range", "paged_api"]
+AnyKind = SourceKind | ReferenceKind
+
+# format -> (allowed kinds, allowed media (first = default), allowed containers, allowed access)
+_FORMAT_RULES: dict[str, tuple[set[str], tuple[str, ...], set[str], set[str]]] = {
+    "cms_v3_csv_tall": ({"hospital_mrf"}, ("csv",), {"zip", "plain"}, {"download"}),
+    "cms_v3_csv_wide": ({"hospital_mrf"}, ("csv",), {"zip", "plain"}, {"download"}),
+    "cms_v3_json": ({"hospital_mrf"}, ("json",), {"zip", "plain"}, {"download"}),
+    "tic_table_of_contents": ({"insurer_tic"}, ("json",), {"plain", "gzip"}, {"download"}),
+    "tic_in_network": ({"insurer_tic"}, ("json",), {"gzip", "plain"}, {"http_range", "download"}),
+    "nppes_monthly": ({"provider_registry"}, ("csv",), {"zip"}, {"download"}),
+    "dph_xlsx": ({"facility_registry"}, ("xlsx",), {"plain"}, {"download"}),
+    "fhir_provider_directory": ({"provider_directory"}, ("json",), {"plain"}, {"paged_api"}),
+    "cms_dataset_csv": (
+        {
+            "clinician_directory",
+            "billing_relationship",
+            "facility_registry",
+            "utilization",
+            "plan_benefits",
+        },
+        ("csv",),
+        {"plain", "zip"},
+        {"download"},
+    ),
+    "cms_dataset_api": (
+        {
+            "clinician_directory",
+            "billing_relationship",
+            "facility_registry",
+            "utilization",
+            "plan_benefits",
+        },
+        ("json",),
+        {"plain"},
+        {"paged_api"},
+    ),
+    "cms_pfs_rvu": ({"medicare_pfs"}, ("csv", "xlsx"), {"zip", "plain"}, {"download"}),
+    "cms_pfs_anes": ({"medicare_pfs"}, ("csv", "xlsx"), {"zip", "plain"}, {"download"}),
+    "cms_opps_addendum": ({"medicare_opps"}, ("csv", "xlsx"), {"zip", "plain"}, {"download"}),
+    "cms_asc_addendum": ({"medicare_asc"}, ("csv", "xlsx"), {"zip", "plain"}, {"download"}),
+    "masshealth_fee_schedule": ({"masshealth_fs"}, ("pdf", "xlsx"), {"plain"}, {"download"}),
+    "html_price_page": ({"clinic_posted"}, ("html",), {"plain"}, {"download"}),
+}
+
+NPPES_MEMBERS = frozenset({"main", "pl_pfile", "othername_pfile", "endpoint_pfile"})
+_PAYER_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
 
 
 class SourceSpec(BaseModel):
+    """One source file / dataset / API. ``format`` names the reader; rules per format are in
+    ``_FORMAT_RULES``. Only hospital MRFs need ``entity_id`` + ``npis`` (checked against the
+    file's type_2_npi); only payer-specific sources need ``payer_id``."""
+
     model_config = ConfigDict(extra="forbid")
-    source_id: str
-    kind: SourceKind
-    entity_id: str
+    source_id: str = Field(pattern=r"^[a-z0-9][a-z0-9_]*$")
+    kind: AnyKind
     format: SourceFormat
-    container: Literal["zip", "plain"]
-    encoding: str
-    npis: list[str]
+    entity_id: str | None = Field(
+        default=None,
+        description="hospitals.yaml id (hospital_mrf) or sites.yaml id (clinic_posted)",
+    )
+    payer_id: str | None = Field(
+        default=None, description="payer_aliases.yaml id (insurer_tic, provider_directory)"
+    )
+    container: Literal["zip", "gzip", "plain"] = "plain"
+    media: Media | None = Field(default=None, description="None -> the format's default")
+    access: Access = "download"
+    encoding: str = "utf-8"
+    npis: list[str] = []
     url: str | None
     discovery: str | None = None
     legacy_filename: str | None = None
     max_bytes: int | None = None
+    members: dict[str, str] = Field(
+        default_factory=dict, description="zip member role -> filename glob (nppes_monthly)"
+    )
+    filters: dict[str, str] = Field(
+        default_factory=dict, description="API query filters, e.g. {state: MA} (paged_api)"
+    )
+    release: str | None = Field(default=None, description="e.g. RVU26A, 2026-11, CY2026 Q4")
 
     @field_validator("npis")
     @classmethod
@@ -91,6 +207,56 @@ class SourceSpec(BaseModel):
             if not (len(n) == 10 and n.isdigit()):
                 raise ValueError(f"bad NPI {n!r}")
         return v
+
+    @model_validator(mode="after")
+    def _format_rules(self) -> SourceSpec:
+        kinds, media, containers, access = _FORMAT_RULES[self.format]
+        sid, k = self.source_id, self.kind.value
+        if k not in kinds:
+            raise ValueError(f"{sid}: format {self.format} needs kind in {sorted(kinds)}, got {k}")
+        if self.media is None:
+            self.media = media[0]  # type: ignore[assignment]
+        elif self.media not in media:
+            raise ValueError(f"{sid}: format {self.format} is {media}, not {self.media}")
+        if self.container not in containers:
+            raise ValueError(
+                f"{sid}: format {self.format} container must be in {sorted(containers)}"
+            )
+        if self.access not in access:
+            raise ValueError(f"{sid}: format {self.format} access must be in {sorted(access)}")
+        if k == "hospital_mrf":
+            if not self.entity_id or not self.npis:
+                raise ValueError(f"{sid}: hospital_mrf needs entity_id and npis")
+        elif self.npis:
+            raise ValueError(f"{sid}: npis are only checked for hospital_mrf files")
+        if k == "clinic_posted" and not self.entity_id:
+            raise ValueError(f"{sid}: clinic_posted needs entity_id (the sites.yaml id)")
+        if k in ("insurer_tic", "provider_directory"):
+            if not self.payer_id or not _PAYER_RE.match(self.payer_id):
+                raise ValueError(f"{sid}: {k} needs payer_id (payer_aliases.yaml id)")
+        elif self.payer_id is not None:
+            raise ValueError(f"{sid}: payer_id only applies to insurer_tic / provider_directory")
+        if self.format == "nppes_monthly" and set(self.members) != NPPES_MEMBERS:
+            raise ValueError(f"{sid}: nppes_monthly needs members {sorted(NPPES_MEMBERS)}")
+        if self.format != "nppes_monthly" and self.members and self.container != "zip":
+            raise ValueError(f"{sid}: members only apply to zip containers")
+        if self.filters and self.access != "paged_api":
+            raise ValueError(f"{sid}: filters only apply to paged_api sources")
+        if self.url is not None and not self.url.startswith("https://"):
+            raise ValueError(f"{sid}: url must be https")
+        return self
+
+    @property
+    def hospital_entity(self) -> str:
+        """entity_id of a hospital MRF (required for that kind, so never None here)."""
+        if not self.entity_id:
+            raise ValueError(f"{self.source_id}: no entity_id")
+        return self.entity_id
+
+    @property
+    def is_rate_row_source(self) -> bool:
+        """Read by the hospital-MRF rate_row pipeline (stage / normalize / build / report)."""
+        return self.format in MRF_FORMATS
 
 
 class SourcesFile(BaseModel):
@@ -113,6 +279,12 @@ class SourcesFile(BaseModel):
                 return s
         raise KeyError(f"unknown source_id {source_id!r} (see data/etl/sources.yaml)")
 
+    @property
+    def rate_row_sources(self) -> list[SourceSpec]:
+        """Hospital MRFs only. Other streams' sources live in the same registry (sources.d) but
+        are read by their own pipelines, so the rate_row build never waits on them."""
+        return [s for s in self.sources if s.is_rate_row_source]
+
     def select(self, which: str | None) -> list[SourceSpec]:
         if which is None or which == "all":
             return list(self.sources)
@@ -124,9 +296,53 @@ def _yaml(name: str, config_dir: Path | None = None) -> dict[str, Any]:
     return doc
 
 
+class SourcesFragment(BaseModel):
+    """One ``sources.d/*.yaml`` file. Each wave-2 stream owns its own file, so no two streams
+    edit the same YAML. A fragment may add sources and fetch domains; it may not change the
+    other fetch settings (those stay in ``sources.yaml``)."""
+
+    model_config = ConfigDict(extra="forbid")
+    version: int = 1
+    allowed_domains: list[str] = []
+    sources: list[SourceSpec] = []
+
+
+SOURCES_D = "sources.d"
+
+
+def _merge_sources(config_dir: Path) -> dict[str, Any]:
+    """``sources.yaml`` + ``sources.d/*.yaml`` (sorted by name). Duplicate ids fail loudly."""
+    doc = _yaml("sources.yaml", config_dir)
+    origin: dict[str, str] = {}
+    for s in doc.get("sources") or []:
+        sid = s.get("source_id")
+        if sid in origin:
+            raise ValueError(f"duplicate source_id {sid!r} in sources.yaml")
+        origin[sid] = "sources.yaml"
+    domains: list[str] = list((doc.get("fetch") or {}).get("allowed_domains") or [])
+    frag_dir = config_dir / SOURCES_D
+    for path in sorted(frag_dir.glob("*.yaml")) if frag_dir.is_dir() else []:
+        frag = SourcesFragment(**(yaml.safe_load(path.read_text()) or {}))
+        rel = f"{SOURCES_D}/{path.name}"
+        for spec in frag.sources:
+            if spec.source_id in origin:
+                raise ValueError(
+                    f"duplicate source_id {spec.source_id!r}: in {origin[spec.source_id]} and {rel}"
+                )
+            origin[spec.source_id] = rel
+            doc.setdefault("sources", []).append(spec.model_dump())
+        for d in frag.allowed_domains:
+            if d not in domains:
+                domains.append(d)
+    if "fetch" in doc:
+        doc["fetch"]["allowed_domains"] = domains
+    return doc
+
+
 @functools.lru_cache(maxsize=4)
 def load_sources(config_dir: Path | None = None) -> SourcesFile:
-    return SourcesFile(**_yaml("sources.yaml", config_dir))
+    """``data/etl/sources.yaml`` plus every ``data/etl/sources.d/*.yaml`` fragment."""
+    return SourcesFile(**_merge_sources(config_dir or CONFIG_DIR))
 
 
 class CodeList(BaseModel):

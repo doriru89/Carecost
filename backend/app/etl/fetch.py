@@ -59,7 +59,7 @@ class FetchRecord:
 def _ext(spec: SourceSpec, url: str | None) -> str:
     name = urlparse(url).path if url else (spec.legacy_filename or "")
     low = name.lower()
-    for e in (".csv.zip", ".json.gz", ".zip", ".csv", ".json", ".gz"):
+    for e in (".csv.zip", ".json.gz", ".zip", ".csv", ".json", ".gz", ".xlsx", ".pdf", ".html"):
         if low.endswith(e):
             return ".zip" if e == ".csv.zip" else e
     return ".bin"

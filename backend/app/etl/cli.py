@@ -23,7 +23,7 @@ from app.etl import fetch as fetch_mod
 from app.etl import normalize as normalize_mod
 from app.etl import report as report_mod
 from app.etl import stage as stage_mod
-from app.etl.config import Paths, load_codes, load_sources, load_yaml
+from app.etl.config import Paths, SourcesFile, SourceSpec, load_codes, load_sources, load_yaml
 from app.etl.payers import PayerResolver
 
 
@@ -31,10 +31,24 @@ def _log(msg: str) -> None:
     print(msg, flush=True)
 
 
+def _rate_row_specs(sources: SourcesFile, which: str | None) -> list[SourceSpec]:
+    """stage / normalize read hospital MRFs only; other formats are skipped, not failed."""
+    out = []
+    for spec in sources.select(which):
+        if spec.is_rate_row_source:
+            out.append(spec)
+        else:
+            _log(f"SKIP   {spec.source_id}: format {spec.format} is not a hospital MRF")
+    return out
+
+
 def cmd_fetch(a: argparse.Namespace, paths: Paths) -> int:
     sources = load_sources(a.config_dir)
     errors = 0
     for spec in sources.select(a.source):
+        if spec.access != "download":
+            _log(f"SKIP   {spec.source_id}: access={spec.access} is read by its own pipeline")
+            continue
         try:
             if a.import_dir:
                 rec = fetch_mod.import_local(spec, Path(a.import_dir), paths)
@@ -61,7 +75,7 @@ def cmd_fetch(a: argparse.Namespace, paths: Paths) -> int:
 def cmd_stage(a: argparse.Namespace, paths: Paths) -> int:
     sources = load_sources(a.config_dir)
     errors = 0
-    for spec in sources.select(a.source):
+    for spec in _rate_row_specs(sources, a.source):
         rec = fetch_mod.current(paths, spec.source_id)
         if rec is None:
             _log(f"FAIL   {spec.source_id}: nothing fetched yet")
@@ -88,7 +102,7 @@ def cmd_normalize(a: argparse.Namespace, paths: Paths) -> int:
     codes = load_codes(a.config_dir)
     resolver = PayerResolver.load(a.config_dir)
     errors = 0
-    for spec in sources.select(a.source):
+    for spec in _rate_row_specs(sources, a.source):
         rec = fetch_mod.current(paths, spec.source_id)
         staged = paths.staging / spec.source_id / f"{rec.sha256}.parquet" if rec else None
         if staged is None or not staged.exists():

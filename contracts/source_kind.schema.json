@@ -5,6 +5,7 @@
     "insurer_tic",
     "medicare_pfs",
     "medicare_opps",
+    "medicare_asc",
     "masshealth_fs",
     "clinic_posted",
     "chia_rp",
