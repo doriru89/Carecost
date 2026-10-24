@@ -62,6 +62,11 @@ def test_provider_targets_have_afc_franchisees_and_census_npis():
 def test_discovery_month_rewrite_and_third_party_rewrite():
     u = "https://transparency-in-coverage.bluecrossma.com/2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_index.json"
     assert "/2026-11-01_Blue" in month_url(u, "2026-11")
+    f = "https://fallon.sapphiremrfhub.com/tocs/202610/2026-10-01_fallon-health_index.json"
+    assert (
+        month_url(f, "2026-11")
+        == "https://fallon.sapphiremrfhub.com/tocs/202611/2026-11-01_fallon-health_index.json"
+    )
     net = get_network("tic_bcbs_ma_hmo_blue_si")
     toc = {"reporting_structure": [{"in_network_files": [{"location":
         "https://transparency-in-coverage.bluecrossma.com/2026-11-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_Third-Party-in-network-rates.json.gz"}]}]}  # fmt: skip

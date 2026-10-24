@@ -23,7 +23,7 @@ from app.etl.tic.networks import TicNetwork, load_visit_map
 from app.etl.tic.run import current_dir
 
 MRF_MISSING = ["00811", "00812", "00813", "99051", "S9083", "S9088"]
-COLS = ["code", "entity_id", "payer_id", "amount", "negotiated_pct", "modifiers", "billing_class",
+COLS = ["stage_row", "code", "entity_id", "payer_id", "amount", "negotiated_pct", "modifiers", "billing_class",
         "tic_service_codes", "tic_site_ids", "tic_business_name", "source_id", "tic_match"]  # fmt: skip
 KNOWN = [  # research-v3 tins.tsv + AFC (the TINs the brief starts from)
     ("272343207", "AFC Urgent Care (AFC Physicians of MA)"), ("455391610", "CareWell UC Centers of MA"),
@@ -88,6 +88,7 @@ def build_report(paths: Paths, nets: list[TicNetwork], out: Path | None = None) 
     # code x payer
     cell_rows: dict[tuple[str, str], int] = Counter()
     cell_tins: dict[tuple[str, str], set[str]] = defaultdict(set)
+    cell_prices: dict[tuple[str, str], set[tuple[str, int]]] = defaultdict(set)
     pct: Counter[tuple[str, str]] = Counter()
     for r in rows:
         k = (r["code"], r["payer_id"])
@@ -96,6 +97,7 @@ def build_report(paths: Paths, nets: list[TicNetwork], out: Path | None = None) 
             continue
         cell_rows[k] += 1
         cell_tins[k].add(r["entity_id"])
+        cell_prices[k].add((r["source_id"], r["stage_row"]))
     all_codes = sorted(codes.codes | vmap.all_codes)
     L += [
         "",
@@ -123,8 +125,9 @@ def build_report(paths: Paths, nets: list[TicNetwork], out: Path | None = None) 
         "",
         "## Codes the hospital MRFs lack",
         "",
-        "Hospital MRFs (12 files) have no payer rate for these. `file` = rate groups for the code in",
-        "the whole file (any provider, from staged prices); `Boston` = rows / TINs for target providers.",
+        "Hospital MRFs (12 files) have no payer rate for these. `file` = staged prices for the code",
+        "summed over the payer's loaded networks (any provider in the US file); `Boston` = prices that",
+        "reach ≥1 target provider / distinct target TINs (from rate_row).",
         "",
         "| code | " + " | ".join(f"{p} file" + " | " + f"{p} Boston" for p in payers) + " |",
         "|---|" + "---|---|" * len(payers),
@@ -141,7 +144,7 @@ def build_report(paths: Paths, nets: list[TicNetwork], out: Path | None = None) 
         cells = []
         for p in payers:
             cells.append(f"{file_counts.get((c, p), 0):,}")
-            n = cell_rows.get((c, p), 0)
+            n = len(cell_prices.get((c, p), ()))
             cells.append(f"{n:,} / {len(cell_tins.get((c, p), ()))}" if n else "—")
         L.append(f"| {c} | " + " | ".join(cells) + " |")
     # known Boston TINs
@@ -226,6 +229,30 @@ def build_report(paths: Paths, nets: list[TicNetwork], out: Path | None = None) 
         for (c, p, e), v in sorted(agg.items()):
             w.writerow([c, p, e, names.get(e, ""), len(v), min(v), statistics.median(v), max(v)])
     tmp.replace(out / "tic_coverage.csv")
+    # per census site x payer: which codes have a dollar rate
+    site_codes: dict[tuple[str, str], dict[str, list[float]]] = defaultdict(
+        lambda: defaultdict(list)
+    )
+    for r in usable:
+        for s_ in (r["tic_site_ids"] or "").split(";"):
+            if s_:
+                site_codes[(s_, r["payer_id"])][r["code"]].append(r["amount"])
+    names_ = _census_names()
+    tmp = out / ".tic_census_coverage.csv.tmp"
+    with tmp.open("w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["site_id", "site_name", "category", "payer_id", "codes_with_rates", "rows",
+                    "visit_99203_median", "visit_99213_median", "S9083_median"])  # fmt: skip
+        for sid in sorted(census):
+            for p in payers:
+                cc = site_codes.get((sid, p))
+                if not cc:
+                    w.writerow([sid, names_.get(sid, ""), census[sid], p, "", 0, "", "", ""])
+                    continue
+                med = lambda c: statistics.median(cc[c]) if c in cc else ""  # noqa: E731
+                w.writerow([sid, names_.get(sid, ""), census[sid], p, "|".join(sorted(cc)),
+                            sum(len(v) for v in cc.values()), med("99203"), med("99213"), med("S9083")])  # fmt: skip
+    tmp.replace(out / "tic_census_coverage.csv")
     alias = write_alias_proposals(runs, out / "payer_alias_proposals.csv")
     return {
         "md": md,
@@ -243,6 +270,12 @@ def _census_sites() -> dict[str, str]:
             if r["site_id"]:
                 out[r["site_id"]] = r["category"]
     return out
+
+
+def _census_names() -> dict[str, str]:
+    p = CONFIG_DIR / "tic_provider_targets.csv"
+    with p.open(newline="") as f:
+        return {r["site_id"]: r["site_name"] for r in csv.DictReader(f) if r["site_id"]}
 
 
 def write_alias_proposals(runs: list[tuple[TicNetwork, dict[str, Any], Path]], path: Path) -> int:

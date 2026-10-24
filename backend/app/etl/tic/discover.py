@@ -50,6 +50,12 @@ def month_url(url: str, month: str | None) -> str:
     """Move a dated TOC URL (``.../2026-10-01_X_index.json``) to ``month`` (YYYY-MM)."""
     if not month:
         return url
+    m = _DATED.search(url)
+    if m:
+        old = m.group(1)
+        url = url.replace(
+            f"/{old.replace('-', '')}/", f"/{month.replace('-', '')}/"
+        )  # .../tocs/202610/
     return _DATED.sub(f"/{month}-01_", url, count=1)
 
 

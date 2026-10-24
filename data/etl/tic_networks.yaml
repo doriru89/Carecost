@@ -179,9 +179,16 @@ networks:
      discover: {toc: tic_toc_uhc_blobs, match: '_UnitedHealthcare-Insurance-Company_Insurer_Options-PPO_665_in-network-rates\.json\.gz$'},
      why: "UHC national PPO (also the network behind the UMR wrap files HP and MGB use)."}
 
+  # ---------------------------------------------------------------- Fallon Health
+  # Fallon's TiC TOC (Zelis "Sapphire" hub, linked from fallonhealth.org) covers only its Community
+  # Care Connector QHPs (35 HIOS plans); one medical file. `month_url` moves both the
+  # tocs/YYYYMM/ directory and the YYYY-MM-01_ file prefix.
+  - {source_id: tic_fallon_community_care, label: "Fallon Community Care (Connector)", product: HMO, lob: connector,
+     discover: {toc: tic_toc_fallon, match: '_sapphire-fallon_in-network-rates\.json\.gz$'},
+     why: "The TOC's only medical network file (behavioral / dental / chiro / vision files skipped)."}
+
 # Payers checked and not loaded (2026-10-24):
 #   CIGNA     - TOC is a CloudFront-signed link fetched from cigna.com; the page returned no link to
 #               a non-browser client this session. Not loaded.
-#   FALLON    - TiC page returned no file links to a non-browser client. Not loaded.
 #   WELLSENSE - QHP-only, provider_references are remote URLs (port 8443); not supported yet.
 #   HNE, WELLPOINT/UNICARE - not attempted (Western MA / GIC; small Greater Boston share).

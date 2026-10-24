@@ -21,6 +21,7 @@ allowed_domains:
 - eusprdtransparencymrfp32.z13.web.core.windows.net/thp
 - awhpmrfeptprod-hqfydsghh6gzcpae.z01.azurefd.net/pricetransparency
 - awhpmrfprodstorage.blob.core.windows.net/pricetransparency
+- fallon.sapphiremrfhub.com
 sources:
 - source_id: tic_toc_bcbs_ma_inc
   kind: insurer_tic
@@ -128,6 +129,15 @@ sources:
   container: plain
   access: download
   url: https://transparency-in-coverage.uhc.com/api/v1/uhc/blobs/
+  max_bytes: 100000000
+  release: 2026-10
+- source_id: tic_toc_fallon
+  kind: insurer_tic
+  format: tic_table_of_contents
+  payer_id: FALLON
+  container: plain
+  access: download
+  url: https://fallon.sapphiremrfhub.com/tocs/202610/2026-10-01_fallon-health_index.json
   max_bytes: 100000000
   release: 2026-10
 - source_id: tic_bcbs_ma_hmo_blue_fi
@@ -339,4 +349,14 @@ sources:
   url: https://transparency-in-coverage.uhc.com/api/v1/uhc/blobs/download/2026-10-01/2026-10-01_UnitedHealthcare-Insurance-Company_Insurer_Options-PPO_665_in-network-rates.json.gz
   discovery: https://transparency-in-coverage.uhc.com/api/v1/uhc/blobs/
   max_bytes: 20000000000
+  release: 2026-10
+- source_id: tic_fallon_community_care
+  kind: insurer_tic
+  format: tic_in_network
+  payer_id: FALLON
+  container: gzip
+  access: http_range
+  url: https://fallon.sapphiremrfhub.com/mrfs/202610/20260901-185656_sapphire-fallon_in-network-rates.json.gz
+  discovery: https://fallon.sapphiremrfhub.com/tocs/202610/2026-10-01_fallon-health_index.json
+  max_bytes: 4000000000
   release: 2026-10
