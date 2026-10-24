@@ -1,0 +1,178 @@
+name: ETL (insurer TiC)
+
+# Monthly insurer Transparency-in-Coverage refresh: python -m app.etl tic discover|run|release.
+#
+# Runner limits (GitHub-hosted, public repo): ~14 GB disk, 16 GB RAM, 6 h per job.
+# - Streaming only: `tic run` reads the HTTP stream straight into the scanner; no raw file
+#   touches the disk (UHC files are 9-15 GB .gz / ~190 GB raw). The sparse seek index is built
+#   during the same pass and shipped in the release, so a later code can be added with HTTP Range
+#   reads (`ranged.py`, 206 + Content-Range enforced) instead of a full download.
+# - One job per payer x network (matrix, fail-fast off). A failing network falls back to its last
+#   good release (`tic release --previous`), keeps its old fetched_at, and never blocks the rest.
+# - Durable history = the previous `tic-YYYY-MM` Release (manifest with sha256 / bytes /
+#   fetched_at + per-network assets), downloaded first by every job. The Actions cache is not used
+#   (entries are evicted after 7 days unused, 10 GB per repo).
+# - A file < 50% of last month's bytes fails that network only (size-drop gate in run.py).
+#
+# Timings measured on the Mac (Apple Silicon, home network, 2026-10-24): UHC Choice HMO 560
+# 9.43 GB downloaded at 45.8 MB/s (206 s); full pass 188 GB raw in 73 s (2.6 GB/s), peak RSS
+# 1.4 GB. Runner timings are [unverified]: the `probe` job records download MB/s, inflate GB/s and
+# peak RSS on the real UHC file before anyone relies on the 300-minute budget below.
+
+on:
+  workflow_dispatch:
+    inputs:
+      month:
+        description: "Release month YYYY-MM (default: current UTC month)"
+        required: false
+      networks:
+        description: "Comma-separated source_ids (default: all in data/etl/tic_networks.yaml)"
+        required: false
+      probe_only:
+        description: "Only run the probe job"
+        type: boolean
+        default: false
+  schedule:
+    - cron: "23 7 9 * *"  # 07:23 UTC on the 9th: after Aetna (~5th) and UHC/BCBS/HP (~1st) post
+
+permissions:
+  contents: write  # create the tic-YYYY-MM release
+
+concurrency:
+  group: etl-tic
+  cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults: {run: {working-directory: backend}}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r requirements-dev.txt
+      - name: Probe UHC Choice HMO 560 (download MB/s, inflate GB/s, peak RSS; nothing kept)
+        run: |
+          python -m app.etl tic probe --network tic_uhc_choice_hmo_560 --max-mb 3000
+          df -h . ; free -m
+      - uses: actions/upload-artifact@v4
+        with: {name: tic-probe, path: data/intermediate/tic/probe.jsonl}
+
+  plan:
+    if: ${{ !inputs.probe_only }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults: {run: {working-directory: backend}}
+    outputs:
+      month: ${{ steps.m.outputs.month }}
+      prev: ${{ steps.m.outputs.prev }}
+      networks: ${{ steps.n.outputs.networks }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r requirements-dev.txt
+      - id: m
+        run: |
+          M="${{ inputs.month }}"; [ -n "$M" ] || M=$(date -u +%Y-%m)
+          P=$(date -u -d "$M-01 -1 month" +%Y-%m)
+          echo "month=$M" >> "$GITHUB_OUTPUT"; echo "prev=$P" >> "$GITHUB_OUTPUT"
+      - name: Discover this month's files (hosts not on the allowlist are reported, never fetched)
+        continue-on-error: true
+        run: python -m app.etl tic discover --month ${{ steps.m.outputs.month }} --out ../discover.json
+      - id: n
+        run: |
+          python - <<'EOF' >> "$GITHUB_OUTPUT"
+          import json, os
+          from app.etl.tic.networks import load_networks
+          want = [w for w in "${{ inputs.networks }}".split(",") if w]
+          ids = [n.source_id for n in load_networks() if not want or n.source_id in want]
+          print("networks=" + json.dumps(ids))
+          EOF
+      - uses: actions/upload-artifact@v4
+        with: {name: tic-discover, path: discover.json, if-no-files-found: warn}
+
+  network:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        source_id: ${{ fromJSON(needs.plan.outputs.networks) }}
+    defaults: {run: {working-directory: backend}}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r requirements-dev.txt
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with: {name: tic-discover, path: ..}
+      - name: Previous release manifest (baseline for the size-drop gate)
+        continue-on-error: true
+        run: gh release download "tic-${{ needs.plan.outputs.prev }}" --pattern manifest.json --dir ../prev
+      - name: Stream, index, stage, normalize (no raw file on disk)
+        id: run
+        continue-on-error: true
+        run: |
+          D=""; [ -f ../discover.json ] && D="--discovered ../discover.json"
+          python -m app.etl tic run --network "${{ matrix.source_id }}" $D --previous-release ../prev
+      - name: Keep this network's fetch-manifest line with its outputs
+        if: always()
+        run: |
+          mkdir -p ../data/intermediate/tic/${{ matrix.source_id }}
+          cp ../data/intermediate/tic/fetch_manifest.jsonl ../data/intermediate/tic/${{ matrix.source_id }}/fetch.jsonl || true
+          rm -rf ../data/intermediate/tic/${{ matrix.source_id }}/.work-* ; df -h .
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: tic-net-${{ matrix.source_id }}
+          path: data/intermediate/tic/${{ matrix.source_id }}
+          retention-days: 7
+
+  release:
+    needs: [plan, network]
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults: {run: {working-directory: backend}}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -r requirements-dev.txt
+      - uses: actions/download-artifact@v4
+        with: {pattern: tic-net-*, path: ../nets}
+      - name: Lay the per-network outputs back into data/intermediate/tic
+        run: |
+          mkdir -p ../data/intermediate/tic
+          for d in ../nets/tic-net-*; do
+            sid=${d##*/tic-net-}; mv "$d" "../data/intermediate/tic/$sid"
+            cat "../data/intermediate/tic/$sid/fetch.jsonl" >> ../data/intermediate/tic/fetch_manifest.jsonl 2>/dev/null || true
+          done
+      - name: Previous release (fallback for failed networks)
+        continue-on-error: true
+        run: gh release download "tic-${{ needs.plan.outputs.prev }}" --dir ../prev
+      - name: Assemble release (ok / fallback / missing per network)
+        run: python -m app.etl tic release --month ${{ needs.plan.outputs.month }} --out ../rel --previous ../prev
+      - name: Coverage report
+        run: python -m app.etl tic report --out ../rel
+      - name: Publish tic-YYYY-MM
+        run: |
+          T="tic-${{ needs.plan.outputs.month }}"
+          if gh release view "$T" >/dev/null 2>&1; then
+            gh release upload "$T" ../rel/* --clobber
+          else
+            gh release create "$T" ../rel/* --title "$T insurer TiC rates" \
+              --notes "Monthly TiC refresh. See manifest.json (per network: ok / fallback / missing, sha256, bytes, fetched_at, publisher_last_updated_on)."
+          fi
