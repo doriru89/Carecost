@@ -1,0 +1,16 @@
+{
+  "$id": "https://carecost.local/contracts/source_kind.schema.json",
+  "enum": [
+    "hospital_mrf",
+    "insurer_tic",
+    "medicare_pfs",
+    "medicare_opps",
+    "masshealth_fs",
+    "clinic_posted",
+    "chia_rp",
+    "estimate",
+    "ai_potential"
+  ],
+  "title": "SourceKind",
+  "type": "string"
+}

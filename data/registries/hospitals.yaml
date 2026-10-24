@@ -1,7 +1,8 @@
 # Hospital identity registry.
 # Key = stable hospital_id used in database and API.
 # address_patterns used by CSV import to match provider addresses to hospitals.
-# npi = primary facility NPI (from CMS NPPES registry).
+# npi = primary type 2 NPI exactly as read from the hospital's own price file (type_2_npi);
+#   tests/etl/test_sources.py fails if this and data/etl/sources.yaml disagree with the file.
 # facility_type: general_acute (default) | pediatric_acute | cancer_center | rehab
 # source_name_aliases = how each data source refers to this hospital.
 
@@ -44,7 +45,7 @@ hospitals:
     neighborhood: "Longwood"
     lat: 42.3389
     lng: -71.1063
-    npi: "1598922205"
+    npi: "1548202641"  # file type_2_npi (was 1598922205, E6)
     address_patterns: ["330 BROOKLINE AVE", "BIDMC", "BETH ISRAEL", "SHAPIRO"]
     source_name_aliases:
       tic: "Beth Israel Deaconess Medical Center"
@@ -59,7 +60,7 @@ hospitals:
     neighborhood: "South End"
     lat: 42.3346
     lng: -71.0721
-    npi: "1689892457"
+    npi: "1346218294"  # file type_2_npi (was 1689892457, E6)
     address_patterns: ["72 EAST CONCORD", "725 ALBANY", "609 ALBANY", "715 ALBANY", "850 HARRISON"]
     source_name_aliases:
       tic: "Boston Medical Center"
@@ -68,7 +69,7 @@ hospitals:
 
   tufts:
     name: "Tufts Medical Center"
-    system: "Wellforce"
+    system: "Tufts Medicine"
     state: "MA"
     metro_area: "boston"
     neighborhood: "Chinatown"
@@ -89,7 +90,7 @@ hospitals:
     neighborhood: "Jamaica Plain"
     lat: 42.3082
     lng: -71.1271
-    npi: "1649254491"
+    npi: "1578677811"  # file type_2_npi (was 1649254491, E6)
     address_patterns: ["1153 CENTRE", "FAULKNER"]
     source_name_aliases:
       tic: "Brigham and Women's Faulkner Hospital"
@@ -148,7 +149,7 @@ hospitals:
     neighborhood: "Cambridge"
     lat: 42.3738
     lng: -71.1284
-    npi: "1710360292"
+    npi: "1689670259"  # file type_2_npi (was 1710360292, E6)
     address_patterns: ["MOUNT AUBURN", "MT AUBURN", "330 MOUNT AUBURN"]
     source_name_aliases:
       tic: "Mount Auburn Hospital"
@@ -163,8 +164,8 @@ hospitals:
     neighborhood: "Cambridge"
     lat: 42.3667
     lng: -71.1050
-    npi: "1275839649"
-    alternate_npis: ["1487603585"]
+    npi: "1487603585"  # file type_2_npi (was 1275839649, not in the file, E6)
+    alternate_npis: ["1447348313"]
     address_patterns: ["1493 CAMBRIDGE", "CHA CAMBRIDGE"]
     source_name_aliases:
       tic: "CHA Cambridge Hospital"

@@ -1,0 +1,466 @@
+{
+  "$defs": {
+    "AmountMethod": {
+      "enum": [
+        "stated",
+        "derived_pct_x_gross",
+        "none"
+      ],
+      "title": "AmountMethod",
+      "type": "string"
+    },
+    "BillingClass": {
+      "enum": [
+        "facility",
+        "professional",
+        "unknown"
+      ],
+      "title": "BillingClass",
+      "type": "string"
+    },
+    "Component": {
+      "description": "Which part of the bill a line is. From the revenue code (096x-098x = professional),\nelse the file's billing_class, else unknown (CHA: no RC and no billing_class).",
+      "enum": [
+        "facility",
+        "professional",
+        "unknown"
+      ],
+      "title": "Component",
+      "type": "string"
+    },
+    "DollarBasis": {
+      "description": "How the contract defines the price (CMS v3 standard_charge fields).",
+      "enum": [
+        "dollar",
+        "pct_of_charges",
+        "algorithm",
+        "none"
+      ],
+      "title": "DollarBasis",
+      "type": "string"
+    },
+    "LineOfBusiness": {
+      "enum": [
+        "commercial",
+        "connector",
+        "medicare",
+        "medicare_advantage",
+        "medicaid",
+        "medicaid_managed",
+        "dual",
+        "other_government",
+        "unknown"
+      ],
+      "title": "LineOfBusiness",
+      "type": "string"
+    },
+    "Methodology": {
+      "enum": [
+        "fee_schedule",
+        "percent_of_total_billed_charges",
+        "per_diem",
+        "case_rate",
+        "other",
+        "unknown"
+      ],
+      "title": "Methodology",
+      "type": "string"
+    },
+    "Setting": {
+      "enum": [
+        "inpatient",
+        "outpatient",
+        "both",
+        "unknown"
+      ],
+      "title": "Setting",
+      "type": "string"
+    },
+    "SourceKind": {
+      "enum": [
+        "hospital_mrf",
+        "insurer_tic",
+        "medicare_pfs",
+        "medicare_opps",
+        "masshealth_fs",
+        "clinic_posted",
+        "chia_rp",
+        "estimate",
+        "ai_potential"
+      ],
+      "title": "SourceKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://carecost.local/contracts/rate_row.schema.json",
+  "additionalProperties": false,
+  "description": "One negotiated-rate fact from a hospital MRF line (or later, a TiC price).\n\nNatural key (never collapsed): entity_id x code_type x code x modifiers x billing_class x\nsetting x component x rev_code x payer_raw x plan_raw x methodology x cdm_code x description,\nthen ``nk_ordinal`` (0, 1, 2 ... in file order) separates rows that the source itself\nleaves identical (``ambiguous_multi_rate``).",
+  "properties": {
+    "above_gross": {
+      "title": "Above Gross",
+      "type": "boolean"
+    },
+    "additional_generic_notes": {
+      "title": "Additional Generic Notes",
+      "type": "string"
+    },
+    "additional_payer_notes": {
+      "title": "Additional Payer Notes",
+      "type": "string"
+    },
+    "allowed_count": {
+      "title": "Allowed Count",
+      "type": "string"
+    },
+    "ambiguous_multi_rate": {
+      "title": "Ambiguous Multi Rate",
+      "type": "boolean"
+    },
+    "amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Resolved dollar amount, see amount_method",
+      "title": "Amount"
+    },
+    "amount_method": {
+      "$ref": "#/$defs/AmountMethod"
+    },
+    "billing_class": {
+      "$ref": "#/$defs/BillingClass"
+    },
+    "billing_npis": {
+      "description": "'|'-joined type_2_npi values as read from the file",
+      "title": "Billing Npis",
+      "type": "string"
+    },
+    "cdm_code": {
+      "title": "Cdm Code",
+      "type": "string"
+    },
+    "code": {
+      "title": "Code",
+      "type": "string"
+    },
+    "code_type": {
+      "title": "Code Type",
+      "type": "string"
+    },
+    "component": {
+      "$ref": "#/$defs/Component"
+    },
+    "component_rule": {
+      "enum": [
+        "rev_code",
+        "billing_class",
+        "none"
+      ],
+      "title": "Component Rule",
+      "type": "string"
+    },
+    "description": {
+      "title": "Description",
+      "type": "string"
+    },
+    "discounted_cash": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Discounted Cash"
+    },
+    "dollar_basis": {
+      "$ref": "#/$defs/DollarBasis"
+    },
+    "entity_id": {
+      "title": "Entity Id",
+      "type": "string"
+    },
+    "exclude_reason": {
+      "description": "'' or one of payer_aliases.yaml exclusion reasons",
+      "title": "Exclude Reason",
+      "type": "string"
+    },
+    "excluded": {
+      "description": "True -> never part of a consumer price",
+      "title": "Excluded",
+      "type": "boolean"
+    },
+    "gross": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Gross"
+    },
+    "gross_rule": {
+      "enum": [
+        "same_row",
+        "joined_code_setting",
+        "ambiguous",
+        "none"
+      ],
+      "title": "Gross Rule",
+      "type": "string"
+    },
+    "line_of_business": {
+      "$ref": "#/$defs/LineOfBusiness"
+    },
+    "max_negotiated": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Max Negotiated"
+    },
+    "median_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Median Amount"
+    },
+    "methodology": {
+      "$ref": "#/$defs/Methodology"
+    },
+    "methodology_raw": {
+      "title": "Methodology Raw",
+      "type": "string"
+    },
+    "min_negotiated": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Min Negotiated"
+    },
+    "modifiers": {
+      "description": "sorted, '|'-joined; '' when none",
+      "title": "Modifiers",
+      "type": "string"
+    },
+    "negotiated_algorithm": {
+      "title": "Negotiated Algorithm",
+      "type": "string"
+    },
+    "negotiated_dollar": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Negotiated Dollar"
+    },
+    "negotiated_pct": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Negotiated Pct"
+    },
+    "nk_hash": {
+      "title": "Nk Hash",
+      "type": "string"
+    },
+    "nk_ordinal": {
+      "minimum": 0,
+      "title": "Nk Ordinal",
+      "type": "integer"
+    },
+    "p10_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "P10 Amount"
+    },
+    "p90_amount": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "P90 Amount"
+    },
+    "payer_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Payer Id"
+    },
+    "payer_plan_mismatch": {
+      "title": "Payer Plan Mismatch",
+      "type": "boolean"
+    },
+    "payer_raw": {
+      "title": "Payer Raw",
+      "type": "string"
+    },
+    "plan_raw": {
+      "title": "Plan Raw",
+      "type": "string"
+    },
+    "product": {
+      "description": "HMO / PPO / POS / INDEMNITY / ... parsed from the plan, or ''",
+      "title": "Product",
+      "type": "string"
+    },
+    "rev_code": {
+      "title": "Rev Code",
+      "type": "string"
+    },
+    "row_id": {
+      "description": "<nk_hash>:<nk_ordinal>; unique per build",
+      "title": "Row Id",
+      "type": "string"
+    },
+    "row_kind": {
+      "description": "payer_rate: payer-specific line; chargemaster: gross/cash line with no payer",
+      "enum": [
+        "payer_rate",
+        "chargemaster"
+      ],
+      "title": "Row Kind",
+      "type": "string"
+    },
+    "row_ref": {
+      "title": "Row Ref",
+      "type": "string"
+    },
+    "setting": {
+      "$ref": "#/$defs/Setting"
+    },
+    "source_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Source Date"
+    },
+    "source_file": {
+      "title": "Source File",
+      "type": "string"
+    },
+    "source_id": {
+      "title": "Source Id",
+      "type": "string"
+    },
+    "source_kind": {
+      "$ref": "#/$defs/SourceKind"
+    },
+    "source_sha256": {
+      "title": "Source Sha256",
+      "type": "string"
+    },
+    "stage_row": {
+      "minimum": 0,
+      "title": "Stage Row",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "row_id",
+    "nk_hash",
+    "nk_ordinal",
+    "source_id",
+    "source_kind",
+    "entity_id",
+    "row_kind",
+    "billing_npis",
+    "code_type",
+    "code",
+    "modifiers",
+    "rev_code",
+    "cdm_code",
+    "description",
+    "setting",
+    "billing_class",
+    "component",
+    "component_rule",
+    "payer_raw",
+    "plan_raw",
+    "payer_id",
+    "line_of_business",
+    "product",
+    "methodology",
+    "methodology_raw",
+    "dollar_basis",
+    "negotiated_dollar",
+    "negotiated_pct",
+    "negotiated_algorithm",
+    "amount",
+    "amount_method",
+    "gross",
+    "gross_rule",
+    "discounted_cash",
+    "min_negotiated",
+    "max_negotiated",
+    "median_amount",
+    "p10_amount",
+    "p90_amount",
+    "allowed_count",
+    "above_gross",
+    "ambiguous_multi_rate",
+    "payer_plan_mismatch",
+    "excluded",
+    "exclude_reason",
+    "additional_generic_notes",
+    "additional_payer_notes",
+    "source_file",
+    "source_sha256",
+    "source_date",
+    "stage_row",
+    "row_ref"
+  ],
+  "title": "RateRow",
+  "type": "object"
+}

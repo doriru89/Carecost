@@ -1,6 +1,7 @@
 # ETL pipeline configuration — HOW we process files, not WHAT things are.
 # Identity data (NPIs, names) lives in hospitals.yaml and payers.yaml.
-# This file is consumed by backend/app/etl/ modules (Phase 0b, next session).
+# Still read by scripts/seed_phase60.py (cpt_extraction_sets -> RVU import) and the registry
+# loader. The hospital-MRF ETL config moved to data/etl/ (sources, codes, payer_aliases, gates).
 
 etl:
   # MRF file format specifications (column indices, JSON paths)
@@ -73,76 +74,8 @@ etl:
       - "96920"  # Laser treatment <250 sq cm
       - "96922"  # Laser treatment >500 sq cm
 
-  # Hospital-to-format mapping: which format handler + container for each hospital's MRF
-  hospital_mrf_sources:
-    mgh:
-      format: cms_v3_csv
-      encoding: latin-1
-      container: zip
-      skip_header_rows: 2
-      min_expected_cpts: 10
-    brigham:
-      format: cms_v3_csv
-      encoding: latin-1
-      container: zip
-      skip_header_rows: 2
-      min_expected_cpts: 10
-    faulkner:
-      format: cms_v3_csv
-      encoding: latin-1
-      container: zip
-      skip_header_rows: 2
-      min_expected_cpts: 8
-    bidmc:
-      format: cms_json
-      encoding: utf-8-sig
-      container: plain
-      min_expected_cpts: 5
-    childrens:
-      format: cms_json
-      encoding: utf-8
-      container: plain
-      min_expected_cpts: 3
-    dana_farber:
-      format: cms_json
-      encoding: utf-8-sig
-      container: plain
-      min_expected_cpts: 3
-    mtauburn:
-      format: cms_json
-      encoding: utf-8-sig
-      container: plain
-      min_expected_cpts: 5
-    bmc:
-      format: cms_v3_csv
-      encoding: utf-8
-      container: zip
-      skip_header_rows: 2
-      min_expected_cpts: 10
-    bmc_brighton:
-      format: cms_v3_csv
-      encoding: utf-8
-      container: zip
-      skip_header_rows: 2
-      min_expected_cpts: 8
-    cha:
-      format: cms_v3_csv
-      encoding: utf-8
-      container: plain
-      skip_header_rows: 2
-      min_expected_cpts: 8
-    tufts:
-      format: cms_v3_csv
-      encoding: latin-1
-      container: zip
-      skip_header_rows: 2
-      min_expected_cpts: 10
-    franciscan:
-      format: cms_v3_csv
-      encoding: latin-1
-      container: plain
-      skip_header_rows: 2
-      min_expected_cpts: 0
+  # Hospital MRF sources live in data/etl/sources.yaml (python -m app.etl). The old
+  # hospital_mrf_sources block was removed with the parser that read it.
 
   # Plan type classification — applied to plan_name at normalization time.
   # Exclusions checked FIRST (they contain trigger keywords but aren't that type).

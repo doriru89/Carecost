@@ -24,3 +24,6 @@ frontend/coverage/
 data/raw/
 data/intermediate/
 .gitnexus
+
+# ETL build outputs (python -m app.etl build); shipped by CI, never committed
+data/build/

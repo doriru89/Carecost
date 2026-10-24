@@ -1,0 +1,68 @@
+# Target code list for normalize/build/report. Staging is lossless (every code); only
+# normalize filters to these, so adding a code = re-run normalize, not a re-parse.
+# Source: etl-audit 2026-10-24 §3/§4 target set (ortho / derm / GI / urgent care).
+# A later phase derives this list from data/care_paths/** instead.
+
+version: 1
+domains:
+  ortho:
+    "99202": New patient office visit, level 2
+    "99203": New patient office visit, level 3
+    "99204": New patient office visit, level 4
+    "99205": New patient office visit, level 5
+    "99212": Established patient office visit, level 2
+    "99213": Established patient office visit, level 3
+    "99214": Established patient office visit, level 4
+    "99215": Established patient office visit, level 5
+    "73030": X-ray shoulder, 2+ views
+    "73221": MRI shoulder (joint) without contrast
+    "73222": MRI shoulder (joint) with contrast
+    "76881": Ultrasound joint, complete
+    "76882": Ultrasound joint, limited
+    "20610": Joint injection/aspiration, major joint
+    "20611": Joint injection/aspiration, major joint, with ultrasound guidance
+    "97161": Physical therapy evaluation, low complexity
+    "97162": Physical therapy evaluation, moderate complexity
+    "97163": Physical therapy evaluation, high complexity
+    "97110": Therapeutic exercise, each 15 min
+    "29826": Shoulder arthroscopy, subacromial decompression (add-on)
+    "29827": Shoulder arthroscopy, rotator cuff repair
+  derm:
+    "11102": Tangential (shave) skin biopsy, single lesion
+    "11104": Punch skin biopsy, single lesion
+    "11300": Shave removal, trunk/arms/legs, 0.5 cm or less
+    "11301": Shave removal, trunk/arms/legs, 0.6-1.0 cm
+    "11302": Shave removal, trunk/arms/legs, 1.1-2.0 cm
+    "11303": Shave removal, trunk/arms/legs, over 2.0 cm
+    "11305": Shave removal, scalp/neck/hands/feet/genitalia, 0.5 cm or less
+    "11306": Shave removal, scalp/neck/hands/feet/genitalia, 0.6-1.0 cm
+    "11307": Shave removal, scalp/neck/hands/feet/genitalia, 1.1-2.0 cm
+    "11308": Shave removal, scalp/neck/hands/feet/genitalia, over 2.0 cm
+    "11310": Shave removal, face/ears/eyelids/nose/lips, 0.5 cm or less
+    "11311": Shave removal, face/ears/eyelids/nose/lips, 0.6-1.0 cm
+    "11312": Shave removal, face/ears/eyelids/nose/lips, 1.1-2.0 cm
+    "11313": Shave removal, face/ears/eyelids/nose/lips, over 2.0 cm
+    "17000": Destruction of premalignant lesion, first
+    "17110": Destruction of benign lesions, up to 14
+    "88305": Surgical pathology, level IV (tissue exam)
+  gi:
+    "45378": Colonoscopy, diagnostic
+    "45380": Colonoscopy with biopsy
+    "45385": Colonoscopy with polyp removal (snare)
+    "43239": Upper endoscopy (EGD) with biopsy
+    "00811": Anesthesia, lower GI endoscopy
+    "00812": Anesthesia, screening colonoscopy
+    "00813": Anesthesia, combined upper and lower GI endoscopy
+    "88305": Surgical pathology, level IV (tissue exam)
+  urgent_care:
+    "99051": After-hours / evening / weekend service add-on
+    "S9083": Urgent care center global fee
+    "S9088": Services provided in an urgent care center
+
+# Code types that count as "this CPT/HCPCS" in a hospital file. RC/CDM-only rows do not.
+code_types: ["CPT", "HCPCS", ""]
+
+# Revenue code -> bill component (NUBC). 096x-098x are professional fees; any other RC is a
+# facility line. Rows without an RC fall back to the file's billing_class, else "unknown".
+rev_code_components:
+  professional: ["0960-0989"]

@@ -1,0 +1,298 @@
+{
+  "$defs": {
+    "Conflict": {
+      "additionalProperties": false,
+      "description": "Two sources disagree; both numbers are shown.",
+      "properties": {
+        "a": {
+          "$ref": "#/$defs/Money"
+        },
+        "b": {
+          "$ref": "#/$defs/Money"
+        },
+        "kind": {
+          "const": "conflict",
+          "default": "conflict",
+          "title": "Kind",
+          "type": "string"
+        }
+      },
+      "required": [
+        "a",
+        "b"
+      ],
+      "title": "Conflict",
+      "type": "object"
+    },
+    "Method": {
+      "description": "How the number in a ``Money`` was obtained.",
+      "enum": [
+        "stated",
+        "derived_pct_x_gross",
+        "computed_fee_schedule",
+        "estimate_medicare_multiple",
+        "ai_drafted"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "Money": {
+      "additionalProperties": false,
+      "properties": {
+        "basis": {
+          "$ref": "#/$defs/PriceBasis"
+        },
+        "high": {
+          "minimum": 0,
+          "title": "High",
+          "type": "number"
+        },
+        "kind": {
+          "const": "money",
+          "default": "money",
+          "title": "Kind",
+          "type": "string"
+        },
+        "low": {
+          "minimum": 0,
+          "title": "Low",
+          "type": "number"
+        },
+        "prov": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "basis",
+        "prov"
+      ],
+      "title": "Money",
+      "type": "object"
+    },
+    "NoSource": {
+      "additionalProperties": false,
+      "description": "No public source exists at all (e.g. self-pay physician fee).",
+      "properties": {
+        "ask": {
+          "title": "Ask",
+          "type": "string"
+        },
+        "kind": {
+          "const": "no_source",
+          "default": "no_source",
+          "title": "Kind",
+          "type": "string"
+        },
+        "what": {
+          "title": "What",
+          "type": "string"
+        }
+      },
+      "required": [
+        "what",
+        "ask"
+      ],
+      "title": "NoSource",
+      "type": "object"
+    },
+    "NotLoaded": {
+      "additionalProperties": false,
+      "description": "A source exists and we have not imported it yet (e.g. UHC TiC).",
+      "properties": {
+        "eta": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eta"
+        },
+        "kind": {
+          "const": "not_loaded",
+          "default": "not_loaded",
+          "title": "Kind",
+          "type": "string"
+        },
+        "what": {
+          "title": "What",
+          "type": "string"
+        }
+      },
+      "required": [
+        "what"
+      ],
+      "title": "NotLoaded",
+      "type": "object"
+    },
+    "NotPublished": {
+      "additionalProperties": false,
+      "description": "The source type exists but this provider did not list this item (in dollars).",
+      "properties": {
+        "ask": {
+          "title": "Ask",
+          "type": "string"
+        },
+        "kind": {
+          "const": "not_published",
+          "default": "not_published",
+          "title": "Kind",
+          "type": "string"
+        },
+        "what": {
+          "title": "What",
+          "type": "string"
+        }
+      },
+      "required": [
+        "what",
+        "ask"
+      ],
+      "title": "NotPublished",
+      "type": "object"
+    },
+    "PercentOnly": {
+      "additionalProperties": false,
+      "description": "Only 'X% of charges' is published and the base charge is not.",
+      "properties": {
+        "kind": {
+          "const": "percent_only",
+          "default": "percent_only",
+          "title": "Kind",
+          "type": "string"
+        },
+        "of": {
+          "title": "Of",
+          "type": "string"
+        },
+        "pct": {
+          "minimum": 0,
+          "title": "Pct",
+          "type": "number"
+        }
+      },
+      "required": [
+        "pct",
+        "of"
+      ],
+      "title": "PercentOnly",
+      "type": "object"
+    },
+    "PriceBasis": {
+      "description": "What the amount *is* (as opposed to how we got it).",
+      "enum": [
+        "negotiated",
+        "gross",
+        "discounted_cash",
+        "min_negotiated",
+        "max_negotiated",
+        "median_allowed",
+        "fee_schedule",
+        "posted_self_pay",
+        "estimate"
+      ],
+      "title": "PriceBasis",
+      "type": "string"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "$ref": "#/$defs/Method"
+        },
+        "row_ref": {
+          "description": "<source_id>:<sha256[:12]>:<staged row ordinal>",
+          "title": "Row Ref",
+          "type": "string"
+        },
+        "source_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The file's own last_updated_on (ISO).",
+          "title": "Source Date"
+        },
+        "source_file": {
+          "description": "Basename only; never an absolute or relative path.",
+          "title": "Source File",
+          "type": "string"
+        },
+        "source_kind": {
+          "$ref": "#/$defs/SourceKind"
+        },
+        "source_sha256": {
+          "title": "Source Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_kind",
+        "source_file",
+        "source_sha256",
+        "source_date",
+        "method",
+        "row_ref"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "SourceKind": {
+      "enum": [
+        "hospital_mrf",
+        "insurer_tic",
+        "medicare_pfs",
+        "medicare_opps",
+        "masshealth_fs",
+        "clinic_posted",
+        "chia_rp",
+        "estimate",
+        "ai_potential"
+      ],
+      "title": "SourceKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://carecost.local/contracts/cell.schema.json",
+  "discriminator": {
+    "mapping": {
+      "conflict": "#/$defs/Conflict",
+      "money": "#/$defs/Money",
+      "no_source": "#/$defs/NoSource",
+      "not_loaded": "#/$defs/NotLoaded",
+      "not_published": "#/$defs/NotPublished",
+      "percent_only": "#/$defs/PercentOnly"
+    },
+    "propertyName": "kind"
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/Money"
+    },
+    {
+      "$ref": "#/$defs/NotPublished"
+    },
+    {
+      "$ref": "#/$defs/NotLoaded"
+    },
+    {
+      "$ref": "#/$defs/NoSource"
+    },
+    {
+      "$ref": "#/$defs/PercentOnly"
+    },
+    {
+      "$ref": "#/$defs/Conflict"
+    }
+  ]
+}

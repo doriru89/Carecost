@@ -1,0 +1,164 @@
+# Source registry: one row per source file. SSOT for what the ETL fetches and how it reads it.
+#
+#   python -m app.etl fetch|stage|normalize|build|report  (backend/app/etl/cli.py)
+#
+# npis = type_2_npi values exactly as read from the file (tests/etl/test_sources.py checks
+# them against the file metadata fixtures; data/registries/hospitals.yaml must agree).
+# url = the file itself. discovery = the cms-hpt.txt that points at it. url: null means we
+# cannot fetch it automatically yet (fetch reports it; stage uses the last stored copy).
+# legacy_filename = the name under the old carecost/data/raw/hospital_mrfs/ (fetch --import-dir).
+
+version: 1
+
+fetch:
+  # Downloads must stay on these registrable domains (redirects included).
+  allowed_domains:
+    - massgeneralbrigham.org
+    - bidmc.org
+    - mountauburnhospital.org
+    - nebh.org
+    - bidneedham.org
+    - bidmilton.org
+    - bmchealthsystem.org
+    - tuftsmedicine.org
+    - challiance.org
+    - childrenshospital.org
+    - dana-farber.org
+    - franciscanchildrens.org
+  default_max_bytes: 1500000000  # 1.5 GB compressed; Tufts zip is ~177 MB, CHA csv ~327 MB
+  timeout_s: 600
+
+sources:
+  - source_id: mgh_mrf
+    kind: hospital_mrf
+    entity_id: mgh
+    format: cms_v3_csv_tall
+    container: zip
+    encoding: latin-1
+    npis: ["1023049236"]
+    url: https://www.massgeneralbrigham.org/price-transparency/042697983_Massachusetts-General-Hospital_StandardCharges.zip
+    discovery: https://www.massgeneralbrigham.org/cms-hpt.txt
+    legacy_filename: mgh_standardcharges.zip
+
+  - source_id: brigham_mrf
+    kind: hospital_mrf
+    entity_id: brigham
+    format: cms_v3_csv_tall
+    container: zip
+    encoding: latin-1
+    npis: ["1790717650"]
+    url: https://www.massgeneralbrigham.org/price-transparency/042312909_Brigham-and-Womens-Hospital_StandardCharges.zip
+    discovery: https://www.massgeneralbrigham.org/cms-hpt.txt
+    legacy_filename: brigham_standardcharges.zip
+
+  - source_id: faulkner_mrf
+    kind: hospital_mrf
+    entity_id: faulkner
+    format: cms_v3_csv_tall
+    container: zip
+    encoding: latin-1
+    npis: ["1578677811"]
+    url: https://www.massgeneralbrigham.org/price-transparency/042768256_Brigham-and-Womens-Faulkner-Hospital_StandardCharges.zip
+    discovery: https://www.massgeneralbrigham.org/cms-hpt.txt
+    legacy_filename: faulkner_standardcharges.zip
+
+  - source_id: bmc_mrf
+    kind: hospital_mrf
+    entity_id: bmc
+    format: cms_v3_csv_tall
+    container: zip
+    encoding: utf-8
+    npis: ["1346218294"]
+    url: https://www.bmchealthsystem.org/wp-content/uploads/043314093_BostonMedicalCenter_standardcharges.csv.zip
+    discovery: https://www.bmchealthsystem.org/cms-hpt.txt
+    legacy_filename: bmc_standardcharges.zip
+
+  - source_id: bmc_brighton_mrf
+    kind: hospital_mrf
+    entity_id: bmc_brighton
+    format: cms_v3_csv_tall
+    container: zip
+    encoding: utf-8
+    npis: ["1720814072"]
+    url: https://www.bmchealthsystem.org/wp-content/uploads/272473667_BostonMedicalCenterBrighton_standardcharges.csv.zip
+    discovery: https://www.bmchealthsystem.org/cms-hpt.txt
+    legacy_filename: bmc_brighton_standardcharges.zip
+
+  - source_id: cha_mrf
+    kind: hospital_mrf
+    entity_id: cha
+    format: cms_v3_csv_tall
+    container: plain
+    encoding: utf-8
+    # One file for three campuses (Cambridge, Somerville, Whidden); NPIs repeat per campus.
+    npis: ["1487603585", "1447348313"]
+    url: https://www.challiance.org/File%20Library/Uploads/PriceTransparency20262320.csv
+    discovery: https://www.challiance.org/cms-hpt.txt
+    legacy_filename: cha_standardcharges.csv
+
+  - source_id: tufts_mrf
+    kind: hospital_mrf
+    entity_id: tufts
+    format: cms_v3_csv_tall
+    container: zip
+    encoding: latin-1
+    npis: ["1730132515"]
+    # Returns 403 to non-browser clients (bot wall) as of 2026-10-24.
+    url: https://www.tuftsmedicine.org/sites/default/files/2026-03/043400617_tuftsmedicalcenter_standardcharges.csv.zip
+    discovery: https://www.tuftsmedicine.org/cms-hpt.txt
+    legacy_filename: tufts_standardcharges.zip
+
+  - source_id: franciscan_mrf
+    kind: hospital_mrf
+    entity_id: franciscan
+    format: cms_v3_csv_wide
+    container: plain
+    encoding: latin-1
+    npis: ["1710910427"]
+    url: null  # cms-hpt.txt has a TLS error; file URL not yet confirmed
+    discovery: https://franciscanchildrens.org/cms-hpt.txt
+    legacy_filename: franciscan_standardcharges.csv
+
+  - source_id: bidmc_mrf
+    kind: hospital_mrf
+    entity_id: bidmc
+    format: cms_v3_json
+    container: plain
+    encoding: utf-8-sig
+    npis: ["1548202641"]
+    url: https://bidmc.org/042103881_beth-israel-deaconess-medical-center_standardcharges.json
+    discovery: https://bidmc.org/cms-hpt.txt
+    legacy_filename: bidmc_standardcharges.json
+
+  - source_id: childrens_mrf
+    kind: hospital_mrf
+    entity_id: childrens
+    format: cms_v3_json
+    container: plain
+    encoding: utf-8
+    npis: ["1710087127"]
+    url: https://www.childrenshospital.org/sites/default/files/cms-hpt/comp-2026/04-2774441_Boston-Childrens-Longwood_StandardCharges.json
+    discovery: https://www.childrenshospital.org/cms-hpt.txt
+    legacy_filename: childrens_standardcharges.json
+
+  - source_id: dana_farber_mrf
+    kind: hospital_mrf
+    entity_id: dana_farber
+    format: cms_v3_json
+    container: plain
+    encoding: utf-8-sig
+    npis: ["1851333686"]
+    url: null  # listed in dana-farber.org/cms-hpt.txt; exact file URL not yet recorded
+    discovery: https://www.dana-farber.org/cms-hpt.txt
+    legacy_filename: dana_farber_standardcharges.json
+
+  - source_id: mtauburn_mrf
+    kind: hospital_mrf
+    entity_id: mtauburn
+    format: cms_v3_json
+    container: plain
+    encoding: utf-8-sig
+    npis: ["1689670259"]
+    url: https://mountauburnhospital.org/042103606_mount-auburn-hospital_standardcharges.json
+    discovery: https://mountauburnhospital.org/cms-hpt.txt
+    legacy_filename: mtauburn_standardcharges.json
