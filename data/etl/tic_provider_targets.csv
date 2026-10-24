@@ -1,0 +1,1133 @@
+site_id,site_name,category,kind,value,level,evidence
+GB0001,BOSTON SPECIALISTS - ENDOSCOPY LLC,asc_endo,npi,1194505735,org,clinic-census.csv org_npis
+GB0001,BOSTON SPECIALISTS - ENDOSCOPY LLC,asc_endo,tin,933664396,org,clinic-census.csv tins
+GB0002,"ENDOSCOPY CENTER OF BROOKLINE, THE",asc_endo,npi,1326179532,org,clinic-census.csv org_npis
+GB0003,Mass General Brigham Endoscopy Clinic,asc_endo,npi,1679420079,org,clinic-census.csv org_npis
+GB0003,Mass General Brigham Endoscopy Clinic,asc_endo,npi,1831122159,org,clinic-census.csv org_npis
+GB0003,Mass General Brigham Endoscopy Clinic,asc_endo,tin,043306443,org,clinic-census.csv tins
+GB0004,NEW ENGLAND AMBULATORY SURGICENTER LLC,asc_endo,npi,1851491013,org,clinic-census.csv org_npis
+GB0004,NEW ENGLAND AMBULATORY SURGICENTER LLC,asc_endo,tin,205110715,org,clinic-census.csv tins
+GB0005,"NEW ENGLAND BAPTIST SURGERY CENTER, LLC",asc_endo,npi,1447995311,org,clinic-census.csv org_npis
+GB0005,"NEW ENGLAND BAPTIST SURGERY CENTER, LLC",asc_endo,tin,874311329,org,clinic-census.csv tins
+GB0006,SHIELDS SURGERY CENTER,asc_endo,npi,1073149365,org,clinic-census.csv org_npis
+GB0006,SHIELDS SURGERY CENTER,asc_endo,tin,384079196,org,clinic-census.csv tins
+GB0007,NEWTON SURGERY,asc_endo,npi,1366917494,org,clinic-census.csv org_npis
+GB0007,NEWTON SURGERY,asc_endo,tin,823869653,org,clinic-census.csv tins
+GB0008,South Shore Endoscopy,asc_endo,npi,1831122159,org,clinic-census.csv org_npis
+GB0008,South Shore Endoscopy,asc_endo,tin,043306443,org,clinic-census.csv tins
+GB0009,"WEYMOUTH ENDOSCOPY, LLC",asc_endo,npi,1033199906,org,clinic-census.csv org_npis
+GB0009,"WEYMOUTH ENDOSCOPY, LLC",asc_endo,tin,020538423,org,clinic-census.csv tins
+GB0010,DHA ENDOSCOPY LLC,asc_endo,npi,1730113325,org,clinic-census.csv org_npis
+GB0010,DHA ENDOSCOPY LLC,asc_endo,tin,043551976,org,clinic-census.csv tins
+GB0011,"NORTHEAST AMBULATORY CENTER, INC",asc_endo,npi,1205024569,org,clinic-census.csv org_npis
+GB0011,"NORTHEAST AMBULATORY CENTER, INC",asc_endo,npi,1225140510,org,clinic-census.csv org_npis
+GB0011,"NORTHEAST AMBULATORY CENTER, INC",asc_endo,tin,043382778,org,clinic-census.csv tins
+GB0012,"ATRIUS HEALTH AMBULATORY SURGERY CENTER, LLC",asc_endo,npi,1588575930,org,clinic-census.csv org_npis
+GB0013,"BOSTON OUT-PATIENT SURGICAL SUITES, LLC",asc_endo,npi,1578534459,org,clinic-census.csv org_npis
+GB0013,"BOSTON OUT-PATIENT SURGICAL SUITES, LLC",asc_endo,tin,270050256,org,clinic-census.csv tins
+GB0015,BOSTON SURGERY CENTER LLC,asc_endo,npi,1922182419,org,clinic-census.csv org_npis
+GB0015,BOSTON SURGERY CENTER LLC,asc_endo,tin,205741427,org,clinic-census.csv tins
+GB0016,Newton-Wellesley Outpatient Surgery Center,asc_endo,npi,1992737761,org,clinic-census.csv org_npis
+GB0016,Newton-Wellesley Outpatient Surgery Center,asc_endo,tin,042103611,org,clinic-census.csv tins
+GB0017,BOSTON ENDOSCOPY CENTER,asc_endo,npi,1477802387,org,clinic-census.csv org_npis
+GB0017,BOSTON ENDOSCOPY CENTER,asc_endo,npi,1740398734,org,clinic-census.csv org_npis
+GB0017,BOSTON ENDOSCOPY CENTER,asc_endo,tin,460828648,org,clinic-census.csv tins
+GB0019,"(clinicians, no group name)",derm,tin,1326020827,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0021,"BOSLEY MEDICAL GROUP, P.C.",derm,npi,1710322854,org,clinic-census.csv org_npis
+GB0022,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042697983,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0022,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0022,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042774441,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0022,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,431987409,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0023,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042697983,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0023,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0023,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042774441,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0023,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,431987409,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0024,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042697983,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0024,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0024,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042774441,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0024,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,431987409,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0025,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042697983,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0025,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0025,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,042774441,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0025,"BOSTON HEALTH CARE FOR THE HOMELESS PROGRAM, INC. (CMS-listed clinicians at this address)",derm,tin,431987409,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0026,BOSTON UNIVERSITY DERMATOLOGY INC (CMS-listed clinicians at this address),derm,tin,043335166,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0027,Brigham & Women's Hospital MOHS and Dermatologic Center,derm,npi,1790717650,org,clinic-census.csv org_npis
+GB0027,Brigham & Women's Hospital MOHS and Dermatologic Center,derm,tin,042312909,org,clinic-census.csv tins
+GB0028,Brigham Dermatology Associates,derm,npi,1083647648,org,clinic-census.csv org_npis
+GB0028,Brigham Dermatology Associates,derm,tin,043466314,clinician,clinic-census.csv clinician_billing_tins_bcbs 38/43
+GB0028,Brigham Dermatology Associates,derm,tin,042263040,clinician,clinic-census.csv clinician_billing_tins_bcbs 12/43
+GB0029,"CENTER FOR BLISTERING DISEASES, INC",derm,npi,1841360716,org,clinic-census.csv org_npis
+GB0029,"CENTER FOR BLISTERING DISEASES, INC",derm,tin,043417815,org,clinic-census.csv tins
+GB0030,DERMATOLOGY INSTITUTE OF BOSTON PC (CMS-listed clinicians at this address),derm,npi,1225407406,org,clinic-census.csv org_npis
+GB0030,DERMATOLOGY INSTITUTE OF BOSTON PC (CMS-listed clinicians at this address),derm,tin,1144751777,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0030,DERMATOLOGY INSTITUTE OF BOSTON PC (CMS-listed clinicians at this address),derm,tin,1811512627,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0031,"DERMATOLOGY, LASER & AESTHETICS, PLLC",derm,npi,1366128159,org,clinic-census.csv org_npis
+GB0032,MASSACHUSETTS GENERAL PHYSICIANS ORGANIZATION INC (CMS-listed clinicians at this address),derm,tin,1720613953,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0033,MDLIVE MEDICAL GROUP DE PA,derm,npi,1992178115,org,clinic-census.csv org_npis
+GB0034,Massachusetts General Dermatology Clinic,derm,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 31/41
+GB0035,"PICTION HEALTH MEDICAL GROUP OF MASSACHUSETTS, P.C.",derm,npi,1700585387,org,clinic-census.csv org_npis
+GB0035,"PICTION HEALTH MEDICAL GROUP OF MASSACHUSETTS, P.C.",derm,npi,1962180307,org,clinic-census.csv org_npis
+GB0036,"SOUTH END SKIN CARE, INC.",derm,npi,1376721167,org,clinic-census.csv org_npis
+GB0037,"ATRIUS HEALTH, INC.",derm,npi,1487877692,org,clinic-census.csv org_npis
+GB0037,"ATRIUS HEALTH, INC.",derm,tin,043397450,org,clinic-census.csv tins
+GB0038,"SOUTH SHORE MEDICAL CENTER, INC",derm,npi,1033778824,org,clinic-census.csv org_npis
+GB0038,"SOUTH SHORE MEDICAL CENTER, INC",derm,npi,1699748541,org,clinic-census.csv org_npis
+GB0039,NEWTON WATERTOWN DERMATOLOGY ASSOC. PC (CMS-listed clinicians at this address),derm,npi,1083912018,org,clinic-census.csv org_npis
+GB0039,NEWTON WATERTOWN DERMATOLOGY ASSOC. PC (CMS-listed clinicians at this address),derm,npi,1265098032,org,clinic-census.csv org_npis
+GB0039,NEWTON WATERTOWN DERMATOLOGY ASSOC. PC (CMS-listed clinicians at this address),derm,npi,1265941082,org,clinic-census.csv org_npis
+GB0039,NEWTON WATERTOWN DERMATOLOGY ASSOC. PC (CMS-listed clinicians at this address),derm,npi,1356988844,org,clinic-census.csv org_npis
+GB0039,NEWTON WATERTOWN DERMATOLOGY ASSOC. PC (CMS-listed clinicians at this address),derm,npi,1376385054,org,clinic-census.csv org_npis
+GB0039,NEWTON WATERTOWN DERMATOLOGY ASSOC. PC (CMS-listed clinicians at this address),derm,npi,1518204353,org,clinic-census.csv org_npis
+GB0039,NEWTON WATERTOWN DERMATOLOGY ASSOC. PC (CMS-listed clinicians at this address),derm,npi,1558477869,org,clinic-census.csv org_npis
+GB0039,NEWTON WATERTOWN DERMATOLOGY ASSOC. PC (CMS-listed clinicians at this address),derm,npi,1760028872,org,clinic-census.csv org_npis
+GB0039,NEWTON WATERTOWN DERMATOLOGY ASSOC. PC (CMS-listed clinicians at this address),derm,tin,043355366,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0039,NEWTON WATERTOWN DERMATOLOGY ASSOC. PC (CMS-listed clinicians at this address),derm,tin,201780432,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0039,NEWTON WATERTOWN DERMATOLOGY ASSOC. PC (CMS-listed clinicians at this address),derm,tin,464282800,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0040,"(clinicians, no group name)",derm,npi,1821618109,org,clinic-census.csv org_npis
+GB0040,"(clinicians, no group name)",derm,tin,844111974,org,clinic-census.csv tins
+GB0040,"(clinicians, no group name)",derm,tin,844111974,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0042,DERMPHYSICIANS OF NEW ENGLAND LLC (CMS-listed clinicians at this address),derm,npi,1558834523,org,clinic-census.csv org_npis
+GB0042,DERMPHYSICIANS OF NEW ENGLAND LLC (CMS-listed clinicians at this address),derm,npi,1811460157,org,clinic-census.csv org_npis
+GB0042,DERMPHYSICIANS OF NEW ENGLAND LLC (CMS-listed clinicians at this address),derm,npi,1861312217,org,clinic-census.csv org_npis
+GB0042,DERMPHYSICIANS OF NEW ENGLAND LLC (CMS-listed clinicians at this address),derm,tin,832916287,org,clinic-census.csv tins
+GB0042,DERMPHYSICIANS OF NEW ENGLAND LLC (CMS-listed clinicians at this address),derm,tin,833063891,org,clinic-census.csv tins
+GB0042,DERMPHYSICIANS OF NEW ENGLAND LLC (CMS-listed clinicians at this address),derm,tin,832916287,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/3
+GB0042,DERMPHYSICIANS OF NEW ENGLAND LLC (CMS-listed clinicians at this address),derm,tin,833063891,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/3
+GB0042,DERMPHYSICIANS OF NEW ENGLAND LLC (CMS-listed clinicians at this address),derm,tin,043487710,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0042,DERMPHYSICIANS OF NEW ENGLAND LLC (CMS-listed clinicians at this address),derm,tin,571146349,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0043,"PHILIP S. ELLERIN, MD,PC",derm,npi,1154420008,org,clinic-census.csv org_npis
+GB0044,"ATRIUS HEALTH, INC.",derm,npi,1427271584,org,clinic-census.csv org_npis
+GB0044,"ATRIUS HEALTH, INC.",derm,tin,043397450,org,clinic-census.csv tins
+GB0045,DERMATOLOGY ASSOCIATES OF CONCORD INC (CMS-listed clinicians at this address),derm,tin,042519087,clinician,clinic-census.csv clinician_billing_tins_bcbs 9/9
+GB0046,MT AUBURN PROFESSIONAL SERVICES,derm,npi,1013375203,org,clinic-census.csv org_npis
+GB0046,MT AUBURN PROFESSIONAL SERVICES,derm,npi,1649210410,org,clinic-census.csv org_npis
+GB0047,DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,npi,1013658061,org,clinic-census.csv org_npis
+GB0047,DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,npi,1063570075,org,clinic-census.csv org_npis
+GB0047,DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,npi,1295819290,org,clinic-census.csv org_npis
+GB0047,DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,863871598,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/4
+GB0047,DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,042707080,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/4
+GB0048,VIBRANT DERMATOLOGY PLLC,derm,npi,1023515277,org,clinic-census.csv org_npis
+GB0049,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),derm,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/3
+GB0049,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),derm,tin,042263040,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0049,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),derm,tin,042697983,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0049,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),derm,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0050,SKINCARE PHYSICIANS INC (CMS-listed clinicians at this address),derm,npi,1508893843,org,clinic-census.csv org_npis
+GB0050,SKINCARE PHYSICIANS INC (CMS-listed clinicians at this address),derm,npi,1639499676,org,clinic-census.csv org_npis
+GB0050,SKINCARE PHYSICIANS INC (CMS-listed clinicians at this address),derm,npi,1699005173,org,clinic-census.csv org_npis
+GB0050,SKINCARE PHYSICIANS INC (CMS-listed clinicians at this address),derm,tin,043487710,clinician,clinic-census.csv clinician_billing_tins_bcbs 14/15
+GB0051,"(clinicians, no group name)",derm,npi,1023515277,org,clinic-census.csv org_npis
+GB0051,"(clinicians, no group name)",derm,npi,1720878242,org,clinic-census.csv org_npis
+GB0051,"(clinicians, no group name)",derm,tin,831820202,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0051,"(clinicians, no group name)",derm,tin,810765237,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0052,"(clinicians, no group name)",derm,npi,1790587814,org,clinic-census.csv org_npis
+GB0052,"(clinicians, no group name)",derm,tin,833242900,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0052,"(clinicians, no group name)",derm,tin,810806712,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0052,"(clinicians, no group name)",derm,tin,334234202,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0053,"STRATA PATHOLOGY SERVICES, INC (CMS-listed clinicians at this address)",derm,tin,1083676431,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0054,"ATRIUS HEALTH, INC.",derm,npi,1447464102,org,clinic-census.csv org_npis
+GB0055,"MYSTIC VALLEY DERMATOLOGY ASSOCIATES, P.C.",derm,npi,1508996430,org,clinic-census.csv org_npis
+GB0056,"ADVANCED DERM MASS, LLC",derm,npi,1013678747,org,clinic-census.csv org_npis
+GB0056,"ADVANCED DERM MASS, LLC",derm,npi,1669584348,org,clinic-census.csv org_npis
+GB0056,"ADVANCED DERM MASS, LLC",derm,npi,1942961750,org,clinic-census.csv org_npis
+GB0056,"ADVANCED DERM MASS, LLC",derm,tin,043434420,org,clinic-census.csv tins
+GB0057,ADVANCED DERMATOLOGY AND AESTHETIC CENTER LLC (CMS-listed clinicians at this address),derm,npi,1568907533,org,clinic-census.csv org_npis
+GB0057,ADVANCED DERMATOLOGY AND AESTHETIC CENTER LLC (CMS-listed clinicians at this address),derm,tin,872916978,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0057,ADVANCED DERMATOLOGY AND AESTHETIC CENTER LLC (CMS-listed clinicians at this address),derm,tin,814653299,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0057,ADVANCED DERMATOLOGY AND AESTHETIC CENTER LLC (CMS-listed clinicians at this address),derm,tin,204012780,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0057,ADVANCED DERMATOLOGY AND AESTHETIC CENTER LLC (CMS-listed clinicians at this address),derm,tin,043434420,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0058,"(clinicians, no group name)",derm,npi,1083912018,org,clinic-census.csv org_npis
+GB0058,"(clinicians, no group name)",derm,npi,1265941082,org,clinic-census.csv org_npis
+GB0058,"(clinicians, no group name)",derm,npi,1376180760,org,clinic-census.csv org_npis
+GB0058,"(clinicians, no group name)",derm,npi,1558477869,org,clinic-census.csv org_npis
+GB0058,"(clinicians, no group name)",derm,tin,821413496,org,clinic-census.csv tins
+GB0058,"(clinicians, no group name)",derm,tin,043355366,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0058,"(clinicians, no group name)",derm,tin,201780432,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0058,"(clinicians, no group name)",derm,tin,464282800,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0059,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),derm,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/4
+GB0059,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),derm,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0060,"(clinicians, no group name)",derm,npi,1093597312,org,clinic-census.csv org_npis
+GB0060,"(clinicians, no group name)",derm,npi,1154522860,org,clinic-census.csv org_npis
+GB0060,"(clinicians, no group name)",derm,tin,932662766,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0060,"(clinicians, no group name)",derm,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0060,"(clinicians, no group name)",derm,tin,134258420,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0061,"BOSTON DERMATOLOGY GROUP, P.C.",derm,npi,1649643347,org,clinic-census.csv org_npis
+GB0062,"LYNN A. BADEN M.D., PC",derm,npi,1265513444,org,clinic-census.csv org_npis
+GB0063,"ADAMS STREET DERMATOLOGY ASSOC, PC (CMS-listed clinicians at this address)",derm,npi,1164693289,org,clinic-census.csv org_npis
+GB0063,"ADAMS STREET DERMATOLOGY ASSOC, PC (CMS-listed clinicians at this address)",derm,tin,300309452,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0063,"ADAMS STREET DERMATOLOGY ASSOC, PC (CMS-listed clinicians at this address)",derm,tin,1730194226,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0064,ID OF QUINCY LLC (CMS-listed clinicians at this address),derm,npi,1053088377,org,clinic-census.csv org_npis
+GB0064,ID OF QUINCY LLC (CMS-listed clinicians at this address),derm,npi,1477229326,org,clinic-census.csv org_npis
+GB0064,ID OF QUINCY LLC (CMS-listed clinicians at this address),derm,tin,871893757,org,clinic-census.csv tins
+GB0064,ID OF QUINCY LLC (CMS-listed clinicians at this address),derm,tin,043214763,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0064,ID OF QUINCY LLC (CMS-listed clinicians at this address),derm,tin,871879750,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0064,ID OF QUINCY LLC (CMS-listed clinicians at this address),derm,tin,844059500,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0065,"SOUTH SHORE MEDICAL CENTER, INC. (CMS-listed clinicians at this address)",derm,npi,1033778824,org,clinic-census.csv org_npis
+GB0065,"SOUTH SHORE MEDICAL CENTER, INC. (CMS-listed clinicians at this address)",derm,tin,043335166,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0065,"SOUTH SHORE MEDICAL CENTER, INC. (CMS-listed clinicians at this address)",derm,tin,042297845,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0065,"SOUTH SHORE MEDICAL CENTER, INC. (CMS-listed clinicians at this address)",derm,tin,043218267,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0065,"SOUTH SHORE MEDICAL CENTER, INC. (CMS-listed clinicians at this address)",derm,tin,042682152,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0066,THE GENERAL HOSPITAL CORPORATION (CMS-listed clinicians at this address),derm,tin,1851666978,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0066,THE GENERAL HOSPITAL CORPORATION (CMS-listed clinicians at this address),derm,tin,042697983,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0066,THE GENERAL HOSPITAL CORPORATION (CMS-listed clinicians at this address),derm,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0066,THE GENERAL HOSPITAL CORPORATION (CMS-listed clinicians at this address),derm,tin,043459576,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0067,CAMBRIDGE PUBLIC HEALTH COMMISSION (CMS-listed clinicians at this address),derm,tin,043320571,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0067,CAMBRIDGE PUBLIC HEALTH COMMISSION (CMS-listed clinicians at this address),derm,tin,814207696,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0067,CAMBRIDGE PUBLIC HEALTH COMMISSION (CMS-listed clinicians at this address),derm,tin,1760607808,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0068,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,npi,1548213606,org,clinic-census.csv org_npis
+GB0068,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,043278862,org,clinic-census.csv tins
+GB0068,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,873323847,org,clinic-census.csv tins
+GB0068,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,043278862,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0068,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,863792771,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0069,GLENN A DOBECKI MD INC,derm,npi,1114118098,org,clinic-census.csv org_npis
+GB0070,PARK DERMATOLOGY ASSOC PC,derm,npi,1346260866,org,clinic-census.csv org_npis
+GB0071,DERMATOLOGY ASSOCIATES OF CONCORD INC (CMS-listed clinicians at this address),derm,tin,043026897,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0071,DERMATOLOGY ASSOCIATES OF CONCORD INC (CMS-listed clinicians at this address),derm,tin,042519087,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,npi,1215276415,org,clinic-census.csv org_npis
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,npi,1235478595,org,clinic-census.csv org_npis
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,npi,1285614834,org,clinic-census.csv org_npis
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,npi,1407194319,org,clinic-census.csv org_npis
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,npi,1467791665,org,clinic-census.csv org_npis
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,npi,1538575386,org,clinic-census.csv org_npis
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,npi,1679138879,org,clinic-census.csv org_npis
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,npi,1740947084,org,clinic-census.csv org_npis
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,npi,1780636597,org,clinic-census.csv org_npis
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,npi,1942508379,org,clinic-census.csv org_npis
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,tin,834117915,org,clinic-census.csv tins
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,tin,043317992,org,clinic-census.csv tins
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,tin,204012780,org,clinic-census.csv tins
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,tin,271887150,org,clinic-census.csv tins
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,tin,371711619,org,clinic-census.csv tins
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,tin,204012780,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,tin,043335166,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,tin,043306782,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0072,DERMCARE PHYSICIANS AND SURGEONS LLC (CMS-listed clinicians at this address),derm,tin,371711619,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0073,"KUCHNIR DERMATOLOGY, PC",derm,npi,1437665908,org,clinic-census.csv org_npis
+GB0074,ASSOCIATES IN DERMATOLOGY LLC (CMS-listed clinicians at this address),derm,npi,1144387390,org,clinic-census.csv org_npis
+GB0074,ASSOCIATES IN DERMATOLOGY LLC (CMS-listed clinicians at this address),derm,npi,1609397371,org,clinic-census.csv org_npis
+GB0074,ASSOCIATES IN DERMATOLOGY LLC (CMS-listed clinicians at this address),derm,npi,1790449940,org,clinic-census.csv org_npis
+GB0074,ASSOCIATES IN DERMATOLOGY LLC (CMS-listed clinicians at this address),derm,tin,043452638,org,clinic-census.csv tins
+GB0074,ASSOCIATES IN DERMATOLOGY LLC (CMS-listed clinicians at this address),derm,tin,043452638,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0075,ATRIUS HEALTH INC (CMS-listed clinicians at this address),derm,npi,1043366537,org,clinic-census.csv org_npis
+GB0075,ATRIUS HEALTH INC (CMS-listed clinicians at this address),derm,tin,043397450,org,clinic-census.csv tins
+GB0075,ATRIUS HEALTH INC (CMS-listed clinicians at this address),derm,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0075,ATRIUS HEALTH INC (CMS-listed clinicians at this address),derm,tin,042472266,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0076,ADULT AND PEDIATRIC DERMATOLOGY PC (CMS-listed clinicians at this address),derm,npi,1285614834,org,clinic-census.csv org_npis
+GB0076,ADULT AND PEDIATRIC DERMATOLOGY PC (CMS-listed clinicians at this address),derm,npi,1437557519,org,clinic-census.csv org_npis
+GB0076,ADULT AND PEDIATRIC DERMATOLOGY PC (CMS-listed clinicians at this address),derm,npi,1467472399,org,clinic-census.csv org_npis
+GB0076,ADULT AND PEDIATRIC DERMATOLOGY PC (CMS-listed clinicians at this address),derm,npi,1679138879,org,clinic-census.csv org_npis
+GB0076,ADULT AND PEDIATRIC DERMATOLOGY PC (CMS-listed clinicians at this address),derm,tin,043317992,org,clinic-census.csv tins
+GB0076,ADULT AND PEDIATRIC DERMATOLOGY PC (CMS-listed clinicians at this address),derm,tin,834117915,org,clinic-census.csv tins
+GB0076,ADULT AND PEDIATRIC DERMATOLOGY PC (CMS-listed clinicians at this address),derm,tin,863871598,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0076,ADULT AND PEDIATRIC DERMATOLOGY PC (CMS-listed clinicians at this address),derm,tin,043317992,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0076,ADULT AND PEDIATRIC DERMATOLOGY PC (CMS-listed clinicians at this address),derm,tin,042707080,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0076,ADULT AND PEDIATRIC DERMATOLOGY PC (CMS-listed clinicians at this address),derm,tin,271887150,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0077,"ATRIUS HEALTH, INC.",derm,npi,1972717635,org,clinic-census.csv org_npis
+GB0077,"ATRIUS HEALTH, INC.",derm,tin,043397450,org,clinic-census.csv tins
+GB0078,DERMATOLOGY AND SKIN CARE ASSOC PC (CMS-listed clinicians at this address),derm,npi,1003005331,org,clinic-census.csv org_npis
+GB0078,DERMATOLOGY AND SKIN CARE ASSOC PC (CMS-listed clinicians at this address),derm,tin,260883505,org,clinic-census.csv tins
+GB0078,DERMATOLOGY AND SKIN CARE ASSOC PC (CMS-listed clinicians at this address),derm,tin,260883505,clinician,clinic-census.csv clinician_billing_tins_bcbs 8/9
+GB0079,DERMWELLESLEY LLC (CMS-listed clinicians at this address),derm,npi,1811478092,org,clinic-census.csv org_npis
+GB0079,DERMWELLESLEY LLC (CMS-listed clinicians at this address),derm,tin,831681208,org,clinic-census.csv tins
+GB0079,DERMWELLESLEY LLC (CMS-listed clinicians at this address),derm,tin,831681208,clinician,clinic-census.csv clinician_billing_tins_bcbs 6/7
+GB0080,KRAUSS DERMATOLOGY PC (CMS-listed clinicians at this address),derm,npi,1962524629,org,clinic-census.csv org_npis
+GB0080,KRAUSS DERMATOLOGY PC (CMS-listed clinicians at this address),derm,tin,203237977,org,clinic-census.csv tins
+GB0080,KRAUSS DERMATOLOGY PC (CMS-listed clinicians at this address),derm,tin,203237977,clinician,clinic-census.csv clinician_billing_tins_bcbs 8/9
+GB0081,PREMIER DERMATOLOGY PLLC (CMS-listed clinicians at this address),derm,npi,1669028353,org,clinic-census.csv org_npis
+GB0081,PREMIER DERMATOLOGY PLLC (CMS-listed clinicians at this address),derm,tin,842432483,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/5
+GB0082,TANG BENJES AND ASSOCIATES PC (CMS-listed clinicians at this address),derm,npi,1104028968,org,clinic-census.csv org_npis
+GB0082,TANG BENJES AND ASSOCIATES PC (CMS-listed clinicians at this address),derm,npi,1912454745,org,clinic-census.csv org_npis
+GB0082,TANG BENJES AND ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,043523893,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0082,TANG BENJES AND ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,260883505,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0082,TANG BENJES AND ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,932662766,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0083,MARITIME MOHS PC (CMS-listed clinicians at this address),derm,npi,1063279420,org,clinic-census.csv org_npis
+GB0083,MARITIME MOHS PC (CMS-listed clinicians at this address),derm,tin,821251146,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0083,MARITIME MOHS PC (CMS-listed clinicians at this address),derm,tin,455480930,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0083,MARITIME MOHS PC (CMS-listed clinicians at this address),derm,tin,823717773,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0083,MARITIME MOHS PC (CMS-listed clinicians at this address),derm,tin,043163854,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0084,VIVASKIN DERMATOLOGY AND AESTHETICS (CMS-listed clinicians at this address),derm,npi,1245981414,org,clinic-census.csv org_npis
+GB0084,VIVASKIN DERMATOLOGY AND AESTHETICS (CMS-listed clinicians at this address),derm,npi,1417764523,org,clinic-census.csv org_npis
+GB0084,VIVASKIN DERMATOLOGY AND AESTHETICS (CMS-listed clinicians at this address),derm,tin,873221557,org,clinic-census.csv tins
+GB0084,VIVASKIN DERMATOLOGY AND AESTHETICS (CMS-listed clinicians at this address),derm,tin,1346506763,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0084,VIVASKIN DERMATOLOGY AND AESTHETICS (CMS-listed clinicians at this address),derm,tin,873221557,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0084,VIVASKIN DERMATOLOGY AND AESTHETICS (CMS-listed clinicians at this address),derm,tin,042472266,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0085,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,831231184,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0085,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,473026344,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0085,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,042509828,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0085,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,562672236,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0086,JE HARRIS NURSING,derm,npi,1972328847,org,clinic-census.csv org_npis
+GB0088,"(clinicians, no group name)",derm,tin,043178219,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0089,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,npi,1548213606,org,clinic-census.csv org_npis
+GB0089,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,043278862,org,clinic-census.csv tins
+GB0089,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,873323847,org,clinic-census.csv tins
+GB0089,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,043278862,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0089,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),derm,tin,863792771,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0090,FOREFRONT DERMATOLOGY SC (CMS-listed clinicians at this address),derm,npi,1841110293,org,clinic-census.csv org_npis
+GB0090,FOREFRONT DERMATOLOGY SC (CMS-listed clinicians at this address),derm,tin,832916287,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/3
+GB0090,FOREFRONT DERMATOLOGY SC (CMS-listed clinicians at this address),derm,tin,833063891,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/3
+GB0090,FOREFRONT DERMATOLOGY SC (CMS-listed clinicians at this address),derm,tin,043487710,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0090,FOREFRONT DERMATOLOGY SC (CMS-listed clinicians at this address),derm,tin,571146349,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0091,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),derm,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/5
+GB0092,"(clinicians, no group name)",gi,npi,1265646921,org,clinic-census.csv org_npis
+GB0092,"(clinicians, no group name)",gi,tin,043397450,org,clinic-census.csv tins
+GB0095,"(clinicians, no group name)",gi,tin,510172171,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0095,"(clinicians, no group name)",gi,tin,1144291949,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0096,ATRIUS HEALTH INC (CMS-listed clinicians at this address),gi,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0097,BARIATRIC ENDOSCOPY INSTITUTE LLC,gi,npi,1730505298,org,clinic-census.csv org_npis
+GB0098,BOSTON FOOD ALLERGY CENTER LLC BI NETWORK (CMS-listed clinicians at this address),gi,npi,1710523147,org,clinic-census.csv org_npis
+GB0098,BOSTON FOOD ALLERGY CENTER LLC BI NETWORK (CMS-listed clinicians at this address),gi,npi,1730810987,org,clinic-census.csv org_npis
+GB0098,BOSTON FOOD ALLERGY CENTER LLC BI NETWORK (CMS-listed clinicians at this address),gi,tin,843477628,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0098,BOSTON FOOD ALLERGY CENTER LLC BI NETWORK (CMS-listed clinicians at this address),gi,tin,043218267,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0098,BOSTON FOOD ALLERGY CENTER LLC BI NETWORK (CMS-listed clinicians at this address),gi,tin,042743894,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0099,BOSTON FOOD ALLERGY CENTER LLC BI NETWORK (CMS-listed clinicians at this address),gi,npi,1679206403,org,clinic-census.csv org_npis
+GB0099,BOSTON FOOD ALLERGY CENTER LLC BI NETWORK (CMS-listed clinicians at this address),gi,tin,881858984,org,clinic-census.csv tins
+GB0099,BOSTON FOOD ALLERGY CENTER LLC BI NETWORK (CMS-listed clinicians at this address),gi,tin,843477628,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0099,BOSTON FOOD ALLERGY CENTER LLC BI NETWORK (CMS-listed clinicians at this address),gi,tin,043218267,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0099,BOSTON FOOD ALLERGY CENTER LLC BI NETWORK (CMS-listed clinicians at this address),gi,tin,042743894,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0100,BOSTON SPECIALISTS - SOUTH SHORE LLC,gi,npi,1023561966,org,clinic-census.csv org_npis
+GB0100,BOSTON SPECIALISTS - SOUTH SHORE LLC,gi,npi,1376201038,org,clinic-census.csv org_npis
+GB0100,BOSTON SPECIALISTS - SOUTH SHORE LLC,gi,npi,1386019503,org,clinic-census.csv org_npis
+GB0100,BOSTON SPECIALISTS - SOUTH SHORE LLC,gi,npi,1679206403,org,clinic-census.csv org_npis
+GB0100,BOSTON SPECIALISTS - SOUTH SHORE LLC,gi,npi,1710523147,org,clinic-census.csv org_npis
+GB0100,BOSTON SPECIALISTS - SOUTH SHORE LLC,gi,npi,1730810987,org,clinic-census.csv org_npis
+GB0100,BOSTON SPECIALISTS - SOUTH SHORE LLC,gi,tin,881858984,org,clinic-census.csv tins
+GB0101,"BOSTON UNIVERSITY GENERAL SURGICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",gi,tin,043218267,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0101,"BOSTON UNIVERSITY GENERAL SURGICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",gi,tin,043265008,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0102,Brigham and Women's Gastroenterology Clinic,gi,tin,043466314,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0103,"CARLOS FERNANDEZ-DEL CASTILLO, MD",gi,npi,1699969006,org,clinic-census.csv org_npis
+GB0104,EVANS MEDICAL FOUNDATION INC (CMS-listed clinicians at this address),gi,tin,510172171,clinician,clinic-census.csv clinician_billing_tins_bcbs 10/10
+GB0105,EVANS MEDICAL FOUNDATION INC (CMS-listed clinicians at this address),gi,tin,510172171,clinician,clinic-census.csv clinician_billing_tins_bcbs 11/11
+GB0106,HALPERT MEDICAL LLC,gi,npi,1194366849,org,clinic-census.csv org_npis
+GB0107,"OSHI HEALTH MEDICAL GROUP, P.A.",gi,npi,1750069118,org,clinic-census.csv org_npis
+GB0108,"RONG J GUAN, MD LLC",gi,npi,1003169327,org,clinic-census.csv org_npis
+GB0108,"RONG J GUAN, MD LLC",gi,tin,043550240,org,clinic-census.csv tins
+GB0109,HARBOR MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),gi,tin,222560501,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/6
+GB0109,HARBOR MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),gi,tin,043466314,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/6
+GB0110,"BMC AFFILIATED PHYSICIANS, INC. (CMS-listed clinicians at this address)",gi,tin,043218267,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/5
+GB0111,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),gi,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0111,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),gi,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0112,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),gi,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0112,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),gi,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0113,"(clinicians, no group name)",gi,npi,1437859105,org,clinic-census.csv org_npis
+GB0113,"(clinicians, no group name)",gi,npi,1730810987,org,clinic-census.csv org_npis
+GB0113,"(clinicians, no group name)",gi,tin,042796795,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0116,MASSACHUSETTS GENERAL PHYSICIANS ORGANIZATION INC (CMS-listed clinicians at this address),gi,tin,1174082499,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0118,DOTHOUSE HEALTH INC. (CMS-listed clinicians at this address),gi,tin,237125970,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0118,DOTHOUSE HEALTH INC. (CMS-listed clinicians at this address),gi,tin,510172171,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0118,DOTHOUSE HEALTH INC. (CMS-listed clinicians at this address),gi,tin,1386621092,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0119,"MADAN ZUTSHI, P.C.",gi,npi,1376707232,org,clinic-census.csv org_npis
+GB0120,MASSACHUSETTS GENERAL PHYSICIANS ORGANIZATION INC (CMS-listed clinicians at this address),gi,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0121,MASS GENERAL BRIGHAM MEDICAL GROUP NORTHERN MASSACHUSETTS INC (CMS-listed clinicians at this address),gi,tin,043080484,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/3
+GB0121,MASS GENERAL BRIGHAM MEDICAL GROUP NORTHERN MASSACHUSETTS INC (CMS-listed clinicians at this address),gi,tin,1326049669,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0122,HALLMARK HEALTH MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),gi,tin,043140938,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0122,HALLMARK HEALTH MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),gi,tin,1538257464,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0123,NORTH SUBURBAN INTERNAL MEDICINE & GASTROENTEROLOGICAL ASSOCIATES,gi,npi,1548310949,org,clinic-census.csv org_npis
+GB0124,SUBHASH C BOWRY MD PC,gi,npi,1386701027,org,clinic-census.csv org_npis
+GB0125,HALLMARK HEALTH MEDICAL ASSOCIATES INC,gi,npi,1770563900,org,clinic-census.csv org_npis
+GB0126,"CANAN AVUNDUK, MD. PHD",gi,npi,1316108079,org,clinic-census.csv org_npis
+GB0127,CARLO CECCHETTI MD PC,gi,npi,1396068102,org,clinic-census.csv org_npis
+GB0128,HALLMARK HEALTH MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),gi,tin,043140938,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/5
+GB0129,ERIC R COHEN MD PC,gi,npi,1952570087,org,clinic-census.csv org_npis
+GB0130,"JOHN W. DALTON, M.D., P.C.",gi,npi,1710157508,org,clinic-census.csv org_npis
+GB0131,HALLMARK HEALTH MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),gi,tin,043140938,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/5
+GB0132,SOUTH BOSTON COMMUNITY HEALTH CENTER (CMS-listed clinicians at this address),gi,tin,042682152,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/3
+GB0132,SOUTH BOSTON COMMUNITY HEALTH CENTER (CMS-listed clinicians at this address),gi,tin,043314093,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0132,SOUTH BOSTON COMMUNITY HEALTH CENTER (CMS-listed clinicians at this address),gi,tin,510172171,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0132,SOUTH BOSTON COMMUNITY HEALTH CENTER (CMS-listed clinicians at this address),gi,tin,043335166,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0133,"SOUTH SUBURBAN GASTROENTEROLOGY, PC",gi,npi,1114948478,org,clinic-census.csv org_npis
+GB0133,"SOUTH SUBURBAN GASTROENTEROLOGY, PC",gi,tin,043166166,org,clinic-census.csv tins
+GB0134,DIGESTIVE HEALTH ASSOCIATES P.C. (CMS-listed clinicians at this address),gi,npi,1144558974,org,clinic-census.csv org_npis
+GB0134,DIGESTIVE HEALTH ASSOCIATES P.C. (CMS-listed clinicians at this address),gi,npi,1962973131,org,clinic-census.csv org_npis
+GB0134,DIGESTIVE HEALTH ASSOCIATES P.C. (CMS-listed clinicians at this address),gi,tin,043364590,org,clinic-census.csv tins
+GB0134,DIGESTIVE HEALTH ASSOCIATES P.C. (CMS-listed clinicians at this address),gi,tin,832701179,clinician,clinic-census.csv clinician_billing_tins_bcbs 8/9
+GB0134,DIGESTIVE HEALTH ASSOCIATES P.C. (CMS-listed clinicians at this address),gi,tin,043364590,clinician,clinic-census.csv clinician_billing_tins_bcbs 8/9
+GB0135,HALLMARK HEALTH MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),gi,tin,043140938,clinician,clinic-census.csv clinician_billing_tins_bcbs 7/7
+GB0136,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),gi,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0136,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),gi,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0137,"(clinicians, no group name)",gi,tin,932376914,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0137,"(clinicians, no group name)",gi,tin,043189783,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0138,DENMARK DIGESTIVE HEALTH LLC,gi,npi,1477304053,org,clinic-census.csv org_npis
+GB0139,ATRIUS HEALTH INC (CMS-listed clinicians at this address),gi,npi,1760818116,org,clinic-census.csv org_npis
+GB0139,ATRIUS HEALTH INC (CMS-listed clinicians at this address),gi,npi,1902290901,org,clinic-census.csv org_npis
+GB0139,ATRIUS HEALTH INC (CMS-listed clinicians at this address),gi,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 7/7
+GB0140,ATRIUS HEALTH INC (CMS-listed clinicians at this address),gi,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0141,HOLTZMAN MEDICAL SPECIALTY SERVICES,gi,npi,1437859105,org,clinic-census.csv org_npis
+GB0142,WINCHESTER HOSPITAL ENDOSCOPY CENTE,gi,npi,1790740777,org,clinic-census.csv org_npis
+GB0142,WINCHESTER HOSPITAL ENDOSCOPY CENTE,gi,tin,042104434,org,clinic-census.csv tins
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,npi,1215276415,org,clinic-census.csv org_npis
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,npi,1235478595,org,clinic-census.csv org_npis
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,npi,1467791665,org,clinic-census.csv org_npis
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,npi,1528585296,org,clinic-census.csv org_npis
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,npi,1538575386,org,clinic-census.csv org_npis
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,npi,1699004598,org,clinic-census.csv org_npis
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,npi,1770421315,org,clinic-census.csv org_npis
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,npi,1780636597,org,clinic-census.csv org_npis
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,npi,1821127168,org,clinic-census.csv org_npis
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,npi,1861731309,org,clinic-census.csv org_npis
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,tin,043018804,org,clinic-census.csv tins
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,tin,204012780,org,clinic-census.csv tins
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,tin,371711619,org,clinic-census.csv tins
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,tin,204012780,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/5
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,tin,371711619,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/5
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,tin,300761298,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/5
+GB0143,"BARRY S PAUL, M.D. (CMS-listed clinicians at this address)",multi,tin,471208235,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/5
+GB0144,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1003939703,org,clinic-census.csv org_npis
+GB0144,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1225175979,org,clinic-census.csv org_npis
+GB0144,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1740238526,org,clinic-census.csv org_npis
+GB0144,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1871639914,org,clinic-census.csv org_npis
+GB0144,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,org,clinic-census.csv tins
+GB0144,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 38/40
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,npi,1073501649,org,clinic-census.csv org_npis
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,npi,1215276415,org,clinic-census.csv org_npis
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,npi,1215963574,org,clinic-census.csv org_npis
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,npi,1235478595,org,clinic-census.csv org_npis
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,npi,1467791665,org,clinic-census.csv org_npis
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,npi,1538575386,org,clinic-census.csv org_npis
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,npi,1629209234,org,clinic-census.csv org_npis
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,npi,1780636597,org,clinic-census.csv org_npis
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,tin,043459576,org,clinic-census.csv tins
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,tin,204012780,org,clinic-census.csv tins
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,tin,270508726,org,clinic-census.csv tins
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,tin,371711619,org,clinic-census.csv tins
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,tin,270508726,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/4
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/4
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,tin,061651087,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0145,BOSTON DERMATOLOGY AND LASER CENTER LLC (CMS-listed clinicians at this address),multi,tin,042697983,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0146,BOSTON UNIVERSITY DERMATOLOGY INC (CMS-listed clinicians at this address),multi,tin,043335166,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/8
+GB0146,BOSTON UNIVERSITY DERMATOLOGY INC (CMS-listed clinicians at this address),multi,tin,043354353,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/8
+GB0146,BOSTON UNIVERSITY DERMATOLOGY INC (CMS-listed clinicians at this address),multi,tin,043218267,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/8
+GB0147,BOSTON UNIVERSITY ORTHOPAEDIC SURGICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1164460580,org,clinic-census.csv org_npis
+GB0147,BOSTON UNIVERSITY ORTHOPAEDIC SURGICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1376532853,org,clinic-census.csv org_npis
+GB0147,BOSTON UNIVERSITY ORTHOPAEDIC SURGICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,043354360,clinician,clinic-census.csv clinician_billing_tins_bcbs 15/22
+GB0148,BRIGHAM AND WOMENS PHYSICIANS ORGANIZATION INC (CMS-listed clinicians at this address),multi,npi,1033535497,org,clinic-census.csv org_npis
+GB0148,BRIGHAM AND WOMENS PHYSICIANS ORGANIZATION INC (CMS-listed clinicians at this address),multi,npi,1235157769,org,clinic-census.csv org_npis
+GB0148,BRIGHAM AND WOMENS PHYSICIANS ORGANIZATION INC (CMS-listed clinicians at this address),multi,tin,042312909,org,clinic-census.csv tins
+GB0148,BRIGHAM AND WOMENS PHYSICIANS ORGANIZATION INC (CMS-listed clinicians at this address),multi,tin,043466314,org,clinic-census.csv tins
+GB0148,BRIGHAM AND WOMENS PHYSICIANS ORGANIZATION INC (CMS-listed clinicians at this address),multi,tin,043466314,clinician,clinic-census.csv clinician_billing_tins_bcbs 105/155
+GB0149,"CHILDREN'S HOSPITAL PEDIATRIC ASSOCIATES, INC (CMS-listed clinicians at this address)",multi,npi,1457306664,org,clinic-census.csv org_npis
+GB0149,"CHILDREN'S HOSPITAL PEDIATRIC ASSOCIATES, INC (CMS-listed clinicians at this address)",multi,npi,1548344393,org,clinic-census.csv org_npis
+GB0149,"CHILDREN'S HOSPITAL PEDIATRIC ASSOCIATES, INC (CMS-listed clinicians at this address)",multi,npi,1740216811,org,clinic-census.csv org_npis
+GB0149,"CHILDREN'S HOSPITAL PEDIATRIC ASSOCIATES, INC (CMS-listed clinicians at this address)",multi,tin,042774441,org,clinic-census.csv tins
+GB0149,"CHILDREN'S HOSPITAL PEDIATRIC ASSOCIATES, INC (CMS-listed clinicians at this address)",multi,tin,042864081,org,clinic-census.csv tins
+GB0149,"CHILDREN'S HOSPITAL PEDIATRIC ASSOCIATES, INC (CMS-listed clinicians at this address)",multi,tin,042943146,org,clinic-census.csv tins
+GB0149,"CHILDREN'S HOSPITAL PEDIATRIC ASSOCIATES, INC (CMS-listed clinicians at this address)",multi,tin,042970129,org,clinic-census.csv tins
+GB0149,"CHILDREN'S HOSPITAL PEDIATRIC ASSOCIATES, INC (CMS-listed clinicians at this address)",multi,tin,431987409,org,clinic-census.csv tins
+GB0149,"CHILDREN'S HOSPITAL PEDIATRIC ASSOCIATES, INC (CMS-listed clinicians at this address)",multi,tin,042774441,clinician,clinic-census.csv clinician_billing_tins_bcbs 70/86
+GB0149,"CHILDREN'S HOSPITAL PEDIATRIC ASSOCIATES, INC (CMS-listed clinicians at this address)",multi,tin,431987409,clinician,clinic-census.csv clinician_billing_tins_bcbs 34/86
+GB0149,"CHILDREN'S HOSPITAL PEDIATRIC ASSOCIATES, INC (CMS-listed clinicians at this address)",multi,tin,042943146,clinician,clinic-census.csv clinician_billing_tins_bcbs 29/86
+GB0150,"DANA-FARBER CANCER INSTITUTE, INC. (CMS-listed clinicians at this address)",multi,tin,042263040,clinician,clinic-census.csv clinician_billing_tins_bcbs 27/28
+GB0150,"DANA-FARBER CANCER INSTITUTE, INC. (CMS-listed clinicians at this address)",multi,tin,043466314,clinician,clinic-census.csv clinician_billing_tins_bcbs 22/28
+GB0151,EVANS MEDICAL FOUNDATION INC (CMS-listed clinicians at this address),multi,npi,1245320910,org,clinic-census.csv org_npis
+GB0151,EVANS MEDICAL FOUNDATION INC (CMS-listed clinicians at this address),multi,npi,1912954124,org,clinic-census.csv org_npis
+GB0151,EVANS MEDICAL FOUNDATION INC (CMS-listed clinicians at this address),multi,tin,510172171,clinician,clinic-census.csv clinician_billing_tins_bcbs 13/31
+GB0151,EVANS MEDICAL FOUNDATION INC (CMS-listed clinicians at this address),multi,tin,043354360,clinician,clinic-census.csv clinician_billing_tins_bcbs 9/31
+GB0152,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,npi,1043250616,org,clinic-census.csv org_npis
+GB0152,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,npi,1225078801,org,clinic-census.csv org_npis
+GB0152,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,npi,1619399961,org,clinic-census.csv org_npis
+GB0152,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,npi,1700817228,org,clinic-census.csv org_npis
+GB0152,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,npi,1972544591,org,clinic-census.csv org_npis
+GB0152,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,042103881,org,clinic-census.csv tins
+GB0152,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,043228556,org,clinic-census.csv tins
+GB0152,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,222768204,org,clinic-census.csv tins
+GB0152,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 83/85
+GB0152,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 58/85
+GB0153,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 29/30
+GB0153,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 15/30
+GB0154,Mass Eye and Ear Dermatology Clinic,multi,npi,1932574332,org,clinic-census.csv org_npis
+GB0154,Mass Eye and Ear Dermatology Clinic,multi,tin,222658209,org,clinic-census.csv tins
+GB0154,Mass Eye and Ear Dermatology Clinic,multi,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 6/7
+GB0154,Mass Eye and Ear Dermatology Clinic,multi,tin,222658209,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/7
+GB0155,Mass General Brigham for Children Gastroenterology Clinic,multi,npi,1104085604,org,clinic-census.csv org_npis
+GB0155,Mass General Brigham for Children Gastroenterology Clinic,multi,npi,1114084472,org,clinic-census.csv org_npis
+GB0155,Mass General Brigham for Children Gastroenterology Clinic,multi,npi,1801874573,org,clinic-census.csv org_npis
+GB0155,Mass General Brigham for Children Gastroenterology Clinic,multi,tin,042807148,org,clinic-census.csv tins
+GB0155,Mass General Brigham for Children Gastroenterology Clinic,multi,tin,042697983,org,clinic-census.csv tins
+GB0155,Mass General Brigham for Children Gastroenterology Clinic,multi,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 157/220
+GB0156,PRATT MED/SURG DERMATOLOGY ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1013237809,org,clinic-census.csv org_npis
+GB0156,PRATT MED/SURG DERMATOLOGY ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1184661225,org,clinic-census.csv org_npis
+GB0156,PRATT MED/SURG DERMATOLOGY ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1275570319,org,clinic-census.csv org_npis
+GB0156,PRATT MED/SURG DERMATOLOGY ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1528012176,org,clinic-census.csv org_npis
+GB0156,PRATT MED/SURG DERMATOLOGY ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1528107380,org,clinic-census.csv org_npis
+GB0156,PRATT MED/SURG DERMATOLOGY ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,042743894,org,clinic-census.csv tins
+GB0156,PRATT MED/SURG DERMATOLOGY ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,043148397,org,clinic-census.csv tins
+GB0156,PRATT MED/SURG DERMATOLOGY ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,205129051,org,clinic-census.csv tins
+GB0156,PRATT MED/SURG DERMATOLOGY ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,043148397,clinician,clinic-census.csv clinician_billing_tins_bcbs 19/57
+GB0156,PRATT MED/SURG DERMATOLOGY ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,042743894,clinician,clinic-census.csv clinician_billing_tins_bcbs 19/57
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,npi,1023516820,org,clinic-census.csv org_npis
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,npi,1154575058,org,clinic-census.csv org_npis
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,npi,1205902665,org,clinic-census.csv org_npis
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,npi,1548213606,org,clinic-census.csv org_npis
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,npi,1720890254,org,clinic-census.csv org_npis
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,npi,1821125766,org,clinic-census.csv org_npis
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,tin,043278862,org,clinic-census.csv tins
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,tin,873323847,org,clinic-census.csv tins
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,tin,043464322,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,tin,202602054,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,tin,043278862,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0157,"SOUTH SHORE SKIN SURGEONS, PC (CMS-listed clinicians at this address)",multi,tin,863792771,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0158,"(clinicians, no group name)",multi,npi,1033452917,org,clinic-census.csv org_npis
+GB0158,"(clinicians, no group name)",multi,npi,1386185858,org,clinic-census.csv org_npis
+GB0158,"(clinicians, no group name)",multi,npi,1396926614,org,clinic-census.csv org_npis
+GB0158,"(clinicians, no group name)",multi,npi,1730810987,org,clinic-census.csv org_npis
+GB0158,"(clinicians, no group name)",multi,tin,200786395,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0158,"(clinicians, no group name)",multi,tin,201611897,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0159,"BMC AFFILIATED PHYSICIANS, INC. (CMS-listed clinicians at this address)",multi,npi,1245320910,org,clinic-census.csv org_npis
+GB0159,"BMC AFFILIATED PHYSICIANS, INC. (CMS-listed clinicians at this address)",multi,npi,1548347032,org,clinic-census.csv org_npis
+GB0159,"BMC AFFILIATED PHYSICIANS, INC. (CMS-listed clinicians at this address)",multi,npi,1730204983,org,clinic-census.csv org_npis
+GB0159,"BMC AFFILIATED PHYSICIANS, INC. (CMS-listed clinicians at this address)",multi,tin,043218267,clinician,clinic-census.csv clinician_billing_tins_bcbs 11/12
+GB0160,INTEGRATED DERMATOLOGY OF BROOKLINE LLC (CMS-listed clinicians at this address),multi,npi,1104389154,org,clinic-census.csv org_npis
+GB0160,INTEGRATED DERMATOLOGY OF BROOKLINE LLC (CMS-listed clinicians at this address),multi,npi,1740323112,org,clinic-census.csv org_npis
+GB0160,INTEGRATED DERMATOLOGY OF BROOKLINE LLC (CMS-listed clinicians at this address),multi,npi,1891609277,org,clinic-census.csv org_npis
+GB0160,INTEGRATED DERMATOLOGY OF BROOKLINE LLC (CMS-listed clinicians at this address),multi,npi,1902105638,org,clinic-census.csv org_npis
+GB0160,INTEGRATED DERMATOLOGY OF BROOKLINE LLC (CMS-listed clinicians at this address),multi,tin,834203732,org,clinic-census.csv tins
+GB0160,INTEGRATED DERMATOLOGY OF BROOKLINE LLC (CMS-listed clinicians at this address),multi,tin,834203732,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/4
+GB0160,INTEGRATED DERMATOLOGY OF BROOKLINE LLC (CMS-listed clinicians at this address),multi,tin,832916287,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0160,INTEGRATED DERMATOLOGY OF BROOKLINE LLC (CMS-listed clinicians at this address),multi,tin,833063891,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0160,INTEGRATED DERMATOLOGY OF BROOKLINE LLC (CMS-listed clinicians at this address),multi,tin,043299688,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0161,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1093900854,org,clinic-census.csv org_npis
+GB0161,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1376588004,org,clinic-census.csv org_npis
+GB0161,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1548746092,org,clinic-census.csv org_npis
+GB0161,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1609129956,org,clinic-census.csv org_npis
+GB0161,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1811399025,org,clinic-census.csv org_npis
+GB0161,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1962880153,org,clinic-census.csv org_npis
+GB0161,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,562672236,org,clinic-census.csv tins
+GB0161,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,831231184,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0161,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,473026344,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0161,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,042509828,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0161,NORTHEAST DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,562672236,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0162,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1225183726,org,clinic-census.csv org_npis
+GB0162,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 8/8
+GB0163,CAMBRIDGE PUBLIC HEALTH COMMISSION (CMS-listed clinicians at this address),multi,npi,1417161712,org,clinic-census.csv org_npis
+GB0163,CAMBRIDGE PUBLIC HEALTH COMMISSION (CMS-listed clinicians at this address),multi,tin,043320571,org,clinic-census.csv tins
+GB0163,CAMBRIDGE PUBLIC HEALTH COMMISSION (CMS-listed clinicians at this address),multi,tin,043320571,clinician,clinic-census.csv clinician_billing_tins_bcbs 18/21
+GB0164,MASSACHUSETTS INSTITUTE OF TECHNOLOGY (CMS-listed clinicians at this address),multi,npi,1215963574,org,clinic-census.csv org_npis
+GB0164,MASSACHUSETTS INSTITUTE OF TECHNOLOGY (CMS-listed clinicians at this address),multi,npi,1548213606,org,clinic-census.csv org_npis
+GB0164,MASSACHUSETTS INSTITUTE OF TECHNOLOGY (CMS-listed clinicians at this address),multi,tin,043278862,org,clinic-census.csv tins
+GB0164,MASSACHUSETTS INSTITUTE OF TECHNOLOGY (CMS-listed clinicians at this address),multi,tin,043459576,org,clinic-census.csv tins
+GB0164,MASSACHUSETTS INSTITUTE OF TECHNOLOGY (CMS-listed clinicians at this address),multi,tin,873323847,org,clinic-census.csv tins
+GB0164,MASSACHUSETTS INSTITUTE OF TECHNOLOGY (CMS-listed clinicians at this address),multi,tin,820671467,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/5
+GB0165,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,npi,1144593757,org,clinic-census.csv org_npis
+GB0165,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,npi,1194895151,org,clinic-census.csv org_npis
+GB0165,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,npi,1447467360,org,clinic-census.csv org_npis
+GB0165,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,npi,1518971811,org,clinic-census.csv org_npis
+GB0165,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,npi,1538232871,org,clinic-census.csv org_npis
+GB0165,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,npi,1649673724,org,clinic-census.csv org_npis
+GB0165,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,npi,1750598652,org,clinic-census.csv org_npis
+GB0165,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,npi,1811015944,org,clinic-census.csv org_npis
+GB0165,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,tin,043026897,clinician,clinic-census.csv clinician_billing_tins_bcbs 8/12
+GB0165,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,tin,820671467,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/12
+GB0166,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,npi,1992750996,org,clinic-census.csv org_npis
+GB0166,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,tin,043026897,clinician,clinic-census.csv clinician_billing_tins_bcbs 6/8
+GB0166,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,tin,820671467,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/8
+GB0166,MOUNT AUBURN PROFESSIONAL SERVICES INC (CMS-listed clinicians at this address),multi,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/8
+GB0167,PRESIDENT AND FELLOWS OF HARVARD COLLEGE (CMS-listed clinicians at this address),multi,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/8
+GB0168,Massachusetts General Dermatology Clinic at Chelsea Community Health Center,multi,tin,1285200972,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0168,Massachusetts General Dermatology Clinic at Chelsea Community Health Center,multi,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0169,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1952518391,org,clinic-census.csv org_npis
+GB0169,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,org,clinic-census.csv tins
+GB0169,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 8/8
+GB0169,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,042472266,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/8
+GB0170,Brigham Dermatology Associates,multi,tin,043466314,clinician,clinic-census.csv clinician_billing_tins_bcbs 9/15
+GB0170,Brigham Dermatology Associates,multi,tin,831905041,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/15
+GB0170,Brigham Dermatology Associates,multi,tin,043320571,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/15
+GB0170,Brigham Dermatology Associates,multi,tin,043483843,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/15
+GB0171,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 18/18
+GB0171,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 11/18
+GB0172,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1306231519,org,clinic-census.csv org_npis
+GB0172,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1407856586,org,clinic-census.csv org_npis
+GB0172,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1659306942,org,clinic-census.csv org_npis
+GB0172,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1720005234,org,clinic-census.csv org_npis
+GB0172,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,org,clinic-census.csv tins
+GB0172,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 11/12
+GB0173,ARTHROSCOPY & SPORTS MEDICINE ASSOCIATES LLC,multi,npi,1144418328,org,clinic-census.csv org_npis
+GB0173,ARTHROSCOPY & SPORTS MEDICINE ASSOCIATES LLC,multi,npi,1215124904,org,clinic-census.csv org_npis
+GB0173,ARTHROSCOPY & SPORTS MEDICINE ASSOCIATES LLC,multi,npi,1508041427,org,clinic-census.csv org_npis
+GB0173,ARTHROSCOPY & SPORTS MEDICINE ASSOCIATES LLC,multi,npi,1538630827,org,clinic-census.csv org_npis
+GB0174,CAMBRIDGE PUBLIC HEALTH COMMISSION (CMS-listed clinicians at this address),multi,tin,043320571,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/7
+GB0175,Brigham and Women's Faulkner Gastroenterology Clinic,multi,npi,1033535497,org,clinic-census.csv org_npis
+GB0175,Brigham and Women's Faulkner Gastroenterology Clinic,multi,npi,1073723367,org,clinic-census.csv org_npis
+GB0175,Brigham and Women's Faulkner Gastroenterology Clinic,multi,npi,1629189014,org,clinic-census.csv org_npis
+GB0175,Brigham and Women's Faulkner Gastroenterology Clinic,multi,npi,1952382103,org,clinic-census.csv org_npis
+GB0175,Brigham and Women's Faulkner Gastroenterology Clinic,multi,tin,042312909,org,clinic-census.csv tins
+GB0175,Brigham and Women's Faulkner Gastroenterology Clinic,multi,tin,042451743,org,clinic-census.csv tins
+GB0175,Brigham and Women's Faulkner Gastroenterology Clinic,multi,tin,043466314,org,clinic-census.csv tins
+GB0175,Brigham and Women's Faulkner Gastroenterology Clinic,multi,tin,043466314,clinician,clinic-census.csv clinician_billing_tins_bcbs 32/38
+GB0176,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/5
+GB0176,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/5
+GB0177,LAHEY CLINIC INC (CMS-listed clinicians at this address),multi,tin,042704683,clinician,clinic-census.csv clinician_billing_tins_bcbs 12/13
+GB0178,LEXINGTON-WALTHAM DERMATOLOGY GROUP INC (CMS-listed clinicians at this address),multi,npi,1255463972,org,clinic-census.csv org_npis
+GB0178,LEXINGTON-WALTHAM DERMATOLOGY GROUP INC (CMS-listed clinicians at this address),multi,npi,1992750996,org,clinic-census.csv org_npis
+GB0178,LEXINGTON-WALTHAM DERMATOLOGY GROUP INC (CMS-listed clinicians at this address),multi,tin,043242075,org,clinic-census.csv tins
+GB0178,LEXINGTON-WALTHAM DERMATOLOGY GROUP INC (CMS-listed clinicians at this address),multi,tin,043242075,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/8
+GB0178,LEXINGTON-WALTHAM DERMATOLOGY GROUP INC (CMS-listed clinicians at this address),multi,tin,043026897,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/8
+GB0179,COMMUNITY PHYSICIANS ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1053475012,org,clinic-census.csv org_npis
+GB0179,COMMUNITY PHYSICIANS ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1154792414,org,clinic-census.csv org_npis
+GB0179,COMMUNITY PHYSICIANS ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1487172532,org,clinic-census.csv org_npis
+GB0179,COMMUNITY PHYSICIANS ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1588730899,org,clinic-census.csv org_npis
+GB0179,COMMUNITY PHYSICIANS ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1598019846,org,clinic-census.csv org_npis
+GB0179,COMMUNITY PHYSICIANS ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,043243146,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/9
+GB0180,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,npi,1477832780,org,clinic-census.csv org_npis
+GB0180,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 6/7
+GB0180,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/7
+GB0180,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,320058309,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/7
+GB0181,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 29/30
+GB0182,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,npi,1508041427,org,clinic-census.csv org_npis
+GB0182,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,npi,1538630827,org,clinic-census.csv org_npis
+GB0182,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 12/13
+GB0182,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),multi,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 10/13
+GB0183,NEEDHAM GASTROENTEROLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1699789339,org,clinic-census.csv org_npis
+GB0183,NEEDHAM GASTROENTEROLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1952527921,org,clinic-census.csv org_npis
+GB0183,NEEDHAM GASTROENTEROLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,043287533,org,clinic-census.csv tins
+GB0183,NEEDHAM GASTROENTEROLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,043464325,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/5
+GB0184,"NEEDHAM ORTHOPEDIC AND SPORTS MEDICINE, LLC",multi,npi,1700899929,org,clinic-census.csv org_npis
+GB0184,"NEEDHAM ORTHOPEDIC AND SPORTS MEDICINE, LLC",multi,npi,1912917840,org,clinic-census.csv org_npis
+GB0184,"NEEDHAM ORTHOPEDIC AND SPORTS MEDICINE, LLC",multi,tin,271560837,org,clinic-census.csv tins
+GB0185,ORTHOBOSTON LLC (CMS-listed clinicians at this address),multi,npi,1154982833,org,clinic-census.csv org_npis
+GB0185,ORTHOBOSTON LLC (CMS-listed clinicians at this address),multi,npi,1619479052,org,clinic-census.csv org_npis
+GB0185,ORTHOBOSTON LLC (CMS-listed clinicians at this address),multi,npi,1619538394,org,clinic-census.csv org_npis
+GB0185,ORTHOBOSTON LLC (CMS-listed clinicians at this address),multi,npi,1750883195,org,clinic-census.csv org_npis
+GB0185,ORTHOBOSTON LLC (CMS-listed clinicians at this address),multi,npi,1861023590,org,clinic-census.csv org_npis
+GB0185,ORTHOBOSTON LLC (CMS-listed clinicians at this address),multi,tin,272777455,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0185,ORTHOBOSTON LLC (CMS-listed clinicians at this address),multi,tin,824400069,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0185,ORTHOBOSTON LLC (CMS-listed clinicians at this address),multi,tin,814960795,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0185,ORTHOBOSTON LLC (CMS-listed clinicians at this address),multi,tin,454639673,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,npi,1013279108,org,clinic-census.csv org_npis
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,npi,1174729628,org,clinic-census.csv org_npis
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,npi,1225194509,org,clinic-census.csv org_npis
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,npi,1356430896,org,clinic-census.csv org_npis
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,npi,1427371194,org,clinic-census.csv org_npis
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,npi,1629139472,org,clinic-census.csv org_npis
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,npi,1639399876,org,clinic-census.csv org_npis
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,npi,1730257080,org,clinic-census.csv org_npis
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,tin,042461479,org,clinic-census.csv tins
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,tin,043189783,org,clinic-census.csv tins
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,tin,264184089,org,clinic-census.csv tins
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,tin,352186955,org,clinic-census.csv tins
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,tin,455480930,org,clinic-census.csv tins
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,tin,042461479,clinician,clinic-census.csv clinician_billing_tins_bcbs 14/30
+GB0186,Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital,multi,tin,043189783,clinician,clinic-census.csv clinician_billing_tins_bcbs 9/30
+GB0187,Mass General Brigham for Children Gastroenterology and Nutrition Clinic,multi,npi,1538191218,org,clinic-census.csv org_npis
+GB0187,Mass General Brigham for Children Gastroenterology and Nutrition Clinic,multi,tin,222560501,org,clinic-census.csv tins
+GB0187,Mass General Brigham for Children Gastroenterology and Nutrition Clinic,multi,tin,222560501,clinician,clinic-census.csv clinician_billing_tins_bcbs 10/12
+GB0187,Mass General Brigham for Children Gastroenterology and Nutrition Clinic,multi,tin,043466314,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/12
+GB0188,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1245444900,org,clinic-census.csv org_npis
+GB0188,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1568877447,org,clinic-census.csv org_npis
+GB0188,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1982376182,org,clinic-census.csv org_npis
+GB0188,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,org,clinic-census.csv tins
+GB0188,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 7/10
+GB0189,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1407445711,org,clinic-census.csv org_npis
+GB0189,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1467932251,org,clinic-census.csv org_npis
+GB0189,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1477937480,org,clinic-census.csv org_npis
+GB0189,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1558756759,org,clinic-census.csv org_npis
+GB0189,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1871668640,org,clinic-census.csv org_npis
+GB0189,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043214763,org,clinic-census.csv tins
+GB0189,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0190,JOHN KADZIELSKI MD PLLC (CMS-listed clinicians at this address),multi,npi,1043190499,org,clinic-census.csv org_npis
+GB0190,JOHN KADZIELSKI MD PLLC (CMS-listed clinicians at this address),multi,npi,1063527299,org,clinic-census.csv org_npis
+GB0190,JOHN KADZIELSKI MD PLLC (CMS-listed clinicians at this address),multi,npi,1710387386,org,clinic-census.csv org_npis
+GB0190,JOHN KADZIELSKI MD PLLC (CMS-listed clinicians at this address),multi,tin,1053448498,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0190,JOHN KADZIELSKI MD PLLC (CMS-listed clinicians at this address),multi,tin,208206420,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0190,JOHN KADZIELSKI MD PLLC (CMS-listed clinicians at this address),multi,tin,334821869,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0190,JOHN KADZIELSKI MD PLLC (CMS-listed clinicians at this address),multi,tin,471376651,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0193,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,npi,1154535813,org,clinic-census.csv org_npis
+GB0193,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,org,clinic-census.csv tins
+GB0193,ATRIUS HEALTH INC (CMS-listed clinicians at this address),multi,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 10/10
+GB0194,CAMBRIDGE PUBLIC HEALTH COMMISSION (CMS-listed clinicians at this address),multi,tin,043320571,clinician,clinic-census.csv clinician_billing_tins_bcbs 6/6
+GB0195,HARBOR MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1124079561,org,clinic-census.csv org_npis
+GB0195,HARBOR MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1578991113,org,clinic-census.csv org_npis
+GB0195,HARBOR MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1891239083,org,clinic-census.csv org_npis
+GB0195,HARBOR MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,npi,1982889853,org,clinic-census.csv org_npis
+GB0195,HARBOR MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,042702579,org,clinic-census.csv tins
+GB0195,HARBOR MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,222560501,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/4
+GB0195,HARBOR MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,010779593,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0195,HARBOR MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,1447212238,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0195,HARBOR MEDICAL ASSOCIATES INC (CMS-listed clinicians at this address),multi,tin,1619956356,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0196,"DANIEL W. BIENKOWSKI M.D., P.C.",multi,npi,1184983959,org,clinic-census.csv org_npis
+GB0196,"DANIEL W. BIENKOWSKI M.D., P.C.",multi,npi,1417924093,org,clinic-census.csv org_npis
+GB0196,"DANIEL W. BIENKOWSKI M.D., P.C.",multi,npi,1427387786,org,clinic-census.csv org_npis
+GB0197,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1144993940,org,clinic-census.csv org_npis
+GB0197,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1184377343,org,clinic-census.csv org_npis
+GB0197,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1548213606,org,clinic-census.csv org_npis
+GB0197,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,npi,1982212700,org,clinic-census.csv org_npis
+GB0197,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,873323847,org,clinic-census.csv tins
+GB0197,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,043278862,org,clinic-census.csv tins
+GB0197,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,043278862,clinician,clinic-census.csv clinician_billing_tins_bcbs 7/13
+GB0197,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,863792771,clinician,clinic-census.csv clinician_billing_tins_bcbs 7/13
+GB0197,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,832778031,clinician,clinic-census.csv clinician_billing_tins_bcbs 6/13
+GB0197,MYSTIC VALLEY DERMATOLOGY ASSOCIATES PC (CMS-listed clinicians at this address),multi,tin,042455168,clinician,clinic-census.csv clinician_billing_tins_bcbs 6/13
+GB0199,DERMATOLOGY PARTNERS INC (CMS-listed clinicians at this address),multi,npi,1326166596,org,clinic-census.csv org_npis
+GB0199,DERMATOLOGY PARTNERS INC (CMS-listed clinicians at this address),multi,npi,1427676394,org,clinic-census.csv org_npis
+GB0199,DERMATOLOGY PARTNERS INC (CMS-listed clinicians at this address),multi,npi,1508930868,org,clinic-census.csv org_npis
+GB0199,DERMATOLOGY PARTNERS INC (CMS-listed clinicians at this address),multi,npi,1699102970,org,clinic-census.csv org_npis
+GB0199,DERMATOLOGY PARTNERS INC (CMS-listed clinicians at this address),multi,tin,043064615,org,clinic-census.csv tins
+GB0199,DERMATOLOGY PARTNERS INC (CMS-listed clinicians at this address),multi,tin,043163854,org,clinic-census.csv tins
+GB0199,DERMATOLOGY PARTNERS INC (CMS-listed clinicians at this address),multi,tin,043163854,clinician,clinic-census.csv clinician_billing_tins_bcbs 6/13
+GB0200,"ORTHO SPORT & SPINE PHYSICIANS OF MASSACHUSETTS, PLLC",multi,npi,1548746092,org,clinic-census.csv org_npis
+GB0200,"ORTHO SPORT & SPINE PHYSICIANS OF MASSACHUSETTS, PLLC",multi,npi,1659192797,org,clinic-census.csv org_npis
+GB0201,ARTHUR J. BOWMAN JR MD PC,multi,npi,1033778824,org,clinic-census.csv org_npis
+GB0201,ARTHUR J. BOWMAN JR MD PC,multi,npi,1972796050,org,clinic-census.csv org_npis
+GB0202,SOUTH COAST DERMATOLOGY LLC (CMS-listed clinicians at this address),multi,tin,611404248,clinician,clinic-census.csv clinician_billing_tins_bcbs 7/12
+GB0202,SOUTH COAST DERMATOLOGY LLC (CMS-listed clinicians at this address),multi,tin,043166166,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/12
+GB0202,SOUTH COAST DERMATOLOGY LLC (CMS-listed clinicians at this address),multi,tin,042297845,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/12
+GB0203,"SOUTH SHORE MEDICAL CENTER, INC",multi,npi,1033778824,org,clinic-census.csv org_npis
+GB0203,"SOUTH SHORE MEDICAL CENTER, INC",multi,npi,1801096680,org,clinic-census.csv org_npis
+GB0204,ROBERT J OBRIEN JR MD AND ASSOC PC (CMS-listed clinicians at this address),multi,npi,1255467098,org,clinic-census.csv org_npis
+GB0204,ROBERT J OBRIEN JR MD AND ASSOC PC (CMS-listed clinicians at this address),multi,npi,1588646715,org,clinic-census.csv org_npis
+GB0204,ROBERT J OBRIEN JR MD AND ASSOC PC (CMS-listed clinicians at this address),multi,npi,1699807578,org,clinic-census.csv org_npis
+GB0204,ROBERT J OBRIEN JR MD AND ASSOC PC (CMS-listed clinicians at this address),multi,npi,1912941733,org,clinic-census.csv org_npis
+GB0204,ROBERT J OBRIEN JR MD AND ASSOC PC (CMS-listed clinicians at this address),multi,npi,1982871893,org,clinic-census.csv org_npis
+GB0204,ROBERT J OBRIEN JR MD AND ASSOC PC (CMS-listed clinicians at this address),multi,tin,043364590,org,clinic-census.csv tins
+GB0204,ROBERT J OBRIEN JR MD AND ASSOC PC (CMS-listed clinicians at this address),multi,tin,571146349,org,clinic-census.csv tins
+GB0204,ROBERT J OBRIEN JR MD AND ASSOC PC (CMS-listed clinicians at this address),multi,tin,814207696,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/6
+GB0204,ROBERT J OBRIEN JR MD AND ASSOC PC (CMS-listed clinicians at this address),multi,tin,571146349,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/6
+GB0205,"(clinicians, no group name)",ortho,tin,205129051,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0208,BOSTON UNIVERSITY ORTHOPAEDIC SURGICAL ASSOCIATES INC (CMS-listed clinicians at this address),ortho,tin,043354360,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/3
+GB0208,BOSTON UNIVERSITY ORTHOPAEDIC SURGICAL ASSOCIATES INC (CMS-listed clinicians at this address),ortho,tin,043354353,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0208,BOSTON UNIVERSITY ORTHOPAEDIC SURGICAL ASSOCIATES INC (CMS-listed clinicians at this address),ortho,tin,237425849,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0209,BRIAN J. AWBREY,ortho,npi,1386869212,org,clinic-census.csv org_npis
+GB0210,Brigham and Women's Spine Center,ortho,tin,043466314,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0211,CHILDREN'S SPORTS MEDICINE FOUNDATION,ortho,npi,1376708172,org,clinic-census.csv org_npis
+GB0211,CHILDREN'S SPORTS MEDICINE FOUNDATION,ortho,npi,1861680720,org,clinic-census.csv org_npis
+GB0211,CHILDREN'S SPORTS MEDICINE FOUNDATION,ortho,tin,042970129,org,clinic-census.csv tins
+GB0212,"DAVID W. LHOWE, M.D., P.C.",ortho,npi,1992862247,org,clinic-census.csv org_npis
+GB0213,"FRANCISCAN PEDIATRICS, INC.",ortho,npi,1154460020,org,clinic-census.csv org_npis
+GB0213,"FRANCISCAN PEDIATRICS, INC.",ortho,tin,043160358,org,clinic-census.csv tins
+GB0214,"FREDERICK L. MANSFIELD, M.D., P.C.",ortho,npi,1366641888,org,clinic-census.csv org_npis
+GB0215,JOHN M SILISKI MD PC (CMS-listed clinicians at this address),ortho,npi,1013074384,org,clinic-census.csv org_npis
+GB0215,JOHN M SILISKI MD PC (CMS-listed clinicians at this address),ortho,npi,1164589420,org,clinic-census.csv org_npis
+GB0215,JOHN M SILISKI MD PC (CMS-listed clinicians at this address),ortho,npi,1518955160,org,clinic-census.csv org_npis
+GB0215,JOHN M SILISKI MD PC (CMS-listed clinicians at this address),ortho,tin,030494865,org,clinic-census.csv tins
+GB0215,JOHN M SILISKI MD PC (CMS-listed clinicians at this address),ortho,tin,043467320,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0215,JOHN M SILISKI MD PC (CMS-listed clinicians at this address),ortho,tin,030494865,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0215,JOHN M SILISKI MD PC (CMS-listed clinicians at this address),ortho,tin,1649270810,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0215,JOHN M SILISKI MD PC (CMS-listed clinicians at this address),ortho,tin,043400441,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0216,Mass General Brigham Orthopedics and Sports Medicine at Charles River Plaza,ortho,npi,1023049236,org,clinic-census.csv org_npis
+GB0216,Mass General Brigham Orthopedics and Sports Medicine at Charles River Plaza,ortho,npi,1215925888,org,clinic-census.csv org_npis
+GB0216,Mass General Brigham Orthopedics and Sports Medicine at Charles River Plaza,ortho,tin,042697983,org,clinic-census.csv tins
+GB0216,Mass General Brigham Orthopedics and Sports Medicine at Charles River Plaza,ortho,tin,050542303,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0218,ORTHOPAEDIC CLINICAL ASSOC INC (CMS-listed clinicians at this address),ortho,tin,043235796,clinician,clinic-census.csv clinician_billing_tins_bcbs 6/14
+GB0219,ORTHOPEDIC AND SPINE SPECIALISTS OF MA PLLC,ortho,npi,1326898503,org,clinic-census.csv org_npis
+GB0220,"PROTERA HEALTH MEDICAL OF MASSACHUSETTS, PC",ortho,npi,1821951658,org,clinic-census.csv org_npis
+GB0221,SHRINERS HOSPITALS FOR CHILDREN,ortho,npi,1275271462,org,clinic-census.csv org_npis
+GB0221,SHRINERS HOSPITALS FOR CHILDREN,ortho,tin,362193608,org,clinic-census.csv tins
+GB0222,"NORTHEAST ORTHOPEDIC ASSOCIATES, PC (CMS-listed clinicians at this address)",ortho,tin,043428151,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0223,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1396083937,org,clinic-census.csv org_npis
+GB0223,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1518971811,org,clinic-census.csv org_npis
+GB0223,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1659829323,org,clinic-census.csv org_npis
+GB0223,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1811580392,org,clinic-census.csv org_npis
+GB0223,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,tin,820671467,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/7
+GB0226,"(clinicians, no group name)",ortho,npi,1912123084,org,clinic-census.csv org_npis
+GB0226,"(clinicians, no group name)",ortho,tin,1952490526,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0228,MASSACHUSETTS GENERAL PHYSICIANS ORGANIZATION INC (CMS-listed clinicians at this address),ortho,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 9/9
+GB0229,PRESIDENT AND FELLOWS OF HARVARD COLLEGE (CMS-listed clinicians at this address),ortho,tin,820671467,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0229,PRESIDENT AND FELLOWS OF HARVARD COLLEGE (CMS-listed clinicians at this address),ortho,tin,1154578268,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0230,MASSACHUSETTS GENERAL PHYSICIANS ORGANIZATION INC (CMS-listed clinicians at this address),ortho,tin,043466314,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0230,MASSACHUSETTS GENERAL PHYSICIANS ORGANIZATION INC (CMS-listed clinicians at this address),ortho,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0231,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),ortho,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0231,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),ortho,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0231,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),ortho,tin,1679894950,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0232,OCCUPATIONAL ORTHOPEDIC SURGERY LLC,ortho,npi,1578002366,org,clinic-census.csv org_npis
+GB0232,OCCUPATIONAL ORTHOPEDIC SURGERY LLC,ortho,npi,1639333214,org,clinic-census.csv org_npis
+GB0233,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1013121581,org,clinic-census.csv org_npis
+GB0233,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1013370329,org,clinic-census.csv org_npis
+GB0233,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1063487577,org,clinic-census.csv org_npis
+GB0233,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1437980638,org,clinic-census.csv org_npis
+GB0233,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1609892892,org,clinic-census.csv org_npis
+GB0233,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1972537819,org,clinic-census.csv org_npis
+GB0233,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,tin,043532873,org,clinic-census.csv tins
+GB0233,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,tin,820671467,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/3
+GB0233,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,tin,043397450,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0234,BOSTON ORTHOPEDIC SPINE CARE INC,ortho,npi,1679132070,org,clinic-census.csv org_npis
+GB0234,BOSTON ORTHOPEDIC SPINE CARE INC,ortho,npi,1700817228,org,clinic-census.csv org_npis
+GB0234,BOSTON ORTHOPEDIC SPINE CARE INC,ortho,tin,841994199,org,clinic-census.csv tins
+GB0235,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),ortho,npi,1619163052,org,clinic-census.csv org_npis
+GB0235,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),ortho,npi,1790113389,org,clinic-census.csv org_npis
+GB0235,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),ortho,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/5
+GB0235,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),ortho,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/5
+GB0236,KAPASI ASSOCIATES P.C.,ortho,npi,1306908561,org,clinic-census.csv org_npis
+GB0237,"NORTHEAST ORTHOPEDIC ASSOCIATES, PC (CMS-listed clinicians at this address)",ortho,npi,1679959977,org,clinic-census.csv org_npis
+GB0237,"NORTHEAST ORTHOPEDIC ASSOCIATES, PC (CMS-listed clinicians at this address)",ortho,npi,1902850357,org,clinic-census.csv org_npis
+GB0237,"NORTHEAST ORTHOPEDIC ASSOCIATES, PC (CMS-listed clinicians at this address)",ortho,tin,043428151,org,clinic-census.csv tins
+GB0237,"NORTHEAST ORTHOPEDIC ASSOCIATES, PC (CMS-listed clinicians at this address)",ortho,tin,043428151,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0238,"CODMAN SQUARE HEALTH CENTER, INC (CMS-listed clinicians at this address)",ortho,tin,043354353,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0238,"CODMAN SQUARE HEALTH CENTER, INC (CMS-listed clinicians at this address)",ortho,tin,222566792,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0238,"CODMAN SQUARE HEALTH CENTER, INC (CMS-listed clinicians at this address)",ortho,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0238,"CODMAN SQUARE HEALTH CENTER, INC (CMS-listed clinicians at this address)",ortho,tin,320058309,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0239,INTERNAL MEDICAL ASSOCIATES-EBNHC (CMS-listed clinicians at this address),ortho,tin,237425849,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0239,INTERNAL MEDICAL ASSOCIATES-EBNHC (CMS-listed clinicians at this address),ortho,tin,510172171,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0239,INTERNAL MEDICAL ASSOCIATES-EBNHC (CMS-listed clinicians at this address),ortho,tin,1740266477,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0239,INTERNAL MEDICAL ASSOCIATES-EBNHC (CMS-listed clinicians at this address),ortho,tin,043354353,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0240,JOSEPH M DE MICHELE MD FACS INC,ortho,npi,1659384303,org,clinic-census.csv org_npis
+GB0241,ROBERT R PENNELL MD PC,ortho,npi,1306031612,org,clinic-census.csv org_npis
+GB0242,"NORTH SUBURBAN ORTHOPEDIC ASSOCIATES, INC.",ortho,npi,1154494219,org,clinic-census.csv org_npis
+GB0243,"(clinicians, no group name)",ortho,npi,1104308881,org,clinic-census.csv org_npis
+GB0243,"(clinicians, no group name)",ortho,tin,831110515,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0244,"BOSTON SPINE GROUP, LLC.",ortho,npi,1225083579,org,clinic-census.csv org_npis
+GB0244,"BOSTON SPINE GROUP, LLC.",ortho,npi,1558316166,org,clinic-census.csv org_npis
+GB0244,"BOSTON SPINE GROUP, LLC.",ortho,tin,043454332,org,clinic-census.csv tins
+GB0245,Mass General Brigham Orthopedics Clinic in Newton,ortho,npi,1720653843,org,clinic-census.csv org_npis
+GB0245,Mass General Brigham Orthopedics Clinic in Newton,ortho,tin,352186955,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/4
+GB0245,Mass General Brigham Orthopedics Clinic in Newton,ortho,tin,1285680330,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0246,ORTHONINJA LLC,ortho,npi,1831041433,org,clinic-census.csv org_npis
+GB0247,ARTHROSCOPY & SPORTS MEDICINE ASSOCIATES LLC,ortho,npi,1366810103,org,clinic-census.csv org_npis
+GB0247,ARTHROSCOPY & SPORTS MEDICINE ASSOCIATES LLC,ortho,npi,1508041427,org,clinic-census.csv org_npis
+GB0247,ARTHROSCOPY & SPORTS MEDICINE ASSOCIATES LLC,ortho,npi,1538630827,org,clinic-census.csv org_npis
+GB0247,ARTHROSCOPY & SPORTS MEDICINE ASSOCIATES LLC,ortho,npi,1790730513,org,clinic-census.csv org_npis
+GB0248,GREATER BOSTON ORTHOPEDIC ASSOCIATES LLC,ortho,npi,1114273612,org,clinic-census.csv org_npis
+GB0248,GREATER BOSTON ORTHOPEDIC ASSOCIATES LLC,ortho,npi,1144426503,org,clinic-census.csv org_npis
+GB0249,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),ortho,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/3
+GB0249,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),ortho,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/3
+GB0249,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),ortho,tin,1124331061,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0249,HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC (CMS-listed clinicians at this address),ortho,tin,043354353,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0251,ORTHOPEDIC CARE PHYSICIAN NETWORK,ortho,npi,1235553942,org,clinic-census.csv org_npis
+GB0252,BOSTON MEDICAL CENTER CORPORATION (CMS-listed clinicians at this address),ortho,tin,042682152,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0252,BOSTON MEDICAL CENTER CORPORATION (CMS-listed clinicians at this address),ortho,tin,043314093,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0253,PARKWAY ORTHOPEDICS & SPORTS MEDICINE,ortho,npi,1457341331,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1083914980,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1184100802,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1326675315,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1417207762,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1558359190,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1568803542,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1609854991,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1679561245,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1700872413,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1780781153,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1801078068,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1891986105,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1902070568,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1902893431,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1932197571,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1962671123,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,npi,1972996098,org,clinic-census.csv org_npis
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,tin,462957380,org,clinic-census.csv tins
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,tin,320465146,org,clinic-census.csv tins
+GB0254,"NEW ENGLAND BAPTIST MEDICAL ASSOCIATES, INC. (CMS-listed clinicians at this address)",ortho,tin,043235796,clinician,clinic-census.csv clinician_billing_tins_bcbs 14/20
+GB0255,CAMBRIDGE PUBLIC HEALTH COMMISSION (CMS-listed clinicians at this address),ortho,tin,043320571,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0256,SOUTH SHORE ORTHOPAEDIC SPECIALISTS PC,ortho,npi,1124191820,org,clinic-census.csv org_npis
+GB0256,SOUTH SHORE ORTHOPAEDIC SPECIALISTS PC,ortho,npi,1659526325,org,clinic-census.csv org_npis
+GB0256,SOUTH SHORE ORTHOPAEDIC SPECIALISTS PC,ortho,npi,1952595324,org,clinic-census.csv org_npis
+GB0257,BOSTON ORTHOPAEDIC AND SPINE LLC,ortho,npi,1417724170,org,clinic-census.csv org_npis
+GB0257,BOSTON ORTHOPAEDIC AND SPINE LLC,ortho,npi,1619507043,org,clinic-census.csv org_npis
+GB0258,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1437184165,org,clinic-census.csv org_npis
+GB0258,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,npi,1619163052,org,clinic-census.csv org_npis
+GB0258,BOSTON ORTHOPAEDIC AND SPINE LLC (CMS-listed clinicians at this address),ortho,tin,820671467,clinician,clinic-census.csv clinician_billing_tins_bcbs 5/5
+GB0259,THE GENERAL HOSPITAL CORPORATION (CMS-listed clinicians at this address),ortho,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/3
+GB0259,THE GENERAL HOSPITAL CORPORATION (CMS-listed clinicians at this address),ortho,tin,1255389821,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0259,THE GENERAL HOSPITAL CORPORATION (CMS-listed clinicians at this address),ortho,tin,222658209,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0261,BOSTON SPORTS & SPINE LLC,ortho,npi,1407618648,org,clinic-census.csv org_npis
+GB0262,Mass General Brigham Orthopedics Walk-In Clinic in Wellesley,ortho,tin,1821610296,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0262,Mass General Brigham Orthopedics Walk-In Clinic in Wellesley,ortho,tin,222560501,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/2
+GB0263,NEWTON WELLESLEY ORTHOPEDIC ASSOCIATES INC (CMS-listed clinicians at this address),ortho,tin,042461479,clinician,clinic-census.csv clinician_billing_tins_bcbs 2/2
+GB0264,"ROBERT J. BANCO, MD, PC",ortho,npi,1962889295,org,clinic-census.csv org_npis
+GB0265,REGENERATIVE INSTITUTE OF WELLESLEY PC,ortho,npi,1003572827,org,clinic-census.csv org_npis
+GB0268,JOSEPH E CHASE MD ORTHOPEDICS LLC,ortho,npi,1700176476,org,clinic-census.csv org_npis
+GB0269,PLYMOUTH BAY ORTHOPEDIC ASSOCIATES NON BIDCO LLC,ortho,npi,1609733831,org,clinic-census.csv org_npis
+GB0269,PLYMOUTH BAY ORTHOPEDIC ASSOCIATES NON BIDCO LLC,ortho,npi,1700072196,org,clinic-census.csv org_npis
+GB0270,"(clinicians, no group name)",ortho,tin,043141294,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0271,EXCEL ORTHOPAEDIC SPECIALISTS (CMS-listed clinicians at this address),ortho,npi,1932553559,org,clinic-census.csv org_npis
+GB0271,EXCEL ORTHOPAEDIC SPECIALISTS (CMS-listed clinicians at this address),ortho,tin,831301823,clinician,clinic-census.csv clinician_billing_tins_bcbs 9/9
+GB0271,EXCEL ORTHOPAEDIC SPECIALISTS (CMS-listed clinicians at this address),ortho,tin,042746756,clinician,clinic-census.csv clinician_billing_tins_bcbs 9/9
+GB0272,NORTHEAST ORTHOPAEDIC ALLIANCE PLLC (CMS-listed clinicians at this address),ortho,tin,933168076,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0274,AFC Urgent Care Arlington,urgent_care,npi,1407207269,org,clinic-census.csv org_npis
+GB0274,AFC Urgent Care Arlington,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0274,AFC Urgent Care Arlington,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0274,AFC Urgent Care Arlington,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0275,AFC Urgent Care Back Bay,urgent_care,npi,1124713383,org,clinic-census.csv org_npis
+GB0275,AFC Urgent Care Back Bay,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0275,AFC Urgent Care Back Bay,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0275,AFC Urgent Care Back Bay,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0275,AFC Urgent Care Back Bay,urgent_care,tin,460782127,org,clinic-census.csv tins
+GB0278,"BOSTON ORTHOPAEDIC URGENT CARE, LLC",urgent_care,npi,1841676905,org,clinic-census.csv org_npis
+GB0279,CARBON HEALTH MEDICAL GROUP OF FLORIDA PA,urgent_care,npi,1134050461,org,clinic-census.csv org_npis
+GB0279,CARBON HEALTH MEDICAL GROUP OF FLORIDA PA,urgent_care,npi,1891473898,org,clinic-census.csv org_npis
+GB0279,CARBON HEALTH MEDICAL GROUP OF FLORIDA PA,urgent_care,tin,851144017,org,clinic-census.csv tins
+GB0279,CARBON HEALTH MEDICAL GROUP OF FLORIDA PA,urgent_care,tin,872011088,org,clinic-census.csv tins
+GB0279,CARBON HEALTH MEDICAL GROUP OF FLORIDA PA,urgent_care,tin,1740538867,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/3
+GB0280,CARBON HEALTH MEDICAL GROUP OF FLORIDA PA,urgent_care,npi,1851078828,org,clinic-census.csv org_npis
+GB0280,CARBON HEALTH MEDICAL GROUP OF FLORIDA PA,urgent_care,tin,851144017,org,clinic-census.csv tins
+GB0280,CARBON HEALTH MEDICAL GROUP OF FLORIDA PA,urgent_care,tin,1588280440,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0281,Carbon Health Boston Ma Back Bay Boylston,urgent_care,npi,1740964824,org,clinic-census.csv org_npis
+GB0281,Carbon Health Boston Ma Back Bay Boylston,urgent_care,tin,851144017,org,clinic-census.csv tins
+GB0281,Carbon Health Boston Ma Back Bay Boylston,urgent_care,tin,872011088,org,clinic-census.csv tins
+GB0281,Carbon Health Boston Ma Back Bay Boylston,urgent_care,tin,934800903,clinician,clinic-census.csv clinician_billing_tins_bcbs 14/15
+GB0282,Carbon Health Boston Ma Downtown Boston,urgent_care,npi,1528836897,org,clinic-census.csv org_npis
+GB0282,Carbon Health Boston Ma Downtown Boston,urgent_care,npi,1881261303,org,clinic-census.csv org_npis
+GB0282,Carbon Health Boston Ma Downtown Boston,urgent_care,npi,1912662719,org,clinic-census.csv org_npis
+GB0282,Carbon Health Boston Ma Downtown Boston,urgent_care,npi,1962185645,org,clinic-census.csv org_npis
+GB0282,Carbon Health Boston Ma Downtown Boston,urgent_care,tin,851144017,org,clinic-census.csv tins
+GB0282,Carbon Health Boston Ma Downtown Boston,urgent_care,tin,872011088,org,clinic-census.csv tins
+GB0282,Carbon Health Boston Ma Downtown Boston,urgent_care,tin,934800903,clinician,clinic-census.csv clinician_billing_tins_bcbs 25/29
+GB0283,Carbon Health Boston Ma Fenway Boylston,urgent_care,npi,1831847805,org,clinic-census.csv org_npis
+GB0283,Carbon Health Boston Ma Fenway Boylston,urgent_care,npi,1912662719,org,clinic-census.csv org_npis
+GB0283,Carbon Health Boston Ma Fenway Boylston,urgent_care,tin,851144017,org,clinic-census.csv tins
+GB0283,Carbon Health Boston Ma Fenway Boylston,urgent_care,tin,934800903,clinician,clinic-census.csv clinician_billing_tins_bcbs 14/16
+GB0284,"Carbon Health Medical Group of Florida PA, Boston",urgent_care,npi,1881261303,org,clinic-census.csv org_npis
+GB0284,"Carbon Health Medical Group of Florida PA, Boston",urgent_care,tin,851144017,org,clinic-census.csv tins
+GB0285,DRUG AND WELLNESS SCREENINGS LLC,urgent_care,npi,1992372072,org,clinic-census.csv org_npis
+GB0286,Mass General Brigham Express Care (Boston Common),urgent_care,npi,1699212340,org,clinic-census.csv org_npis
+GB0286,Mass General Brigham Express Care (Boston Common),urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0287,PREMISE HEALTH OF MASSACHUSETTS MEDICAL PC,urgent_care,npi,1215231071,org,clinic-census.csv org_npis
+GB0288,SOUTH END COMMUNITY HEALTH CENTER,urgent_care,npi,1962792200,org,clinic-census.csv org_npis
+GB0289,URGENT CARE AT CHISHOLM-DEMERTINE CLINIC,urgent_care,npi,1780945121,org,clinic-census.csv org_npis
+GB0290,AFC Urgent Care Braintree,urgent_care,npi,1033482864,org,clinic-census.csv org_npis
+GB0290,AFC Urgent Care Braintree,urgent_care,npi,1184206229,org,clinic-census.csv org_npis
+GB0290,AFC Urgent Care Braintree,urgent_care,npi,1639448251,org,clinic-census.csv org_npis
+GB0290,AFC Urgent Care Braintree,urgent_care,npi,1639751779,org,clinic-census.csv org_npis
+GB0290,AFC Urgent Care Braintree,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0290,AFC Urgent Care Braintree,urgent_care,tin,813416211,org,clinic-census.csv tins
+GB0290,AFC Urgent Care Braintree,urgent_care,tin,273676242,clinician,clinic-census.csv clinician_billing_tins_bcbs 4/12
+GB0290,AFC Urgent Care Braintree,urgent_care,tin,331237732,clinician,clinic-census.csv clinician_billing_tins_bcbs 3/12
+GB0292,MINUTECLINIC,urgent_care,npi,1457470858,org,clinic-census.csv org_npis
+GB0294,PM PEDIATRICS AT BRAINTREE,urgent_care,npi,1366108946,org,clinic-census.csv org_npis
+GB0294,PM PEDIATRICS AT BRAINTREE,urgent_care,tin,821363644,org,clinic-census.csv tins
+GB0295,"SOUTH SHORE HEALTH CARE, INC.",urgent_care,npi,1669770368,org,clinic-census.csv org_npis
+GB0296,South Shore Health Urgent Care Braintree (formerly Health Express),urgent_care,npi,1487203246,org,clinic-census.csv org_npis
+GB0296,South Shore Health Urgent Care Braintree (formerly Health Express),urgent_care,tin,452385865,org,clinic-census.csv tins
+GB0297,Carbon Health Brighton Ma Washington St,urgent_care,npi,1568146645,org,clinic-census.csv org_npis
+GB0297,Carbon Health Brighton Ma Washington St,urgent_care,tin,851144017,org,clinic-census.csv tins
+GB0297,Carbon Health Brighton Ma Washington St,urgent_care,tin,872011088,org,clinic-census.csv tins
+GB0297,Carbon Health Brighton Ma Washington St,urgent_care,tin,934800903,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/1
+GB0298,"CONVENIENT PEDIATRIC CARE GROUP, LLC",urgent_care,npi,1629477989,org,clinic-census.csv org_npis
+GB0299,"HOLTZMAN URGENT CARE, LLC",urgent_care,npi,1295602662,org,clinic-census.csv org_npis
+GB0300,Mass General Brigham Express Care (Brookline),urgent_care,npi,1720486830,org,clinic-census.csv org_npis
+GB0300,Mass General Brigham Express Care (Brookline),urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0301,AFC Urgent Care Burlington,urgent_care,npi,1518445709,org,clinic-census.csv org_npis
+GB0301,AFC Urgent Care Burlington,urgent_care,npi,1598195968,org,clinic-census.csv org_npis
+GB0301,AFC Urgent Care Burlington,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0301,AFC Urgent Care Burlington,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0301,AFC Urgent Care Burlington,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0301,AFC Urgent Care Burlington,urgent_care,tin,460782127,org,clinic-census.csv tins
+GB0301,AFC Urgent Care Burlington,urgent_care,tin,1821254046,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0303,ConvenientMD Urgent Care Burlington,urgent_care,npi,1265123632,org,clinic-census.csv org_npis
+GB0303,ConvenientMD Urgent Care Burlington,urgent_care,npi,1811596216,org,clinic-census.csv org_npis
+GB0303,ConvenientMD Urgent Care Burlington,urgent_care,npi,1871164681,org,clinic-census.csv org_npis
+GB0303,ConvenientMD Urgent Care Burlington,urgent_care,tin,931375169,org,clinic-census.csv tins
+GB0304,MASS GENERAL BRIGHAM URGENT CARE LLC,urgent_care,npi,1336658350,org,clinic-census.csv org_npis
+GB0304,MASS GENERAL BRIGHAM URGENT CARE LLC,urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0305,"TMIN SERVICES, INC.",urgent_care,npi,1225734262,org,clinic-census.csv org_npis
+GB0306,AFC Urgent Care Cambridge,urgent_care,npi,1245123587,org,clinic-census.csv org_npis
+GB0306,AFC Urgent Care Cambridge,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0306,AFC Urgent Care Cambridge,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0306,AFC Urgent Care Cambridge,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0306,AFC Urgent Care Cambridge,urgent_care,tin,460782127,org,clinic-census.csv tins
+GB0307,AFC Urgent Care Cambridge Inman Square,urgent_care,npi,1306753843,org,clinic-census.csv org_npis
+GB0308,CVS MinuteClinic - Cambridge (Alewife Brook Parkway),urgent_care,npi,1457470858,org,clinic-census.csv org_npis
+GB0312,MASS GENERAL BRIGHAM URGENT CARE LLC,urgent_care,npi,1609387695,org,clinic-census.csv org_npis
+GB0312,MASS GENERAL BRIGHAM URGENT CARE LLC,urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0313,MIT Medical Urgent Care,urgent_care,npi,1457607756,org,clinic-census.csv org_npis
+GB0313,MIT Medical Urgent Care,urgent_care,tin,042103594,org,clinic-census.csv tins
+GB0314,Mass General Brigham Urgent Care - Cambridge Central Square,urgent_care,npi,1881141398,org,clinic-census.csv org_npis
+GB0314,Mass General Brigham Urgent Care - Cambridge Central Square,urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0316,PRESIDENT AND FELLOWS OF HARVARD COLLEGE,urgent_care,npi,1073947396,org,clinic-census.csv org_npis
+GB0316,PRESIDENT AND FELLOWS OF HARVARD COLLEGE,urgent_care,tin,042103580,org,clinic-census.csv tins
+GB0317,"EquitableCare4u Urgent Care Center PLLC, Canton",urgent_care,npi,1538914494,org,clinic-census.csv org_npis
+GB0317,"EquitableCare4u Urgent Care Center PLLC, Canton",urgent_care,tin,991459340,org,clinic-census.csv tins
+GB0318,Mass General Brigham Urgent Care - Canton,urgent_care,npi,1174495048,org,clinic-census.csv org_npis
+GB0318,Mass General Brigham Urgent Care - Canton,urgent_care,npi,1346787090,org,clinic-census.csv org_npis
+GB0318,Mass General Brigham Urgent Care - Canton,urgent_care,npi,1730801986,org,clinic-census.csv org_npis
+GB0318,Mass General Brigham Urgent Care - Canton,urgent_care,tin,824318101,org,clinic-census.csv tins
+GB0318,Mass General Brigham Urgent Care - Canton,urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0319,PREMISE HEALTH OF MASSACHUSETTS MEDICAL PC,urgent_care,npi,1356628184,org,clinic-census.csv org_npis
+GB0320,"CVS CLINIC, PLLC FOR THE MAINTENANCE OF MINUTECLINIC",urgent_care,npi,1306623426,org,clinic-census.csv org_npis
+GB0320,"CVS CLINIC, PLLC FOR THE MAINTENANCE OF MINUTECLINIC",urgent_care,tin,933207654,org,clinic-census.csv tins
+GB0321,"AFTERCARE SERVICES, INC",urgent_care,npi,1912271875,org,clinic-census.csv org_npis
+GB0322,Beth Israel Deaconess Urgent Care at Chelsea,urgent_care,npi,1235662933,org,clinic-census.csv org_npis
+GB0322,Beth Israel Deaconess Urgent Care at Chelsea,urgent_care,tin,042103881,org,clinic-census.csv tins
+GB0323,Chelsea Community Health Center Urgent Care,urgent_care,npi,1982731006,org,clinic-census.csv org_npis
+GB0324,MOLINAS MEDICAL SERVICES LLC,urgent_care,npi,1386341600,org,clinic-census.csv org_npis
+GB0325,AFC Urgent Care Chestnuthill,urgent_care,npi,1548078363,org,clinic-census.csv org_npis
+GB0325,AFC Urgent Care Chestnuthill,urgent_care,npi,1851755359,org,clinic-census.csv org_npis
+GB0325,AFC Urgent Care Chestnuthill,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0325,AFC Urgent Care Chestnuthill,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0325,AFC Urgent Care Chestnuthill,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0325,AFC Urgent Care Chestnuthill,urgent_care,tin,460782127,org,clinic-census.csv tins
+GB0326,Beth Israel Lahey Health Urgent Care - Chestnut Hill,urgent_care,npi,1568880110,org,clinic-census.csv org_npis
+GB0326,Beth Israel Lahey Health Urgent Care - Chestnut Hill,urgent_care,tin,042103881,org,clinic-census.csv tins
+GB0327,AFC Urgent Care Dedham,urgent_care,npi,1033946025,org,clinic-census.csv org_npis
+GB0327,AFC Urgent Care Dedham,urgent_care,npi,1407106982,org,clinic-census.csv org_npis
+GB0327,AFC Urgent Care Dedham,urgent_care,npi,1528622362,org,clinic-census.csv org_npis
+GB0327,AFC Urgent Care Dedham,urgent_care,npi,1902123276,org,clinic-census.csv org_npis
+GB0327,AFC Urgent Care Dedham,urgent_care,tin,272343207,org,clinic-census.csv tins
+GB0327,AFC Urgent Care Dedham,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0327,AFC Urgent Care Dedham,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0327,AFC Urgent Care Dedham,urgent_care,tin,460967027,org,clinic-census.csv tins
+GB0327,AFC Urgent Care Dedham,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0328,Beth Israel Lahey Health Urgent Care - Dedham,urgent_care,npi,1538774443,org,clinic-census.csv org_npis
+GB0328,Beth Israel Lahey Health Urgent Care - Dedham,urgent_care,npi,1972116754,org,clinic-census.csv org_npis
+GB0328,Beth Israel Lahey Health Urgent Care - Dedham,urgent_care,tin,222768204,org,clinic-census.csv tins
+GB0329,CVS MinuteClinic - Dedham,urgent_care,npi,1457470858,org,clinic-census.csv org_npis
+GB0331,ConvenientMD Urgent Care Dedham,urgent_care,npi,1649879651,org,clinic-census.csv org_npis
+GB0331,ConvenientMD Urgent Care Dedham,urgent_care,npi,1760174809,org,clinic-census.csv org_npis
+GB0331,ConvenientMD Urgent Care Dedham,urgent_care,tin,931375169,org,clinic-census.csv tins
+GB0333,Codman Square Health Center,urgent_care,npi,1922599117,org,clinic-census.csv org_npis
+GB0333,Codman Square Health Center,urgent_care,tin,042678774,org,clinic-census.csv tins
+GB0334,DORCHESTER HOUSE MULTI SERVICE CENTER,urgent_care,npi,1114402807,org,clinic-census.csv org_npis
+GB0335,"HARBOR HEALTH SERVICES, INC.",urgent_care,npi,1811245392,org,clinic-census.csv org_npis
+GB0336,"UPHAM'S CORNER HEALTH COMMITTEE, INC.",urgent_care,npi,1780780486,org,clinic-census.csv org_npis
+GB0338,AMERICAN CURRENT CARE OF MASSACHUSETTS PC,urgent_care,npi,1811167596,org,clinic-census.csv org_npis
+GB0340,Carewell Urgent Care Centers Of MA - Lexington,urgent_care,npi,1083955892,org,clinic-census.csv org_npis
+GB0340,Carewell Urgent Care Centers Of MA - Lexington,urgent_care,tin,455391610,org,clinic-census.csv tins
+GB0342,Lynn Urgent Care,urgent_care,npi,1992342075,org,clinic-census.csv org_npis
+GB0342,Lynn Urgent Care,urgent_care,tin,843066202,org,clinic-census.csv tins
+GB0343,Mass General Brigham Express Care (Lynn),urgent_care,npi,1326669151,org,clinic-census.csv org_npis
+GB0343,Mass General Brigham Express Care (Lynn),urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0344,AFC Urgent Care Malden,urgent_care,npi,1114754108,org,clinic-census.csv org_npis
+GB0344,AFC Urgent Care Malden,urgent_care,npi,1215379789,org,clinic-census.csv org_npis
+GB0344,AFC Urgent Care Malden,urgent_care,npi,1902123276,org,clinic-census.csv org_npis
+GB0344,AFC Urgent Care Malden,urgent_care,tin,272343207,org,clinic-census.csv tins
+GB0344,AFC Urgent Care Malden,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0344,AFC Urgent Care Malden,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0344,AFC Urgent Care Malden,urgent_care,tin,463251869,org,clinic-census.csv tins
+GB0344,AFC Urgent Care Malden,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0345,AFC Urgent Care Medford,urgent_care,npi,1053855247,org,clinic-census.csv org_npis
+GB0345,AFC Urgent Care Medford,urgent_care,npi,1609684430,org,clinic-census.csv org_npis
+GB0345,AFC Urgent Care Medford,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0345,AFC Urgent Care Medford,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0345,AFC Urgent Care Medford,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0345,AFC Urgent Care Medford,urgent_care,tin,450666163,org,clinic-census.csv tins
+GB0345,AFC Urgent Care Medford,urgent_care,tin,460782127,org,clinic-census.csv tins
+GB0346,MASS GENERAL BRIGHAM URGENT CARE LLC,urgent_care,npi,1033628045,org,clinic-census.csv org_npis
+GB0346,MASS GENERAL BRIGHAM URGENT CARE LLC,urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0347,MINUTECLINIC,urgent_care,npi,1457470858,org,clinic-census.csv org_npis
+GB0348,Melrose Wakefield Urgent Care,urgent_care,npi,1205473592,org,clinic-census.csv org_npis
+GB0348,Melrose Wakefield Urgent Care,urgent_care,tin,043470892,clinician,clinic-census.csv clinician_billing_tins_bcbs 8/29
+GB0348,Melrose Wakefield Urgent Care,urgent_care,tin,455428936,clinician,clinic-census.csv clinician_billing_tins_bcbs 8/29
+GB0350,VITALCARE HEALTH SERVICES PC,urgent_care,npi,1235954389,org,clinic-census.csv org_npis
+GB0351,AFC Urgent Care Needham,urgent_care,npi,1316854862,org,clinic-census.csv org_npis
+GB0351,AFC Urgent Care Needham,urgent_care,npi,1518302223,org,clinic-census.csv org_npis
+GB0351,AFC Urgent Care Needham,urgent_care,tin,455391610,org,clinic-census.csv tins
+GB0352,GOLDEN TOUCH ENTERPRISES,urgent_care,npi,1992682827,org,clinic-census.csv org_npis
+GB0353,KIDSWELL PEDIATRICS & URGENT CARE PC,urgent_care,npi,1285096719,org,clinic-census.csv org_npis
+GB0354,MINUTECLINIC,urgent_care,npi,1457470858,org,clinic-census.csv org_npis
+GB0355,Mass General Brigham Express Care (Newton),urgent_care,npi,1336513886,org,clinic-census.csv org_npis
+GB0355,Mass General Brigham Express Care (Newton),urgent_care,npi,1720486830,org,clinic-census.csv org_npis
+GB0355,Mass General Brigham Express Care (Newton),urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0356,"MinuteClinic, Newton Highlands",urgent_care,npi,1457470858,org,clinic-census.csv org_npis
+GB0357,AFC Urgent Care North Waltham,urgent_care,npi,1245048073,org,clinic-census.csv org_npis
+GB0357,AFC Urgent Care North Waltham,urgent_care,npi,1659153203,org,clinic-census.csv org_npis
+GB0357,AFC Urgent Care North Waltham,urgent_care,npi,1720442247,org,clinic-census.csv org_npis
+GB0357,AFC Urgent Care North Waltham,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0357,AFC Urgent Care North Waltham,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0357,AFC Urgent Care North Waltham,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0357,AFC Urgent Care North Waltham,urgent_care,tin,460782127,org,clinic-census.csv tins
+GB0358,Beth Israel Lahey Health Urgent Care - Quincy,urgent_care,npi,1164060778,org,clinic-census.csv org_npis
+GB0358,Beth Israel Lahey Health Urgent Care - Quincy,urgent_care,tin,222566792,org,clinic-census.csv tins
+GB0360,ConvenientMD Urgent Care Quincy,urgent_care,npi,1063103448,org,clinic-census.csv org_npis
+GB0360,ConvenientMD Urgent Care Quincy,urgent_care,npi,1386281020,org,clinic-census.csv org_npis
+GB0360,ConvenientMD Urgent Care Quincy,urgent_care,npi,1396382032,org,clinic-census.csv org_npis
+GB0360,ConvenientMD Urgent Care Quincy,urgent_care,npi,1700362233,org,clinic-census.csv org_npis
+GB0360,ConvenientMD Urgent Care Quincy,urgent_care,tin,931375169,org,clinic-census.csv tins
+GB0361,Health Express - Quincy,urgent_care,npi,1144713199,org,clinic-census.csv org_npis
+GB0361,Health Express - Quincy,urgent_care,npi,1417336181,org,clinic-census.csv org_npis
+GB0361,Health Express - Quincy,urgent_care,npi,1477044212,org,clinic-census.csv org_npis
+GB0362,"MANET COMMUNITY HEALTH CENTER, INC.",urgent_care,npi,1740787340,org,clinic-census.csv org_npis
+GB0363,MINUTECLINIC,urgent_care,npi,1457470858,org,clinic-census.csv org_npis
+GB0364,AFC Urgent Care Revere,urgent_care,npi,1528825031,org,clinic-census.csv org_npis
+GB0364,AFC Urgent Care Revere,urgent_care,tin,934880533,org,clinic-census.csv tins
+GB0365,PARITY URGENT CARE,urgent_care,npi,1013772474,org,clinic-census.csv org_npis
+GB0366,AFC HEALTH CONNECTION LLC,urgent_care,npi,1396506945,org,clinic-census.csv org_npis
+GB0367,AFC Urgent Care Saugus,urgent_care,npi,1568026532,org,clinic-census.csv org_npis
+GB0367,AFC Urgent Care Saugus,urgent_care,npi,1588491575,org,clinic-census.csv org_npis
+GB0367,AFC Urgent Care Saugus,urgent_care,npi,1871865709,org,clinic-census.csv org_npis
+GB0367,AFC Urgent Care Saugus,urgent_care,npi,1902123276,org,clinic-census.csv org_npis
+GB0367,AFC Urgent Care Saugus,urgent_care,tin,272343207,org,clinic-census.csv tins
+GB0367,AFC Urgent Care Saugus,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0367,AFC Urgent Care Saugus,urgent_care,tin,454478857,org,clinic-census.csv tins
+GB0367,AFC Urgent Care Saugus,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0367,AFC Urgent Care Saugus,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0367,AFC Urgent Care Saugus,urgent_care,tin,1184972333,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0367,AFC Urgent Care Saugus,urgent_care,tin,1942383138,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0368,CONVENIENTMD - FFS UC LLC,urgent_care,npi,1255022638,org,clinic-census.csv org_npis
+GB0368,CONVENIENTMD - FFS UC LLC,urgent_care,npi,1912622085,org,clinic-census.csv org_npis
+GB0368,CONVENIENTMD - FFS UC LLC,urgent_care,tin,931375169,org,clinic-census.csv tins
+GB0369,ConvenientMD Urgent Care Saugus,urgent_care,npi,1912622085,org,clinic-census.csv org_npis
+GB0370,"PM PEDIATIC CARE, SAUGUS",urgent_care,npi,1477378123,org,clinic-census.csv org_npis
+GB0370,"PM PEDIATIC CARE, SAUGUS",urgent_care,tin,821363644,org,clinic-census.csv tins
+GB0372,CHA Somerville Urgent Care Center,urgent_care,npi,1780214338,org,clinic-census.csv org_npis
+GB0372,CHA Somerville Urgent Care Center,urgent_care,tin,043320571,org,clinic-census.csv tins
+GB0374,SOUTH BOSTON COMMUNITY HEALTH CENTER,urgent_care,npi,1295221315,org,clinic-census.csv org_npis
+GB0375,Mass General Brigham Express Care (South Weymouth),urgent_care,npi,1912296633,org,clinic-census.csv org_npis
+GB0376,AFC Urgent Care Stoneham,urgent_care,npi,1588031579,org,clinic-census.csv org_npis
+GB0376,AFC Urgent Care Stoneham,urgent_care,npi,1639657901,org,clinic-census.csv org_npis
+GB0376,AFC Urgent Care Stoneham,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0376,AFC Urgent Care Stoneham,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0376,AFC Urgent Care Stoneham,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0376,AFC Urgent Care Stoneham,urgent_care,tin,460782127,org,clinic-census.csv tins
+GB0377,AFC Urgent Care Waltham,urgent_care,npi,1417205105,org,clinic-census.csv org_npis
+GB0377,AFC Urgent Care Waltham,urgent_care,npi,1760960959,org,clinic-census.csv org_npis
+GB0377,AFC Urgent Care Waltham,urgent_care,tin,454148303,org,clinic-census.csv tins
+GB0377,AFC Urgent Care Waltham,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0377,AFC Urgent Care Waltham,urgent_care,tin,472237031,org,clinic-census.csv tins
+GB0377,AFC Urgent Care Waltham,urgent_care,tin,460782127,org,clinic-census.csv tins
+GB0378,AFC Urgent Care Watertown,urgent_care,npi,1164772299,org,clinic-census.csv org_npis
+GB0378,AFC Urgent Care Watertown,urgent_care,tin,460903626,org,clinic-census.csv tins
+GB0379,"Auburn Urgent Care, Watertown",urgent_care,tin,043296453,org,clinic-census.csv tins
+GB0380,Beth Israel Lahey Health Urgent Care - Watertown,urgent_care,npi,1548090376,org,clinic-census.csv org_npis
+GB0382,MASS GENERAL BRIGHAM URGENT CARE LLC,urgent_care,npi,1619341161,org,clinic-census.csv org_npis
+GB0382,MASS GENERAL BRIGHAM URGENT CARE LLC,urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0383,MINUTECLINIC,urgent_care,npi,1457470858,org,clinic-census.csv org_npis
+GB0384,Carbon Health West Roxbury Ma Spring St,urgent_care,npi,1104501626,org,clinic-census.csv org_npis
+GB0384,Carbon Health West Roxbury Ma Spring St,urgent_care,npi,1912662719,org,clinic-census.csv org_npis
+GB0384,Carbon Health West Roxbury Ma Spring St,urgent_care,tin,851144017,org,clinic-census.csv tins
+GB0384,Carbon Health West Roxbury Ma Spring St,urgent_care,tin,934800903,clinician,clinic-census.csv clinician_billing_tins_bcbs 18/19
+GB0385,"HEALTH EXPRESS, LLC",urgent_care,npi,1295193654,org,clinic-census.csv org_npis
+GB0386,Mass General Brigham Express Care (Westwood),urgent_care,npi,1144782467,org,clinic-census.csv org_npis
+GB0386,Mass General Brigham Express Care (Westwood),urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0386,Mass General Brigham Express Care (Westwood),urgent_care,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 8/24
+GB0387,PhysicianOne Urgent Care - Westwood,urgent_care,npi,1326585951,org,clinic-census.csv org_npis
+GB0387,PhysicianOne Urgent Care - Westwood,urgent_care,tin,450666163,org,clinic-census.csv tins
+GB0388,CONVENIENTMD LLC,urgent_care,npi,1740767060,org,clinic-census.csv org_npis
+GB0389,ConvenientMD Urgent Care Weymouth,urgent_care,npi,1053002436,org,clinic-census.csv org_npis
+GB0389,ConvenientMD Urgent Care Weymouth,urgent_care,tin,931375169,org,clinic-census.csv tins
+GB0389,ConvenientMD Urgent Care Weymouth,urgent_care,tin,1174999205,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0389,ConvenientMD Urgent Care Weymouth,urgent_care,tin,042103881,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0389,ConvenientMD Urgent Care Weymouth,urgent_care,tin,320058309,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0389,ConvenientMD Urgent Care Weymouth,urgent_care,tin,222768204,clinician,clinic-census.csv clinician_billing_tins_bcbs 1/4
+GB0390,MINUTECLINIC,urgent_care,npi,1457470858,org,clinic-census.csv org_npis
+GB0391,"SOUTH SHORE HEALTH EXPRESS, INC",urgent_care,npi,1184116493,org,clinic-census.csv org_npis
+GB0391,"SOUTH SHORE HEALTH EXPRESS, INC",urgent_care,npi,1477044212,org,clinic-census.csv org_npis
+GB0391,"SOUTH SHORE HEALTH EXPRESS, INC",urgent_care,tin,452385865,org,clinic-census.csv tins
+GB0392,South Shore Health Urgent Care Weymouth (formerly Health Express),urgent_care,npi,1053692327,org,clinic-census.csv org_npis
+GB0392,South Shore Health Urgent Care Weymouth (formerly Health Express),urgent_care,npi,1205329265,org,clinic-census.csv org_npis
+GB0392,South Shore Health Urgent Care Weymouth (formerly Health Express),urgent_care,npi,1477044212,org,clinic-census.csv org_npis
+GB0392,South Shore Health Urgent Care Weymouth (formerly Health Express),urgent_care,npi,1952725756,org,clinic-census.csv org_npis
+GB0392,South Shore Health Urgent Care Weymouth (formerly Health Express),urgent_care,tin,452385865,org,clinic-census.csv tins
+GB0392,South Shore Health Urgent Care Weymouth (formerly Health Express),urgent_care,tin,464690516,org,clinic-census.csv tins
+GB0392,South Shore Health Urgent Care Weymouth (formerly Health Express),urgent_care,tin,043170333,clinician,clinic-census.csv clinician_billing_tins_bcbs 8/27
+GB0393,GOLDEN TOUCH ENTERPRISES,urgent_care,npi,1992682827,org,clinic-census.csv org_npis
+GB0394,Lahey Health Urgent Care - Woburn,urgent_care,npi,1790740777,org,clinic-census.csv org_npis
+GB0394,Lahey Health Urgent Care - Woburn,urgent_care,tin,042104434,org,clinic-census.csv tins
+GB0395,Mass General Brigham Express Care (Woburn),urgent_care,npi,1720597750,org,clinic-census.csv org_npis
+GB0395,Mass General Brigham Express Care (Woburn),urgent_care,tin,471683619,org,clinic-census.csv tins
+GB0395,Mass General Brigham Express Care (Woburn),urgent_care,tin,042807148,clinician,clinic-census.csv clinician_billing_tins_bcbs 9/28
+GB0397,PM PEDIATRICS AT WOBURN,urgent_care,npi,1346871183,org,clinic-census.csv org_npis
+GB0397,PM PEDIATRICS AT WOBURN,urgent_care,tin,821363644,org,clinic-census.csv tins
+,AFC Urgent Care (AFC Physicians of MA),urgent_care,tin,272343207,research,research-v3 tins.tsv (tic-structure.md)
+,CareWell Urgent Care Centers of MA,urgent_care,tin,455391610,research,research-v3 tins.tsv (tic-structure.md)
+,CareWell Urgent Care,urgent_care,tin,352533673,research,research-v3 tins.tsv (tic-structure.md)
+,MGPO (MGH physicians),physician_group,tin,042807148,research,research-v3 tins.tsv (tic-structure.md)
+,Brigham and Womens Physicians Org,physician_group,tin,043466314,research,research-v3 tins.tsv (tic-structure.md)
+,Harvard Medical Faculty Physicians at BIDMC,physician_group,tin,222768204,research,research-v3 tins.tsv (tic-structure.md)
+,AP HMFP Surgery,physician_group,tin,320058309,research,research-v3 tins.tsv (tic-structure.md)
+,Atrius Health,physician_group,tin,043397450,research,research-v3 tins.tsv (tic-structure.md)
+,Lahey Clinic,physician_group,tin,042704683,research,research-v3 tins.tsv (tic-structure.md)
+,Mass General Brigham Medical Group,physician_group,tin,222560501,research,research-v3 tins.tsv (tic-structure.md)
+,Beth Israel Lahey Health Primary Care,physician_group,tin,472248298,research,research-v3 tins.tsv (tic-structure.md)
+,New England Baptist Medical Associates,physician_group,tin,043235796,research,research-v3 tins.tsv (tic-structure.md)
+,Boston Orthopaedic and Spine,physician_group,tin,820671467,research,research-v3 tins.tsv (tic-structure.md)
+,Tufts Medical Center Inc,hospital_or_group,tin,043400617,research,research-v3 tins.tsv (tic-structure.md)
+,Tufts Medical Center Community Care,physician_group,tin,473046563,research,research-v3 tins.tsv (tic-structure.md)
+,BU Family Medicine,physician_group,tin,043354353,research,research-v3 tins.tsv (tic-structure.md)
+,BUMC Radiologists,physician_group,tin,043283573,research,research-v3 tins.tsv (tic-structure.md)
+,BU Medical Center (physicians),physician_group,tin,043276227,research,research-v3 tins.tsv (tic-structure.md)
+,Massachusetts General Hospital,hospital,tin,042697983,research,research-v3 tins.tsv (tic-structure.md)
+,Beth Israel Deaconess Medical Center,hospital,tin,042103881,research,research-v3 tins.tsv (tic-structure.md)
+,Boston Medical Center,hospital,tin,043314093,research,research-v3 tins.tsv (tic-structure.md)
+,AFC Urgent Care franchisee,urgent_care,tin,460903626,research,clinic-census.md §0.3 AFC franchisee TINs
+,AFC Urgent Care franchisee,urgent_care,tin,454148303,research,clinic-census.md §0.3 AFC franchisee TINs
+,AFC Urgent Care franchisee,urgent_care,tin,472237031,research,clinic-census.md §0.3 AFC franchisee TINs
+,AFC Urgent Care franchisee,urgent_care,tin,460782127,research,clinic-census.md §0.3 AFC franchisee TINs
+,AFC Urgent Care franchisee,urgent_care,tin,934880533,research,clinic-census.md §0.3 AFC franchisee TINs
+,AFC Urgent Care franchisee,urgent_care,tin,454478857,research,clinic-census.md §0.3 AFC franchisee TINs
+,AFC Urgent Care franchisee,urgent_care,tin,463251869,research,clinic-census.md §0.3 AFC franchisee TINs
+,AFC Urgent Care franchisee,urgent_care,tin,813416211,research,clinic-census.md §0.3 AFC franchisee TINs

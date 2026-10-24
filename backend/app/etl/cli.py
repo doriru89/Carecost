@@ -5,6 +5,7 @@
     python -m app.etl ...                             normalize [--source ID|all] [--force]
     python -m app.etl ...                             build     [--build-date YYYY-MM-DD]
     python -m app.etl ...                             report    [--build ID] [--out DIR]
+    python -m app.etl ...                             tic       discover|run|verify|normalize|report|release|probe
 
 Every subcommand exits non-zero when anything failed, after finishing the other sources.
 """
@@ -25,6 +26,7 @@ from app.etl import report as report_mod
 from app.etl import stage as stage_mod
 from app.etl.config import Paths, SourcesFile, SourceSpec, load_codes, load_sources, load_yaml
 from app.etl.payers import PayerResolver
+from app.etl.tic import cli as tic_cli
 
 
 def _log(msg: str) -> None:
@@ -176,6 +178,7 @@ def parser() -> argparse.ArgumentParser:
     r = sub.add_parser("report", help="coverage matrix vs the old DB baseline")
     r.add_argument("--build", default=None)
     r.add_argument("--out", default=None)
+    tic_cli.add_parser(sub)
     return p
 
 
@@ -185,6 +188,7 @@ COMMANDS = {
     "normalize": cmd_normalize,
     "build": cmd_build,
     "report": cmd_report,
+    "tic": tic_cli.cmd,
 }
 
 
