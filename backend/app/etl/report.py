@@ -163,17 +163,24 @@ def build_report(
 
     L.append("## Per hospital\n")
     L.append(
-        "| hospital | file date | staged rows (= independent count) | rate rows | usable payer rates | payers | target codes /"
+        "Two dates, never mixed (D18): the publisher's own `last_updated_on` from the file header "
+        "(late to refresh after 365 days) and our `fetched_at` (stale on our side after 31 days).\n"
+    )
+    L.append(
+        "| hospital | publisher last_updated_on | our fetched_at (method) | staged rows (= independent count) | rate rows | usable payer rates | payers | target codes /"
         f"{len(target)} | placeholders dropped |"
     )
-    L.append("|---|---|---|---|---|---|---|---|")
+    L.append("|---|---|---|---|---|---|---|---|---|---|")
     for s in sources.rate_row_sources:
         m = manifest["sources"].get(s.source_id)
         if not m:
-            L.append(f"| {s.hospital_entity} | — | not built | — | — | — | — | — |")
+            L.append(f"| {s.hospital_entity} | — | — | not built | — | — | — | — | — | — |")
             continue
+        fb = m.get("fallback")
+        fetched = f"{str(m.get('fetched_at', ''))[:10]} ({m.get('fetch_method', '?')}"
+        fetched += f", fallback: {fb['used']})" if fb else ")"
         L.append(
-            f"| {s.hospital_entity} | {m['last_updated_on']} | {m['staged_rows']:,} (= {m['independent_count']:,}) | "
+            f"| {s.hospital_entity} | {m['last_updated_on']} | {fetched} | {m['staged_rows']:,} (= {m['independent_count']:,}) | "
             f"{m['rate_rows']:,} | {by_h_rows.get(s.hospital_entity, 0):,} | {len(by_h_payers.get(s.hospital_entity, ()))} | "
             f"{len(by_h_codes.get(s.hospital_entity, ()))} | {sum(m['placeholders_dropped'].values())} |"
         )

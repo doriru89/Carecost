@@ -53,6 +53,15 @@ def test_anchor_amount_must_be_exact_on_the_same_file(tmp_path):
     assert res[0].status == "pass"
 
 
+def test_anchor_survives_a_recased_payer_label(tmp_path):
+    """BIDMC 2026-10: "Bcbs"/"Hmo" became "BCBS"/"HMO", same amount -> still the anchor row."""
+    rows = _brigham_rows(tmp_path)
+    for r in rows:
+        r["payer_raw"], r["plan_raw"] = r["payer_raw"].upper(), "  " + r["plan_raw"].lower()
+    res = gates.check_anchors(rows, [a for a in CFG["anchors"] if a["entity_id"] == "brigham"])
+    assert all(r.status == "pass" for r in res), res
+
+
 def test_row_count_drop_fails_and_zero_payer_rates_fails():
     cur = {
         "brigham_mrf": {"rate_rows": 70, "payer_rate_rows": 60},

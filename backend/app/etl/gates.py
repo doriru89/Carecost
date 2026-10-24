@@ -26,16 +26,24 @@ def failed(results: Iterable[GateResult]) -> list[GateResult]:
     return [r for r in results if r.status == "fail"]
 
 
+def _anchor_key(*parts: str | None) -> tuple[str, ...]:
+    """Case- and spacing-insensitive: BIDMC's 2026-10 file renamed "Bcbs"/"Hmo" to "BCBS"/"HMO"
+    with the same $110.42; a re-cased label is not a lost rate."""
+    return tuple(" ".join((p or "").split()).casefold() for p in parts)
+
+
 def check_anchors(
     rows: Iterable[dict[str, Any]], anchors: list[dict[str, Any]]
 ) -> list[GateResult]:
     want = {
-        (a["entity_id"], a["code"], a["payer_raw"], a["plan_raw"], a.get("rev_code", "")): a
+        _anchor_key(
+            a["entity_id"], a["code"], a["payer_raw"], a["plan_raw"], a.get("rev_code", "")
+        ): a
         for a in anchors
     }
     hits: dict[str, list[dict[str, Any]]] = {a["id"]: [] for a in anchors}
     for r in rows:
-        k = (r["entity_id"], r["code"], r["payer_raw"], r["plan_raw"], r["rev_code"])
+        k = _anchor_key(r["entity_id"], r["code"], r["payer_raw"], r["plan_raw"], r["rev_code"])
         if k in want:
             hits[want[k]["id"]].append(r)
     out = []
