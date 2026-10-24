@@ -4,8 +4,8 @@
 #
 # npis = type_2_npi values exactly as read from the file (tests/etl/test_sources.py checks
 # them against the file metadata fixtures; data/registries/hospitals.yaml must agree).
-# url = the file itself. discovery = the cms-hpt.txt that points at it. url: null means we
-# cannot fetch it automatically yet (fetch reports it; stage uses the last stored copy).
+# url = the file itself. discovery = the cms-hpt.txt that points at it (re-read 2026-10-24).
+# url: null means we cannot fetch it automatically yet (fetch reports it).
 # legacy_filename = the name under the old carecost/data/raw/hospital_mrfs/ (fetch --import-dir).
 #
 # More sources live in data/etl/sources.d/*.yaml (one file per stream, e.g. tic.yaml, government.yaml).
@@ -28,6 +28,10 @@ fetch:
     - childrenshospital.org
     - dana-farber.org
     - franciscanchildrens.org
+    # Dana-Farber's cms-hpt.txt points at its Widen DAM, which 303s to Widen's CDN. Exact hosts,
+    # not the registrable domain: widen.net / widencdn.net serve every Widen customer.
+    - dfci.widen.net
+    - cf-store.widencdn.net
   default_max_bytes: 1500000000  # 1.5 GB compressed; Tufts zip is ~177 MB, CHA csv ~327 MB
   timeout_s: 600
 
@@ -106,7 +110,8 @@ sources:
     container: zip
     encoding: latin-1
     npis: ["1730132515"]
-    # Returns 403 to non-browser clients (bot wall) as of 2026-10-24.
+    # Confirmed in tuftsmedicine.org/cms-hpt.txt 2026-10-24. Akamai 403s curl (any UA) but serves
+    # the ETL's own httpx client; robots.txt allows /sites/default/files/.
     url: https://www.tuftsmedicine.org/sites/default/files/2026-03/043400617_tuftsmedicalcenter_standardcharges.csv.zip
     discovery: https://www.tuftsmedicine.org/cms-hpt.txt
     legacy_filename: tufts_standardcharges.zip
@@ -118,8 +123,11 @@ sources:
     container: plain
     encoding: latin-1
     npis: ["1710910427"]
-    url: null  # cms-hpt.txt has a TLS error; file URL not yet confirmed
-    discovery: https://franciscanchildrens.org/cms-hpt.txt
+    # franciscanchildrens.org/cms-hpt.txt now redirects to franciscans.childrenshospital.org (2026-10-24).
+    # That host sends no intermediate certificate (Sectigo OV R36), so fetch fails TLS
+    # verification; we do not disable verification. Same bytes as the 2026-05 copy (sha f7d22355).
+    url: https://franciscans.childrenshospital.org/sites/default/files/shoppable/042156082_Franciscan_Hospital_for_Children_Standardsharges.csv
+    discovery: https://franciscans.childrenshospital.org/cms-hpt.txt
     legacy_filename: franciscan_standardcharges.csv
 
   - source_id: bidmc_mrf
@@ -151,7 +159,8 @@ sources:
     container: plain
     encoding: utf-8-sig
     npis: ["1851333686"]
-    url: null  # listed in dana-farber.org/cms-hpt.txt; exact file URL not yet recorded
+    # From dana-farber.org/cms-hpt.txt (2026-10-24); the Widen link 303s to a signed CDN URL.
+    url: https://dfci.widen.net/content/759njv3uoe/original/04-2263040_dana-farber-cancer-institute_standardcharges.json?u=rnuji5&download=true
     discovery: https://www.dana-farber.org/cms-hpt.txt
     legacy_filename: dana_farber_standardcharges.json
 
