@@ -150,7 +150,7 @@ def build_report(paths: Paths, nets: list[TicNetwork], out: Path | None = None) 
     # known Boston TINs
     L += [
         "",
-        "## Known Boston TINs (median $ over all matching rows, unmodified codes, all POS)",
+        "## Known Boston TINs (median $ of professional rows, no modifier, any POS / NPI block / network)",
         "",
         "| TIN | who | payers with any rate | " + " | ".join(SHOW) + " |",
         "|---|---|---|" + "---|" * len(SHOW),
