@@ -149,6 +149,30 @@ class StageError(RuntimeError):
     pass
 
 
+def _next(reader: Iterator[list[str]], what: str) -> list[str]:
+    """``next()`` that turns an early end of file into ``StageError`` (a truncated CSV header
+    used to escape as a bare StopIteration and kill the whole ``stage`` run)."""
+    try:
+        return next(reader)
+    except StopIteration:
+        raise StageError(f"file ends before its {what} row (truncated?)") from None
+
+
+def size_drop_error(
+    source_id: str, cur_bytes: int, prev_bytes: int | None, max_drop_pct: float
+) -> str | None:
+    """Truncation signal: the new copy is much smaller than the previous copy of the same source."""
+    if not prev_bytes or cur_bytes >= prev_bytes:
+        return None
+    drop = 1 - cur_bytes / prev_bytes
+    if drop * 100 <= max_drop_pct:
+        return None
+    return (
+        f"{source_id}: file is {drop:.0%} smaller than the previous copy ({prev_bytes:,} -> "
+        f"{cur_bytes:,} bytes, limit {max_drop_pct:g}%): truncated? (stage --allow-shrink accepts it)"
+    )
+
+
 # ---------------------------------------------------------------------------- helpers
 
 _DATE_FORMATS = ("%Y-%m-%d", "%m/%d/%Y", "%Y/%m/%d")
@@ -278,8 +302,8 @@ def _meta_from_pairs(pairs: list[tuple[str, str]], bom: bool) -> FileMeta:
 
 
 def _csv_meta(reader: Iterator[list[str]], bom: bool) -> FileMeta:
-    keys = next(reader)
-    vals = next(reader)
+    keys = _next(reader, "metadata header")
+    vals = _next(reader, "metadata value")
     return _meta_from_pairs(list(zip(keys, vals + [""] * (len(keys) - len(vals)))), bom)
 
 
@@ -340,9 +364,9 @@ def count_leaves(spec: SourceSpec, path: Path) -> int:
     fh, _ = _text_stream(spec, path)
     with fh:
         r = csv.reader(fh)
-        next(r)
-        next(r)
-        header = [h.strip().lower() for h in next(r)]
+        _next(r, "metadata header")
+        _next(r, "metadata value")
+        header = [h.strip().lower() for h in _next(r, "column header")]
         if spec.format == "cms_v3_csv_tall":
             return sum(1 for row in r if any(c.strip() for c in row))
         group_cols: dict[str, list[int]] = {}
@@ -398,9 +422,9 @@ def _iter_csv(spec: SourceSpec, path: Path, st: _ReadStats) -> Iterator[tuple[in
     fh, _ = _text_stream(spec, path)
     with fh:
         r = csv.reader(fh)
-        next(r)
-        next(r)
-        raw_header = next(r)
+        _next(r, "metadata header")
+        _next(r, "metadata value")
+        raw_header = _next(r, "column header")
         header = [h.strip() for h in raw_header]
         st.header = header
         hl = [h.lower() for h in header]
@@ -439,10 +463,12 @@ def _iter_csv(spec: SourceSpec, path: Path, st: _ReadStats) -> Iterator[tuple[in
                 extra.append((i, header[i]))
         st.wide_payer_groups = len(groups)
         st.extra_columns = [h for _, h in extra]
+        last: list[str] | None = None
         for row in r:
             if not any(c.strip() for c in row):
                 st.blank_rows += 1
                 continue
+            last = row
             item = st.items
             st.items += 1
             codes = _codes_from_csv(row, code_cols)
@@ -467,6 +493,10 @@ def _iter_csv(spec: SourceSpec, path: Path, st: _ReadStats) -> Iterator[tuple[in
                 yield item, codes, leaf
             if not emitted:
                 yield item, codes, rec
+        if last is not None and len(last) < len(header):  # truncated mid-row
+            raise StageError(
+                f"last data row has {len(last)} of {len(header)} columns: file truncated mid-row?"
+            )
 
 
 _GROUP_FIELDS = {
@@ -580,6 +610,19 @@ def stage_file(spec: SourceSpec, raw: Path, sha256: str, out: Path) -> StageResu
     t0 = time.time()
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = out.with_suffix(".parquet.partial")
+    try:
+        return _stage(spec, raw, sha256, out, tmp, t0)
+    except StageError:
+        tmp.unlink(missing_ok=True)
+        raise
+    except (ijson.JSONError, csv.Error, zipfile.BadZipFile, UnicodeError, EOFError) as e:
+        tmp.unlink(missing_ok=True)  # truncated / corrupt payload: one source fails, not the run
+        raise StageError(f"{spec.source_id}: unreadable file ({type(e).__name__}: {e})") from e
+
+
+def _stage(
+    spec: SourceSpec, raw: Path, sha256: str, out: Path, tmp: Path, t0: float
+) -> StageResult:
     if spec.format == "cms_v3_json":
         meta, expected, _, mods = _json_scan(spec, raw)
     else:

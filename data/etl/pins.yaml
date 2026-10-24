@@ -1,0 +1,16 @@
+# Last-good pins (version-controlled; read by `python -m app.etl build`).
+#
+# A pin is used ONLY when a source's current copy fails a gate (not stageable, NPI, row count,
+# anchor). The build then ships the pinned copy, keeping that copy's own fetched_at, so the
+# source honestly shows as stale_on_our_side until the publisher's file is fixed.
+# Without a pin the build falls back to the baseline build's sha if the store still has it.
+# The pinned sha must be in data/raw/store (fetched or imported earlier) to be usable.
+#
+#   - source_id: brigham_mrf
+#     sha256: <64 hex>          # a copy that passed every gate
+#     reason: "2026-11 file truncated at 20 kB; publisher notified"
+#     set_by: austin
+#     date: 2026-11-03
+
+version: 1
+pins: []

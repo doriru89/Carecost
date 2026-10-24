@@ -40,7 +40,7 @@ def test_cli_end_to_end(tmp_path, capsys):
     assert _run(tmp_path, cfg, "stage") == 0  # idempotent: unchanged sha -> skipped
     assert "already staged" in capsys.readouterr().out
     assert _run(tmp_path, cfg, "normalize") == 0
-    assert _run(tmp_path, cfg, "build", "--build-date", "2026-10-24") == 0
+    assert _run(tmp_path, cfg, "build", "--build-date", "2026-10-24", "--first-build") == 0
     latest = (tmp_path / "data" / "build" / "LATEST").read_text().strip()
     bdir = tmp_path / "data" / "build" / latest
     con = sqlite3.connect(bdir / "rate_row.sqlite")
@@ -67,7 +67,7 @@ def test_build_fails_loudly_and_keeps_latest_when_a_gate_fails(tmp_path):
     (cfg / "gates.yaml").write_text(yaml.safe_dump(gates))
     for cmd in (["fetch", "--import-dir", str(FIX)], ["stage"], ["normalize"]):
         assert _run(tmp_path, cfg, *cmd) == 0
-    assert _run(tmp_path, cfg, "build", "--build-date", "2026-10-24") == 1
+    assert _run(tmp_path, cfg, "build", "--build-date", "2026-10-24", "--first-build") == 1
     assert not (tmp_path / "data" / "build" / "LATEST").exists()
 
 

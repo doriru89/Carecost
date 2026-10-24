@@ -1,4 +1,5 @@
-"""Data-quality gates (config: data/etl/gates.yaml). ``fail`` stops the build; ``warn`` is reported."""
+"""Data-quality gates (config: data/etl/gates.yaml). ``fail`` stops the build (unless the source
+has a last-good copy to fall back to, see build.py); ``warn`` is reported."""
 
 from __future__ import annotations
 
@@ -6,6 +7,8 @@ from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 from datetime import date
 from typing import Any
+
+from app.sites.contracts import Freshness  # D18: the one implementation of both cadences
 
 
 @dataclass(frozen=True)
@@ -83,23 +86,38 @@ def check_row_counts(
 
 
 def check_staleness(
-    dates: dict[str, date | None], today: date, cfg: dict[str, Any]
+    sources: dict[str, tuple[date | None, date]], today: date, cfg: dict[str, Any]
 ) -> list[GateResult]:
+    """Freshness is a label, never a fail (D13). ``sources``: sid -> (publisher's own
+    last_updated_on, our fetched_at date). Both sides come from ``Freshness.compute`` (the one
+    implementation of the 365-day / monthly cadences, D18); ``warn_after_days`` is an internal
+    ETL warning only. A file without last_updated_on is never "late" (no date, no deadline)."""
     out = []
-    for sid, d in sorted(dates.items()):
-        if d is None:
-            out.append(GateResult("staleness", sid, "fail", "file has no last_updated_on"))
-            continue
-        age = (today - d).days
-        if age > int(cfg["fail_after_days"]):
-            status = "fail"
-        elif age > int(cfg["warn_after_days"]):
-            status = "warn"
-        else:
-            status = "pass"
-        out.append(
-            GateResult("staleness", sid, status, f"last_updated_on {d.isoformat()} ({age} days)")
+    warn_after = int(cfg.get("warn_after_days", 180))
+    for sid, (d, fetched) in sorted(sources.items()):
+        f = Freshness.compute(
+            as_of=today,
+            source_rule="hospital_mrf_365_days",
+            last_updated=d,
+            our_rule="hospital_monthly",
+            fetched_at=fetched,
         )
+        notes = []
+        if d is None:
+            notes.append("file has no last_updated_on (never late)")
+        else:
+            notes.append(f"last_updated_on {d.isoformat()} ({(today - d).days} days)")
+        notes.append(f"fetched_at {fetched.isoformat()}")
+        if f.late_to_refresh:
+            notes.append(f"late_to_refresh (expected_by {f.expected_by})")
+        if f.stale_on_our_side:
+            notes.append(f"stale_on_our_side (our_refresh_due {f.our_refresh_due})")
+        flagged = (
+            f.late_to_refresh
+            or f.stale_on_our_side
+            or (d is not None and (today - d).days > warn_after)
+        )
+        out.append(GateResult("staleness", sid, "warn" if flagged else "pass", "; ".join(notes)))
     return out
 
 

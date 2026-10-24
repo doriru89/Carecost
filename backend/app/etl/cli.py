@@ -1,9 +1,10 @@
 """Single ETL entry point (identical locally and in GitHub Actions)::
 
     python -m app.etl [--data-dir D] [--config-dir C] fetch     [--source ID|all] [--import-dir DIR]
-    python -m app.etl ...                             stage     [--source ID|all] [--force]
+    python -m app.etl ...                             stage     [--source ID|all] [--force] [--allow-shrink]
     python -m app.etl ...                             normalize [--source ID|all] [--force]
     python -m app.etl ...                             build     [--build-date YYYY-MM-DD]
+                                                                [--baseline-manifest PATH | --first-build]
     python -m app.etl ...                             report    [--build ID] [--out DIR]
 
 Every subcommand exits non-zero when anything failed, after finishing the other sources.
@@ -72,8 +73,35 @@ def cmd_fetch(a: argparse.Namespace, paths: Paths) -> int:
     return 1 if errors else 0
 
 
+def _bytes(rec: fetch_mod.FetchRecord) -> int | None:
+    if rec.bytes:
+        return rec.bytes
+    return rec.path.stat().st_size if rec.path.exists() else None
+
+
+def _previous_copy(paths: Paths, rec: fetch_mod.FetchRecord) -> fetch_mod.FetchRecord | None:
+    """The newest earlier manifest entry of the same source with different content."""
+    recs = [r for r in fetch_mod.read_manifest(paths) if r.source_id == rec.source_id]
+    older = [r for r in recs if r.sha256 != rec.sha256]
+    return older[-1] if older else None
+
+
+def _stage_one(spec: SourceSpec, rec: fetch_mod.FetchRecord, paths: Paths) -> stage_mod.StageResult:
+    out = paths.staging / spec.source_id / f"{rec.sha256}.parquet"
+    return stage_mod.stage_file(spec, rec.path, rec.sha256, out)
+
+
+def _max_size_drop_pct(config_dir: Path | None) -> float:
+    try:
+        cfg = load_yaml("gates.yaml", config_dir)
+    except FileNotFoundError:  # a config dir with sources only (tests) -> the default
+        cfg = {}
+    return float((cfg.get("truncation") or {}).get("max_size_drop_pct", 50))
+
+
 def cmd_stage(a: argparse.Namespace, paths: Paths) -> int:
     sources = load_sources(a.config_dir)
+    max_drop = _max_size_drop_pct(a.config_dir)
     errors = 0
     for spec in _rate_row_specs(sources, a.source):
         rec = fetch_mod.current(paths, spec.source_id)
@@ -85,14 +113,25 @@ def cmd_stage(a: argparse.Namespace, paths: Paths) -> int:
         if out.exists() and out.with_suffix(".meta.json").exists() and not a.force:
             _log(f"SKIP   {spec.source_id}: {rec.sha256[:12]} already staged")
             continue
+        prev = _previous_copy(paths, rec)
+        cur_bytes = _bytes(rec)
+        why = (
+            stage_mod.size_drop_error(spec.source_id, cur_bytes, _bytes(prev), max_drop)
+            if prev is not None and cur_bytes is not None and not a.allow_shrink
+            else None
+        )
+        if why:
+            _log(f"FAIL   {why}")
+            errors += 1
+            continue
         try:
-            res = stage_mod.stage_file(spec, rec.path, rec.sha256, out)
+            res = _stage_one(spec, rec, paths)
             _log(
                 f"STAGED {spec.source_id}: {res.staged_rows:,} leaves (= independent {res.independent_count:,}), "
                 f"{res.items:,} items, {res.seconds}s"
             )
-        except (stage_mod.StageError, ValueError, OSError) as e:
-            _log(f"FAIL   {spec.source_id}: {e}")
+        except Exception as e:  # noqa: BLE001 - report and continue with the other sources
+            _log(f"FAIL   {spec.source_id}: {type(e).__name__}: {e}")
             errors += 1
     return 1 if errors else 0
 
@@ -129,7 +168,31 @@ def cmd_normalize(a: argparse.Namespace, paths: Paths) -> int:
 def cmd_build(a: argparse.Namespace, paths: Paths) -> int:
     sources = load_sources(a.config_dir)
     today = date.fromisoformat(a.build_date) if a.build_date else date.today()
-    res = build_mod.run_build(paths, sources, load_yaml("gates.yaml", a.config_dir), today)
+    codes, resolver = load_codes(a.config_dir), PayerResolver.load(a.config_dir)
+
+    def materialize(spec: SourceSpec, rec: fetch_mod.FetchRecord) -> None:
+        """Stage + normalize a fallback copy that has no built files yet (e.g. a CI cache)."""
+        res = _stage_one(spec, rec, paths)
+        out = paths.normalized / spec.source_id / f"{rec.sha256}.parquet"
+        normalize_mod.normalize_file(
+            spec,
+            paths.staging / spec.source_id / f"{rec.sha256}.parquet",
+            res,
+            out,
+            codes,
+            resolver,
+        )
+
+    res = build_mod.run_build(
+        paths,
+        sources,
+        load_yaml("gates.yaml", a.config_dir),
+        today,
+        config_dir=a.config_dir,
+        baseline_manifest=Path(a.baseline_manifest) if a.baseline_manifest else None,
+        first_build=a.first_build,
+        materialize=materialize,
+    )
     for g in res.gate_results:
         if g.status != "pass":
             _log(f"{g.status.upper():5} {g.gate:15} {g.subject:28} {g.detail}")
@@ -171,8 +234,24 @@ def parser() -> argparse.ArgumentParser:
         s = sub.add_parser(name, help=h)
         s.add_argument("--source", default="all")
         s.add_argument("--force", action="store_true")
+        if name == "stage":
+            s.add_argument(
+                "--allow-shrink",
+                action="store_true",
+                help="accept a file much smaller than its previous copy (checked by a human)",
+            )
     b = sub.add_parser("build", help="assemble rate_row + sqlite, run gates")
     b.add_argument("--build-date", default=None)
+    b.add_argument(
+        "--baseline-manifest",
+        default=None,
+        help="manifest.json to compare row counts against (default: the LATEST build)",
+    )
+    b.add_argument(
+        "--first-build",
+        action="store_true",
+        help="allow a build with no row-count baseline (a deliberate first build only)",
+    )
     r = sub.add_parser("report", help="coverage matrix vs the old DB baseline")
     r.add_argument("--build", default=None)
     r.add_argument("--out", default=None)

@@ -65,10 +65,25 @@ def test_row_count_drop_fails_and_zero_payer_rates_fails():
     assert st["brigham_mrf"] == "pass" and st["bidmc_mrf"] == "fail"
 
 
-def test_staleness_warn_and_fail():
-    dates = {"a": date(2026, 7, 23), "b": date(2026, 3, 27), "c": date(2025, 9, 1), "d": None}
-    st = _status(gates.check_staleness(dates, date(2026, 10, 24), CFG["staleness"]), "staleness")
-    assert st == {"a": "pass", "b": "warn", "c": "fail", "d": "fail"}
+def test_staleness_is_a_label_never_a_fail():
+    """D13 / D18: late or stale is a warn label; a file without a date is never late."""
+    today = date(2026, 10, 24)
+    fresh = date(2026, 10, 20)
+    dates = {
+        "a": (date(2026, 7, 23), fresh),  # 93 days: pass
+        "b": (date(2026, 3, 27), fresh),  # 211 days: internal warn (warn_after_days 180)
+        "c": (date(2025, 9, 1), fresh),  # 418 days: late_to_refresh, still only warn
+        "d": (None, fresh),  # no publisher date: never late, not a fail
+        "e": (date(2026, 7, 23), date(2026, 8, 1)),  # our fetch 84 days old: stale on our side
+    }
+    res = gates.check_staleness(dates, today, CFG["staleness"])
+    st = _status(res, "staleness")
+    assert st == {"a": "pass", "b": "warn", "c": "warn", "d": "pass", "e": "warn"}
+    detail = {r.subject: r.detail for r in res}
+    assert "late_to_refresh" in detail["c"] and "stale_on_our_side" not in detail["c"]
+    assert "never late" in detail["d"]
+    assert "stale_on_our_side" in detail["e"] and "late_to_refresh" not in detail["e"]
+    assert "fail_after_days" not in CFG["staleness"]
 
 
 def test_missing_sources_fail():
