@@ -1,0 +1,322 @@
+# AI-drafted care path. NOT publishable until two non-AI reviewers sign off (review.status).
+# Plain text is our own words; quotes are <=15 words and verified against data/care_paths/sources.yaml.
+# CPT codes appear only under `cpts` (price layer). Edit freely, then run backend tests.
+id: knee_chronic_v1
+version: 1.0.0
+title:
+  en: Knee pain that came on gradually
+  zh: 慢慢出现的膝盖痛
+intro: Knee pain that builds up over time is most often wear of the cartilage (arthritis), or a problem with a tendon
+  or the knee's cushion cartilage. Most people start with an exam and a quick bone picture, then exercises. A detailed
+  scan comes later, mainly if the knee catches or locks.
+scope:
+  area: msk_knee
+  acuity: chronic
+  severity_band:
+  - minor
+  - moderate
+entry:
+  all_of:
+    Q1:
+    - knee
+    Q2:
+    - no_injury
+red_flags:
+- rf_cardiac
+- rf_chest_pain_alone
+- rf_allergic_airway
+- rf_non_blanching_rash
+- rf_septic_joint
+- rf_limb_deformity
+- rf_systemic_msk
+- rf_knee_urgent
+intro_citations:
+- doc: medlineplus_knee
+  year: 2025
+  section: Overview
+  url: https://medlineplus.gov/kneeinjuriesanddisorders.html
+  quote: The most common disease affecting the knee is osteoarthritis.
+  claim_field: intro
+- doc: acr_chronic_knee_2026
+  year: 2026
+  section: Variant 1
+  url: https://acsearch.acr.org/docs/69432/Narrative/
+  quote: Adult. Chronic knee pain. Initial imaging.
+  claim_field: intro
+steps:
+- id: referral
+  layer: 0
+  kind: referral
+  condition:
+    Q14:
+    - hmo_referral_required
+    - masshealth
+    - unsure
+  appropriateness:
+    rating: plan_rule
+    source: hc_gov_glossary
+  likelihood_tier: certain
+  plain:
+    name: Visit with your main doctor first
+    technical_name: Primary-care referral visit
+    what: A short visit with your primary care doctor, who writes the order that lets you see a bone and joint specialist.
+    why: Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.
+    when_skipped: Your plan doesn't require a referral. Check your plan card or member website.
+  when_skipped_basis: plan_rule
+  citations:
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: If you don't get a referral first, the plan may not pay for the services.
+    claim_field: why
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: A written order from your primary care doctor for you to see a specialist
+    claim_field: what
+  cpts:
+  - code: '99213'
+    role: primary
+    mapping: asserted
+    note: Established-patient visit; research marked this code [断言]. Level could be 99212-99214.
+  glossary:
+  - referral
+  - hmo
+- id: visit
+  layer: 1
+  parent: referral
+  kind: visit
+  appropriateness:
+    rating: standard_of_care
+    note: ACR knee variants are defined by what the exam suspects; the visit is not rated.
+  likelihood_tier: certain
+  plain:
+    name: Visit with a bone & joint doctor
+    technical_name: New-patient orthopedic or sports-medicine visit
+    what: The doctor asks how the pain behaves and presses and bends the knee to test the cartilage, ligaments and
+      tendons.
+    why: The exam points to arthritis, a tendon problem or a cartilage tear, and that decides what comes next.
+    when_skipped: It isn't skipped on this path.
+  when_skipped_basis: logic
+  reviewer_note: Primary care vs. specialist as first visit depends on plan and person.
+  citations:
+  - doc: acr_chronic_knee_2026
+    year: 2026
+    section: Variant 3
+    url: https://acsearch.acr.org/docs/69432/Narrative/
+    quote: Radiographs performed. Suspect abnormality of tendon or meniscus or ligament.
+    claim_field: why
+  cpts:
+  - code: '99203'
+    role: primary
+    mapping: confirmed_pfs
+  - code: '99204'
+    role: alternative
+    mapping: confirmed_pfs
+- id: xray
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_chronic_knee_2026
+    variant: 1
+    procedure: Radiography knee
+  likelihood_tier: likely
+  plain:
+    name: Quick picture of the knee bones
+    technical_name: Knee X-ray
+    what: A few pictures of the knee made with a small dose of radiation, often while you stand. Quick, no preparation.
+    why: Guidelines rate an X-ray as the first test for long-lasting knee pain. It shows arthritis and bone problems.
+    when_skipped: You had a recent knee X-ray the doctor can use.
+  when_skipped_basis: logic
+  reviewer_note: Reuse window for prior X-rays is reviewer judgment.
+  citations:
+  - doc: acr_chronic_knee_2026
+    year: 2026
+    section: 'Variant 1 (Radiography knee: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/69432/Narrative/
+    quote: Adult. Chronic knee pain. Initial imaging.
+    claim_field: why
+  - doc: medlineplus_xrays
+    year: 2026
+    section: Preparation
+    url: https://medlineplus.gov/xrays.html
+    quote: In most cases, little or no preparation is needed.
+    claim_field: what
+  cpts:
+  - code: '73562'
+    role: primary
+    mapping: confirmed_pfs
+    note: Knee, 3 views
+  - code: '73560'
+    role: alternative
+    mapping: asserted
+    note: 1-2 views
+  - code: '73564'
+    role: alternative
+    mapping: asserted
+    note: 4 or more views
+  glossary:
+  - xray
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: X-Rays'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73562&informationRecipient.languageCode.c=en
+    code: '73562'
+    resolved_title: X-Rays
+- id: physical_therapy
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: therapy
+  appropriateness:
+    rating: standard_of_care
+    note: Exercise therapy is first-line for chronic knee pain (AAOS knee OA guideline, not snapshotted).
+  likelihood_tier: likely
+  plain:
+    name: Guided exercise program for the knee
+    technical_name: Physical therapy evaluation and visits
+    what: A first session where a therapist checks your strength and motion, then guided exercises over several
+      weeks.
+    why: Exercise is the usual first treatment for this kind of pain and is tried before any detailed scan.
+    when_skipped: The pain settles with home exercises, or the exam shows something that needs a surgeon first.
+  when_skipped_basis: logic
+  reviewer_note: Visit count varies; price as evaluation + per-visit.
+  citations:
+  - doc: medlineplus_sprains
+    year: 2025
+    section: Treatment
+    url: https://medlineplus.gov/sprainsandstrains.html
+    quote: Later treatment might include exercise and physical therapy.
+    claim_field: why
+  - doc: medlineplus_rehabilitation
+    year: 2025
+    section: Overview
+    url: https://medlineplus.gov/rehabilitation.html
+    quote: help you get back, keep, or improve abilities that you need for daily life
+    claim_field: what
+  cpts:
+  - code: '97161'
+    role: primary
+    mapping: asserted
+  - code: '97162'
+    role: alternative
+    mapping: asserted
+  - code: '97110'
+    role: add_on
+    mapping: asserted
+  glossary:
+  - pt_evaluation
+- id: knee_mri
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  - xray
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_chronic_knee_2026
+    variant: 3
+    procedure: MRI knee without IV contrast
+  likelihood_tier: possible
+  plain:
+    name: Detailed scan of the knee's soft parts
+    technical_name: Knee MRI (no contrast)
+    what: A strong magnet makes detailed pictures of cartilage, ligaments and tendons. You lie still with the knee
+      inside the machine.
+    why: After an X-ray, if the exam suggests a torn cushion cartilage, ligament or tendon, this shows it directly.
+    when_skipped: The X-ray shows ordinary arthritis; then a detailed scan usually adds little.
+  citations:
+  - doc: acr_chronic_knee_2026
+    year: 2026
+    section: 'Variant 3 (MRI: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/69432/Narrative/
+    quote: Radiographs performed. Suspect abnormality of tendon or meniscus or ligament.
+    claim_field: why
+  - doc: acr_chronic_knee_2026
+    year: 2026
+    section: 'Variant 2 (MRI: May Be Appropriate)'
+    url: https://acsearch.acr.org/docs/69432/Narrative/
+    quote: Radiographs show osteoarthritis. Next imaging study.
+    claim_field: when_skipped
+  cpts:
+  - code: '73721'
+    role: primary
+    mapping: asserted
+    note: MRI lower-extremity joint without contrast; not in research list
+  glossary:
+  - mri
+  - xray
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: MRI Scans'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73721&informationRecipient.languageCode.c=en
+    code: '73721'
+    resolved_title: MRI Scans
+  - kind: link_out
+    label: 'RadiologyInfo: knee MRI'
+    url: https://www.radiologyinfo.org/en/info/kneemr
+tier_modifiers:
+- when:
+    Q5:
+    - painful_catch
+  step: knee_mri
+  tier: likely
+  note: Painful catching/locking -> meniscus branch (ACR V3).
+- when:
+    Q4:
+    - yes_still_bad
+  step: knee_mri
+  tier: likely
+  note: '[我判断] Persistent pain after 6 weeks of treatment raises the chance of a scan.'
+exits:
+- when: Surgery or a knee replacement is suggested
+  text: This tool stops before surgery. Ask for a written estimate that lists every bill.
+golden_cases:
+- name: 58-year-old, gradual knee ache
+  answers:
+    Q0: []
+    Q1: knee
+    Q2: no_injury
+  expect: knee_chronic_v1
+  expect_tiers:
+    xray: likely
+    knee_mri: possible
+- name: Knee catches on stairs
+  answers:
+    Q0: []
+    Q1: knee
+    Q2: no_injury
+    Q5: painful_catch
+  expect: knee_chronic_v1
+  expect_tiers:
+    knee_mri: likely
+- name: Twisted knee playing soccer
+  answers:
+    Q0: []
+    Q1: knee
+    Q2: injury
+  expect: knee_injury_not_built
+- name: 'Red flag: hot swollen knee with fever'
+  answers:
+    Q0:
+    - rf_septic_joint
+    Q1: knee
+  expect: er_today
+clinical_uncertainties:
+- ACR Chronic Knee Pain was revised in 2026; the variant ratings were re-read 2026-10-24 but the narrative changes
+  were not reviewed.
+- PT 'likely' rests on general rehab sources here; the AAOS knee osteoarthritis guideline was not snapshotted.
+- 73721 (knee MRI) exists in the PFS but was not in the research list; mapping marked asserted.
+review:
+  status: pending_austin
+  drafted_by: ai:claude-opus-5.5
+  drafted_at: '2026-10-24'
+  reviewers: []

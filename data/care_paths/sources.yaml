@@ -1,0 +1,906 @@
+# Source registry for care paths (SSOT for citations).
+# excerpts: short verbatim snippets (<=15 words) copied from the fetched page on checked_at.
+#   V2 checks every citation quote against these; app.care_paths.verify_sources re-checks them live.
+# acr_variants: ratings extracted mechanically from the ACR narrative page (not typed by hand).
+# fetched_text_sha256: hash of the whitespace-normalized page text at fetch time (audit only; pages
+#   with live feeds change daily, so drift detection uses the excerpts, not the hash).
+sources:
+  acr_chronic_shoulder_2022:
+    title: 'ACR Appropriateness Criteria: Chronic Shoulder Pain'
+    publisher: American College of Radiology
+    year: 2022
+    url: https://acsearch.acr.org/docs/3101482/Narrative
+    tier: guideline
+    license: copyrighted_link_only
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 49b0339cac1f194dc446e63b88baa68181fd8370631b27ce6b7a280810d3c8f2
+    excerpts:
+    - Chronic shoulder pain. Initial imaging.
+    - Suspect rotator cuff disorders or subacromial subdeltoid bursitis (no prior surgery).
+    - Initial radiographs normal or inconclusive. Next imaging study.
+    - Suspect labral pathology or shoulder instability.
+    - Radiographs demonstrate calcific tendinopathy or calcific bursitis.
+    - Suspect adhesive capsulitis.
+    acr_variants:
+      1:
+        description: Chronic shoulder pain. Initial imaging.
+        requires_prior_radiographs: false
+        ratings:
+          Radiography shoulder: UA
+          US shoulder: MBA
+          Image-guided anesthetic +/- corticosteroid injection shoulder or surrounding structures: UNA
+          MR arthrography shoulder: UNA
+          MRI shoulder without IV contrast: UNA
+      2:
+        description: Chronic shoulder pain. Suspect rotator cuff disorders or subacromial subdeltoid bursitis (no
+          prior surgery). Initial radiographs normal or inconclusive. Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          US shoulder: UA
+          MR arthrography shoulder: UA
+          MRI shoulder without IV contrast: UA
+          Image-guided anesthetic +/- corticosteroid injection shoulder or surrounding structures: MBA
+      3:
+        description: Chronic shoulder pain. Radiographs demonstrate calcific tendinopathy or calcific bursitis.
+          Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          Image-guided anesthetic +/- corticosteroid injection shoulder or surrounding structures: UA
+          US shoulder: MBA
+          MR arthrography shoulder: MBA
+          MRI shoulder without IV contrast: MBA
+      4:
+        description: Chronic shoulder pain. Suspect labral pathology or shoulder instability. Initial radiographs
+          normal or inconclusive. Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          MR arthrography shoulder: UA
+          MRI shoulder without IV contrast: UA
+          US shoulder: UNA
+          Image-guided anesthetic +/- corticosteroid injection shoulder or surrounding structures: UNA
+      5:
+        description: Chronic shoulder pain. Suspect adhesive capsulitis. Initial radiographs normal or inconclusive.
+          Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          Image-guided anesthetic +/- corticosteroid injection shoulder or surrounding structures: UA
+          MRI shoulder without IV contrast: UA
+          US shoulder: MBA
+          MR arthrography shoulder: MBA
+      6:
+        description: Chronic shoulder pain. Suspect biceps tendon abnormality. Initial radiographs normal or inconclusive.
+          Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          US shoulder: UA
+          Image-guided anesthetic +/- corticosteroid injection shoulder or surrounding structures: UA
+          MR arthrography shoulder: UA
+          MRI shoulder without IV contrast: UA
+      7:
+        description: Chronic shoulder pain. Initial radiographs demonstrate osteoarthritis. Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          MRI shoulder without IV contrast: UA
+          Image-guided anesthetic +/- corticosteroid injection shoulder or surrounding structures: MBA
+          MR arthrography shoulder: MBA
+          US shoulder: UNA
+      8:
+        description: Chronic shoulder pain. History of prior rotator cuff repair. Suspect rotator cuff disorders
+          or subacromial subdeltoid bursitis. Initial radiographs normal or inconclusive. Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          US shoulder: UA
+          MR arthrography shoulder: UA
+          MRI shoulder without IV contrast: UA
+          Image-guided anesthetic +/- corticosteroid injection shoulder or surrounding structures: MBA
+  acr_acute_shoulder_2024:
+    title: 'ACR Appropriateness Criteria: Acute Shoulder Pain'
+    publisher: American College of Radiology
+    year: 2024
+    url: https://acsearch.acr.org/docs/69433/Narrative/
+    tier: guideline
+    license: copyrighted_link_only
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: a718e697179890ea0a61bd6a4e7e928a54bfa060492bfff1efeb80b778f4934b
+    excerpts:
+    - Adult. Acute shoulder pain. Any etiology. Initial imaging.
+    - Physical examination consistent with rotator cuff tear. Radiographs negative or indeterminate.
+    - History or physical examination consistent with dislocation or instability.
+    - Physical examination consistent with labral tear. Radiographs negative or indeterminate.
+    acr_variants:
+      1:
+        description: Adult. Acute shoulder pain. Any etiology. Initial imaging.
+        requires_prior_radiographs: false
+        ratings:
+          Radiography shoulder: UA
+          US shoulder: UNA
+          MR arthrography shoulder: UNA
+          MRI shoulder without IV contrast: UNA
+      2:
+        description: Adult. Acute shoulder pain. Suspect occult fracture. Radiographs negative or indeterminate.
+          Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          MRI shoulder without IV contrast: UA
+          US shoulder: UNA
+          MR arthrography shoulder: UNA
+      3:
+        description: Adult. Acute shoulder pain. Radiographs positive for proximal humerus, scapular, or clavicle
+          fracture. Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          MRI shoulder without IV contrast: MBA
+          US shoulder: UNA
+          MR arthrography shoulder: UNA
+      4:
+        description: Adult. Acute shoulder pain. History or physical examination consistent with dislocation or
+          instability. Radiographs positive, negative, or indeterminate. Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          MRI shoulder without IV contrast: UA
+          MR arthrography shoulder: MBA
+          US shoulder: UNA
+      5:
+        description: Adult. Acute shoulder pain. Physical examination consistent with labral tear. Radiographs negative
+          or indeterminate. Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          MR arthrography shoulder: UA
+          MRI shoulder without IV contrast: UA
+          US shoulder: UNA
+      6:
+        description: Adult. Acute shoulder pain. Physical examination consistent with rotator cuff tear. Radiographs
+          negative or indeterminate. Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          US shoulder: UA
+          MRI shoulder without IV contrast: UA
+          MR arthrography shoulder: UNA
+  acr_chronic_knee_2026:
+    title: 'ACR Appropriateness Criteria: Chronic Knee Pain'
+    publisher: American College of Radiology
+    year: 2026
+    url: https://acsearch.acr.org/docs/69432/Narrative/
+    tier: guideline
+    license: copyrighted_link_only
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: a880de6f7274e624eb5d7484d50a52a34749177bff60fd4406d440ee1737d910
+    excerpts:
+    - Adult. Chronic knee pain. Initial imaging.
+    - Radiographs performed. Suspect abnormality of tendon or meniscus or ligament.
+    - Radiographs show osteoarthritis. Next imaging study.
+    acr_variants:
+      1:
+        description: Adult. Chronic knee pain. Initial imaging.
+        requires_prior_radiographs: false
+        ratings:
+          Radiography knee: UA
+          MRI knee without IV contrast: UNA
+      2:
+        description: Adult. Chronic knee pain. Radiographs show osteoarthritis. Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          MRI knee without IV contrast: MBA
+      3:
+        description: Adult. Chronic knee pain. Radiographs performed. Suspect abnormality of tendon or meniscus
+          or ligament. Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          MRI knee without IV contrast: UA
+      4:
+        description: Adult. Chronic knee pain. Radiographs performed. Suspect osteochondral lesion or subchondral
+          insufficiency fracture. Next imaging study.
+        requires_prior_radiographs: true
+        ratings:
+          MRI knee without IV contrast: UA
+      5:
+        description: Adult. Chronic knee pain. Radiographs performed. Suspect patellofemoral maltracking. Next imaging
+          study.
+        requires_prior_radiographs: true
+        ratings:
+          MRI knee without IV contrast: UA
+  acr_low_back_pain_2021:
+    title: 'ACR Appropriateness Criteria: Low Back Pain'
+    publisher: American College of Radiology
+    year: 2021
+    url: https://acsearch.acr.org/docs/69483/Narrative/
+    tier: guideline
+    license: copyrighted_link_only
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 9b0e3b8d7604075e20802f1a23271fb24b111545c920cf0f94cd873d55bec5c4
+    excerpts:
+    - Acute low back pain with or without radiculopathy. No red flags. No prior management.
+    - Surgery or intervention candidate with persistent or progressive symptoms
+    - during or following 6 weeks of optimal medical management.
+    - Low back pain with suspected cauda equina syndrome.
+    acr_variants:
+      1:
+        description: Acute low back pain with or without radiculopathy. No red flags. No prior management. Initial
+          imaging.
+        requires_prior_radiographs: false
+        ratings:
+          Radiography lumbar spine: UNA
+          MRI lumbar spine without IV contrast: UNA
+      2:
+        description: Subacute or chronic low back pain with or without radiculopathy. No red flags. No prior management.
+          Initial imaging.
+        requires_prior_radiographs: false
+        ratings:
+          Radiography lumbar spine: UNA
+          MRI lumbar spine without IV contrast: UNA
+      3:
+        description: Subacute or chronic low back pain with or without radiculopathy. Surgery or intervention candidate
+          with persistent or progressive symptoms during or following 6 weeks of optimal medical management. Initial
+          imaging.
+        requires_prior_radiographs: false
+        ratings:
+          MRI lumbar spine without IV contrast: UA
+          Radiography lumbar spine: MBA
+      4:
+        description: Low back pain with suspected cauda equina syndrome. Initial imaging.
+        requires_prior_radiographs: false
+        ratings:
+          MRI lumbar spine without IV contrast: UA
+          Radiography lumbar spine: UNA
+      5:
+        description: Low back pain with history of prior lumbar surgery and with or without radiculopathy. New or
+          progressing symptoms or clinical findings. Initial imaging.
+        requires_prior_radiographs: false
+        ratings:
+          Radiography lumbar spine: UA
+          MRI lumbar spine without IV contrast: UA
+      6:
+        description: 'Low back pain with or without radiculopathy. One or more of the following: low-velocity trauma,
+          osteoporosis, elderly individual, or chronic steroid use. Initial imaging.'
+        requires_prior_radiographs: false
+        ratings:
+          Radiography lumbar spine: UA
+          MRI lumbar spine without IV contrast: UA
+      7:
+        description: 'Low back pain with or without radiculopathy. One or more of the following: suspicion of cancer,
+          infection, or immunosuppression. Initial imaging.'
+        requires_prior_radiographs: false
+        ratings:
+          MRI lumbar spine without IV contrast: UA
+          Radiography lumbar spine: MBA
+  acr_acute_ankle_2020:
+    title: 'ACR Appropriateness Criteria: Acute Trauma to the Ankle'
+    publisher: American College of Radiology
+    year: 2020
+    url: https://acsearch.acr.org/docs/69436/Narrative/
+    tier: guideline
+    license: copyrighted_link_only
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: ac2a82dfd5cbe064c3660aab2e57ad7aa4c635b370dbb2208555feb75362ab0b
+    excerpts:
+    - Patient meets the requirements for evaluation by the Ottawa Ankle Rules which are positive
+    - Ottawa Ankle Rules which are negative
+    - Inability to bear weight immediately after the injury
+    - Acute trauma to the ankle with persistent pain for more than 1 week
+    acr_variants:
+      1:
+        description: 'Adult or child 5 years of age or older. Acute trauma to the ankle or acute trauma to the ankle
+          with persistent pain for more than 1 week but less than 3 weeks. No exclusionary criteria present. Initial
+          imaging. Patient meets the requirements for evaluation by the Ottawa Ankle Rules which are positive: 1.
+          Inability to bear weight immediately after the injury, OR 2. Point tenderness over the medial malleolus,
+          the posterior edge or inferior tip of the lateral malleolus, talus, or calcaneus, OR 3. Inability to ambulate
+          for 4 steps in the emergency department.'
+        requires_prior_radiographs: false
+        ratings:
+          Radiography ankle: UA
+          MRI ankle without IV contrast: UNA
+      2:
+        description: 'Adult or child 5 years of age or older. Acute trauma to the ankle. No exclusionary criteria
+          present (eg, neurologically intact (including no peripheral neuropathy)). Patient meets the requirements
+          for evaluation by the Ottawa Ankle Rules which are negative: No point tenderness over the malleoli, talus,
+          or calcaneus on physical examination. Able to walk. Initial imaging.'
+        requires_prior_radiographs: false
+        ratings:
+          Radiography ankle: UNA
+          MRI ankle without IV contrast: UNA
+      3:
+        description: Adult or child 5 years of age or older. Acute trauma to the ankle. Exclusionary criteria are
+          present (eg, neurologic disorder, neuropathy, or other). Patient does not meet requirements for evaluation
+          by the Ottawa Ankle Rules. Initial imaging.
+        requires_prior_radiographs: false
+        ratings:
+          Radiography ankle: UA
+          MRI ankle without IV contrast: UNA
+      4:
+        description: Adult or child 5 years of age or older. Acute trauma to the ankle with persistent pain for
+          more than 1 week but less than 3 weeks. No exclusionary criteria present. Initial radiographs negative.
+          Next study.
+        requires_prior_radiographs: true
+        ratings:
+          MRI ankle without IV contrast: UA
+          Radiography ankle: MBA
+      5:
+        description: Adult or child 5 years of age or older. Acute trauma to the ankle. No exclusionary criteria
+          present. Radiographs demonstrate fracture or potential osteochondral injury. Next study.
+        requires_prior_radiographs: true
+        ratings:
+          MRI ankle without IV contrast: UA
+      6:
+        description: Adult or child 5 years of age or older. Acute trauma to the ankle. Radiographs negative for
+          osseous injury and physical examination or radiographs demonstrate alignment abnormality suggesting syndesmotic/ligamentous
+          injury or dislocation. Next study.
+        requires_prior_radiographs: true
+        ratings:
+          MRI ankle without IV contrast: UA
+  aaos_rotator_cuff_2025:
+    title: 'AAOS Clinical Practice Guideline: Management of Rotator Cuff Injuries'
+    publisher: American Academy of Orthopaedic Surgeons
+    year: 2025
+    url: https://www.aaos.org/rccpg2025
+    tier: guideline
+    license: copyrighted_link_only
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: b7477241e266cb150ad129f9b03d493d3e263b56758df9d7ae4095339a0569aa
+    excerpts:
+    - MRI, MRA, CT and ultrasound are useful adjuncts to a clinical exam and radiographs
+    - The use of a single injection of corticosteroids with local anesthetic can be considered
+    - for short-term improvement in both pain and function for patients with shoulder pain.
+    - Patient reported outcomes (PROs) improve with physical therapy in symptomatic
+    - Clinical examination can be useful to diagnose or stratify patients with rotator cuff
+  acg_gerd_2022:
+    title: ACG Clinical Guideline for the Diagnosis and Management of GERD (Katz et al.)
+    publisher: American College of Gastroenterology (Am J Gastroenterol 2022;117:27-56)
+    year: 2022
+    url: https://www.newswise.com/pdf_docs/163769644314928_ACG%20GERD%20Guidelines%20Katz%20et%20al%20AJG%20Jan%202022.pdf
+    tier: guideline
+    license: copyrighted_link_only
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: fffa968f55c47679d59f80fabefef90efef2ea803a76edbb83932e9470373871
+    excerpts:
+    - we recommend an 8-wk trial of empiric PPIs once daily before a meal.
+    - We recommend diagnostic endoscopy, ideally after PPIs are stopped for 2-4 weeks
+    - symptoms do not respond adequately to an 8-week empiric trial of PPIs
+    - We recommend endoscopy as the first test for evaluation of patients presenting with dysphagia
+    - In patients with chest pain who have had adequate evaluation to exclude heart disease
+  uspstf_crc_2021:
+    title: 'USPSTF: Colorectal Cancer: Screening (Final Recommendation Statement)'
+    publisher: US Preventive Services Task Force
+    year: 2021
+    url: https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening
+    tier: guideline
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 43a87b9b3c57a97091946908ead13dfd3b3fff06bfed3ff1bbf756c96331506a
+    excerpts:
+    - The USPSTF recommends screening for colorectal cancer in all adults aged 50 to 75 years.
+    - The USPSTF recommends screening for colorectal cancer in adults aged 45 to 49 years.
+    - This recommendation applies to asymptomatic adults 45 years or older who are at average risk
+    - Colonoscopy screening every 10 years
+    - fecal immunochemical test (FIT), and stool DNA test
+  uspstf_skin_2023:
+    title: 'USPSTF: Skin Cancer: Screening (Final Recommendation Statement)'
+    publisher: US Preventive Services Task Force
+    year: 2023
+    url: https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/skin-cancer-screening
+    tier: guideline
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: aa33a6e7df0bd856f4525a94174aad2953b78493b0967f9aefb535df1349deb0
+    excerpts:
+    - does not apply to persons with symptoms, such as changes in size, shape, or color
+    - asymmetry, border irregularity, nonuniform color, diameter greater than 6 mm, and evolution over time
+    - identifies pigmented lesions that look different than other moles on the patient.
+  aca_faq_part51_2022:
+    title: FAQs about Affordable Care Act Implementation Part 51 (DOL/HHS/Treasury)
+    publisher: US Departments of Labor, HHS and Treasury
+    year: 2022
+    url: https://www.cms.gov/CCIIO/Resources/Fact-Sheets-and-FAQs/Downloads/FAQs-Part-51.pdf
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 18b0dcd8ec541f859c4d991a811c9110a1fb33e8028d8a8d48159dd970eabbbb
+    excerpts:
+    - Required specialist consultation prior to the screening procedure;
+    - Bowel preparation medications prescribed for the screening procedure;
+    - Anesthesia services performed in connection with a preventive colonoscopy;
+    - Polyp removal performed during the screening procedure;
+    - Any pathology exam on a polyp biopsy performed as part of the screening procedure.
+    - the follow-up colonoscopy is an integral part of the preventive screening
+  medicare_colonoscopy:
+    title: 'Medicare.gov: Colonoscopies (coverage page)'
+    publisher: Centers for Medicare & Medicaid Services
+    year: 2026
+    url: https://www.medicare.gov/coverage/colonoscopies
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 243488422865e6333792a45c4a84e109127e96af299f198b8e7aa52b961e73c0
+    excerpts:
+    - Part B also covers a follow-up colonoscopy as a screening test.
+    - removes a polyp or other tissue during the colonoscopy, you pay 15% of the
+  hc_gov_glossary:
+    title: HealthCare.gov Glossary
+    publisher: Centers for Medicare & Medicaid Services
+    year: 2026
+    url: https://www.healthcare.gov/glossary/
+    pages:
+    - https://www.healthcare.gov/glossary/referral/
+    - https://www.healthcare.gov/glossary/deductible/
+    - https://www.healthcare.gov/glossary/co-payment/
+    - https://www.healthcare.gov/glossary/co-insurance/
+    - https://www.healthcare.gov/glossary/network/
+    - https://www.healthcare.gov/glossary/health-maintenance-organization-hmo/
+    - https://www.healthcare.gov/glossary/preferred-provider-organization-ppo/
+    - https://www.healthcare.gov/glossary/hospital-outpatient-care/
+    - https://www.healthcare.gov/glossary/specialist/
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 26d7311155fea600bb44ca2981efa4bab95bba05eff494b2641d24cae8f440d1
+    excerpts:
+    - A written order from your primary care doctor for you to see a specialist
+    - If you don't get a referral first, the plan may not pay for the services.
+    - The amount you pay for covered health care services before your insurance plan starts
+    - A fixed amount ($20, for example) you pay for a covered health care service
+    - The percentage of costs of a covered health care service you pay (20%, for example)
+    - The facilities, providers and suppliers your health insurer or plan has contracted with
+    - usually limits coverage to care from doctors who work for or contract with the HMO
+    - You pay less if you use providers that belong to the plan's network.
+    - Care in a hospital that usually doesn't require an overnight stay.
+  medlineplus_xrays:
+    title: 'MedlinePlus: X-Rays'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2026
+    url: https://medlineplus.gov/xrays.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 20c3a9dff59b6041a8d6f6203fa3baf601be4ceb834e0149314f3ac7f4ce5b4e
+    excerpts:
+    - X-rays are commonly used to check for fractures (broken bones).
+    - In most cases, little or no preparation is needed.
+    - A specialist called a radiologist reviews the images and shares the results with your provider.
+  medlineplus_mri:
+    title: 'MedlinePlus: MRI Scans'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2026
+    url: https://medlineplus.gov/mriscans.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 26ac55f7c4a3fd503a71c5c320c8a7758b12fbd8df2362a97820115bfb42b1f5
+    excerpts:
+    - MRI scans show organs and soft tissues clearly
+    - Metal objects or implants can interfere with the scan and may be unsafe.
+    - MRI does not use x-rays or other radiation.
+  medlineplus_ultrasound:
+    title: 'MedlinePlus: Ultrasound'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2026
+    url: https://medlineplus.gov/lab-tests/sonogram/
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 3fb1abd3d84219c3d148567e38c4afb500679d6e51e7e3ee2ff2740db830c43a
+    excerpts:
+    - uses sound waves to make pictures
+    - Ultrasound is best used to learn about conditions that involve soft tissues
+  medlineplus_rotator_cuff:
+    title: 'MedlinePlus: Rotator Cuff Injuries'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2024
+    url: https://medlineplus.gov/rotatorcuffinjuries.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 0868c4dc6d9067cb61ba37217f65a40a4bdbe82a8e04d062107616b6ff470b7d
+    excerpts:
+    - Most rotator cuff injuries are from the wear and tear of aging.
+    - Tears in a rotator cuff tendon can happen over time or suddenly from an injury
+  medlineplus_shoulder:
+    title: 'MedlinePlus: Shoulder Injuries and Disorders'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2025
+    url: https://medlineplus.gov/shoulderinjuriesanddisorders.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 3cbb202037c58711264cdabb6fdad0a058234206624eefefa4d851f8de1e2162
+    excerpts:
+    - diagnose shoulder problems by using your medical history, a physical exam, and imaging tests.
+    - Other treatments include exercise and medicines to reduce pain and swelling.
+  medlineplus_rehabilitation:
+    title: 'MedlinePlus: Rehabilitation'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2025
+    url: https://medlineplus.gov/rehabilitation.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 1cdc829a52bb51d0292e7175d346261ccb7f0f2fd6f38568b529b281842c4be8
+    excerpts:
+    - help you get back, keep, or improve abilities that you need for daily life
+  medlineplus_sprains:
+    title: 'MedlinePlus: Sprains and Strains'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2025
+    url: https://medlineplus.gov/sprainsandstrains.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: f499bcae83b5d29404312a67adc6aef1a6f18de6992b263f14183b5afe040382
+    excerpts:
+    - Later treatment might include exercise and physical therapy.
+    - resting the injured area, icing it, wearing a bandage or device that compresses the area
+    - Ankle and wrist sprains are common.
+  medlineplus_ankle:
+    title: 'MedlinePlus: Ankle Injuries and Disorders'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2024
+    url: https://medlineplus.gov/ankleinjuriesanddisorders.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 2cba67fe959ac258950813bb299ccce2d3ae64b9c0e3588a59cb93b492eced69
+    excerpts:
+    - The most common ankle problems are sprains and fractures (broken bones).
+  medlineplus_knee:
+    title: 'MedlinePlus: Knee Injuries and Disorders'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2025
+    url: https://medlineplus.gov/kneeinjuriesanddisorders.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 413d0e3581bb8621cdd2ab23e66d4ba7228165b9690a6d61116d9a2a7ff235f5
+    excerpts:
+    - The most common disease affecting the knee is osteoarthritis.
+  medlineplus_skin_biopsy:
+    title: 'MedlinePlus: Skin Biopsy'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2025
+    url: https://medlineplus.gov/lab-tests/skin-biopsy/
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: ad55aaa3ac443a1e32084b02186def8dc393d4ae530a9e19aeb4a7af645101e4
+    excerpts:
+    - looked at under a microscope to check for a variety of conditions, including skin cancer.
+    - Most skin biopsies can be done in a health care provider's office
+    - use a skin biopsy to see if a suspicious mole or other growth is cancerous.
+    - The type of biopsy you get depends on the location and size
+  medlineplus_biopsy:
+    title: 'MedlinePlus: Biopsy'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2025
+    url: https://medlineplus.gov/biopsy.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 190aa27e02cdb3c74b56afc0b380233743d653e09724e817a03ab26884ec0b67
+    excerpts:
+    - the only test that can tell for sure if a suspicious area is cancer
+    - A doctor called a pathologist looks at the cells or tissue under a microscope
+  medlineplus_moles:
+    title: 'MedlinePlus: Moles'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2026
+    url: https://medlineplus.gov/moles.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 877b7167c14c0712961596137deb427fc9578040baa88a51b03fc673dedc0da9
+    excerpts:
+    - have a health care professional check your moles if they look unusual, grow larger
+    - Most people have between 10 and 40 moles.
+  medlineplus_melanoma:
+    title: 'MedlinePlus: Melanoma'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2019
+    url: https://medlineplus.gov/melanoma.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: a0907db8566d268f21944619b6afdfc8cedb5031629698d50a74d25fd5008de4
+    excerpts:
+    - the first sign of melanoma is a change in the size, shape, color, or feel
+    - Surgery is the first treatment of all stages of melanoma.
+  medlineplus_colonoscopy:
+    title: 'MedlinePlus: Colonoscopy'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2024
+    url: https://medlineplus.gov/colonoscopy.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 85760cb1c92b75a1678623d4595bc9990840379ee3264af0f27b052bc83ca899
+    excerpts:
+    - Colonoscopy checks your entire colon and rectum.
+    - Screening is testing for diseases when you have no symptoms.
+    - to find the cause of unexplained symptoms
+  medlineplus_crc_screening_tests:
+    title: 'MedlinePlus: Colorectal Cancer Screening Tests'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2024
+    url: https://medlineplus.gov/lab-tests/colorectal-cancer-screening-tests/
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 6b3df58e4f85b1ade7991331aae50d97f0b878612b315ad3f46e01fe373574fb
+    excerpts:
+    - Some screening tests let your health care provider find and remove abnormal growths
+    - usually require some type of bowel prep to clear the stool out of your colon
+    - may also be used as diagnostic tests.
+  medlineplus_anesthesia:
+    title: 'MedlinePlus: Anesthesia'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2025
+    url: https://medlineplus.gov/anesthesia.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 57cf5198b2935b904eadda5d2cc18bda0f0ae14e755e598b23c7847d0676d0dc
+    excerpts:
+    - Monitored sedation makes you relaxed or sleepy.
+    - It may be used for a colonoscopy or dental work.
+  medlineplus_endoscopy:
+    title: 'MedlinePlus: Endoscopy'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2024
+    url: https://medlineplus.gov/endoscopy.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 968a47d9e1401a0b43da2dc6c77cd4baf583253ed2770601c590d04c9f0ea658
+    excerpts:
+    - Endoscopy is a procedure that lets your doctor look inside your body.
+  medlineplus_gerd:
+    title: 'MedlinePlus: GERD'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2025
+    url: https://medlineplus.gov/gerd.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 24d2ada36c6d9ba9e6c34602cbc1342d58dbed4ecc4e7f7dabf9cfd054852d19
+    excerpts:
+    - chest pain with shortness of breath, or pain in your jaw or arm
+    - Upper GI endoscopy to look at the esophagus and stomach lining with a tiny camera.
+    - The most common symptom of GERD is heartburn.
+  medlineplus_heart_attack:
+    title: 'MedlinePlus: Heart Attack'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2026
+    url: https://medlineplus.gov/heartattack.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: b538bd9ed9868284d44f3eabca9b0c94ae2692db358dd0984e68e48547a12692
+    excerpts:
+    - you should call 911, even if you are not sure it is a heart attack.
+  medlineplus_cellulitis:
+    title: 'MedlinePlus: Cellulitis'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2025
+    url: https://medlineplus.gov/cellulitis.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 15b6171b5800a66894094d07e99ac36c517a36a23a499093e585baa00f4f7934
+    excerpts:
+    - Cellulitis is an infection of the skin and deep underlying tissues.
+  nhs_chest_pain:
+    title: 'NHS: Chest pain'
+    publisher: NHS website (England)
+    year: 2023
+    url: https://www.nhs.uk/symptoms/chest-pain/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 8c3bf72902feed4466af7e390766af44f91a363cacbe475dbf9eb81c6ef6e19a
+    excerpts:
+    - sudden pain or discomfort in your chest that does not go away
+    - spreads to your left or right arm, or your neck, jaw, stomach or back
+    - you have chest pain and you feel sweaty, sick, light headed or short of breath
+    - You could be having a heart attack.
+  nhs_anaphylaxis:
+    title: 'NHS: Anaphylaxis'
+    publisher: NHS website (England)
+    year: 2023
+    url: https://www.nhs.uk/conditions/anaphylaxis/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 85e52abe2d3ad371b0e5269aa8917bf7b9425335a065aa0f01887f66a63c488b
+    excerpts:
+    - your lips, mouth, throat or tongue suddenly become swollen
+    - your throat feels tight or you're struggling to swallow
+  nhs_shoulder_pain:
+    title: 'NHS: Shoulder pain'
+    publisher: NHS website (England)
+    year: 2024
+    url: https://www.nhs.uk/conditions/shoulder-pain/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 96a3b52f5d2c9435e12d9f36a42bf42b2ae8ba92d60d9ecff29c9fcd645a722b
+    excerpts:
+    - you have sudden or very bad shoulder pain
+    - your arm or shoulder has changed shape or is badly swollen
+    - there's no feeling in your arm or shoulder
+    - your arm or shoulder is hot or cold to touch
+    - you feel feverish or unwell
+    - you cannot move your arm
+  nhs_knee_pain:
+    title: 'NHS: Knee pain'
+    publisher: NHS website (England)
+    year: 2023
+    url: https://www.nhs.uk/conditions/knee-pain/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 3c420c8521bf2740be2328f37bcd000dbde3b840e939d429a1f2bfe48a93533b
+    excerpts:
+    - you cannot move your knee or put any weight on it
+    - your knee is badly swollen or has changed shape
+    - your knee locks, gives way or painfully clicks - painless clicking is normal
+    - have redness or heat around your knee - this can be a sign of infection
+  nhs_septic_arthritis:
+    title: 'NHS: Septic arthritis'
+    publisher: NHS website (England)
+    year: 2026
+    url: https://www.nhs.uk/conditions/septic-arthritis/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 9103e95e74e4caf67044a726f0c134280d9df044fff2ad57d844997f94c7ab78
+    excerpts:
+    - you have severe joint pain, usually in just 1 joint, that started suddenly
+    - feel generally unwell and have a high temperature, or feel hot, cold or shivery
+  nhs_back_pain:
+    title: 'NHS: Back pain'
+    publisher: NHS website (England)
+    year: 2023
+    url: https://www.nhs.uk/conditions/back-pain/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: b3190162b82e78b51b80478eb402e571bf642f7135978b1c6e564e878197d2e6
+    excerpts:
+    - pain, tingling, weakness or numbness in both legs
+    - a loss of feeling around your genitals or anus
+    - changes in your bladder or bowels, such as difficulty peeing, or peeing or pooing yourself
+    - it started after a serious accident, such as a car accident
+    - you feel hot, cold, shivery or generally unwell
+    - it's severe pain that starts suddenly, or it's getting worse quickly
+    - you've lost weight without trying to
+    - Back pain often improves on its own within a few weeks.
+  nhs_stomach_ache:
+    title: 'NHS: Stomach ache'
+    publisher: NHS website (England)
+    year: 2026
+    url: https://www.nhs.uk/conditions/stomach-ache/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: eab3e5227c98b80cb7713c5c69160cda391e746694a291a406ffbdc646f80502
+    excerpts:
+    - it started suddenly and is severe
+    - you're vomiting blood or your vomit looks green or like ground coffee
+    - a lot of blood coming from your bottom or your poo is black and sticky
+    - you cannot poo or fart at all
+    - you cannot pee at all
+    - spots or a rash that does not fade when you press it
+    - you're struggling to breathe
+  nhs_rectal_bleeding:
+    title: 'NHS: Bleeding from the bottom'
+    publisher: NHS website (England)
+    year: 2023
+    url: https://www.nhs.uk/conditions/bleeding-from-the-bottom-rectal-bleeding/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 82babe0e87ee15aef9299646f326fb7eb50ed391ab5dd54a78daf12e11fff9ba
+    excerpts:
+    - you're bleeding non-stop
+    - the toilet water turns red or you see large blood clots
+    - your poo is black or dark red
+    - you have bloody diarrhoea
+  nhs_sprains:
+    title: 'NHS: Sprains and strains'
+    publisher: NHS website (England)
+    year: 2024
+    url: https://www.nhs.uk/conditions/sprains-and-strains/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 65e00b04bd8974279638f49bbc5503cbc6da54221799464a67014edc3a889807
+    excerpts:
+    - the injured body part has changed shape or is pointing at an odd angle
+    - the injured body part is numb, tingling or has pins and needles
+    - you heard a crack when you had your injury
+    - is cold to touch
+    - You may need an X-ray, which can sometimes be done at an urgent treatment centre
+  nhs_cellulitis:
+    title: 'NHS: Cellulitis'
+    publisher: NHS website (England)
+    year: 2024
+    url: https://www.nhs.uk/conditions/cellulitis/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: e9361ee81432b7ca5a7a23a5392ad7ec7f39d75882d4eb5e2181924b36c6507b
+    excerpts:
+    - your skin is painful, hot and swollen
+    - a fast heartbeat or fast breathing
+    - confusion or disorientation
+  nhs_heartburn:
+    title: 'NHS: Heartburn and acid reflux'
+    publisher: NHS website (England)
+    year: 2023
+    url: https://www.nhs.uk/conditions/heartburn-and-acid-reflux/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 2597ca5e74ba4684419f14b35bbe6b88654f16bf65d697929af8cd9a0ff277eb
+    excerpts:
+    - food getting stuck in your throat, frequently being sick, or losing weight for no reason
+  cms_pfs_2026:
+    title: CMS Physician Fee Schedule Relative Value File, 2026 January release (non-QPP)
+    publisher: Centers for Medicare & Medicaid Services
+    year: 2026
+    url: https://www.cms.gov/medicare/payment/fee-schedules/physician/pfs-relative-value-files
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    excerpts: []

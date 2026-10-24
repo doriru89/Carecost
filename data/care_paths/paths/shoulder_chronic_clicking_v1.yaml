@@ -1,0 +1,599 @@
+# AI-drafted care path. NOT publishable until two non-AI reviewers sign off (review.status).
+# Plain text is our own words; quotes are <=15 words and verified against data/care_paths/sources.yaml.
+# CPT codes appear only under `cpts` (price layer). Edit freely, then run backend tests.
+id: shoulder_chronic_clicking_v1
+version: 1.0.0
+title:
+  en: Shoulder pain that came on gradually, often with painful clicking
+  zh: 慢慢出现的肩痛，常伴有疼痛的咔哒声
+intro: Shoulder pain that builds up slowly, sometimes with clicking that hurts, usually comes from the tendons that
+  lift your arm (the rotator cuff). Less often it's the rim of cartilage around the socket. Most people start with
+  an exam and a quick bone picture, then exercises. Detailed scans come later, and only if needed.
+scope:
+  area: msk_shoulder
+  acuity: chronic
+  severity_band:
+  - minor
+  - moderate
+entry:
+  all_of:
+    Q1:
+    - shoulder
+    Q2:
+    - no_injury
+red_flags:
+- rf_cardiac
+- rf_chest_pain_alone
+- rf_allergic_airway
+- rf_non_blanching_rash
+- rf_septic_joint
+- rf_limb_deformity
+- rf_systemic_msk
+- rf_shoulder_urgent
+glossary:
+- rotator_cuff
+- anesthesia
+intro_citations:
+- doc: medlineplus_rotator_cuff
+  year: 2024
+  section: Causes
+  url: https://medlineplus.gov/rotatorcuffinjuries.html
+  quote: Most rotator cuff injuries are from the wear and tear of aging.
+  claim_field: intro
+- doc: acr_chronic_shoulder_2022
+  year: 2022
+  section: Variant 1
+  url: https://acsearch.acr.org/docs/3101482/Narrative
+  quote: Chronic shoulder pain. Initial imaging.
+  claim_field: intro
+steps:
+- id: referral
+  layer: 0
+  kind: referral
+  condition:
+    Q14:
+    - hmo_referral_required
+    - masshealth
+    - unsure
+  appropriateness:
+    rating: plan_rule
+    source: hc_gov_glossary
+  likelihood_tier: certain
+  plain:
+    name: Visit with your main doctor first
+    technical_name: Primary-care referral visit
+    what: A short visit with your primary care doctor, who writes the order that lets you see a bone and joint specialist.
+    why: Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.
+    when_skipped: Your plan doesn't require a referral. Check your plan card or member website.
+  when_skipped_basis: plan_rule
+  citations:
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: If you don't get a referral first, the plan may not pay for the services.
+    claim_field: why
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: A written order from your primary care doctor for you to see a specialist
+    claim_field: what
+  cpts:
+  - code: '99213'
+    role: primary
+    mapping: asserted
+    note: Established-patient visit; research marked this code [断言]. Level could be 99212-99214.
+  glossary:
+  - referral
+  - hmo
+- id: visit
+  layer: 1
+  parent: referral
+  kind: visit
+  appropriateness:
+    rating: standard_of_care
+    note: Every ACR imaging variant starts from the clinician's history and exam; the visit itself is not rated.
+  likelihood_tier: certain
+  plain:
+    name: Visit with a bone & joint doctor
+    technical_name: New-patient orthopedic or sports-medicine visit
+    what: The doctor asks how the pain started and moves your arm in different directions to test each tendon.
+    why: The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes
+      next.
+    when_skipped: It isn't skipped on this path; some people start with their primary care doctor instead.
+  when_skipped_basis: logic
+  reviewer_note: Primary care vs. orthopedics as first visit is plan- and person-dependent.
+  citations:
+  - doc: aaos_rotator_cuff_2025
+    year: 2025
+    section: Diagnosis (clinical examination), Strong
+    url: https://www.aaos.org/rccpg2025
+    quote: Clinical examination can be useful to diagnose or stratify patients with rotator cuff
+    claim_field: why
+  - doc: medlineplus_shoulder
+    year: 2025
+    section: Diagnosis
+    url: https://medlineplus.gov/shoulderinjuriesanddisorders.html
+    quote: diagnose shoulder problems by using your medical history, a physical exam, and imaging tests.
+    claim_field: what
+  cpts:
+  - code: '99203'
+    role: primary
+    mapping: confirmed_pfs
+  - code: '99204'
+    role: alternative
+    mapping: confirmed_pfs
+    note: Higher-complexity new-patient visit
+- id: xray
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_chronic_shoulder_2022
+    variant: 1
+    procedure: Radiography shoulder
+  likelihood_tier: likely
+  plain:
+    name: Quick picture of the shoulder bones
+    technical_name: Shoulder X-ray
+    what: A few pictures of the shoulder made with a small dose of radiation. It's quick and usually needs no preparation.
+    why: Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while. It shows arthritis,
+      bone spurs and calcium in the tendons, which changes what comes next.
+    when_skipped: You had a recent shoulder X-ray that the doctor can use.
+  when_skipped_basis: logic
+  reviewer_note: How recent a prior X-ray must be to reuse it (~6 months in the research draft) is reviewer judgment.
+  citations:
+  - doc: acr_chronic_shoulder_2022
+    year: 2022
+    section: 'Variant 1 (Radiography shoulder: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/3101482/Narrative
+    quote: Chronic shoulder pain. Initial imaging.
+    claim_field: why
+  - doc: acr_chronic_shoulder_2022
+    year: 2022
+    section: Variant 3
+    url: https://acsearch.acr.org/docs/3101482/Narrative
+    quote: Radiographs demonstrate calcific tendinopathy or calcific bursitis.
+    claim_field: why
+  - doc: medlineplus_xrays
+    year: 2026
+    section: Preparation
+    url: https://medlineplus.gov/xrays.html
+    quote: In most cases, little or no preparation is needed.
+    claim_field: what
+  cpts:
+  - code: '73030'
+    role: primary
+    mapping: confirmed_pfs
+    note: Shoulder, at least 2 views. Professional reading (modifier 26) is often billed separately.
+  glossary:
+  - xray
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: X-Rays'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en
+    code: '73030'
+    resolved_title: X-Rays
+  - kind: link_out
+    label: 'RadiologyInfo: bone X-ray'
+    url: https://www.radiologyinfo.org/en/info/bonerad
+- id: physical_therapy
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: therapy
+  appropriateness:
+    rating: aaos_strong
+    source: aaos_rotator_cuff_2025
+    note: Strong recommendation is for symptomatic full-thickness cuff tears; extended here to cuff-type chronic
+      pain.
+  likelihood_tier: likely
+  plain:
+    name: Guided exercise program for the shoulder
+    technical_name: Physical therapy evaluation and visits
+    what: A first session where a therapist checks your strength and motion, then regular sessions of guided exercises,
+      usually over several weeks.
+    why: Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed
+      scan.
+    when_skipped: The exam or bone picture shows something that needs a surgeon first.
+  when_skipped_basis: logic
+  reviewer_note: Number of PT visits varies; the price layer should show the evaluation plus a per-visit price,
+    not a total.
+  citations:
+  - doc: aaos_rotator_cuff_2025
+    year: 2025
+    section: Long-term non-operative management (Strong)
+    url: https://www.aaos.org/rccpg2025
+    quote: Patient reported outcomes (PROs) improve with physical therapy in symptomatic
+    claim_field: why
+  - doc: medlineplus_rehabilitation
+    year: 2025
+    section: Overview
+    url: https://medlineplus.gov/rehabilitation.html
+    quote: help you get back, keep, or improve abilities that you need for daily life
+    claim_field: what
+  cpts:
+  - code: '97161'
+    role: primary
+    mapping: asserted
+    note: PT evaluation, low complexity; 97162/97163 for higher complexity
+  - code: '97162'
+    role: alternative
+    mapping: asserted
+  - code: '97163'
+    role: alternative
+    mapping: asserted
+  - code: '97110'
+    role: add_on
+    mapping: asserted
+    note: Therapeutic exercise, per 15 minutes, each later visit
+  glossary:
+  - pt_evaluation
+- id: steroid_injection
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  - xray
+  kind: procedure
+  appropriateness:
+    rating: MBA
+    source: acr_chronic_shoulder_2022
+    variant: 2
+    procedure: Image-guided anesthetic +/- corticosteroid injection shoulder or surrounding structures
+  likelihood_tier: possible
+  plain:
+    name: Shot of anti-inflammatory and numbing medicine
+    technical_name: Corticosteroid shoulder injection
+    what: A needle puts anti-inflammatory medicine mixed with numbing medicine into or near the shoulder joint,
+      sometimes guided by ultrasound.
+    why: It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered
+      for short-term relief.
+    when_skipped: The pain is mild enough to do the exercises without it, or you'd rather avoid shots.
+  when_skipped_basis: logic
+  reviewer_note: Diabetes / blood-sugar concerns and nearness to surgery change this; doctor decides.
+  citations:
+  - doc: aaos_rotator_cuff_2025
+    year: 2025
+    section: Corticosteroid injections (Moderate, downgraded)
+    url: https://www.aaos.org/rccpg2025
+    quote: The use of a single injection of corticosteroids with local anesthetic can be considered
+    claim_field: why
+  - doc: aaos_rotator_cuff_2025
+    year: 2025
+    section: Corticosteroid injections (Moderate, downgraded)
+    url: https://www.aaos.org/rccpg2025
+    quote: for short-term improvement in both pain and function for patients with shoulder pain.
+    claim_field: why
+  - doc: acr_chronic_shoulder_2022
+    year: 2022
+    section: 'Variant 2 (image-guided injection: May Be Appropriate)'
+    url: https://acsearch.acr.org/docs/3101482/Narrative
+    quote: Suspect rotator cuff disorders or subacromial subdeltoid bursitis (no prior surgery).
+    claim_field: appropriateness
+  cpts:
+  - code: '20610'
+    role: primary
+    mapping: asserted
+    note: Large joint injection without imaging guidance
+  - code: '20611'
+    role: alternative
+    mapping: asserted
+    note: Same, with ultrasound guidance
+  glossary:
+  - steroid_injection
+  - ultrasound
+  ai_potential:
+  - label: AI-suggested
+    text: The medicine in the shot may appear as its own line on the bill.
+    ai_generated: true
+    cpts:
+    - code: J3301
+      role: drug
+      mapping: asserted
+      note: Triamcinolone, per 10 mg (one common choice); PFS status E
+- id: tendon_scan_ultrasound
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  - xray
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_chronic_shoulder_2022
+    variant: 2
+    procedure: US shoulder
+  likelihood_tier: possible
+  plain:
+    name: Live sound-wave picture of the tendons
+    technical_name: Shoulder ultrasound
+    what: A probe on your skin uses sound waves to show the tendons moving in real time. No radiation.
+    why: If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear
+      is.
+    when_skipped: Most people improve with exercises and never need a scan. The doctor may pick a detailed magnet
+      scan instead.
+  citations:
+  - doc: acr_chronic_shoulder_2022
+    year: 2022
+    section: 'Variant 2 (US shoulder: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/3101482/Narrative
+    quote: Initial radiographs normal or inconclusive. Next imaging study.
+    claim_field: why
+  - doc: aaos_rotator_cuff_2025
+    year: 2025
+    section: Diagnosis (imaging), Strong
+    url: https://www.aaos.org/rccpg2025
+    quote: MRI, MRA, CT and ultrasound are useful adjuncts to a clinical exam and radiographs
+    claim_field: why
+  - doc: aaos_rotator_cuff_2025
+    year: 2025
+    section: Long-term non-operative management (Strong)
+    url: https://www.aaos.org/rccpg2025
+    quote: Patient reported outcomes (PROs) improve with physical therapy in symptomatic
+    claim_field: when_skipped
+  - doc: medlineplus_ultrasound
+    year: 2026
+    section: Uses
+    url: https://medlineplus.gov/lab-tests/sonogram/
+    quote: Ultrasound is best used to learn about conditions that involve soft tissues
+    claim_field: what
+  cpts:
+  - code: '76881'
+    role: primary
+    mapping: confirmed_pfs
+    note: Complete joint exam
+  - code: '76882'
+    role: alternative
+    mapping: confirmed_pfs
+    note: Limited exam
+  glossary:
+  - ultrasound
+  - xray
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: Ultrasound'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=76881&informationRecipient.languageCode.c=en
+    code: '76881'
+    resolved_title: Ultrasound
+  - kind: link_out
+    label: 'RadiologyInfo: musculoskeletal ultrasound'
+    url: https://www.radiologyinfo.org/en/info/genus
+- id: tendon_scan_mri
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  - xray
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_chronic_shoulder_2022
+    variant: 2
+    procedure: MRI shoulder without IV contrast
+  likelihood_tier: possible
+  plain:
+    name: Detailed scan of tendons & cartilage
+    technical_name: Shoulder MRI (no contrast)
+    what: A strong magnet makes detailed pictures of the tendons and cartilage. You lie still inside a tube-shaped
+      machine; tell the staff about any metal in your body.
+    why: If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.
+    when_skipped: 'Most people improve with exercises and never need one. It isn''t a first test: guidelines rate
+      it as usually not appropriate before an X-ray.'
+  citations:
+  - doc: acr_chronic_shoulder_2022
+    year: 2022
+    section: 'Variant 2 (MRI without contrast: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/3101482/Narrative
+    quote: Initial radiographs normal or inconclusive. Next imaging study.
+    claim_field: why
+  - doc: acr_chronic_shoulder_2022
+    year: 2022
+    section: 'Variant 1 (MRI as first test: Usually Not Appropriate)'
+    url: https://acsearch.acr.org/docs/3101482/Narrative
+    quote: Chronic shoulder pain. Initial imaging.
+    claim_field: when_skipped
+  - doc: medlineplus_mri
+    year: 2026
+    section: Safety
+    url: https://medlineplus.gov/mriscans.html
+    quote: Metal objects or implants can interfere with the scan and may be unsafe.
+    claim_field: what
+  cpts:
+  - code: '73221'
+    role: primary
+    mapping: confirmed_pfs
+    note: MRI upper-extremity joint without contrast
+  glossary:
+  - mri
+  - xray
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: MRI Scans'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73221&informationRecipient.languageCode.c=en
+    code: '73221'
+    resolved_title: MRI Scans
+  - kind: link_out
+    label: 'RadiologyInfo: shoulder MRI'
+    url: https://www.radiologyinfo.org/en/info/shouldermr
+- id: mr_arthrogram
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  - xray
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_chronic_shoulder_2022
+    variant: 4
+    procedure: MR arthrography shoulder
+  likelihood_tier: rare
+  plain:
+    name: Detailed scan with dye in the joint
+    technical_name: Shoulder MR arthrogram
+    what: A doctor first injects dye into the joint, using a live X-ray to guide the needle, and then you have the
+      detailed magnet scan.
+    why: The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum)
+      better. It's used when clicking comes with catching or a slipping feeling.
+    when_skipped: There's no catching or slipping, or a plain detailed scan already answered the question.
+  citations:
+  - doc: acr_chronic_shoulder_2022
+    year: 2022
+    section: 'Variant 4 (MR arthrography: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/3101482/Narrative
+    quote: Suspect labral pathology or shoulder instability.
+    claim_field: why
+  - doc: acr_chronic_shoulder_2022
+    year: 2022
+    section: 'Variant 4 (MR arthrography: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/3101482/Narrative
+    quote: Suspect labral pathology or shoulder instability.
+    claim_field: when_skipped
+  cpts:
+  - code: '73222'
+    role: primary
+    mapping: asserted
+    note: MRI upper-extremity joint with contrast
+  - code: '23350'
+    role: add_on
+    mapping: asserted
+    note: Injection for shoulder arthrography
+  - code: '77002'
+    role: guidance
+    mapping: asserted
+    note: Fluoroscopic needle guidance
+  glossary:
+  - mr_arthrogram
+  - labrum
+  - xray
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: MRI Scans'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en
+    code: '73222'
+    resolved_title: MRI Scans
+tier_modifiers:
+- when:
+    Q4:
+    - yes_still_bad
+  step: tendon_scan_mri
+  tier: likely
+  note: '6 weeks of treatment failed: next imaging study (ACR V2) becomes likely. [我判断]'
+- when:
+    Q4:
+    - yes_still_bad
+  step: tendon_scan_ultrasound
+  tier: likely
+  note: Same reasoning as the MRI; one of the two is usually chosen, not both.
+- when:
+    Q5:
+    - painful_catch
+  step: mr_arthrogram
+  tier: possible
+  note: Painful catch/slip -> labral/instability branch (ACR V4). Mapping is an inference; clinician to confirm.
+- when:
+    Q6:
+    - stiff_both_ways
+  step: steroid_injection
+  tier: likely
+  appropriateness:
+    rating: UA
+    source: acr_chronic_shoulder_2022
+    variant: 5
+    procedure: Image-guided anesthetic +/- corticosteroid injection shoulder or surrounding structures
+  note: 'Suspected frozen shoulder (ACR V5): image-guided injection Usually Appropriate.'
+exits:
+- when: Your pain started with a fall or an injury
+  text: 'Injuries follow a different path: a bone picture first, then quicker scans if a tear or dislocation is
+    suspected.'
+  citations:
+  - doc: acr_acute_shoulder_2024
+    year: 2024
+    section: Variant 1
+    url: https://acsearch.acr.org/docs/69433/Narrative/
+    quote: Adult. Acute shoulder pain. Any etiology. Initial imaging.
+    claim_field: intro
+- when: Surgery is recommended
+  text: This tool stops before surgery. Ask the surgeon's office for a written estimate that lists the facility,
+    surgeon and sedation separately.
+golden_cases:
+- name: 52-year-old, gradual pain, can't lift overhead alone
+  answers:
+    Q0: []
+    Q1: shoulder
+    Q2: no_injury
+    Q6: weak_lift_only
+    Q8: age_45_59
+  expect: shoulder_chronic_clicking_v1
+  expect_tiers:
+    xray: likely
+    tendon_scan_mri: possible
+    mr_arthrogram: rare
+- name: Exercises for 6 weeks did not help
+  answers:
+    Q0: []
+    Q1: shoulder
+    Q2: no_injury
+    Q4: yes_still_bad
+  expect: shoulder_chronic_clicking_v1
+  expect_tiers:
+    tendon_scan_mri: likely
+    tendon_scan_ultrasound: likely
+- name: Painful catching and slipping
+  answers:
+    Q0: []
+    Q1: shoulder
+    Q2: no_injury
+    Q5: painful_catch
+  expect: shoulder_chronic_clicking_v1
+  expect_tiers:
+    mr_arthrogram: possible
+- name: Stiff both ways (possible frozen shoulder)
+  answers:
+    Q0: []
+    Q1: shoulder
+    Q2: no_injury
+    Q6: stiff_both_ways
+  expect: shoulder_chronic_clicking_v1
+  expect_tiers:
+    steroid_injection: likely
+- name: HMO member
+  answers:
+    Q0: []
+    Q1: shoulder
+    Q2: no_injury
+    Q14: hmo_referral_required
+  expect: shoulder_chronic_clicking_v1
+- name: 'Red flag: chest pressure with arm pain'
+  answers:
+    Q0:
+    - rf_cardiac
+    Q1: shoulder
+    Q2: no_injury
+  expect: call_911
+- name: 'Red flag: night sweats and weight loss'
+  answers:
+    Q0:
+    - rf_systemic_msk
+    Q1: shoulder
+    Q2: no_injury
+  expect: routine
+clinical_uncertainties:
+- ACR's document does not use the word 'clicking'. Mapping painful click/catch to the labral/instability variant
+  (V4) is an inference.
+- Q6 (can lift with help vs stiff both ways) stands in for the active vs passive range-of-motion exam; a clinician
+  should confirm it is reliable enough to move tiers.
+- Tier 'likely' for imaging after 6 weeks of failed treatment is our judgment, not a measured frequency.
+- Whether frozen shoulder should be its own path (ACR V5) or stay a modifier here is Austin's call.
+- PT 'likely' extends AAOS's strong recommendation for full-thickness tears to cuff-type chronic pain in general.
+review:
+  status: pending_austin
+  drafted_by: ai:claude-opus-5.5
+  drafted_at: '2026-10-24'
+  reviewers: []

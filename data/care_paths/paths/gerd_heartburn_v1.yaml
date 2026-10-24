@@ -1,0 +1,331 @@
+# AI-drafted care path. NOT publishable until two non-AI reviewers sign off (review.status).
+# Plain text is our own words; quotes are <=15 words and verified against data/care_paths/sources.yaml.
+# CPT codes appear only under `cpts` (price layer). Edit freely, then run backend tests.
+id: gerd_heartburn_v1
+version: 1.0.0
+title:
+  en: Heartburn or acid reflux without warning signs
+  zh: 没有报警症状的烧心/反酸
+intro: Classic heartburn without warning signs usually starts with a doctor visit and about 8 weeks of a daily acid-reducing
+  pill. A camera check of the food pipe and stomach comes only if that doesn't work or the symptoms come back.
+scope:
+  area: gi_upper
+  acuity: chronic
+  severity_band:
+  - minor
+  - moderate
+entry:
+  all_of:
+    Q1:
+    - heartburn_upper
+    Q11:
+    - none
+red_flags:
+- rf_cardiac
+- rf_chest_pain_alone
+- rf_allergic_airway
+- rf_non_blanching_rash
+- rf_gi_bleed_heavy
+- rf_gi_bleed_dark_stool
+- rf_gi_bleed_dizzy
+- rf_abdomen_severe
+glossary: []
+intro_citations:
+- doc: medlineplus_gerd
+  year: 2025
+  section: Symptoms
+  url: https://medlineplus.gov/gerd.html
+  quote: The most common symptom of GERD is heartburn.
+  claim_field: intro
+- doc: acg_gerd_2022
+  year: 2022
+  section: Diagnosis recommendations (Strong)
+  url: https://www.newswise.com/pdf_docs/163769644314928_ACG%20GERD%20Guidelines%20Katz%20et%20al%20AJG%20Jan%202022.pdf
+  quote: we recommend an 8-wk trial of empiric PPIs once daily before a meal.
+  claim_field: intro
+steps:
+- id: referral
+  layer: 0
+  kind: referral
+  condition:
+    Q14:
+    - hmo_referral_required
+    - masshealth
+    - unsure
+  appropriateness:
+    rating: plan_rule
+    source: hc_gov_glossary
+  likelihood_tier: certain
+  plain:
+    name: Visit with your main doctor first
+    technical_name: Primary-care referral visit
+    what: A short visit with your primary care doctor, who writes the order that lets you see a stomach specialist.
+    why: Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.
+    when_skipped: Your plan doesn't require a referral. Check your plan card or member website.
+  when_skipped_basis: plan_rule
+  citations:
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: If you don't get a referral first, the plan may not pay for the services.
+    claim_field: why
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: A written order from your primary care doctor for you to see a specialist
+    claim_field: what
+  cpts:
+  - code: '99213'
+    role: primary
+    mapping: asserted
+    note: Established-patient visit; research marked this code [断言]. Level could be 99212-99214.
+  glossary:
+  - referral
+  - hmo
+- id: visit
+  layer: 1
+  parent: referral
+  kind: visit
+  appropriateness:
+    rating: standard_of_care
+    note: History decides classic vs atypical GERD and checks for alarm features.
+  likelihood_tier: likely
+  plain:
+    name: Visit with your doctor about heartburn
+    technical_name: Primary-care office visit
+    what: The doctor asks about your symptoms, food, medicines and warning signs.
+    why: It confirms this is ordinary reflux and not something that needs a test first, then sets up the medicine
+      trial.
+    when_skipped: Many people start an over-the-counter acid reducer on their own.
+  when_skipped_basis: logic
+  reviewer_note: Self-treatment with OTC acid reducers is common; visit tier 'likely' not 'certain'.
+  citations:
+  - doc: acg_gerd_2022
+    year: 2022
+    section: Recommendation 6
+    url: https://www.newswise.com/pdf_docs/163769644314928_ACG%20GERD%20Guidelines%20Katz%20et%20al%20AJG%20Jan%202022.pdf
+    quote: We recommend endoscopy as the first test for evaluation of patients presenting with dysphagia
+    claim_field: why
+  cpts:
+  - code: '99203'
+    role: primary
+    mapping: confirmed_pfs
+  - code: '99213'
+    role: alternative
+    mapping: asserted
+    note: Established patient
+- id: acid_reducer_trial
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: medication
+  appropriateness:
+    rating: acg_strong
+    source: acg_gerd_2022
+    note: Recommendation 1 (strong, moderate evidence).
+  likelihood_tier: likely
+  plain:
+    name: 8-week trial of a daily acid-reducing pill
+    technical_name: Empiric PPI trial (e.g. omeprazole)
+    what: One pill a day before a meal for about 8 weeks. Several are sold over the counter.
+    why: For classic heartburn without warning signs, guidelines strongly recommend trying this first; if it works,
+      no test is needed.
+    when_skipped: You have warning signs, which call for a camera check first.
+  citations:
+  - doc: acg_gerd_2022
+    year: 2022
+    section: Diagnosis recommendations (Strong)
+    url: https://www.newswise.com/pdf_docs/163769644314928_ACG%20GERD%20Guidelines%20Katz%20et%20al%20AJG%20Jan%202022.pdf
+    quote: we recommend an 8-wk trial of empiric PPIs once daily before a meal.
+    claim_field: why
+  - doc: acg_gerd_2022
+    year: 2022
+    section: Recommendation 6
+    url: https://www.newswise.com/pdf_docs/163769644314928_ACG%20GERD%20Guidelines%20Katz%20et%20al%20AJG%20Jan%202022.pdf
+    quote: We recommend endoscopy as the first test for evaluation of patients presenting with dysphagia
+    claim_field: when_skipped
+  no_price: true
+  no_price_reason: Pharmacy or over-the-counter medicine; not in physician or hospital price files.
+  glossary:
+  - acid_reducer
+- id: upper_endoscopy
+  layer: 2
+  parent: visit
+  after:
+  - acid_reducer_trial
+  kind: procedure
+  appropriateness:
+    rating: acg_strong
+    source: acg_gerd_2022
+    note: Recommendation 3 (strong, low evidence).
+  likelihood_tier: possible
+  plain:
+    name: Camera check of the food pipe and stomach
+    technical_name: Upper endoscopy (EGD)
+    what: A thin camera tube goes through your mouth while you're sedated to look at the food pipe and stomach.
+      Small samples may be taken.
+    why: If 8 weeks of medicine doesn't help, or symptoms return when you stop, guidelines recommend this, ideally
+      after 2-4 weeks off the medicine.
+    when_skipped: The medicine works and symptoms stay away.
+  citations:
+  - doc: acg_gerd_2022
+    year: 2022
+    section: Recommendation 3 (Strong)
+    url: https://www.newswise.com/pdf_docs/163769644314928_ACG%20GERD%20Guidelines%20Katz%20et%20al%20AJG%20Jan%202022.pdf
+    quote: We recommend diagnostic endoscopy, ideally after PPIs are stopped for 2-4 weeks
+    claim_field: why
+  - doc: acg_gerd_2022
+    year: 2022
+    section: Recommendation 3 (Strong)
+    url: https://www.newswise.com/pdf_docs/163769644314928_ACG%20GERD%20Guidelines%20Katz%20et%20al%20AJG%20Jan%202022.pdf
+    quote: symptoms do not respond adequately to an 8-week empiric trial of PPIs
+    claim_field: when_skipped
+  - doc: medlineplus_endoscopy
+    year: 2024
+    section: Overview
+    url: https://medlineplus.gov/endoscopy.html
+    quote: Endoscopy is a procedure that lets your doctor look inside your body.
+    claim_field: what
+  cpts:
+  - code: '43235'
+    role: primary
+    mapping: asserted
+    note: Diagnostic EGD
+  - code: '43239'
+    role: alternative
+    mapping: confirmed_pfs
+    note: EGD with biopsy
+  glossary:
+  - upper_endoscopy
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: Biopsy'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=43239&informationRecipient.languageCode.c=en
+    code: '43239'
+    resolved_title: Biopsy
+- id: anesthesia
+  layer: 2
+  parent: visit
+  travels_with: upper_endoscopy
+  kind: anesthesia
+  appropriateness:
+    rating: standard_of_care
+    note: Sedation is standard for EGD.
+  likelihood_tier: possible
+  plain:
+    name: Medicine so you sleep through it
+    technical_name: Anesthesia for upper endoscopy
+    what: Medicine through an IV so you're asleep or very relaxed, often from a separate anesthesia team.
+    why: It keeps you comfortable; when an anesthesia team gives it, it arrives as its own bill.
+    when_skipped: Lighter sedation from the endoscopy team, with no separate bill.
+  when_skipped_basis: logic
+  reviewer_note: '[断言] separate-anesthesia share not sourced.'
+  citations:
+  - doc: medlineplus_anesthesia
+    year: 2025
+    section: Monitored sedation
+    url: https://medlineplus.gov/anesthesia.html
+    quote: Monitored sedation makes you relaxed or sleepy.
+    claim_field: why
+  cpts:
+  - code: '00731'
+    role: primary
+    mapping: asserted
+    note: Anesthesia for upper GI endoscopy; not in research list
+  glossary:
+  - anesthesia
+  - upper_endoscopy
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: Anesthesia'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=00731&informationRecipient.languageCode.c=en
+    code: '00731'
+    resolved_title: Anesthesia
+- id: pathology
+  layer: 2
+  parent: visit
+  after:
+  - upper_endoscopy
+  travels_with: upper_endoscopy
+  kind: lab
+  appropriateness:
+    rating: implied_by_parent
+    note: Billed only when samples are taken during the scope (43239).
+  likelihood_tier: possible
+  plain:
+    name: Lab check of any samples
+    technical_name: Surgical pathology (tissue exam)
+    what: A pathologist looks at any samples taken during the camera check.
+    why: It checks for inflammation, infection or changes in the lining. It's a separate bill.
+    when_skipped: No samples are taken.
+  when_skipped_basis: logic
+  reviewer_note: Travels with upper_endoscopy when 43239 applies.
+  citations:
+  - doc: medlineplus_biopsy
+    year: 2025
+    section: Overview
+    url: https://medlineplus.gov/biopsy.html
+    quote: A doctor called a pathologist looks at the cells or tissue under a microscope
+    claim_field: why
+  cpts:
+  - code: '88305'
+    role: primary
+    mapping: confirmed_pfs
+  glossary:
+  - pathology
+tier_modifiers:
+- when:
+    Q12:
+    - yes_still_bad
+  step: upper_endoscopy
+  tier: likely
+  note: Failed 8-week trial -> ACG recommendation 3.
+golden_cases:
+- name: Heartburn after meals, nothing tried
+  answers:
+    Q0: []
+    Q1: heartburn_upper
+    Q11: none
+    Q12: no_trial_yet
+  expect: gerd_heartburn_v1
+  expect_tiers:
+    upper_endoscopy: possible
+- name: 8 weeks of omeprazole, still bad
+  answers:
+    Q0: []
+    Q1: heartburn_upper
+    Q11: none
+    Q12: yes_still_bad
+  expect: gerd_heartburn_v1
+  expect_tiers:
+    upper_endoscopy: likely
+- name: Heartburn with trouble swallowing
+  answers:
+    Q0: []
+    Q1: heartburn_upper
+    Q11: 'yes'
+  expect: upper_gi_alarm
+- name: 'Red flag: vomiting blood'
+  answers:
+    Q0:
+    - rf_gi_bleed_heavy
+    Q1: heartburn_upper
+  expect: call_911
+- name: 'Red flag: chest pain'
+  answers:
+    Q0:
+    - rf_cardiac
+    Q1: heartburn_upper
+  expect: call_911
+clinical_uncertainties:
+- 'Dyspepsia (upper-belly pain without heartburn) uses a different rule (ACG/CAG 2017: scope at 60+, H. pylori test-and-treat
+  under 60) that is NOT modeled; it was not snapshotted.'
+- 00731 and 43235 were not verified against the research list; mapping marked asserted.
+review:
+  status: pending_austin
+  drafted_by: ai:claude-opus-5.5
+  drafted_at: '2026-10-24'
+  reviewers: []

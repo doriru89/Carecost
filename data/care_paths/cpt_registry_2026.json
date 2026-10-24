@@ -1,0 +1,187 @@
+{
+  "source_file": "PPRRVU2026_Jan_nonQPP.csv",
+  "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
+  "release": "CMS PFS Relative Value File, 2026 January release (non-QPP), released 12/29/2025",
+  "status_legend": {
+    "A": "Active; separately paid under the PFS when covered",
+    "B": "Bundled; payment is folded into other services",
+    "C": "Contractor-priced case by case",
+    "E": "Excluded from the PFS by regulation (e.g. many drugs); paid elsewhere if covered",
+    "I": "Not valid for Medicare; Medicare uses another code",
+    "J": "Anesthesia service; priced with anesthesia base units, not RVUs",
+    "N": "Not covered by Medicare",
+    "R": "Restricted coverage; contractor-priced if covered",
+    "T": "Injection; paid only if nothing else PFS-payable is billed that day",
+    "X": "Statutory exclusion (e.g. clinical lab tests); paid under another fee schedule"
+  },
+  "codes": {
+    "00731": {
+      "status": "J",
+      "has_professional_technical_split": false
+    },
+    "00811": {
+      "status": "J",
+      "has_professional_technical_split": false
+    },
+    "00812": {
+      "status": "J",
+      "has_professional_technical_split": false
+    },
+    "11102": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "11104": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "11106": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "11401": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "11402": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "11601": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "11602": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "20610": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "20611": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "23350": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "43235": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "43239": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "45378": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "45380": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "45385": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "72100": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "72148": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "73030": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "73221": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "73222": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "73560": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "73562": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "73564": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "73600": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "73610": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "73721": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "76881": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "76882": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "77002": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "88305": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "97110": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "97161": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "97162": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "97163": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "99203": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "99204": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "99213": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "G0121": {
+      "status": "A",
+      "has_professional_technical_split": false
+    },
+    "J3301": {
+      "status": "E",
+      "has_professional_technical_split": false
+    }
+  }
+}

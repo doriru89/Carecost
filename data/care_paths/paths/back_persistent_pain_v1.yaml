@@ -1,0 +1,284 @@
+# AI-drafted care path. NOT publishable until two non-AI reviewers sign off (review.status).
+# Plain text is our own words; quotes are <=15 words and verified against data/care_paths/sources.yaml.
+# CPT codes appear only under `cpts` (price layer). Edit freely, then run backend tests.
+id: back_persistent_pain_v1
+version: 1.0.0
+title:
+  en: Low back pain that hasn't improved after 6 weeks of treatment
+  zh: 治疗 6 周后仍未好转的腰痛
+intro: When low back pain is still bad after about 6 weeks of good treatment, and you and your doctor are considering
+  a procedure or surgery, a detailed scan of the spine becomes reasonable.
+scope:
+  area: msk_back
+  acuity: subacute
+  severity_band:
+  - moderate
+entry:
+  all_of:
+    Q1:
+    - lower_back
+    Q3:
+    - 6w_6m
+    - gt_6m
+    Q4:
+    - yes_still_bad
+red_flags:
+- rf_cardiac
+- rf_chest_pain_alone
+- rf_allergic_airway
+- rf_non_blanching_rash
+- rf_cauda_equina
+- rf_back_trauma
+- rf_back_systemic
+- rf_back_risk_history
+glossary:
+- anesthesia
+intro_citations:
+- doc: acr_low_back_pain_2021
+  year: 2021
+  section: Variant 3
+  url: https://acsearch.acr.org/docs/69483/Narrative/
+  quote: Surgery or intervention candidate with persistent or progressive symptoms
+  claim_field: intro
+- doc: acr_low_back_pain_2021
+  year: 2021
+  section: Variant 3
+  url: https://acsearch.acr.org/docs/69483/Narrative/
+  quote: during or following 6 weeks of optimal medical management.
+  claim_field: intro
+steps:
+- id: referral
+  layer: 0
+  kind: referral
+  condition:
+    Q14:
+    - hmo_referral_required
+    - masshealth
+    - unsure
+  appropriateness:
+    rating: plan_rule
+    source: hc_gov_glossary
+  likelihood_tier: certain
+  plain:
+    name: Visit with your main doctor first
+    technical_name: Primary-care referral visit
+    what: A short visit with your primary care doctor, who writes the order that lets you see a spine specialist.
+    why: Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.
+    when_skipped: Your plan doesn't require a referral. Check your plan card or member website.
+  when_skipped_basis: plan_rule
+  citations:
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: If you don't get a referral first, the plan may not pay for the services.
+    claim_field: why
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: A written order from your primary care doctor for you to see a specialist
+    claim_field: what
+  cpts:
+  - code: '99213'
+    role: primary
+    mapping: asserted
+    note: Established-patient visit; research marked this code [断言]. Level could be 99212-99214.
+  glossary:
+  - referral
+  - hmo
+- id: visit
+  layer: 1
+  parent: referral
+  kind: visit
+  appropriateness:
+    rating: standard_of_care
+    note: Candidate-for-intervention status is a clinical judgment made at this visit.
+  likelihood_tier: certain
+  plain:
+    name: Follow-up visit about the back pain
+    technical_name: Office visit (primary care, spine or physiatry)
+    what: The doctor reviews what you've tried and re-checks your back and legs.
+    why: Whether a scan helps depends on whether you'd consider a procedure if it found something.
+    when_skipped: It isn't skipped on this path.
+  when_skipped_basis: logic
+  reviewer_note: Primary care vs. specialist as first visit depends on plan and person.
+  citations:
+  - doc: acr_low_back_pain_2021
+    year: 2021
+    section: Variant 3
+    url: https://acsearch.acr.org/docs/69483/Narrative/
+    quote: Surgery or intervention candidate with persistent or progressive symptoms
+    claim_field: why
+  cpts:
+  - code: '99203'
+    role: primary
+    mapping: confirmed_pfs
+  - code: '99204'
+    role: alternative
+    mapping: confirmed_pfs
+- id: spine_mri
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_low_back_pain_2021
+    variant: 3
+    procedure: MRI lumbar spine without IV contrast
+  likelihood_tier: possible
+  plain:
+    name: Detailed scan of the lower spine
+    technical_name: Lumbar spine MRI (no contrast)
+    what: A strong magnet makes detailed pictures of the discs and nerves in the lower back. You lie still inside
+      a tube-shaped machine.
+    why: After 6 weeks of good treatment, if a procedure is on the table, guidelines rate this scan as the right
+      next step.
+    when_skipped: You wouldn't want a procedure, or the pain is improving.
+  citations:
+  - doc: acr_low_back_pain_2021
+    year: 2021
+    section: 'Variant 3 (MRI: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/69483/Narrative/
+    quote: during or following 6 weeks of optimal medical management.
+    claim_field: why
+  - doc: acr_low_back_pain_2021
+    year: 2021
+    section: Variant 3
+    url: https://acsearch.acr.org/docs/69483/Narrative/
+    quote: Surgery or intervention candidate with persistent or progressive symptoms
+    claim_field: when_skipped
+  cpts:
+  - code: '72148'
+    role: primary
+    mapping: asserted
+  glossary:
+  - mri
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: MRI Scans'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=72148&informationRecipient.languageCode.c=en
+    code: '72148'
+    resolved_title: MRI Scans
+- id: spine_xray
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: imaging
+  appropriateness:
+    rating: MBA
+    source: acr_low_back_pain_2021
+    variant: 3
+    procedure: Radiography lumbar spine
+  likelihood_tier: possible
+  plain:
+    name: Picture of the lower spine bones
+    technical_name: Lumbar spine X-ray
+    what: Pictures of the lower back made with a dose of radiation.
+    why: Sometimes added to look at alignment or bone changes; guidelines rate it as maybe appropriate at this stage.
+    when_skipped: The detailed scan answers the question on its own.
+  citations:
+  - doc: acr_low_back_pain_2021
+    year: 2021
+    section: 'Variant 3 (Radiography: May Be Appropriate)'
+    url: https://acsearch.acr.org/docs/69483/Narrative/
+    quote: during or following 6 weeks of optimal medical management.
+    claim_field: why
+  - doc: acr_low_back_pain_2021
+    year: 2021
+    section: Variant 3
+    url: https://acsearch.acr.org/docs/69483/Narrative/
+    quote: during or following 6 weeks of optimal medical management.
+    claim_field: when_skipped
+  cpts:
+  - code: '72100'
+    role: primary
+    mapping: asserted
+  glossary:
+  - xray
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: X-Rays'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=72100&informationRecipient.languageCode.c=en
+    code: '72100'
+    resolved_title: X-Rays
+- id: physical_therapy
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: therapy
+  appropriateness:
+    rating: standard_of_care
+    note: Continued rehab is standard while deciding on procedures.
+  likelihood_tier: likely
+  plain:
+    name: Guided exercise program for the back
+    technical_name: Physical therapy evaluation and visits
+    what: A first session where a therapist checks your strength and motion, then guided exercises over several
+      weeks.
+    why: Exercise is the usual first treatment for this kind of pain and is tried before any detailed scan.
+    when_skipped: The pain settles with home exercises, or the exam shows something that needs a surgeon first.
+  when_skipped_basis: logic
+  reviewer_note: Visit count varies; price as evaluation + per-visit.
+  citations:
+  - doc: medlineplus_sprains
+    year: 2025
+    section: Treatment
+    url: https://medlineplus.gov/sprainsandstrains.html
+    quote: Later treatment might include exercise and physical therapy.
+    claim_field: why
+  - doc: medlineplus_rehabilitation
+    year: 2025
+    section: Overview
+    url: https://medlineplus.gov/rehabilitation.html
+    quote: help you get back, keep, or improve abilities that you need for daily life
+    claim_field: what
+  cpts:
+  - code: '97161'
+    role: primary
+    mapping: asserted
+  - code: '97162'
+    role: alternative
+    mapping: asserted
+  - code: '97110'
+    role: add_on
+    mapping: asserted
+  glossary:
+  - pt_evaluation
+exits:
+- when: A procedure or surgery is offered
+  text: This tool stops here. Ask for a written estimate that lists the facility, doctor and sedation.
+golden_cases:
+- name: 3 months, PT failed
+  answers:
+    Q0: []
+    Q1: lower_back
+    Q3: 6w_6m
+    Q4: yes_still_bad
+  expect: back_persistent_pain_v1
+  expect_tiers:
+    spine_mri: possible
+- name: A year of pain, still bad
+  answers:
+    Q0: []
+    Q1: lower_back
+    Q3: gt_6m
+    Q4: yes_still_bad
+  expect: back_persistent_pain_v1
+- name: 'Red flag: fever'
+  answers:
+    Q0:
+    - rf_back_systemic
+    Q1: lower_back
+  expect: seen_today
+clinical_uncertainties:
+- Whether the user is a 'procedure candidate' (ACR V3 condition) can't be asked directly; MRI stays 'possible'.
+review:
+  status: pending_austin
+  drafted_by: ai:claude-opus-5.5
+  drafted_at: '2026-10-24'
+  reviewers: []

@@ -1,0 +1,1010 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://carecost.local/contracts/care_path.schema.json",
+  "$defs": {
+    "AiPotential": {
+      "additionalProperties": false,
+      "description": "Something an AI thinks may be billed too. Shown in a dashed box, never in the total.",
+      "properties": {
+        "label": {
+          "const": "AI-suggested",
+          "title": "Label",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "ai_generated": {
+          "const": true,
+          "title": "Ai Generated",
+          "type": "boolean"
+        },
+        "cpts": {
+          "items": {
+            "$ref": "#/$defs/CptRef"
+          },
+          "title": "Cpts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "label",
+        "text",
+        "ai_generated"
+      ],
+      "title": "AiPotential",
+      "type": "object"
+    },
+    "Appropriateness": {
+      "additionalProperties": false,
+      "properties": {
+        "rating": {
+          "enum": [
+            "UA",
+            "MBA",
+            "UNA",
+            "aaos_strong",
+            "aaos_moderate",
+            "aaos_limited",
+            "aaos_consensus",
+            "uspstf_A",
+            "uspstf_B",
+            "uspstf_C",
+            "uspstf_D",
+            "uspstf_I",
+            "acg_strong",
+            "acg_conditional",
+            "standard_of_care",
+            "plan_rule",
+            "implied_by_parent"
+          ],
+          "title": "Rating",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "variant": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variant"
+        },
+        "procedure": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ACR procedure label exactly as in the rating table",
+          "title": "Procedure"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "rating"
+      ],
+      "title": "Appropriateness",
+      "type": "object"
+    },
+    "Citation": {
+      "additionalProperties": false,
+      "description": "Where a claim comes from. `doc` is a key in data/care_paths/sources.yaml.",
+      "properties": {
+        "doc": {
+          "title": "Doc",
+          "type": "string"
+        },
+        "year": {
+          "title": "Year",
+          "type": "integer"
+        },
+        "section": {
+          "title": "Section",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "quote": {
+          "minLength": 3,
+          "title": "Quote",
+          "type": "string"
+        },
+        "claim_field": {
+          "enum": [
+            "why",
+            "what",
+            "when_skipped",
+            "appropriateness",
+            "coverage",
+            "intro"
+          ],
+          "title": "Claim Field",
+          "type": "string"
+        }
+      },
+      "required": [
+        "doc",
+        "year",
+        "section",
+        "url",
+        "quote",
+        "claim_field"
+      ],
+      "title": "Citation",
+      "type": "object"
+    },
+    "CptRef": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^([0-9]{4}[0-9A-Z]|[A-Z][0-9]{4})$",
+          "title": "Code",
+          "type": "string"
+        },
+        "role": {
+          "enum": [
+            "primary",
+            "alternative",
+            "add_on",
+            "drug",
+            "guidance"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "payer_scope": {
+          "default": "all",
+          "enum": [
+            "all",
+            "commercial",
+            "medicare"
+          ],
+          "title": "Payer Scope",
+          "type": "string"
+        },
+        "modifier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Modifier"
+        },
+        "mapping": {
+          "description": "confirmed_pfs: exists in PFS and research cited it for this step without doubt. asserted: exists in PFS but research flagged the step-to-code mapping [断言].",
+          "enum": [
+            "confirmed_pfs",
+            "asserted"
+          ],
+          "title": "Mapping",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "code",
+        "role",
+        "mapping"
+      ],
+      "title": "CptRef",
+      "type": "object"
+    },
+    "Entry": {
+      "additionalProperties": false,
+      "properties": {
+        "all_of": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "All Of",
+          "type": "object"
+        },
+        "any_of": {
+          "items": {
+            "additionalProperties": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "object"
+          },
+          "title": "Any Of",
+          "type": "array"
+        },
+        "none_of": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "None Of",
+          "type": "object"
+        }
+      },
+      "title": "Entry",
+      "type": "object"
+    },
+    "Exit": {
+      "additionalProperties": false,
+      "properties": {
+        "when": {
+          "title": "When",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/Citation"
+          },
+          "title": "Citations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "when",
+        "text"
+      ],
+      "title": "Exit",
+      "type": "object"
+    },
+    "GoldenCase": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "answers": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            ]
+          },
+          "title": "Answers",
+          "type": "object"
+        },
+        "expect": {
+          "title": "Expect",
+          "type": "string"
+        },
+        "expect_tiers": {
+          "additionalProperties": {
+            "enum": [
+              "certain",
+              "likely",
+              "possible",
+              "rare"
+            ],
+            "type": "string"
+          },
+          "title": "Expect Tiers",
+          "type": "object"
+        }
+      },
+      "required": [
+        "name",
+        "answers",
+        "expect"
+      ],
+      "title": "GoldenCase",
+      "type": "object"
+    },
+    "LearnMore": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "medlineplus_connect",
+            "link_out"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "type": "string"
+        },
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Code"
+        },
+        "resolved_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolved Title"
+        }
+      },
+      "required": [
+        "kind",
+        "label",
+        "url"
+      ],
+      "title": "LearnMore",
+      "type": "object"
+    },
+    "Plain": {
+      "additionalProperties": false,
+      "description": "User-facing copy (English). D8: `name` leads in plain words; `technical_name` is small text.",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "technical_name": {
+          "title": "Technical Name",
+          "type": "string"
+        },
+        "what": {
+          "title": "What",
+          "type": "string"
+        },
+        "why": {
+          "title": "Why",
+          "type": "string"
+        },
+        "when_skipped": {
+          "title": "When Skipped",
+          "type": "string"
+        },
+        "how_long": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "How Long"
+        },
+        "prep": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prep"
+        }
+      },
+      "required": [
+        "name",
+        "technical_name",
+        "what",
+        "why",
+        "when_skipped"
+      ],
+      "title": "Plain",
+      "type": "object"
+    },
+    "Review": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "pending_austin",
+            "changes_requested",
+            "approved"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "drafted_by": {
+          "title": "Drafted By",
+          "type": "string"
+        },
+        "drafted_at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Drafted At"
+        },
+        "reviewers": {
+          "items": {
+            "$ref": "#/$defs/Reviewer"
+          },
+          "title": "Reviewers",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status",
+        "drafted_by"
+      ],
+      "title": "Review",
+      "type": "object"
+    },
+    "Reviewer": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "human_clinician",
+            "human_nonclinician",
+            "ai"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "at": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "At"
+        },
+        "verdict": {
+          "anyOf": [
+            {
+              "enum": [
+                "ok",
+                "changes_requested"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Verdict"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "at",
+        "verdict"
+      ],
+      "title": "Reviewer",
+      "type": "object"
+    },
+    "Scope": {
+      "additionalProperties": false,
+      "properties": {
+        "area": {
+          "enum": [
+            "msk_shoulder",
+            "msk_knee",
+            "msk_back",
+            "msk_ankle",
+            "skin",
+            "gi_upper",
+            "gi_lower"
+          ],
+          "title": "Area",
+          "type": "string"
+        },
+        "acuity": {
+          "enum": [
+            "acute",
+            "chronic",
+            "preventive",
+            "subacute"
+          ],
+          "title": "Acuity",
+          "type": "string"
+        },
+        "severity_band": {
+          "items": {
+            "enum": [
+              "minor",
+              "moderate"
+            ],
+            "type": "string"
+          },
+          "title": "Severity Band",
+          "type": "array"
+        }
+      },
+      "required": [
+        "area",
+        "acuity",
+        "severity_band"
+      ],
+      "title": "Scope",
+      "type": "object"
+    },
+    "Step": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^[a-z0-9_]+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "layer": {
+          "enum": [
+            0,
+            1,
+            2
+          ],
+          "title": "Layer",
+          "type": "integer"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Parent"
+        },
+        "after": {
+          "description": "steps that must have happened before this one",
+          "items": {
+            "type": "string"
+          },
+          "title": "After",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "referral",
+            "visit",
+            "imaging",
+            "procedure",
+            "lab",
+            "anesthesia",
+            "therapy",
+            "medication",
+            "supply"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "only shown when these answers hold (e.g. layer-0 referral)",
+          "title": "Condition"
+        },
+        "appropriateness": {
+          "$ref": "#/$defs/Appropriateness"
+        },
+        "likelihood_tier": {
+          "enum": [
+            "certain",
+            "likely",
+            "possible",
+            "rare"
+          ],
+          "title": "Likelihood Tier",
+          "type": "string"
+        },
+        "travels_with": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "billed whenever this other step happens (e.g. pathology)",
+          "title": "Travels With"
+        },
+        "plain": {
+          "$ref": "#/$defs/Plain"
+        },
+        "when_skipped_basis": {
+          "default": "clinical",
+          "enum": [
+            "clinical",
+            "logic",
+            "plan_rule"
+          ],
+          "title": "When Skipped Basis",
+          "type": "string"
+        },
+        "citations": {
+          "items": {
+            "$ref": "#/$defs/Citation"
+          },
+          "minItems": 1,
+          "title": "Citations",
+          "type": "array"
+        },
+        "cpts": {
+          "items": {
+            "$ref": "#/$defs/CptRef"
+          },
+          "title": "Cpts",
+          "type": "array"
+        },
+        "no_price": {
+          "default": false,
+          "title": "No Price",
+          "type": "boolean"
+        },
+        "no_price_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "No Price Reason"
+        },
+        "glossary": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Glossary",
+          "type": "array"
+        },
+        "learn_more": {
+          "items": {
+            "$ref": "#/$defs/LearnMore"
+          },
+          "title": "Learn More",
+          "type": "array"
+        },
+        "ai_potential": {
+          "items": {
+            "$ref": "#/$defs/AiPotential"
+          },
+          "title": "Ai Potential",
+          "type": "array"
+        },
+        "reviewer_note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewer Note"
+        }
+      },
+      "required": [
+        "id",
+        "layer",
+        "kind",
+        "appropriateness",
+        "likelihood_tier",
+        "plain",
+        "citations"
+      ],
+      "title": "Step",
+      "type": "object"
+    },
+    "TierModifier": {
+      "additionalProperties": false,
+      "properties": {
+        "when": {
+          "additionalProperties": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "title": "When",
+          "type": "object"
+        },
+        "step": {
+          "title": "Step",
+          "type": "string"
+        },
+        "tier": {
+          "enum": [
+            "certain",
+            "likely",
+            "possible",
+            "rare"
+          ],
+          "title": "Tier",
+          "type": "string"
+        },
+        "appropriateness": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Appropriateness"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "when the answer moves the step to a different guideline variant"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        }
+      },
+      "required": [
+        "when",
+        "step",
+        "tier"
+      ],
+      "title": "TierModifier",
+      "type": "object"
+    },
+    "Title": {
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "zh": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Zh"
+        }
+      },
+      "required": [
+        "en"
+      ],
+      "title": "Title",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "pattern": "^[a-z0-9_]+_v[0-9]+$",
+      "title": "Id",
+      "type": "string"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "title": {
+      "$ref": "#/$defs/Title"
+    },
+    "intro": {
+      "title": "Intro",
+      "type": "string"
+    },
+    "scope": {
+      "$ref": "#/$defs/Scope"
+    },
+    "priority": {
+      "default": 0,
+      "title": "Priority",
+      "type": "integer"
+    },
+    "entry": {
+      "$ref": "#/$defs/Entry"
+    },
+    "red_flags": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Red Flags",
+      "type": "array"
+    },
+    "glossary": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Glossary",
+      "type": "array"
+    },
+    "intro_citations": {
+      "items": {
+        "$ref": "#/$defs/Citation"
+      },
+      "minItems": 1,
+      "title": "Intro Citations",
+      "type": "array"
+    },
+    "steps": {
+      "items": {
+        "$ref": "#/$defs/Step"
+      },
+      "minItems": 1,
+      "title": "Steps",
+      "type": "array"
+    },
+    "tier_modifiers": {
+      "items": {
+        "$ref": "#/$defs/TierModifier"
+      },
+      "title": "Tier Modifiers",
+      "type": "array"
+    },
+    "exits": {
+      "items": {
+        "$ref": "#/$defs/Exit"
+      },
+      "title": "Exits",
+      "type": "array"
+    },
+    "coverage_note": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Coverage Note"
+    },
+    "coverage_citations": {
+      "items": {
+        "$ref": "#/$defs/Citation"
+      },
+      "title": "Coverage Citations",
+      "type": "array"
+    },
+    "golden_cases": {
+      "items": {
+        "$ref": "#/$defs/GoldenCase"
+      },
+      "title": "Golden Cases",
+      "type": "array"
+    },
+    "clinical_uncertainties": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Clinical Uncertainties",
+      "type": "array"
+    },
+    "review": {
+      "$ref": "#/$defs/Review"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "title",
+    "intro",
+    "scope",
+    "entry",
+    "red_flags",
+    "intro_citations",
+    "steps",
+    "review"
+  ],
+  "title": "CarePath",
+  "type": "object"
+}
