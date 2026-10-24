@@ -1,0 +1,1088 @@
+{
+  "version": "0.1.0",
+  "doc": "Q0 red flags. Any match stops the price flow. Dispositions are a 4-step ladder borrowed in shape (not content) from nurse-triage protocols. NHS pages are UK; their 'call 999 / go to A&E / urgent GP / 111' advice is mapped to US settings by us (mapping_note) and needs a US clinician's confirmation. Free-text patterns are a backstop for the chat; the checklist is the primary screen.",
+  "review": {
+    "status": "pending_austin",
+    "drafted_by": "ai:claude-opus-5.5",
+    "drafted_at": "2026-10-24",
+    "reviewers": []
+  },
+  "areas": [
+    "global",
+    "joint",
+    "shoulder",
+    "knee",
+    "back",
+    "ankle",
+    "skin",
+    "gi"
+  ],
+  "path_areas": {
+    "msk_shoulder": [
+      "global",
+      "joint",
+      "shoulder"
+    ],
+    "msk_knee": [
+      "global",
+      "joint",
+      "knee"
+    ],
+    "msk_back": [
+      "global",
+      "back"
+    ],
+    "msk_ankle": [
+      "global",
+      "joint",
+      "ankle"
+    ],
+    "skin": [
+      "global",
+      "skin"
+    ],
+    "gi_upper": [
+      "global",
+      "gi"
+    ],
+    "gi_lower": [
+      "global",
+      "gi"
+    ]
+  },
+  "dispositions": [
+    {
+      "id": "call_911",
+      "rank": 4,
+      "headline": {
+        "en": "Call 911 now",
+        "zh": "现在就打 911"
+      },
+      "text": {
+        "en": "This could be an emergency. Call 911 or ask someone to call for you, and don't drive yourself. We've stopped the price estimate here.",
+        "zh": "这可能是急症。请立即拨打 911 或请身边的人帮你打，不要自己开车。价格估算到此停止。"
+      }
+    },
+    {
+      "id": "er_today",
+      "rank": 3,
+      "headline": {
+        "en": "Go to an emergency room now",
+        "zh": "现在就去急诊"
+      },
+      "text": {
+        "en": "Don't wait for an appointment. Go to the nearest ER; if you can't get there safely, call 911. We've stopped the price estimate here.",
+        "zh": "不要等预约，直接去最近的急诊室；如果无法安全到达，请拨打 911。价格估算到此停止。"
+      }
+    },
+    {
+      "id": "seen_today",
+      "rank": 2,
+      "headline": {
+        "en": "Get seen today",
+        "zh": "今天就去看医生"
+      },
+      "text": {
+        "en": "Go to urgent care or call your doctor's office today. This needs a clinician to look at it first, so we won't estimate a price for it.",
+        "zh": "今天去 urgent care 或打电话给你的医生。这种情况需要先由医生判断，所以我们不做价格估算。"
+      }
+    },
+    {
+      "id": "routine",
+      "rank": 1,
+      "headline": {
+        "en": "Book a visit with your doctor",
+        "zh": "预约你的医生"
+      },
+      "text": {
+        "en": "Not an emergency, but it goes beyond the minor problems this tool covers. Your doctor should check for other causes first.",
+        "zh": "不是急症，但超出了本工具覆盖的小毛病范围。请先让医生排查其他原因。"
+      }
+    }
+  ],
+  "flags": [
+    {
+      "id": "rf_cardiac",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Chest pain or pressure, or arm/jaw pain with sweating or shortness of breath",
+        "zh": "胸口痛或发紧，或手臂/下巴痛并伴有出汗、气短"
+      },
+      "patterns": [
+        [
+          [
+            "chest pain",
+            "chest pressure",
+            "chest tightness",
+            "tight chest",
+            "chest feels tight",
+            "chest hurts",
+            "pain in my chest",
+            "pressure in my chest",
+            "chest discomfort",
+            "squeezing in my chest",
+            "胸口痛",
+            "胸口很痛",
+            "胸痛",
+            "胸口疼",
+            "胸闷",
+            "胸口闷",
+            "胸口压",
+            "胸口发紧",
+            "心口痛",
+            "胸部疼痛"
+          ],
+          [
+            "left arm",
+            "right arm",
+            "both arms",
+            "arm pain",
+            "pain in my arm",
+            "down my arm",
+            "into my arm",
+            "jaw",
+            "neck pain",
+            "upper back",
+            "左臂",
+            "左手臂",
+            "左胳膊",
+            "右臂",
+            "手臂",
+            "胳膊",
+            "下巴",
+            "下颌",
+            "脖子"
+          ]
+        ],
+        [
+          [
+            "chest pain",
+            "chest pressure",
+            "chest tightness",
+            "tight chest",
+            "chest feels tight",
+            "chest hurts",
+            "pain in my chest",
+            "pressure in my chest",
+            "chest discomfort",
+            "胸口痛",
+            "胸口很痛",
+            "胸痛",
+            "胸口疼",
+            "胸闷",
+            "胸口闷",
+            "胸口发紧",
+            "心口痛"
+          ],
+          [
+            "short of breath",
+            "shortness of breath",
+            "can't breathe",
+            "hard to breathe",
+            "sweating",
+            "sweaty",
+            "cold sweat",
+            "clammy",
+            "nausea",
+            "nauseous",
+            "lightheaded",
+            "light-headed",
+            "light headed",
+            "dizzy",
+            "喘不过气",
+            "呼吸困难",
+            "气短",
+            "出冷汗",
+            "冒冷汗",
+            "出汗",
+            "恶心",
+            "想吐",
+            "头晕"
+          ]
+        ],
+        [
+          [
+            "left arm",
+            "both arms",
+            "arm pain",
+            "jaw pain",
+            "jaw hurts",
+            "左臂",
+            "左手臂",
+            "左胳膊",
+            "下巴痛",
+            "下颌痛"
+          ],
+          [
+            "short of breath",
+            "shortness of breath",
+            "can't breathe",
+            "cold sweat",
+            "sweating",
+            "clammy",
+            "喘不过气",
+            "呼吸困难",
+            "气短",
+            "出冷汗",
+            "冒冷汗"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_chest_pain",
+        "medlineplus_heart_attack",
+        "medlineplus_gerd"
+      ],
+      "mapping_note": "NHS 'call 999' -> US 911. MedlinePlus says call 911 even when unsure it is a heart attack."
+    },
+    {
+      "id": "rf_chest_pain_alone",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Chest pain or pressure that doesn't go away",
+        "zh": "持续不缓解的胸口痛或压迫感"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "chest pain",
+            "chest pressure",
+            "chest tightness",
+            "tight chest",
+            "chest feels tight",
+            "pain in my chest",
+            "pressure in my chest",
+            "squeezing in my chest",
+            "胸口痛",
+            "胸口很痛",
+            "胸痛",
+            "胸口疼",
+            "胸闷",
+            "胸口闷",
+            "胸口发紧",
+            "胸部疼痛"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_chest_pain"
+      ],
+      "mapping_note": "Free-text backstop only. NHS lists sudden chest pain that does not go away as call 999. Deliberate over-triage: a price tool should not decide whether chest pain is heartburn."
+    },
+    {
+      "id": "rf_allergic_airway",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Lips, tongue or throat swelling, or struggling to breathe",
+        "zh": "嘴唇、舌头或喉咙肿胀，或呼吸困难"
+      },
+      "patterns": [
+        [
+          [
+            "swollen lips",
+            "lips are swelling",
+            "lips swelling",
+            "swollen tongue",
+            "tongue is swelling",
+            "tongue swelling",
+            "throat swelling",
+            "throat is closing",
+            "throat feels tight",
+            "嘴唇肿",
+            "舌头肿",
+            "喉咙肿",
+            "喉咙发紧",
+            "喉咙收紧"
+          ]
+        ],
+        [
+          [
+            "lips",
+            "tongue",
+            "throat",
+            "嘴唇",
+            "舌头",
+            "喉咙"
+          ],
+          [
+            "swelling",
+            "swollen",
+            "swell",
+            "肿"
+          ]
+        ],
+        [
+          [
+            "struggling to breathe",
+            "can't breathe",
+            "cannot breathe",
+            "trouble breathing",
+            "gasping for air",
+            "喘不上气",
+            "无法呼吸",
+            "透不过气"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_anaphylaxis",
+        "nhs_stomach_ache"
+      ],
+      "mapping_note": "NHS 'call 999' -> US 911."
+    },
+    {
+      "id": "rf_non_blanching_rash",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "A rash or spots that don't fade when you press on them",
+        "zh": "按压后不褪色的皮疹或斑点"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "rash that doesn't fade",
+            "rash that does not fade",
+            "doesn't fade when",
+            "does not fade when",
+            "non-blanching",
+            "按压不褪色",
+            "压了不褪色",
+            "不褪色的疹",
+            "按了不褪"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_stomach_ache"
+      ],
+      "mapping_note": "NHS stomach-ache page: call 999 or go to A&E. We map to 911 because a non-fading rash can signal a fast-moving infection [clinician to confirm]."
+    },
+    {
+      "id": "rf_gi_bleed_heavy",
+      "areas": [
+        "gi"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Vomiting blood or coffee-ground material, or heavy bleeding from the bottom",
+        "zh": "吐血或吐出咖啡渣样物，或肛门大量出血"
+      },
+      "patterns": [
+        [
+          [
+            "vomiting blood",
+            "throwing up blood",
+            "vomited blood",
+            "threw up blood",
+            "blood in my vomit",
+            "coffee ground",
+            "coffee-ground",
+            "吐血",
+            "呕血",
+            "咖啡色",
+            "咖啡渣"
+          ]
+        ],
+        [
+          [
+            "a lot of blood",
+            "lots of blood",
+            "bleeding won't stop",
+            "bleeding non-stop",
+            "won't stop bleeding",
+            "blood clots",
+            "toilet water red",
+            "toilet water turns red",
+            "大量出血",
+            "血止不住",
+            "出血不止",
+            "一直出血",
+            "血块"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_stomach_ache",
+        "nhs_rectal_bleeding"
+      ],
+      "mapping_note": "NHS 'call 999 or go to A&E' -> US 911 (possible major bleed)."
+    },
+    {
+      "id": "rf_gi_bleed_dark_stool",
+      "areas": [
+        "gi"
+      ],
+      "disposition": "seen_today",
+      "checklist": {
+        "en": "Black, tarry or dark-red stool, or bloody diarrhea",
+        "zh": "黑便、柏油样便或暗红色便，或带血腹泻"
+      },
+      "patterns": [
+        [
+          [
+            "black stool",
+            "black poop",
+            "black poo",
+            "tarry stool",
+            "dark red stool",
+            "bloody diarrhea",
+            "bloody diarrhoea",
+            "blood in my stool",
+            "blood in my poop",
+            "黑便",
+            "大便发黑",
+            "大便是黑",
+            "柏油样",
+            "便血",
+            "血便",
+            "拉血"
+          ]
+        ],
+        [
+          [
+            "stool",
+            "poop",
+            "poo",
+            "bowel movement",
+            "大便",
+            "粪便"
+          ],
+          [
+            "black",
+            "tarry",
+            "dark red",
+            "黑",
+            "柏油"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_rectal_bleeding",
+        "nhs_stomach_ache"
+      ],
+      "mapping_note": "NHS 'urgent GP / 111' -> US 'get seen today'."
+    },
+    {
+      "id": "rf_gi_bleed_dizzy",
+      "areas": [
+        "gi"
+      ],
+      "disposition": "er_today",
+      "checklist": {
+        "en": "Any bleeding with dizziness or fainting",
+        "zh": "出血同时头晕或晕倒"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "blood",
+            "bleeding",
+            "black stool",
+            "便血",
+            "出血",
+            "黑便",
+            "血"
+          ],
+          [
+            "dizzy",
+            "faint",
+            "fainted",
+            "passed out",
+            "lightheaded",
+            "light-headed",
+            "头晕",
+            "晕倒",
+            "昏倒",
+            "快晕"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_rectal_bleeding"
+      ],
+      "mapping_note": "[断言] Escalation is our inference: dizziness with bleeding suggests significant blood loss. NHS does not list this combination. Clinician to confirm."
+    },
+    {
+      "id": "rf_abdomen_severe",
+      "areas": [
+        "gi"
+      ],
+      "disposition": "er_today",
+      "checklist": {
+        "en": "Sudden, severe belly pain, or you can't pee or pass stool or gas at all",
+        "zh": "突然剧烈腹痛，或完全无法排尿、排便或排气"
+      },
+      "patterns": [
+        [
+          [
+            "sudden severe",
+            "severe sudden",
+            "suddenly severe",
+            "worst pain",
+            "突然剧痛",
+            "剧烈腹痛",
+            "肚子剧痛",
+            "突然很痛",
+            "疼得受不了"
+          ],
+          [
+            "belly",
+            "stomach",
+            "abdomen",
+            "abdominal",
+            "tummy",
+            "肚子",
+            "腹",
+            "胃"
+          ]
+        ],
+        [
+          [
+            "can't pee",
+            "cannot pee",
+            "can't urinate",
+            "unable to urinate",
+            "尿不出"
+          ]
+        ],
+        [
+          [
+            "can't pass gas",
+            "cannot pass gas",
+            "can't fart",
+            "放不出屁",
+            "排不出气",
+            "不能排气"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_stomach_ache"
+      ],
+      "mapping_note": "NHS 'call 999 or go to A&E now' -> US 'ER now'. We chose ER over 911 because most people can get there; clinician to confirm."
+    },
+    {
+      "id": "rf_cauda_equina",
+      "areas": [
+        "back"
+      ],
+      "disposition": "er_today",
+      "checklist": {
+        "en": "Numbness or weakness in both legs, numbness around the groin, or new trouble controlling bladder or bowels",
+        "zh": "双腿麻木或无力、会阴部麻木，或新出现的大小便控制困难"
+      },
+      "patterns": [
+        [
+          [
+            "both legs",
+            "两条腿",
+            "双腿",
+            "两腿"
+          ],
+          [
+            "numb",
+            "numbness",
+            "tingling",
+            "weak",
+            "weakness",
+            "麻",
+            "无力",
+            "没力气"
+          ]
+        ],
+        [
+          [
+            "groin",
+            "genitals",
+            "anus",
+            "saddle",
+            "between my legs",
+            "肛门",
+            "会阴",
+            "私处",
+            "裆部"
+          ],
+          [
+            "numb",
+            "numbness",
+            "no feeling",
+            "can't feel",
+            "麻",
+            "没感觉",
+            "没知觉"
+          ]
+        ],
+        [
+          [
+            "can't control my bladder",
+            "lost bladder control",
+            "peeing myself",
+            "wet myself",
+            "loss of bowel control",
+            "pooing myself",
+            "incontinence",
+            "trouble peeing",
+            "difficulty peeing",
+            "大小便失禁",
+            "尿失禁",
+            "憋不住尿",
+            "控制不住大小便",
+            "排尿困难"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_back_pain",
+        "acr_low_back_pain_2021"
+      ],
+      "mapping_note": "Possible cauda equina syndrome (ACR LBP variant 4 treats it as an imaging emergency). NHS 'call 999 or go to A&E' -> US 'ER now'."
+    },
+    {
+      "id": "rf_back_trauma",
+      "areas": [
+        "back"
+      ],
+      "disposition": "er_today",
+      "checklist": {
+        "en": "Back pain that started after a car crash or a bad fall",
+        "zh": "车祸或严重摔伤后开始的背痛"
+      },
+      "patterns": [
+        [
+          [
+            "car accident",
+            "car crash",
+            "serious accident",
+            "hit by a car",
+            "fell from",
+            "fall from a height",
+            "车祸",
+            "被车撞",
+            "从高处摔",
+            "高处坠落"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_back_pain"
+      ],
+      "mapping_note": "NHS 'call 999 or go to A&E' -> US 'ER now'."
+    },
+    {
+      "id": "rf_back_systemic",
+      "areas": [
+        "back"
+      ],
+      "disposition": "seen_today",
+      "checklist": {
+        "en": "Back pain with fever or chills, or severe pain that is getting worse fast",
+        "zh": "背痛伴发烧或发冷，或剧痛并迅速加重"
+      },
+      "patterns": [
+        [
+          [
+            "fever",
+            "chills",
+            "shivery",
+            "shivering",
+            "发烧",
+            "发热",
+            "寒战",
+            "发冷"
+          ]
+        ],
+        [
+          [
+            "getting worse quickly",
+            "getting worse fast",
+            "rapidly worse",
+            "suddenly much worse",
+            "迅速加重",
+            "突然加重",
+            "越来越严重"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_back_pain"
+      ],
+      "mapping_note": "NHS 'urgent GP / 111' -> US 'get seen today'."
+    },
+    {
+      "id": "rf_back_risk_history",
+      "areas": [
+        "back"
+      ],
+      "disposition": "routine",
+      "checklist": {
+        "en": "Weight loss without trying, past cancer, osteoporosis, long-term steroid pills, or a weak immune system",
+        "zh": "不明原因体重下降、有癌症史、骨质疏松、长期服用激素或免疫力低下"
+      },
+      "patterns": [
+        [
+          [
+            "lost weight without trying",
+            "losing weight without trying",
+            "unexplained weight loss",
+            "history of cancer",
+            "had cancer",
+            "osteoporosis",
+            "long-term steroids",
+            "steroid pills",
+            "weak immune",
+            "体重莫名下降",
+            "不明原因消瘦",
+            "得过癌",
+            "癌症病史",
+            "骨质疏松",
+            "长期吃激素",
+            "免疫力低"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_back_pain",
+        "acr_low_back_pain_2021"
+      ],
+      "mapping_note": "These move the case to ACR LBP variants 6-7 (not 'minor'), so the minor back path exits to a regular doctor visit."
+    },
+    {
+      "id": "rf_septic_joint",
+      "areas": [
+        "joint"
+      ],
+      "disposition": "er_today",
+      "checklist": {
+        "en": "One joint suddenly very painful, red or hot, and swollen, with fever or chills",
+        "zh": "某个关节突然剧痛、发红发热、肿胀，并伴发烧或发冷"
+      },
+      "patterns": [
+        [
+          [
+            "hot",
+            "red",
+            "warm",
+            "红",
+            "热",
+            "烫"
+          ],
+          [
+            "swollen",
+            "swelling",
+            "肿"
+          ],
+          [
+            "fever",
+            "chills",
+            "shivery",
+            "high temperature",
+            "发烧",
+            "发热",
+            "寒战",
+            "发冷"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_septic_arthritis",
+        "nhs_knee_pain"
+      ],
+      "mapping_note": "NHS says urgent GP / 111; we escalate to ER because a joint infection needs same-day hospital treatment (NHS: usually admitted for IV antibiotics). Clinician to confirm."
+    },
+    {
+      "id": "rf_limb_deformity",
+      "areas": [
+        "joint"
+      ],
+      "disposition": "er_today",
+      "checklist": {
+        "en": "The joint looks out of place or bent, or the limb is cold, blue or has no feeling",
+        "zh": "关节看起来错位或变形，或肢体冰凉、发紫、没有知觉"
+      },
+      "patterns": [
+        [
+          [
+            "changed shape",
+            "looks deformed",
+            "deformed",
+            "odd angle",
+            "wrong angle",
+            "bent the wrong way",
+            "popped out",
+            "dislocated",
+            "变形",
+            "歪了",
+            "脱臼",
+            "错位"
+          ]
+        ],
+        [
+          [
+            "cold to touch",
+            "turned blue",
+            "turned grey",
+            "turned gray",
+            "no feeling",
+            "can't feel my",
+            "发紫",
+            "发青",
+            "冰凉",
+            "没有知觉",
+            "没知觉"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_sprains",
+        "nhs_shoulder_pain",
+        "nhs_knee_pain"
+      ],
+      "mapping_note": "NHS sprains page: changed shape / odd angle / numb / cold -> call 999 or A&E. Mapped to US 'ER now' (a dislocation is usually put back in an ER)."
+    },
+    {
+      "id": "rf_systemic_msk",
+      "areas": [
+        "joint"
+      ],
+      "disposition": "routine",
+      "checklist": {
+        "en": "Joint pain with night sweats, unexplained weight loss, or feeling generally unwell",
+        "zh": "关节痛伴夜间盗汗、不明原因体重下降或全身不适"
+      },
+      "patterns": [
+        [
+          [
+            "night sweats",
+            "盗汗"
+          ]
+        ],
+        [
+          [
+            "weight loss",
+            "losing weight",
+            "lost weight",
+            "体重下降",
+            "消瘦",
+            "瘦了很多"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_shoulder_pain",
+        "nhs_back_pain"
+      ],
+      "mapping_note": "Points away from wear-and-tear; exits the minor path. AFP 2008 (secondary, not snapshotted) lists fever, night sweats, weight loss for shoulder."
+    },
+    {
+      "id": "rf_shoulder_urgent",
+      "areas": [
+        "shoulder"
+      ],
+      "disposition": "seen_today",
+      "checklist": {
+        "en": "Sudden, very bad shoulder pain, can't move the arm at all, or numbness that won't go away",
+        "zh": "突然剧烈的肩痛、手臂完全动不了，或麻木一直不消"
+      },
+      "patterns": [
+        [
+          [
+            "can't move my arm",
+            "cannot move my arm",
+            "can't move my arm at all",
+            "胳膊动不了",
+            "手臂动不了",
+            "胳膊完全动不了"
+          ]
+        ],
+        [
+          [
+            "very bad pain",
+            "very bad shoulder pain",
+            "excruciating",
+            "unbearable",
+            "突然剧痛",
+            "剧痛",
+            "疼得受不了"
+          ]
+        ],
+        [
+          [
+            "badly swollen",
+            "very swollen",
+            "肿得厉害",
+            "肿得很厉害"
+          ]
+        ],
+        [
+          [
+            "pins and needles",
+            "tingling",
+            "numb",
+            "麻"
+          ],
+          [
+            "won't go away",
+            "doesn't go away",
+            "constant",
+            "一直",
+            "不消"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_shoulder_pain"
+      ],
+      "mapping_note": "NHS 'urgent GP / 111' -> US 'get seen today'. Weakness lifting overhead is NOT this flag (that is the rotator-cuff path, Q6)."
+    },
+    {
+      "id": "rf_knee_urgent",
+      "areas": [
+        "knee"
+      ],
+      "disposition": "seen_today",
+      "checklist": {
+        "en": "You can't put weight on the knee, it's badly swollen, or it's locked and won't straighten",
+        "zh": "膝盖不能承重、肿得厉害，或卡住伸不直"
+      },
+      "patterns": [
+        [
+          [
+            "can't put weight",
+            "cannot put weight",
+            "can't bear weight",
+            "can't stand on it",
+            "can't walk on it",
+            "不能着地",
+            "不能承重",
+            "没法走路",
+            "站不起来"
+          ]
+        ],
+        [
+          [
+            "badly swollen",
+            "very swollen",
+            "肿得厉害",
+            "肿得很厉害"
+          ]
+        ],
+        [
+          [
+            "is locked",
+            "locked up",
+            "won't straighten",
+            "can't straighten",
+            "伸不直",
+            "卡住伸不直"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_knee_pain"
+      ],
+      "mapping_note": "NHS '111 now' -> US 'get seen today'. Occasional painful catching (no lock right now) stays on the knee path (Q5); clinician to confirm the split."
+    },
+    {
+      "id": "rf_skin_infection",
+      "areas": [
+        "skin"
+      ],
+      "disposition": "seen_today",
+      "checklist": {
+        "en": "Skin that is red, hot, swollen and spreading",
+        "zh": "皮肤红、热、肿并在扩散"
+      },
+      "patterns": [
+        [
+          [
+            "spreading",
+            "red streak",
+            "getting bigger fast",
+            "扩散",
+            "越来越红",
+            "红线"
+          ],
+          [
+            "red",
+            "hot",
+            "warm",
+            "swollen",
+            "红",
+            "热",
+            "肿"
+          ]
+        ],
+        [
+          [
+            "painful, hot and swollen",
+            "hot and swollen",
+            "又热又肿",
+            "红肿热痛"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_cellulitis",
+        "medlineplus_cellulitis"
+      ],
+      "mapping_note": "NHS cellulitis: urgent GP / 111 -> US 'get seen today'."
+    },
+    {
+      "id": "rf_skin_sepsis",
+      "areas": [
+        "skin"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "A red, swollen skin infection with confusion, a racing heart or fast breathing",
+        "zh": "皮肤红肿感染并伴意识不清、心跳很快或呼吸急促"
+      },
+      "patterns": [
+        [
+          [
+            "red",
+            "swollen",
+            "infection",
+            "infected",
+            "红",
+            "肿",
+            "感染"
+          ],
+          [
+            "confused",
+            "confusion",
+            "fast heartbeat",
+            "racing heart",
+            "heart is racing",
+            "breathing fast",
+            "意识不清",
+            "糊涂",
+            "心跳很快",
+            "心跳加速",
+            "呼吸很快",
+            "呼吸急促"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_cellulitis"
+      ],
+      "mapping_note": "NHS cellulitis 'call 999 or A&E' list (possible sepsis) -> US 911."
+    }
+  ]
+}

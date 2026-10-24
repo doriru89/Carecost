@@ -1,0 +1,347 @@
+# AI-drafted care path. NOT publishable until two non-AI reviewers sign off (review.status).
+# Plain text is our own words; quotes are <=15 words and verified against data/care_paths/sources.yaml.
+# CPT codes appear only under `cpts` (price layer). Edit freely, then run backend tests.
+id: skin_changing_mole_v1
+version: 1.0.0
+title:
+  en: A mole or spot that is new or changing
+  zh: 新长出或正在变化的痣/斑点
+intro: A mole that's new or changing is worth a skin doctor's look. Most turn out to be harmless, but the only way
+  to know for sure is to check a small sample under a microscope. Here's what that usually involves, including the
+  lab bill that often surprises people.
+scope:
+  area: skin
+  acuity: subacute
+  severity_band:
+  - minor
+  - moderate
+entry:
+  all_of:
+    Q1:
+    - skin_spot
+    Q9:
+    - new
+    - changing
+    - different
+    - itch_bleed
+red_flags:
+- rf_cardiac
+- rf_chest_pain_alone
+- rf_allergic_airway
+- rf_non_blanching_rash
+- rf_skin_infection
+- rf_skin_sepsis
+intro_citations:
+- doc: medlineplus_moles
+  year: 2026
+  section: Overview
+  url: https://medlineplus.gov/moles.html
+  quote: have a health care professional check your moles if they look unusual, grow larger
+  claim_field: intro
+- doc: medlineplus_biopsy
+  year: 2025
+  section: Overview
+  url: https://medlineplus.gov/biopsy.html
+  quote: the only test that can tell for sure if a suspicious area is cancer
+  claim_field: intro
+steps:
+- id: referral
+  layer: 0
+  kind: referral
+  condition:
+    Q14:
+    - hmo_referral_required
+    - masshealth
+    - unsure
+  appropriateness:
+    rating: plan_rule
+    source: hc_gov_glossary
+  likelihood_tier: certain
+  plain:
+    name: Visit with your main doctor first
+    technical_name: Primary-care referral visit
+    what: A short visit with your primary care doctor, who writes the order that lets you see a dermatologist.
+    why: Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.
+    when_skipped: Your plan doesn't require a referral. Check your plan card or member website.
+  when_skipped_basis: plan_rule
+  citations:
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: If you don't get a referral first, the plan may not pay for the services.
+    claim_field: why
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: A written order from your primary care doctor for you to see a specialist
+    claim_field: what
+  cpts:
+  - code: '99213'
+    role: primary
+    mapping: asserted
+    note: Established-patient visit; research marked this code [断言]. Level could be 99212-99214.
+  glossary:
+  - referral
+  - hmo
+- id: derm_visit
+  layer: 1
+  parent: referral
+  kind: visit
+  appropriateness:
+    rating: standard_of_care
+    note: Visual exam (often with a dermatoscope) is how a suspicious spot is assessed; USPSTF's screening 'I' statement
+      explicitly excludes people with changing spots.
+  likelihood_tier: certain
+  plain:
+    name: Skin doctor's close look at the spot
+    technical_name: Dermatology new-patient visit
+    what: The doctor looks at the spot, often through a handheld magnifier with a light, and compares it with your
+      other moles.
+    why: 'Doctors look for warning signs: an uneven shape or border, more than one color, wider than about 6 mm,
+      changing over time, or looking different from your other moles.'
+    when_skipped: It isn't skipped on this path.
+  when_skipped_basis: logic
+  reviewer_note: Some primary care doctors do the first look and biopsy themselves.
+  citations:
+  - doc: uspstf_skin_2023
+    year: 2023
+    section: Practice considerations (ABCDE rule)
+    url: https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/skin-cancer-screening
+    quote: asymmetry, border irregularity, nonuniform color, diameter greater than 6 mm, and evolution over time
+    claim_field: why
+  - doc: uspstf_skin_2023
+    year: 2023
+    section: Practice considerations (ugly duckling sign)
+    url: https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/skin-cancer-screening
+    quote: identifies pigmented lesions that look different than other moles on the patient.
+    claim_field: why
+  - doc: uspstf_skin_2023
+    year: 2023
+    section: Population
+    url: https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/skin-cancer-screening
+    quote: does not apply to persons with symptoms, such as changes in size, shape, or color
+    claim_field: what
+  cpts:
+  - code: '99203'
+    role: primary
+    mapping: confirmed_pfs
+  - code: '99204'
+    role: alternative
+    mapping: confirmed_pfs
+- id: skin_biopsy
+  layer: 2
+  parent: derm_visit
+  after:
+  - derm_visit
+  kind: procedure
+  appropriateness:
+    rating: standard_of_care
+    note: A sample is the only definitive test for a suspicious spot (MedlinePlus). AAD 2019 melanoma guideline
+      covers technique but was not snapshotted.
+  likelihood_tier: likely
+  plain:
+    name: Removing the spot, or a piece of it, to test
+    technical_name: Skin biopsy (shave, punch or excision)
+    what: 'After a numbing shot, the doctor removes the spot or part of it: a thin shave, a small round punch, or
+      a cut-out with a scalpel. It''s done in the office, and you may get a stitch or two.'
+    why: Checking a sample under a microscope is the only way to tell a harmless mole from skin cancer.
+    when_skipped: After a close look the doctor is confident it's harmless, and may photograph it to recheck in
+      a few months instead.
+  when_skipped_basis: logic
+  reviewer_note: Watch-and-photograph instead of sampling is dermatologist judgment; no snapshotted guideline quote.
+  citations:
+  - doc: medlineplus_biopsy
+    year: 2025
+    section: Overview
+    url: https://medlineplus.gov/biopsy.html
+    quote: the only test that can tell for sure if a suspicious area is cancer
+    claim_field: why
+  - doc: medlineplus_skin_biopsy
+    year: 2025
+    section: Uses
+    url: https://medlineplus.gov/lab-tests/skin-biopsy/
+    quote: use a skin biopsy to see if a suspicious mole or other growth is cancerous.
+    claim_field: why
+  - doc: medlineplus_skin_biopsy
+    year: 2025
+    section: Procedure
+    url: https://medlineplus.gov/lab-tests/skin-biopsy/
+    quote: Most skin biopsies can be done in a health care provider's office
+    claim_field: what
+  - doc: medlineplus_skin_biopsy
+    year: 2025
+    section: Types
+    url: https://medlineplus.gov/lab-tests/skin-biopsy/
+    quote: The type of biopsy you get depends on the location and size
+    claim_field: what
+  cpts:
+  - code: '11102'
+    role: primary
+    mapping: confirmed_pfs
+    note: Tangential (shave) biopsy, first lesion
+  - code: '11104'
+    role: alternative
+    mapping: confirmed_pfs
+    note: Punch biopsy, first lesion
+  - code: '11106'
+    role: alternative
+    mapping: confirmed_pfs
+    note: Incisional biopsy, first lesion
+  - code: '11401'
+    role: alternative
+    mapping: asserted
+    note: 'If the whole spot is cut out: benign-excision series by size (here 0.6-1.0 cm); the final code depends
+      on the lab result and size'
+  - code: '11601'
+    role: alternative
+    mapping: asserted
+    note: Malignant-excision series by size (here 0.6-1.0 cm), used if the lab finds cancer
+  glossary:
+  - biopsy
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: Skin Biopsy'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=11102&informationRecipient.languageCode.c=en
+    code: '11102'
+    resolved_title: Skin Biopsy
+- id: pathology
+  layer: 2
+  parent: derm_visit
+  after:
+  - skin_biopsy
+  travels_with: skin_biopsy
+  kind: lab
+  appropriateness:
+    rating: implied_by_parent
+    note: Every biopsy sample is read by a pathologist; 88305 is its own PFS line (status A, separate professional/technical
+      rows), so it is a separate bill.
+  likelihood_tier: likely
+  plain:
+    name: Lab check of the sample under a microscope
+    technical_name: Surgical pathology, skin (tissue exam)
+    what: A pathologist, a doctor who specializes in reading tissue, studies the sample and writes the diagnosis.
+    why: This is the actual diagnosis. It's billed separately from the removal, often by a lab or company you never
+      meet, which is why it's the line people don't expect.
+    when_skipped: No sample is taken.
+  when_skipped_basis: logic
+  reviewer_note: Billed whenever skin_biopsy happens; result timing (often 1-2 weeks) left out until sourced.
+  citations:
+  - doc: medlineplus_biopsy
+    year: 2025
+    section: Overview
+    url: https://medlineplus.gov/biopsy.html
+    quote: A doctor called a pathologist looks at the cells or tissue under a microscope
+    claim_field: why
+  - doc: medlineplus_skin_biopsy
+    year: 2025
+    section: Overview
+    url: https://medlineplus.gov/lab-tests/skin-biopsy/
+    quote: looked at under a microscope to check for a variety of conditions, including skin cancer.
+    claim_field: what
+  cpts:
+  - code: '88305'
+    role: primary
+    mapping: confirmed_pfs
+    note: Surgical pathology, level IV; professional and technical parts may be billed by different entities
+  glossary:
+  - pathology
+- id: wider_removal
+  layer: 2
+  parent: derm_visit
+  after:
+  - pathology
+  kind: procedure
+  appropriateness:
+    rating: standard_of_care
+    note: 'Done when pathology shows cancer or an atypical lesion needing clear margins (AAD 2019, not snapshotted);
+      MedlinePlus: surgery is the first treatment for melanoma.'
+  likelihood_tier: possible
+  plain:
+    name: Wider removal around the spot
+    technical_name: Re-excision
+    what: A second, larger removal of skin around the first site, usually with stitches.
+    why: Only if the lab finds skin cancer or an unusual mole that needs a clear rim of normal skin around it.
+    when_skipped: The lab says the spot was harmless.
+  when_skipped_basis: logic
+  reviewer_note: Share of changing moles that need re-excision is not sourced; 'possible' is a guess.
+  citations:
+  - doc: medlineplus_melanoma
+    year: 2019
+    section: Treatment
+    url: https://medlineplus.gov/melanoma.html
+    quote: Surgery is the first treatment of all stages of melanoma.
+    claim_field: why
+  cpts:
+  - code: '11602'
+    role: primary
+    mapping: asserted
+    note: Excision, malignant lesion, by size; exact code depends on size
+  - code: '11402'
+    role: alternative
+    mapping: asserted
+    note: Excision, benign lesion, by size
+  glossary: []
+exits:
+- when: The lab finds melanoma
+  text: This tool stops here. Your dermatologist or a cancer team will plan the next steps.
+  citations:
+  - doc: medlineplus_melanoma
+    year: 2019
+    section: Treatment
+    url: https://medlineplus.gov/melanoma.html
+    quote: Surgery is the first treatment of all stages of melanoma.
+    claim_field: intro
+golden_cases:
+- name: Mole getting bigger and darker
+  answers:
+    Q0: []
+    Q1: skin_spot
+    Q9:
+    - changing
+  expect: skin_changing_mole_v1
+  expect_tiers:
+    skin_biopsy: likely
+    pathology: likely
+- name: New spot that itches and bleeds
+  answers:
+    Q0: []
+    Q1: skin_spot
+    Q9:
+    - new
+    - itch_bleed
+  expect: skin_changing_mole_v1
+- name: Ugly duckling on the face
+  answers:
+    Q0: []
+    Q1: skin_spot
+    Q9:
+    - different
+    Q10: face_ears
+  expect: skin_changing_mole_v1
+- name: Nothing changing, wants a check
+  answers:
+    Q0: []
+    Q1: skin_spot
+    Q9:
+    - none
+  expect: skin_check_visit
+- name: 'Red flag: spreading infection with racing heart'
+  answers:
+    Q0:
+    - rf_skin_sepsis
+    Q1: skin_spot
+    Q9:
+    - changing
+  expect: call_911
+clinical_uncertainties:
+- Biopsy technique preference (narrow excision with 1-3 mm margins for suspected melanoma) comes from the AAD 2019
+  guideline via secondary summaries; the primary JAAD text was not read.
+- Excision codes (11400/11600 series) depend on final pathology and size; the sizes shown are placeholders.
+- How often a changing mole is sampled vs watched is not measured; 'likely' assumes the entry criteria (new/changing/different/bleeding).
+review:
+  status: pending_austin
+  drafted_by: ai:claude-opus-5.5
+  drafted_at: '2026-10-24'
+  reviewers: []

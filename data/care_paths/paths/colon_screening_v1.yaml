@@ -1,0 +1,438 @@
+# AI-drafted care path. NOT publishable until two non-AI reviewers sign off (review.status).
+# Plain text is our own words; quotes are <=15 words and verified against data/care_paths/sources.yaml.
+# CPT codes appear only under `cpts` (price layer). Edit freely, then run backend tests.
+id: colon_screening_v1
+version: 1.0.0
+title:
+  en: Colon cancer screening with a colonoscopy (no symptoms)
+  zh: 无症状的肠镜结肠癌筛查
+intro: If you're 45 or older with no symptoms, a colonoscopy is one of several ways to check for colon cancer. Others
+  include a yearly at-home stool test. A camera check every 10 years is the most thorough, and it's the only one
+  that removes growths on the spot.
+scope:
+  area: gi_lower
+  acuity: preventive
+  severity_band:
+  - minor
+entry:
+  all_of:
+    Q1:
+    - screening
+    Q8:
+    - age_45_59
+    - age_60_75
+    Q11:
+    - none
+    Q13:
+    - none
+    - positive_stool_test
+red_flags:
+- rf_cardiac
+- rf_chest_pain_alone
+- rf_allergic_airway
+- rf_non_blanching_rash
+- rf_gi_bleed_heavy
+- rf_gi_bleed_dark_stool
+- rf_gi_bleed_dizzy
+- rf_abdomen_severe
+glossary:
+- colonoscopy
+- anesthesia
+- coinsurance
+intro_citations:
+- doc: uspstf_crc_2021
+  year: 2021
+  section: Recommendation summary (Grade A)
+  url: https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening
+  quote: The USPSTF recommends screening for colorectal cancer in all adults aged 50 to 75 years.
+  claim_field: intro
+- doc: uspstf_crc_2021
+  year: 2021
+  section: Recommendation summary (Grade B)
+  url: https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening
+  quote: The USPSTF recommends screening for colorectal cancer in adults aged 45 to 49 years.
+  claim_field: intro
+- doc: uspstf_crc_2021
+  year: 2021
+  section: Screening strategies
+  url: https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening
+  quote: Colonoscopy screening every 10 years
+  claim_field: intro
+steps:
+- id: referral
+  layer: 0
+  kind: referral
+  condition:
+    Q14:
+    - hmo_referral_required
+    - masshealth
+    - unsure
+  appropriateness:
+    rating: plan_rule
+    source: hc_gov_glossary
+  likelihood_tier: certain
+  plain:
+    name: Visit with your main doctor first
+    technical_name: Primary-care referral visit
+    what: A short visit with your primary care doctor, who writes the order that lets you see a stomach and colon
+      specialist.
+    why: Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.
+    when_skipped: Your plan doesn't require a referral. Check your plan card or member website.
+  when_skipped_basis: plan_rule
+  citations:
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: If you don't get a referral first, the plan may not pay for the services.
+    claim_field: why
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: A written order from your primary care doctor for you to see a specialist
+    claim_field: what
+  cpts:
+  - code: '99213'
+    role: primary
+    mapping: asserted
+    note: Established-patient visit; research marked this code [断言]. Level could be 99212-99214.
+  glossary:
+  - referral
+  - hmo
+- id: pre_procedure_consult
+  layer: 1
+  parent: referral
+  kind: visit
+  appropriateness:
+    rating: standard_of_care
+    note: Practice policy, not a clinical rating; if required, it is part of the preventive service.
+  likelihood_tier: possible
+  plain:
+    name: Short visit with the colon doctor first
+    technical_name: GI pre-procedure consultation
+    what: A brief visit before the procedure day to review your health and medicines and explain the cleanout.
+    why: Some practices require it. If yours does, federal guidance says it counts as part of the free screening.
+    when_skipped: Many centers book the procedure directly, with a phone call instead of a visit.
+  when_skipped_basis: logic
+  reviewer_note: Share of Boston practices using direct-access booking is unknown.
+  citations:
+  - doc: aca_faq_part51_2022
+    year: 2022
+    section: Coverage of colonoscopies (items integral to screening)
+    url: https://www.cms.gov/CCIIO/Resources/Fact-Sheets-and-FAQs/Downloads/FAQs-Part-51.pdf
+    quote: Required specialist consultation prior to the screening procedure;
+    claim_field: why
+  cpts:
+  - code: '99203'
+    role: primary
+    mapping: asserted
+    note: Research marked the consult code [断言]
+- id: bowel_prep
+  layer: 2
+  parent: pre_procedure_consult
+  kind: medication
+  appropriateness:
+    rating: standard_of_care
+    note: Required for the procedure to be done; not separately rated.
+  likelihood_tier: likely
+  plain:
+    name: Cleanout drink the day before
+    technical_name: Bowel preparation
+    what: A prescription laxative you drink the day before, with clear liquids only.
+    why: The colon has to be empty for the doctor to see the lining.
+    when_skipped: It isn't skipped.
+  when_skipped_basis: logic
+  reviewer_note: Always needed; 'likely' rather than 'certain' only because some users stop before booking.
+  citations:
+  - doc: medlineplus_crc_screening_tests
+    year: 2024
+    section: Visual exams
+    url: https://medlineplus.gov/lab-tests/colorectal-cancer-screening-tests/
+    quote: usually require some type of bowel prep to clear the stool out of your colon
+    claim_field: why
+  - doc: aca_faq_part51_2022
+    year: 2022
+    section: Coverage of colonoscopies
+    url: https://www.cms.gov/CCIIO/Resources/Fact-Sheets-and-FAQs/Downloads/FAQs-Part-51.pdf
+    quote: Bowel preparation medications prescribed for the screening procedure;
+    claim_field: coverage
+  no_price: true
+  no_price_reason: Prescription drug, priced at the pharmacy; not in physician or hospital price files.
+- id: colonoscopy
+  layer: 2
+  parent: pre_procedure_consult
+  after:
+  - bowel_prep
+  kind: procedure
+  appropriateness:
+    rating: uspstf_A
+    source: uspstf_crc_2021
+    note: Grade A at 50-75; grade B at 45-49 (same cap).
+  likelihood_tier: certain
+  plain:
+    name: Camera check of the whole colon
+    technical_name: Screening colonoscopy
+    what: A thin, bendable tube with a camera looks at your whole colon while you're asleep or very relaxed. You'll
+      need someone to take you home.
+    why: It finds growths and removes them during the same procedure, before they can turn into cancer.
+    when_skipped: You choose a different screening test, such as a yearly at-home stool test.
+  citations:
+  - doc: uspstf_crc_2021
+    year: 2021
+    section: Recommendation summary
+    url: https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening
+    quote: The USPSTF recommends screening for colorectal cancer in all adults aged 50 to 75 years.
+    claim_field: why
+  - doc: medlineplus_crc_screening_tests
+    year: 2024
+    section: Purpose
+    url: https://medlineplus.gov/lab-tests/colorectal-cancer-screening-tests/
+    quote: Some screening tests let your health care provider find and remove abnormal growths
+    claim_field: why
+  - doc: uspstf_crc_2021
+    year: 2021
+    section: Screening tests
+    url: https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening
+    quote: fecal immunochemical test (FIT), and stool DNA test
+    claim_field: when_skipped
+  - doc: medlineplus_colonoscopy
+    year: 2024
+    section: Overview
+    url: https://medlineplus.gov/colonoscopy.html
+    quote: Colonoscopy checks your entire colon and rectum.
+    claim_field: what
+  cpts:
+  - code: '45378'
+    role: primary
+    mapping: confirmed_pfs
+    payer_scope: commercial
+    modifier: '33'
+    note: 'Commercial plans: 45378 with modifier 33 (preventive). Medicare: G0121 (average risk).'
+  - code: G0121
+    role: primary
+    mapping: confirmed_pfs
+    payer_scope: medicare
+    note: Medicare screening colonoscopy, not high risk
+  glossary:
+  - colonoscopy
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: Colonoscopy'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=45378&informationRecipient.languageCode.c=en
+    code: '45378'
+    resolved_title: Colonoscopy
+- id: anesthesia
+  layer: 2
+  parent: pre_procedure_consult
+  travels_with: colonoscopy
+  kind: anesthesia
+  appropriateness:
+    rating: standard_of_care
+    note: Sedation is standard for colonoscopy; covered as integral to screening.
+  likelihood_tier: likely
+  plain:
+    name: Medicine so you sleep through it
+    technical_name: Anesthesia for screening colonoscopy
+    what: Medicine through an IV so you're asleep or very relaxed. It often comes from a separate anesthesia team.
+    why: It keeps you comfortable. When an anesthesia team gives it, it arrives as its own bill.
+    when_skipped: Some people get lighter sedation from the colon doctor's own team, with no separate anesthesia
+      bill.
+  when_skipped_basis: logic
+  reviewer_note: '[断言] Share of Boston colonoscopies with separately billed anesthesia is not sourced.'
+  citations:
+  - doc: medlineplus_anesthesia
+    year: 2025
+    section: Monitored sedation
+    url: https://medlineplus.gov/anesthesia.html
+    quote: It may be used for a colonoscopy or dental work.
+    claim_field: why
+  - doc: aca_faq_part51_2022
+    year: 2022
+    section: Coverage of colonoscopies
+    url: https://www.cms.gov/CCIIO/Resources/Fact-Sheets-and-FAQs/Downloads/FAQs-Part-51.pdf
+    quote: Anesthesia services performed in connection with a preventive colonoscopy;
+    claim_field: coverage
+  cpts:
+  - code: 00812
+    role: primary
+    mapping: confirmed_pfs
+    note: Anesthesia for screening colonoscopy; PFS status J (base units x conversion factor)
+  glossary:
+  - anesthesia
+  - colonoscopy
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: Anesthesia'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=00812&informationRecipient.languageCode.c=en
+    code: 00812
+    resolved_title: Anesthesia
+- id: polyp_removal
+  layer: 2
+  parent: pre_procedure_consult
+  after:
+  - colonoscopy
+  kind: procedure
+  appropriateness:
+    rating: standard_of_care
+    note: Removal during screening is the purpose of the test; federal FAQ counts it as integral.
+  likelihood_tier: possible
+  plain:
+    name: Removing growths found during the check
+    technical_name: Polyp removal (polypectomy)
+    what: If the doctor sees a small growth on the colon wall, they remove it through the same tube.
+    why: Removing growths is the point of screening, and federal rules count it as part of the free screening.
+    when_skipped: No growths are found.
+  when_skipped_basis: logic
+  reviewer_note: Coding changes the line, not the clinical step.
+  citations:
+  - doc: aca_faq_part51_2022
+    year: 2022
+    section: Coverage of colonoscopies
+    url: https://www.cms.gov/CCIIO/Resources/Fact-Sheets-and-FAQs/Downloads/FAQs-Part-51.pdf
+    quote: Polyp removal performed during the screening procedure;
+    claim_field: why
+  - doc: medlineplus_crc_screening_tests
+    year: 2024
+    section: Purpose
+    url: https://medlineplus.gov/lab-tests/colorectal-cancer-screening-tests/
+    quote: Some screening tests let your health care provider find and remove abnormal growths
+    claim_field: what
+  cpts:
+  - code: '45385'
+    role: primary
+    mapping: confirmed_pfs
+    note: Snare removal; modifier 33 (commercial) or PT (Medicare)
+  - code: '45380'
+    role: alternative
+    mapping: confirmed_pfs
+    note: Biopsy removal
+  glossary:
+  - polyp
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: Colonoscopy'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=45385&informationRecipient.languageCode.c=en
+    code: '45385'
+    resolved_title: Colonoscopy
+- id: polyp_pathology
+  layer: 2
+  parent: pre_procedure_consult
+  after:
+  - polyp_removal
+  travels_with: polyp_removal
+  kind: lab
+  appropriateness:
+    rating: implied_by_parent
+    note: Every biopsy sample is read by a pathologist; 88305 is its own PFS line (status A, separate professional/technical
+      rows), so it is a separate bill.
+  likelihood_tier: possible
+  plain:
+    name: Lab check of the removed growth
+    technical_name: Surgical pathology (tissue exam)
+    what: A pathologist looks at the removed tissue under a microscope.
+    why: It tells whether the growth was the kind that can turn into cancer, which sets the date of your next check.
+    when_skipped: No growths are removed.
+  when_skipped_basis: logic
+  reviewer_note: Travels with polyp_removal.
+  citations:
+  - doc: aca_faq_part51_2022
+    year: 2022
+    section: Coverage of colonoscopies
+    url: https://www.cms.gov/CCIIO/Resources/Fact-Sheets-and-FAQs/Downloads/FAQs-Part-51.pdf
+    quote: Any pathology exam on a polyp biopsy performed as part of the screening procedure.
+    claim_field: why
+  - doc: medlineplus_biopsy
+    year: 2025
+    section: Overview
+    url: https://medlineplus.gov/biopsy.html
+    quote: A doctor called a pathologist looks at the cells or tissue under a microscope
+    claim_field: what
+  cpts:
+  - code: '88305'
+    role: primary
+    mapping: confirmed_pfs
+  glossary:
+  - pathology
+coverage_note: On most plans, the cleanout, the procedure, the sedation, growth removal and the lab check are all
+  part of free preventive screening, including a colonoscopy after a positive home stool test. Some older 'grandfathered'
+  plans may not follow this rule. On Medicare, if a growth is removed you pay 15% coinsurance for the doctor's part.
+coverage_citations:
+- doc: aca_faq_part51_2022
+  year: 2022
+  section: Q7 (follow-up colonoscopy)
+  url: https://www.cms.gov/CCIIO/Resources/Fact-Sheets-and-FAQs/Downloads/FAQs-Part-51.pdf
+  quote: the follow-up colonoscopy is an integral part of the preventive screening
+  claim_field: coverage
+- doc: medicare_colonoscopy
+  year: 2026
+  section: Your costs in Original Medicare
+  url: https://www.medicare.gov/coverage/colonoscopies
+  quote: removes a polyp or other tissue during the colonoscopy, you pay 15% of the
+  claim_field: coverage
+- doc: medicare_colonoscopy
+  year: 2026
+  section: How often is it covered?
+  url: https://www.medicare.gov/coverage/colonoscopies
+  quote: Part B also covers a follow-up colonoscopy as a screening test.
+  claim_field: coverage
+golden_cases:
+- name: 50-year-old, no symptoms, never screened
+  answers:
+    Q0: []
+    Q1: screening
+    Q8: age_45_59
+    Q11: none
+    Q13: none
+  expect: colon_screening_v1
+  expect_tiers:
+    colonoscopy: certain
+    polyp_removal: possible
+- name: Positive home stool test at 62
+  answers:
+    Q0: []
+    Q1: screening
+    Q8: age_60_75
+    Q11: none
+    Q13: positive_stool_test
+  expect: colon_screening_v1
+- name: Medicare member, 70
+  answers:
+    Q0: []
+    Q1: screening
+    Q8: age_60_75
+    Q11: none
+    Q13: none
+    Q14: medicare
+  expect: colon_screening_v1
+- name: Normal colonoscopy 5 years ago
+  answers:
+    Q0: []
+    Q1: screening
+    Q8: age_45_59
+    Q11: none
+    Q13: normal_within_10y
+  expect: colon_not_due_yet
+- name: Age 40
+  answers:
+    Q0: []
+    Q1: screening
+    Q8: age_under_40
+    Q11: none
+    Q13: none
+  expect: screening_under_45
+- name: 'Red flag: heavy bleeding'
+  answers:
+    Q0:
+    - rf_gi_bleed_heavy
+    Q1: screening
+  expect: call_911
+clinical_uncertainties:
+- 'Age to start is disputed: ACP (2023) says 50; USPSTF, ACG and ASGE say 45. The path follows USPSTF.'
+- Medicare polyp-removal coinsurance is 15% now and steps down later; pin the rate by service date in the price
+  layer.
+review:
+  status: pending_austin
+  drafted_by: ai:claude-opus-5.5
+  drafted_at: '2026-10-24'
+  reviewers: []

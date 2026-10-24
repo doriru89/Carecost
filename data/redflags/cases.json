@@ -1,0 +1,401 @@
+{
+ "_doc": "Table-driven red-flag cases (free-text screen). expect = disposition id, or null for 'no stop'. areas omitted = screen against every flag.",
+ "cases": [
+  {
+   "lang": "zh",
+   "text": "胸口痛+左臂痛",
+   "expect": "call_911"
+  },
+  {
+   "lang": "zh",
+   "text": "胸口痛，左臂也痛",
+   "expect": "call_911"
+  },
+  {
+   "lang": "zh",
+   "text": "胸闷，还出冷汗",
+   "expect": "call_911"
+  },
+  {
+   "lang": "zh",
+   "text": "胸口很痛",
+   "expect": "call_911"
+  },
+  {
+   "lang": "en",
+   "text": "I have chest pressure and I'm sweating",
+   "expect": "call_911"
+  },
+  {
+   "lang": "en",
+   "text": "my chest feels tight and my jaw hurts",
+   "expect": "call_911"
+  },
+  {
+   "lang": "en",
+   "text": "chest pain",
+   "expect": "call_911"
+  },
+  {
+   "lang": "en",
+   "text": "I have no chest pain but my left arm hurts and I'm short of breath",
+   "expect": "call_911"
+  },
+  {
+   "lang": "en",
+   "text": "I don't have chest pain, my shoulder clicks when I lift it",
+   "expect": null,
+   "areas": [
+    "shoulder",
+    "joint"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "我没有胸痛，只是肩膀转的时候咔哒响",
+   "expect": null,
+   "areas": [
+    "shoulder",
+    "joint"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "my left shoulder hurts when I reach overhead",
+   "expect": null,
+   "areas": [
+    "shoulder",
+    "joint"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "my lips and tongue are swelling",
+   "expect": "call_911"
+  },
+  {
+   "lang": "en",
+   "text": "my lips swelling and I can't breathe",
+   "expect": "call_911"
+  },
+  {
+   "lang": "zh",
+   "text": "嘴唇肿了，喘不上气",
+   "expect": "call_911"
+  },
+  {
+   "lang": "en",
+   "text": "a rash that doesn't fade when I press a glass on it",
+   "expect": "call_911"
+  },
+  {
+   "lang": "en",
+   "text": "I vomited blood this morning",
+   "expect": "call_911",
+   "areas": [
+    "gi"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "早上吐血了",
+   "expect": "call_911",
+   "areas": [
+    "gi"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "my stool has been black for two days",
+   "expect": "seen_today",
+   "areas": [
+    "gi"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "这两天大便发黑",
+   "expect": "seen_today",
+   "areas": [
+    "gi"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "black stool and I feel dizzy",
+   "expect": "er_today",
+   "areas": [
+    "gi"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "便血，还头晕",
+   "expect": "er_today",
+   "areas": [
+    "gi"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "sudden severe stomach pain",
+   "expect": "er_today",
+   "areas": [
+    "gi"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "肚子突然剧痛",
+   "expect": "er_today",
+   "areas": [
+    "gi"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "heartburn after big meals",
+   "expect": null,
+   "areas": [
+    "gi"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "饭后烧心，胸口不痛",
+   "expect": null,
+   "areas": [
+    "gi"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "lower back pain with numbness in both legs",
+   "expect": "er_today",
+   "areas": [
+    "back"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "腰痛，两条腿都麻",
+   "expect": "er_today",
+   "areas": [
+    "back"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "back pain and now I can't control my bladder",
+   "expect": "er_today",
+   "areas": [
+    "back"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "腰疼，大小便失禁",
+   "expect": "er_today",
+   "areas": [
+    "back"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "my back hurts and I have a fever",
+   "expect": "seen_today",
+   "areas": [
+    "back"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "腰痛还发烧",
+   "expect": "seen_today",
+   "areas": [
+    "back"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "back pain, no numbness in my legs, no fever",
+   "expect": null,
+   "areas": [
+    "back"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "back sore for 3 days after lifting a box",
+   "expect": null,
+   "areas": [
+    "back"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "back pain and I lost weight without trying",
+   "expect": "routine",
+   "areas": [
+    "back"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "腰痛，有骨质疏松",
+   "expect": "routine",
+   "areas": [
+    "back"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "my knee is hot, red and swollen and I have a fever",
+   "expect": "er_today",
+   "areas": [
+    "knee",
+    "joint"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "膝盖又红又热又肿，还发烧",
+   "expect": "er_today",
+   "areas": [
+    "knee",
+    "joint"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "I can't put weight on my knee",
+   "expect": "seen_today",
+   "areas": [
+    "knee",
+    "joint"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "膝盖不能着地",
+   "expect": "seen_today",
+   "areas": [
+    "knee",
+    "joint"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "my knee clicks and sometimes catches on the stairs",
+   "expect": null,
+   "areas": [
+    "knee",
+    "joint"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "my shoulder looks deformed after the fall",
+   "expect": "er_today",
+   "areas": [
+    "shoulder",
+    "joint"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "摔倒后肩膀变形了",
+   "expect": "er_today",
+   "areas": [
+    "shoulder",
+    "joint"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "sudden very bad shoulder pain and I can't move my arm",
+   "expect": "seen_today",
+   "areas": [
+    "shoulder",
+    "joint"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "肩膀突然剧痛，胳膊动不了",
+   "expect": "seen_today",
+   "areas": [
+    "shoulder",
+    "joint"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "I lost weight without trying and have night sweats, my shoulder aches",
+   "expect": "routine",
+   "areas": [
+    "shoulder",
+    "joint"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "肩膀酸痛，晚上盗汗",
+   "expect": "routine",
+   "areas": [
+    "shoulder",
+    "joint"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "twisted my ankle playing soccer, it's swollen",
+   "expect": null,
+   "areas": [
+    "ankle",
+    "joint"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "my ankle is pointing at an odd angle",
+   "expect": "er_today",
+   "areas": [
+    "ankle",
+    "joint"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "a mole on my back changed color",
+   "expect": null,
+   "areas": [
+    "skin"
+   ]
+  },
+  {
+   "lang": "zh",
+   "text": "痣变大了，颜色也变了",
+   "expect": null,
+   "areas": [
+    "skin"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "red, hot skin around a cut and the redness is spreading",
+   "expect": "seen_today",
+   "areas": [
+    "skin"
+   ]
+  },
+  {
+   "lang": "en",
+   "text": "my leg infection is red and swollen and my heart is racing",
+   "expect": "call_911",
+   "areas": [
+    "skin"
+   ]
+  }
+ ]
+}

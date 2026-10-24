@@ -1,0 +1,283 @@
+# CareCost glossary: hover text for every technical or insurance term in user-facing copy.
+# Rules (enforced by backend/tests/care_paths/test_glossary.py and V6):
+#   - plain_name leads; technical_name is the small-print term.
+#   - `short` is OUR words, paraphrased from a public-domain US-government page (`based_on`),
+#     credited as below. RadiologyInfo / OrthoInfo / AAD are link-only: never paraphrase or paste them,
+#     and never put AAD text into an LLM prompt (their terms restrict AI use).
+#   - `triggers` are the strings V6 looks for in user-facing copy; any copy that uses one must list
+#     this key in its `glossary`.
+#   - Durations and timings are deliberately left out where we have no verified source.
+version: 0.1.0
+credit: "Some explanations are adapted from MedlinePlus (National Library of Medicine) and HealthCare.gov; neither endorses CareCost."
+review:
+  status: pending_austin
+  drafted_by: "ai:claude-opus-5.5"
+  drafted_at: 2026-10-24
+  reviewers: []
+terms:
+  xray:
+    plain_name: Quick picture of the bones
+    technical_name: X-ray (radiograph)
+    zh_plain_name: 骨头快照
+    short: >-
+      A fast, painless picture made with a small dose of radiation. Bones show up clearly, so it can
+      reveal breaks, arthritis, bone spurs and calcium deposits. It does not show tendons or cartilage
+      well. Usually no preparation; a radiologist reads it and sends the result to your doctor.
+    based_on: medlineplus_xrays
+    triggers: [X-ray, x-ray, radiograph, Radiography]
+    link_out:
+      - {label: "RadiologyInfo: bone X-ray", url: "https://www.radiologyinfo.org/en/info/bonerad"}
+  mri:
+    plain_name: Detailed scan of soft tissue
+    technical_name: MRI (magnetic resonance imaging)
+    zh_plain_name: 软组织精细扫描
+    short: >-
+      A scanner that uses a strong magnet and radio waves (no X-ray radiation) to make detailed pictures
+      of tendons, cartilage and other soft parts. You lie still inside a tube-shaped machine while it
+      makes loud knocking sounds. Tell the staff about any metal or implants in your body first.
+    based_on: medlineplus_mri
+    triggers: [MRI]
+    link_out:
+      - {label: "RadiologyInfo: shoulder MRI", url: "https://www.radiologyinfo.org/en/info/shouldermr"}
+      - {label: "RadiologyInfo: knee MRI", url: "https://www.radiologyinfo.org/en/info/kneemr"}
+  ultrasound:
+    plain_name: Live sound-wave picture
+    technical_name: Ultrasound (sonogram)
+    zh_plain_name: 超声（声波实时成像）
+    short: >-
+      A handheld probe on your skin sends sound waves and turns the echoes into a moving picture. It is
+      good at soft tissue near the surface, such as shoulder tendons. No radiation and usually no prep.
+    based_on: medlineplus_ultrasound
+    triggers: [ultrasound, sonogram]
+    link_out:
+      - {label: "RadiologyInfo: musculoskeletal ultrasound", url: "https://www.radiologyinfo.org/en/info/genus"}
+  mr_arthrogram:
+    plain_name: Detailed scan with dye in the joint
+    technical_name: MR arthrogram
+    zh_plain_name: 关节内注入造影剂后的精细扫描
+    short: >-
+      First a doctor injects contrast dye into the joint (usually guided by live X-ray), then you have a
+      detailed magnet scan. The dye spreads into small tears, so it can show damage to the rim of
+      cartilage in the shoulder socket that a plain scan may miss. It is two procedures on one day.
+    based_on: medlineplus_mri
+    triggers: [arthrogram, arthrography]
+    link_out: []
+  steroid_injection:
+    plain_name: Shot of anti-inflammatory medicine
+    technical_name: Corticosteroid injection
+    zh_plain_name: 抗炎针（激素注射）
+    short: >-
+      A needle puts a strong anti-inflammatory medicine, usually mixed with a numbing medicine, into or
+      near the painful joint. It can calm pain for a while so exercise is easier; it does not repair a
+      tear. The medicine itself is often billed as a separate line.
+    based_on: medlineplus_shoulder
+    triggers: [steroid, corticosteroid, cortisone]
+    link_out: []
+  pt_evaluation:
+    plain_name: First visit for a guided exercise plan
+    technical_name: Physical therapy (PT) evaluation
+    zh_plain_name: 物理治疗首次评估
+    short: >-
+      A licensed therapist measures your strength and movement, then builds an exercise plan. Later
+      visits are billed separately, usually per block of minutes of treatment.
+    based_on: medlineplus_rehabilitation
+    triggers: [physical therapy, physical therapist, PT]
+    link_out: []
+  biopsy:
+    plain_name: Taking a small sample to test
+    technical_name: Biopsy
+    zh_plain_name: 取一小块组织化验
+    short: >-
+      The doctor numbs the area and removes a small piece of tissue, or the whole spot, so it can be
+      checked under a microscope. For a skin spot this is done in the office with a blade (shave), a
+      small round cutter (punch) or a scalpel (excision).
+    based_on: medlineplus_skin_biopsy
+    triggers: [biopsy, biopsies]
+    link_out: []
+  pathology:
+    plain_name: Lab check of the sample under a microscope
+    technical_name: Pathology (tissue exam)
+    zh_plain_name: 病理化验
+    short: >-
+      A specialist doctor (a pathologist) studies the tissue that was removed and writes the diagnosis.
+      It is a separate bill from the procedure, often from a different company or lab you never meet.
+    based_on: medlineplus_biopsy
+    triggers: [pathology, pathologist]
+    link_out: []
+  colonoscopy:
+    plain_name: Camera check of the whole colon
+    technical_name: Colonoscopy
+    zh_plain_name: 肠镜（全结肠镜检查）
+    short: >-
+      A thin, bendable tube with a light and camera is passed through the bottom to look at the entire
+      large intestine. Growths can be removed during the same procedure. You need a cleanout the day
+      before and someone to take you home.
+    based_on: medlineplus_colonoscopy
+    triggers: [colonoscopy, colonoscopies]
+    link_out: []
+  anesthesia:
+    plain_name: Medicine so you sleep or relax through it
+    technical_name: Anesthesia / sedation
+    zh_plain_name: 麻醉 / 镇静
+    short: >-
+      Medicine given through an IV so you are very relaxed or asleep and feel no pain during a
+      procedure. When an anesthesia team gives it, it usually arrives as its own bill.
+    based_on: medlineplus_anesthesia
+    triggers: [anesthesia, anesthetic, sedation]
+    link_out:
+      - {label: "RadiologyInfo: anesthesia", url: "https://www.radiologyinfo.org/en/info/anesthesia"}
+  polyp:
+    plain_name: Small growth on the inner wall
+    technical_name: Polyp
+    zh_plain_name: 息肉
+    short: >-
+      A small bump of tissue on the lining of the colon. Most are harmless, but some can turn into cancer
+      over years, which is why they are removed when found during a screening check.
+    based_on: medlineplus_crc_screening_tests
+    triggers: [polyp, polypectomy]
+    link_out: []
+  upper_endoscopy:
+    plain_name: Camera check of the food pipe and stomach
+    technical_name: Upper endoscopy (EGD)
+    zh_plain_name: 胃镜
+    short: >-
+      A thin camera tube goes through the mouth, usually while you are sedated, to look at the food pipe,
+      stomach and the start of the small intestine. Small tissue samples can be taken at the same time.
+    based_on: medlineplus_endoscopy
+    triggers: [endoscopy, EGD]
+    link_out: []
+  acid_reducer:
+    plain_name: Daily acid-reducing pill
+    technical_name: Proton pump inhibitor (PPI), e.g. omeprazole
+    zh_plain_name: 每日抑酸药
+    short: >-
+      A medicine that lowers how much acid the stomach makes. Some are sold over the counter. Doctors
+      usually try it once a day before a meal for about 8 weeks before ordering tests.
+    based_on: medlineplus_gerd
+    triggers: [PPI, proton pump inhibitor, omeprazole]
+    link_out: []
+  rotator_cuff:
+    plain_name: Tendons that lift and turn the arm
+    technical_name: Rotator cuff
+    zh_plain_name: 肩袖（抬臂转臂的肌腱）
+    short: >-
+      A group of four muscles and their tendons that hold the ball of the upper arm in the shoulder
+      socket. Most problems come from wear over time, and they become more common after age 40.
+    based_on: medlineplus_rotator_cuff
+    triggers: [rotator cuff]
+    link_out:
+      - {label: "OrthoInfo: rotator cuff tears", url: "https://orthoinfo.aaos.org/en/diseases--conditions/rotator-cuff-tears/"}
+  labrum:
+    plain_name: Rim of cartilage around the shoulder socket
+    technical_name: Labrum
+    zh_plain_name: 盂唇（关节窝边缘软骨）
+    short: >-
+      A ring of firm, rubbery tissue that deepens the shallow shoulder socket and helps keep the ball in
+      place. Tears can cause catching, clicking with pain, or a feeling that the shoulder slips.
+    based_on: medlineplus_shoulder
+    triggers: [labrum, labral]
+    link_out:
+      - {label: "OrthoInfo: labrum tears", url: "https://orthoinfo.aaos.org/en/diseases--conditions/shoulder-joint-tear-glenoid-labrum-tear/"}
+  meniscus:
+    plain_name: Cushion cartilage inside the knee
+    technical_name: Meniscus
+    zh_plain_name: 半月板（膝内缓冲软骨）
+    short: >-
+      Two C-shaped pads of cartilage that cushion the knee between the thigh and shin bones. A tear can
+      make the knee catch, lock or swell.
+    based_on: medlineplus_knee
+    triggers: [meniscus, menisci]
+    link_out:
+      - {label: "OrthoInfo: meniscus tears", url: "https://orthoinfo.aaos.org/en/diseases--conditions/meniscus-tears/"}
+  deductible:
+    plain_name: What you pay before insurance pays
+    technical_name: Deductible
+    zh_plain_name: 起付额（保险开始付钱前你自付的部分）
+    short: >-
+      The yearly amount you pay yourself for covered care before your plan starts sharing the cost. Until
+      you reach it, you usually pay the full negotiated price shown here.
+    based_on: hc_gov_glossary
+    triggers: [deductible]
+    link_out: []
+  copay:
+    plain_name: Flat fee per visit
+    technical_name: Copay (copayment)
+    zh_plain_name: 每次固定自付费
+    short: >-
+      A set dollar amount, such as $30, that you pay for a covered service. Many plans charge it for office
+      visits whether or not you have met your deductible; check your plan.
+    based_on: hc_gov_glossary
+    triggers: [copay, copayment, co-pay]
+    link_out: []
+  coinsurance:
+    plain_name: Your percentage of the bill
+    technical_name: Coinsurance
+    zh_plain_name: 按比例自付
+    short: >-
+      After your deductible is met, you pay a share of each covered bill (for example 20%) and the plan
+      pays the rest, until you hit your yearly out-of-pocket maximum.
+    based_on: hc_gov_glossary
+    triggers: [coinsurance, co-insurance]
+    link_out: []
+  facility_fee:
+    plain_name: Separate charge for the building and staff
+    technical_name: Facility fee
+    zh_plain_name: 机构费（场地和人员费）
+    short: >-
+      When care happens in a hospital outpatient department or surgery center, the facility bills for the
+      room, equipment and staff on top of the doctor's own bill. The same test in an independent office or
+      clinic often has no separate facility charge, which is why prices differ so much.
+    based_on: hc_gov_glossary
+    triggers: [facility fee, facility fees, facility charge]
+    link_out: []
+  in_network:
+    plain_name: Doctors your plan has a deal with
+    technical_name: In-network
+    zh_plain_name: 网络内（与你的保险签约）
+    short: >-
+      Providers and facilities that signed a contract with your insurer. You pay the contracted price and
+      usually much less of it than you would out of network.
+    based_on: hc_gov_glossary
+    triggers: [in-network, in network, out-of-network, out of network]
+    link_out: []
+  bundle_price:
+    plain_name: One price for all the pieces
+    technical_name: Bundle / episode price
+    zh_plain_name: 打包价（整个疗程一个价）
+    short: >-
+      A single price that covers several things that usually come as separate bills, such as the
+      procedure, the facility, sedation and the lab. Our price is the sum of the separate pieces unless a
+      provider publishes one combined price.
+    based_on: aca_faq_part51_2022
+    triggers: [bundle, bundled, episode price]
+    link_out: []
+  referral:
+    plain_name: Permission slip from your main doctor
+    technical_name: Referral
+    zh_plain_name: 转诊单（主治医生的许可）
+    short: >-
+      A note from your main (primary care) doctor that sends you on to a specialist. Many HMO-type
+      plans will not pay for the specialist visit without one, so you may need a primary-care visit first.
+    based_on: hc_gov_glossary
+    triggers: [referral]
+    link_out: []
+  hmo:
+    plain_name: Plan that keeps you inside its network
+    technical_name: HMO (health maintenance organization)
+    zh_plain_name: 只能用网络内医生的保险计划
+    short: >-
+      A plan that generally covers only doctors who work for or contract with it (except emergencies) and
+      often needs a referral from your primary care doctor before you see a specialist.
+    based_on: hc_gov_glossary
+    triggers: [HMO]
+    link_out: []
+  ppo:
+    plain_name: Plan that lets you go outside its network for more money
+    technical_name: PPO (preferred provider organization)
+    zh_plain_name: 可以去网络外看病（但更贵）的保险计划
+    short: >-
+      A plan with a network of preferred doctors. Staying in network costs you less; you can go out of
+      network but pay more. Usually no referral needed to see a specialist.
+    based_on: hc_gov_glossary
+    triggers: [PPO]
+    link_out: []

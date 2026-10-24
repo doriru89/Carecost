@@ -1,0 +1,103 @@
+{
+  "checked_at": "2026-10-24",
+  "endpoint": "https://connect.medlineplus.gov/service (CPT OID 2.16.840.1.113883.6.12, JSON)",
+  "resolves": {
+    "00731": [
+      "Anesthesia",
+      "Endoscopy"
+    ],
+    "00811": [
+      "Anesthesia",
+      "Endoscopy"
+    ],
+    "00812": [
+      "Anesthesia",
+      "Colonoscopy",
+      "Colorectal Cancer Screening Tests"
+    ],
+    "11102": [
+      "Skin Biopsy"
+    ],
+    "11104": [
+      "Skin Biopsy"
+    ],
+    "11106": [
+      "Skin Biopsy"
+    ],
+    "23350": [
+      "Diagnostic Imaging"
+    ],
+    "43239": [
+      "Biopsy",
+      "Endoscopy"
+    ],
+    "45378": [
+      "Colonoscopy",
+      "Colorectal Cancer Screening Tests"
+    ],
+    "45380": [
+      "Colonoscopy",
+      "Colorectal Cancer Screening Tests"
+    ],
+    "45385": [
+      "Colonoscopy",
+      "Colorectal Cancer Screening Tests"
+    ],
+    "72100": [
+      "X-Rays"
+    ],
+    "72148": [
+      "MRI Scans"
+    ],
+    "73030": [
+      "X-Rays"
+    ],
+    "73221": [
+      "MRI Scans"
+    ],
+    "73222": [
+      "MRI Scans"
+    ],
+    "73562": [
+      "X-Rays"
+    ],
+    "73564": [
+      "X-Rays"
+    ],
+    "73600": [
+      "X-Rays"
+    ],
+    "73610": [
+      "X-Rays"
+    ],
+    "73721": [
+      "MRI Scans"
+    ],
+    "76881": [
+      "Ultrasound"
+    ],
+    "76882": [
+      "Ultrasound"
+    ],
+    "77002": [
+      "Fluoroscopy"
+    ]
+  },
+  "no_result": [
+    "11402",
+    "11602",
+    "17110",
+    "20610",
+    "20611",
+    "43235",
+    "88305",
+    "97110",
+    "97161",
+    "97162",
+    "99203",
+    "99204",
+    "99213",
+    "G0121",
+    "J3301"
+  ]
+}

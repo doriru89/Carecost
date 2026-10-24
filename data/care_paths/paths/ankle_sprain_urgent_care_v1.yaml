@@ -1,0 +1,343 @@
+# AI-drafted care path. NOT publishable until two non-AI reviewers sign off (review.status).
+# Plain text is our own words; quotes are <=15 words and verified against data/care_paths/sources.yaml.
+# CPT codes appear only under `cpts` (price layer). Edit freely, then run backend tests.
+id: ankle_sprain_urgent_care_v1
+version: 1.0.0
+title:
+  en: Twisted or sprained ankle (urgent care)
+  zh: 扭伤的脚踝（urgent care）
+intro: Most twisted ankles are sprains, a stretched or torn ligament. At urgent care, a short exam using a well-tested
+  checklist (the Ottawa ankle rules) decides whether you need a bone picture. Most sprains heal with rest, ice,
+  a wrap and, later, exercises.
+scope:
+  area: msk_ankle
+  acuity: acute
+  severity_band:
+  - minor
+  - moderate
+entry:
+  all_of:
+    Q1:
+    - ankle
+    Q2:
+    - injury
+red_flags:
+- rf_cardiac
+- rf_chest_pain_alone
+- rf_allergic_airway
+- rf_non_blanching_rash
+- rf_septic_joint
+- rf_limb_deformity
+- rf_systemic_msk
+intro_citations:
+- doc: medlineplus_ankle
+  year: 2024
+  section: Overview
+  url: https://medlineplus.gov/ankleinjuriesanddisorders.html
+  quote: The most common ankle problems are sprains and fractures (broken bones).
+  claim_field: intro
+- doc: acr_acute_ankle_2020
+  year: 2020
+  section: Variant 1
+  url: https://acsearch.acr.org/docs/69436/Narrative/
+  quote: Patient meets the requirements for evaluation by the Ottawa Ankle Rules which are positive
+  claim_field: intro
+steps:
+- id: referral
+  layer: 0
+  kind: referral
+  condition:
+    Q14:
+    - hmo_referral_required
+    - masshealth
+    - unsure
+  appropriateness:
+    rating: plan_rule
+    source: hc_gov_glossary
+  likelihood_tier: certain
+  plain:
+    name: Visit with your main doctor first
+    technical_name: Primary-care referral visit
+    what: A short visit with your primary care doctor, who writes the order that lets you see a specialist.
+    why: Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.
+    when_skipped: Your plan doesn't require a referral. Check your plan card or member website.
+  when_skipped_basis: plan_rule
+  citations:
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: If you don't get a referral first, the plan may not pay for the services.
+    claim_field: why
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: A written order from your primary care doctor for you to see a specialist
+    claim_field: what
+  cpts:
+  - code: '99213'
+    role: primary
+    mapping: asserted
+    note: Established-patient visit; research marked this code [断言]. Level could be 99212-99214.
+  glossary:
+  - referral
+  - hmo
+- id: visit
+  layer: 1
+  parent: referral
+  kind: visit
+  appropriateness:
+    rating: standard_of_care
+    note: The Ottawa ankle rules are applied at this exam; the visit itself is not rated.
+  likelihood_tier: certain
+  plain:
+    name: Same-day check at urgent care
+    technical_name: Urgent-care visit
+    what: A clinician presses on specific spots around the ankle and foot and watches you try to walk a few steps.
+    why: Those checks tell whether a bone picture is needed. If you can walk and the key bony spots aren't tender,
+      it usually isn't.
+    when_skipped: A mild twist that you can walk on often heals at home without a visit.
+  when_skipped_basis: logic
+  reviewer_note: Urgent care commonly bills a new-patient visit; some add an urgent-care code not priced here.
+  citations:
+  - doc: acr_acute_ankle_2020
+    year: 2020
+    section: Variant 1
+    url: https://acsearch.acr.org/docs/69436/Narrative/
+    quote: Patient meets the requirements for evaluation by the Ottawa Ankle Rules which are positive
+    claim_field: why
+  - doc: acr_acute_ankle_2020
+    year: 2020
+    section: Variant 2
+    url: https://acsearch.acr.org/docs/69436/Narrative/
+    quote: Ottawa Ankle Rules which are negative
+    claim_field: why
+  cpts:
+  - code: '99203'
+    role: primary
+    mapping: confirmed_pfs
+  - code: '99213'
+    role: alternative
+    mapping: asserted
+    note: If you're an established patient there
+- id: xray
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_acute_ankle_2020
+    variant: 1
+    procedure: Radiography ankle
+  likelihood_tier: likely
+  plain:
+    name: Quick picture of the ankle bones
+    technical_name: Ankle X-ray
+    what: A few pictures of the ankle made with a small dose of radiation. Many urgent cares do it on site.
+    why: If you can't put weight on it or certain bony spots are tender, guidelines rate an X-ray as the right first
+      test to look for a break.
+    when_skipped: You can walk and the exam finds no tender bony spots; then guidelines say an X-ray isn't needed.
+  citations:
+  - doc: acr_acute_ankle_2020
+    year: 2020
+    section: 'Variant 1 (Radiography: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/69436/Narrative/
+    quote: Inability to bear weight immediately after the injury
+    claim_field: why
+  - doc: acr_acute_ankle_2020
+    year: 2020
+    section: 'Variant 2 (Radiography: Usually Not Appropriate)'
+    url: https://acsearch.acr.org/docs/69436/Narrative/
+    quote: Ottawa Ankle Rules which are negative
+    claim_field: when_skipped
+  - doc: nhs_sprains
+    year: 2024
+    section: Treatment
+    url: https://www.nhs.uk/conditions/sprains-and-strains/
+    quote: You may need an X-ray, which can sometimes be done at an urgent treatment centre
+    claim_field: what
+  cpts:
+  - code: '73610'
+    role: primary
+    mapping: confirmed_pfs
+    note: Ankle, 3 views
+  - code: '73600'
+    role: alternative
+    mapping: asserted
+    note: 2 views
+  glossary:
+  - xray
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: X-Rays'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73610&informationRecipient.languageCode.c=en
+    code: '73610'
+    resolved_title: X-Rays
+- id: brace_or_crutches
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: supply
+  appropriateness:
+    rating: standard_of_care
+    note: Rest, ice, compression and support are standard sprain care.
+  likelihood_tier: possible
+  plain:
+    name: Wrap, brace or crutches
+    technical_name: Ankle support / durable medical equipment
+    what: A compression wrap or brace to support the ankle, and sometimes crutches for a few days.
+    why: Resting and supporting the ankle early helps the swelling go down and the ligament heal.
+    when_skipped: You already have a wrap or brace at home.
+  when_skipped_basis: logic
+  reviewer_note: Supplies are often sold at a fixed price; not in our price files yet.
+  citations:
+  - doc: medlineplus_sprains
+    year: 2025
+    section: Treatment
+    url: https://medlineplus.gov/sprainsandstrains.html
+    quote: resting the injured area, icing it, wearing a bandage or device that compresses the area
+    claim_field: why
+  no_price: true
+  no_price_reason: Billed under supply codes we don't price yet.
+- id: physical_therapy
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: therapy
+  appropriateness:
+    rating: standard_of_care
+    note: Rehab after a sprain is routine; only some people need formal PT.
+  likelihood_tier: possible
+  plain:
+    name: Guided exercise program for the ankle
+    technical_name: Physical therapy evaluation and visits
+    what: A first session where a therapist checks your strength and motion, then guided exercises over several
+      weeks.
+    why: Exercise is the usual first treatment for this kind of pain and is tried before any detailed scan.
+    when_skipped: The pain settles with home exercises, or the exam shows something that needs a surgeon first.
+  when_skipped_basis: logic
+  reviewer_note: Visit count varies; price as evaluation + per-visit.
+  citations:
+  - doc: medlineplus_sprains
+    year: 2025
+    section: Treatment
+    url: https://medlineplus.gov/sprainsandstrains.html
+    quote: Later treatment might include exercise and physical therapy.
+    claim_field: why
+  - doc: medlineplus_rehabilitation
+    year: 2025
+    section: Overview
+    url: https://medlineplus.gov/rehabilitation.html
+    quote: help you get back, keep, or improve abilities that you need for daily life
+    claim_field: what
+  cpts:
+  - code: '97161'
+    role: primary
+    mapping: asserted
+  - code: '97162'
+    role: alternative
+    mapping: asserted
+  - code: '97110'
+    role: add_on
+    mapping: asserted
+  glossary:
+  - pt_evaluation
+- id: ankle_mri
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  - xray
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_acute_ankle_2020
+    variant: 4
+    procedure: MRI ankle without IV contrast
+  likelihood_tier: rare
+  plain:
+    name: Detailed scan of the ankle's soft parts
+    technical_name: Ankle MRI (no contrast)
+    what: A strong magnet makes detailed pictures of the ligaments, tendons and cartilage.
+    why: Only if pain hasn't improved after more than a week and the X-ray was normal, to look for a hidden ligament
+      or cartilage injury.
+    when_skipped: The ankle improves over the first weeks, as most sprains do.
+  citations:
+  - doc: acr_acute_ankle_2020
+    year: 2020
+    section: 'Variant 4 (MRI: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/69436/Narrative/
+    quote: Acute trauma to the ankle with persistent pain for more than 1 week
+    claim_field: why
+  - doc: acr_acute_ankle_2020
+    year: 2020
+    section: Variant 4
+    url: https://acsearch.acr.org/docs/69436/Narrative/
+    quote: Acute trauma to the ankle with persistent pain for more than 1 week
+    claim_field: when_skipped
+  cpts:
+  - code: '73721'
+    role: primary
+    mapping: asserted
+    note: MRI lower-extremity joint without contrast
+  glossary:
+  - mri
+  - xray
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: MRI Scans'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73721&informationRecipient.languageCode.c=en
+    code: '73721'
+    resolved_title: MRI Scans
+  - kind: link_out
+    label: 'OrthoInfo: sprained ankle'
+    url: https://orthoinfo.aaos.org/en/diseases--conditions/sprained-ankle/
+exits:
+- when: The X-ray shows a break
+  text: This tool stops here. A broken ankle is treated and priced differently, sometimes by a bone specialist the
+    same week.
+golden_cases:
+- name: Rolled ankle at soccer
+  answers:
+    Q0: []
+    Q1: ankle
+    Q2: injury
+  expect: ankle_sprain_urgent_care_v1
+  expect_tiers:
+    xray: likely
+    ankle_mri: rare
+- name: Ankle pointing the wrong way
+  answers:
+    Q0:
+    - rf_limb_deformity
+    Q1: ankle
+    Q2: injury
+  expect: er_today
+- name: Ankle ache without injury
+  answers:
+    Q0: []
+    Q1: ankle
+    Q2: no_injury
+  expect: ankle_no_injury_not_built
+- name: HMO member
+  answers:
+    Q0: []
+    Q1: ankle
+    Q2: injury
+    Q14: hmo_referral_required
+  expect: ankle_sprain_urgent_care_v1
+clinical_uncertainties:
+- 'X-ray ''likely'' at urgent care is a guess: Ottawa-negative patients shouldn''t get one (ACR V2), and we can''t
+  run the exam from home.'
+- Urgent care probably doesn't need an HMO referral; the referral layer still shows for HMO answers. Austin/plan
+  rules to confirm.
+review:
+  status: pending_austin
+  drafted_by: ai:claude-opus-5.5
+  drafted_at: '2026-10-24'
+  reviewers: []

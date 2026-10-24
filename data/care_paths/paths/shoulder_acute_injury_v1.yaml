@@ -1,0 +1,391 @@
+# AI-drafted care path. NOT publishable until two non-AI reviewers sign off (review.status).
+# Plain text is our own words; quotes are <=15 words and verified against data/care_paths/sources.yaml.
+# CPT codes appear only under `cpts` (price layer). Edit freely, then run backend tests.
+id: shoulder_acute_injury_v1
+version: 1.0.0
+title:
+  en: Shoulder pain after a fall or injury
+  zh: 摔倒或受伤后的肩痛
+intro: After a shoulder injury, the first question is whether anything is broken or out of place. That starts with
+  an exam and a quick bone picture. If the bones look fine but the arm is weak or unstable, a scan of the tendons
+  may follow.
+scope:
+  area: msk_shoulder
+  acuity: acute
+  severity_band:
+  - minor
+  - moderate
+entry:
+  all_of:
+    Q1:
+    - shoulder
+    Q2:
+    - injury
+red_flags:
+- rf_cardiac
+- rf_chest_pain_alone
+- rf_allergic_airway
+- rf_non_blanching_rash
+- rf_septic_joint
+- rf_limb_deformity
+- rf_systemic_msk
+- rf_shoulder_urgent
+intro_citations:
+- doc: acr_acute_shoulder_2024
+  year: 2024
+  section: 'Variant 1 (Radiography: Usually Appropriate)'
+  url: https://acsearch.acr.org/docs/69433/Narrative/
+  quote: Adult. Acute shoulder pain. Any etiology. Initial imaging.
+  claim_field: intro
+steps:
+- id: referral
+  layer: 0
+  kind: referral
+  condition:
+    Q14:
+    - hmo_referral_required
+    - masshealth
+    - unsure
+  appropriateness:
+    rating: plan_rule
+    source: hc_gov_glossary
+  likelihood_tier: certain
+  plain:
+    name: Visit with your main doctor first
+    technical_name: Primary-care referral visit
+    what: A short visit with your primary care doctor, who writes the order that lets you see a bone and joint specialist.
+    why: Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.
+    when_skipped: Your plan doesn't require a referral. Check your plan card or member website.
+  when_skipped_basis: plan_rule
+  citations:
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: If you don't get a referral first, the plan may not pay for the services.
+    claim_field: why
+  - doc: hc_gov_glossary
+    year: 2026
+    section: 'Glossary: Referral'
+    url: https://www.healthcare.gov/glossary/
+    quote: A written order from your primary care doctor for you to see a specialist
+    claim_field: what
+  cpts:
+  - code: '99213'
+    role: primary
+    mapping: asserted
+    note: Established-patient visit; research marked this code [断言]. Level could be 99212-99214.
+  glossary:
+  - referral
+  - hmo
+- id: visit
+  layer: 1
+  parent: referral
+  kind: visit
+  appropriateness:
+    rating: standard_of_care
+    note: ACR acute variants 4-6 are defined by what the exam finds; the visit itself is not rated.
+  likelihood_tier: certain
+  plain:
+    name: Same-day check at urgent care or a bone & joint clinic
+    technical_name: Urgent-care or orthopedic new-patient visit
+    what: A clinician checks where it hurts, how far the arm moves and how strong it is, and looks for signs of
+      a break or dislocation.
+    why: The exam decides whether you need a bone picture right away and whether a tendon or the joint's stability
+      might be the problem.
+    when_skipped: It isn't skipped on this path.
+  when_skipped_basis: logic
+  reviewer_note: Urgent care vs. orthopedic walk-in vs. ER depends on severity; red flags already route deformity
+    to the ER.
+  citations:
+  - doc: acr_acute_shoulder_2024
+    year: 2024
+    section: Variant 4
+    url: https://acsearch.acr.org/docs/69433/Narrative/
+    quote: History or physical examination consistent with dislocation or instability.
+    claim_field: why
+  - doc: acr_acute_shoulder_2024
+    year: 2024
+    section: Variant 6
+    url: https://acsearch.acr.org/docs/69433/Narrative/
+    quote: Physical examination consistent with rotator cuff tear. Radiographs negative or indeterminate.
+    claim_field: what
+  cpts:
+  - code: '99203'
+    role: primary
+    mapping: confirmed_pfs
+  - code: '99204'
+    role: alternative
+    mapping: confirmed_pfs
+    note: Higher-complexity new-patient visit
+- id: xray
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_acute_shoulder_2024
+    variant: 1
+    procedure: Radiography shoulder
+  likelihood_tier: likely
+  plain:
+    name: Quick picture of the shoulder bones
+    technical_name: Shoulder X-ray
+    what: A few pictures of the shoulder made with a small dose of radiation. It's quick and needs no preparation.
+    why: After a shoulder injury, an X-ray is the only test guidelines rate as the right first picture. It shows
+      breaks and dislocations.
+    when_skipped: The clinician is confident from the exam that nothing is broken or out of place.
+  when_skipped_basis: logic
+  reviewer_note: No decision rule like Ottawa exists for the shoulder; skipping is clinician judgment.
+  citations:
+  - doc: acr_acute_shoulder_2024
+    year: 2024
+    section: 'Variant 1 (Radiography: only Usually Appropriate first test)'
+    url: https://acsearch.acr.org/docs/69433/Narrative/
+    quote: Adult. Acute shoulder pain. Any etiology. Initial imaging.
+    claim_field: why
+  - doc: medlineplus_xrays
+    year: 2026
+    section: Uses
+    url: https://medlineplus.gov/xrays.html
+    quote: X-rays are commonly used to check for fractures (broken bones).
+    claim_field: what
+  cpts:
+  - code: '73030'
+    role: primary
+    mapping: confirmed_pfs
+    note: Shoulder, at least 2 views
+  glossary:
+  - xray
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: X-Rays'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en
+    code: '73030'
+    resolved_title: X-Rays
+- id: tendon_ultrasound
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  - xray
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_acute_shoulder_2024
+    variant: 6
+    procedure: US shoulder
+  likelihood_tier: possible
+  plain:
+    name: Live sound-wave picture of the tendons
+    technical_name: Shoulder ultrasound
+    what: A probe on your skin uses sound waves to show the tendons in real time. No radiation.
+    why: If the exam suggests a torn tendon and the X-ray shows no break, this checks the tendon directly.
+    when_skipped: Your arm is strong on the exam, so a tear is unlikely.
+  citations:
+  - doc: acr_acute_shoulder_2024
+    year: 2024
+    section: 'Variant 6 (US: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/69433/Narrative/
+    quote: Physical examination consistent with rotator cuff tear. Radiographs negative or indeterminate.
+    claim_field: why
+  - doc: acr_acute_shoulder_2024
+    year: 2024
+    section: Variant 6
+    url: https://acsearch.acr.org/docs/69433/Narrative/
+    quote: Physical examination consistent with rotator cuff tear. Radiographs negative or indeterminate.
+    claim_field: when_skipped
+  cpts:
+  - code: '76881'
+    role: primary
+    mapping: confirmed_pfs
+  - code: '76882'
+    role: alternative
+    mapping: confirmed_pfs
+  glossary:
+  - ultrasound
+  - xray
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: Ultrasound'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=76881&informationRecipient.languageCode.c=en
+    code: '76881'
+    resolved_title: Ultrasound
+- id: shoulder_mri
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  - xray
+  kind: imaging
+  appropriateness:
+    rating: UA
+    source: acr_acute_shoulder_2024
+    variant: 6
+    procedure: MRI shoulder without IV contrast
+  likelihood_tier: possible
+  plain:
+    name: Detailed scan of tendons & cartilage
+    technical_name: Shoulder MRI (no contrast)
+    what: A strong magnet makes detailed pictures of the tendons, cartilage and joint lining. You lie still inside
+      a tube-shaped machine.
+    why: If the arm is weak or the joint feels unstable after the injury, this shows tendon tears and damage from
+      a dislocation.
+    when_skipped: The exam is reassuring and the arm recovers over the first weeks.
+  citations:
+  - doc: acr_acute_shoulder_2024
+    year: 2024
+    section: 'Variant 6 (MRI: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/69433/Narrative/
+    quote: Physical examination consistent with rotator cuff tear. Radiographs negative or indeterminate.
+    claim_field: why
+  - doc: acr_acute_shoulder_2024
+    year: 2024
+    section: 'Variant 4 (MRI: Usually Appropriate)'
+    url: https://acsearch.acr.org/docs/69433/Narrative/
+    quote: History or physical examination consistent with dislocation or instability.
+    claim_field: why
+  - doc: acr_acute_shoulder_2024
+    year: 2024
+    section: Variant 6
+    url: https://acsearch.acr.org/docs/69433/Narrative/
+    quote: Physical examination consistent with rotator cuff tear. Radiographs negative or indeterminate.
+    claim_field: when_skipped
+  cpts:
+  - code: '73221'
+    role: primary
+    mapping: confirmed_pfs
+  glossary:
+  - mri
+  learn_more:
+  - kind: medlineplus_connect
+    label: 'MedlinePlus: MRI Scans'
+    url: https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73221&informationRecipient.languageCode.c=en
+    code: '73221'
+    resolved_title: MRI Scans
+  - kind: link_out
+    label: 'RadiologyInfo: shoulder MRI'
+    url: https://www.radiologyinfo.org/en/info/shouldermr
+- id: physical_therapy
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: therapy
+  appropriateness:
+    rating: standard_of_care
+    note: Rehab after a soft-tissue shoulder injury is routine care; no imaging-style rating applies.
+  likelihood_tier: possible
+  plain:
+    name: Guided exercise program for the shoulder
+    technical_name: Physical therapy evaluation and visits
+    what: A therapist checks your motion and strength, then teaches exercises to get the shoulder moving and strong
+      again.
+    why: After the first rest period, exercise is the usual next treatment for strains and sprains.
+    when_skipped: The shoulder recovers on its own with home care.
+  when_skipped_basis: logic
+  reviewer_note: Frequency after acute shoulder injuries is not measured; 'possible' is a guess.
+  citations:
+  - doc: medlineplus_sprains
+    year: 2025
+    section: Treatment
+    url: https://medlineplus.gov/sprainsandstrains.html
+    quote: Later treatment might include exercise and physical therapy.
+    claim_field: why
+  - doc: medlineplus_shoulder
+    year: 2025
+    section: Treatment
+    url: https://medlineplus.gov/shoulderinjuriesanddisorders.html
+    quote: Other treatments include exercise and medicines to reduce pain and swelling.
+    claim_field: what
+  cpts:
+  - code: '97161'
+    role: primary
+    mapping: asserted
+  - code: '97110'
+    role: add_on
+    mapping: asserted
+  glossary:
+  - pt_evaluation
+tier_modifiers:
+- when:
+    Q6:
+    - weak_lift_only
+  step: shoulder_mri
+  tier: likely
+  note: Weakness after injury suggests a cuff tear (ACR V6).
+- when:
+    Q6:
+    - weak_lift_only
+  step: tendon_ultrasound
+  tier: likely
+  note: Ultrasound or MRI; usually one of the two.
+- when:
+    Q5:
+    - painful_catch
+  step: shoulder_mri
+  tier: likely
+  appropriateness:
+    rating: UA
+    source: acr_acute_shoulder_2024
+    variant: 4
+    procedure: MRI shoulder without IV contrast
+  note: Slipping/catching after injury -> instability branch (ACR V4).
+exits:
+- when: The X-ray shows a break or a dislocation
+  text: This tool stops here. Setting a bone or putting a joint back in place is priced differently, often in an
+    emergency room.
+golden_cases:
+- name: Fell on outstretched arm
+  answers:
+    Q0: []
+    Q1: shoulder
+    Q2: injury
+  expect: shoulder_acute_injury_v1
+  expect_tiers:
+    xray: likely
+    shoulder_mri: possible
+- name: Can't lift arm after injury
+  answers:
+    Q0: []
+    Q1: shoulder
+    Q2: injury
+    Q6: weak_lift_only
+  expect: shoulder_acute_injury_v1
+  expect_tiers:
+    shoulder_mri: likely
+    tendon_ultrasound: likely
+- name: Shoulder slips out after a fall
+  answers:
+    Q0: []
+    Q1: shoulder
+    Q2: injury
+    Q5: painful_catch
+  expect: shoulder_acute_injury_v1
+  expect_tiers:
+    shoulder_mri: likely
+- name: 'Red flag: deformed shoulder'
+  answers:
+    Q0:
+    - rf_limb_deformity
+    Q1: shoulder
+    Q2: injury
+  expect: er_today
+- name: 'Red flag: can''t move arm at all'
+  answers:
+    Q0:
+    - rf_shoulder_urgent
+    Q1: shoulder
+    Q2: injury
+  expect: seen_today
+clinical_uncertainties:
+- Whether an acute shoulder injury belongs at urgent care or an orthopedic walk-in (vs the ER) needs a clinician's
+  view; we route only deformity/numbness to the ER.
+- 'Fracture follow-up (ACR V2-V3: CT or MRI) is intentionally out of scope.'
+review:
+  status: pending_austin
+  drafted_by: ai:claude-opus-5.5
+  drafted_at: '2026-10-24'
+  reviewers: []

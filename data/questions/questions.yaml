@@ -1,0 +1,469 @@
+# Intake question set Q0-Q14 (clinical-sources.md §1.2). Order matters; Q0 is always first.
+# Structure borrowed from OLDCARTS history-taking (Onset, Location, Duration, Character,
+# Aggravating/relieving, Radiation, Timing, Severity); wording is ours.
+# Rule: a question earns its place only if an answer changes the path, a step's likelihood,
+# the referral layer, a card, or stops the flow. Every answer declares `routes_to`:
+#   path:<id>          an entry condition of that care path uses this answer
+#   tier:<path>.<step> a tier modifier on that step uses this answer
+#   card:<id>          an exit/note card is chosen by this answer
+#   stop:<disposition> | stop:by_flag   red-flag stop
+#   layer0:on|off      referral layer (plan rule, not clinical)
+#   next:<Qid>         ask this next (never the only route of a whole question)
+# tests/care_paths/test_questions.py checks every route resolves and matches the path data.
+version: 0.1.0
+review:
+  status: pending_austin
+  drafted_by: "ai:claude-opus-5.5"
+  drafted_at: 2026-10-24
+  reviewers: []
+questions:
+  - id: Q0
+    text:
+      en: "Right now, do you have any of these?"
+      zh: "现在有没有以下任何情况？"
+    slot: severity / associated symptoms
+    applies_to: [all]
+    multi: true
+    note: "Checklist items come from data/redflags/redflags.json for the chosen area (<=7 items)."
+    answers:
+      - value: any_checked
+        label: {en: "Yes, at least one", zh: "有，至少一项"}
+        routes_to: ["stop:by_flag"]
+      - value: none
+        label: {en: "None of these", zh: "都没有"}
+        routes_to: ["next:Q1"]
+  - id: Q1
+    text:
+      en: "Where is the problem?"
+      zh: "哪里不舒服？"
+    slot: location
+    applies_to: [all]
+    answers:
+      - value: shoulder
+        label: {en: "Shoulder", zh: "肩膀"}
+        routes_to: ["next:Q2", "path:shoulder_chronic_clicking_v1", "path:shoulder_acute_injury_v1"]
+      - value: knee
+        label: {en: "Knee", zh: "膝盖"}
+        routes_to: ["next:Q2", "path:knee_chronic_v1", "card:knee_injury_not_built"]
+      - value: lower_back
+        label: {en: "Lower back", zh: "下背/腰"}
+        routes_to: ["next:Q3", "path:back_new_pain_v1", "path:back_persistent_pain_v1"]
+      - value: ankle
+        label: {en: "Ankle", zh: "脚踝"}
+        routes_to: ["next:Q2", "path:ankle_sprain_urgent_care_v1", "card:ankle_no_injury_not_built"]
+      - value: skin_spot
+        label: {en: "A spot or mole on the skin", zh: "皮肤上的斑点或痣"}
+        routes_to: ["next:Q9", "path:skin_changing_mole_v1", "card:skin_check_visit"]
+      - value: heartburn_upper
+        label: {en: "Heartburn or upper-belly pain", zh: "烧心或上腹痛"}
+        routes_to: ["next:Q11", "path:gerd_heartburn_v1", "card:upper_gi_alarm"]
+      - value: bowel
+        label: {en: "Bowel changes or blood in stool", zh: "排便改变或便血"}
+        routes_to: ["next:Q11", "path:colon_diagnostic_v1", "card:bowel_change_see_doctor"]
+      - value: screening
+        label: {en: "No symptoms, I want a colon cancer screening", zh: "没有症状，想做结肠癌筛查"}
+        routes_to:
+          - "next:Q8"
+          - "path:colon_screening_v1"
+          - "path:colon_diagnostic_v1"
+          - "card:colon_not_due_yet"
+          - "card:colon_higher_risk"
+          - "card:screening_under_45"
+          - "card:screening_76_85"
+          - "card:screening_over_85"
+      - value: other
+        label: {en: "Something else", zh: "其他"}
+        routes_to: ["card:not_covered_yet"]
+  - id: Q2
+    text:
+      en: "Did it start with an injury, like a fall, a twist or a hit?"
+      zh: "是不是因为受伤开始的，比如摔倒、扭伤或撞击？"
+    slot: onset
+    applies_to: [shoulder, knee, ankle]
+    answers:
+      - value: injury
+        label: {en: "Yes, an injury", zh: "是，受过伤"}
+        routes_to: ["path:shoulder_acute_injury_v1", "path:ankle_sprain_urgent_care_v1", "card:knee_injury_not_built"]
+      - value: no_injury
+        label: {en: "No, it came on gradually", zh: "没有，慢慢出现的"}
+        routes_to: ["path:shoulder_chronic_clicking_v1", "path:knee_chronic_v1", "card:ankle_no_injury_not_built"]
+    sources: [acr_acute_shoulder_2024, acr_chronic_shoulder_2022]
+  - id: Q3
+    text:
+      en: "How long has it been going on?"
+      zh: "持续多久了？"
+    slot: duration
+    applies_to: [lower_back]
+    answers:
+      - value: lt_6w
+        label: {en: "Less than 6 weeks", zh: "不到 6 周"}
+        routes_to: ["path:back_new_pain_v1"]
+      - value: 6w_6m
+        label: {en: "6 weeks to 6 months", zh: "6 周到 6 个月"}
+        routes_to: ["next:Q4", "path:back_persistent_pain_v1"]
+      - value: gt_6m
+        label: {en: "More than 6 months", zh: "超过 6 个月"}
+        routes_to: ["next:Q4", "path:back_persistent_pain_v1"]
+    sources: [acr_low_back_pain_2021]
+  - id: Q4
+    text:
+      en: "Have you already tried about 6 weeks of physical therapy, exercises or medicines, and it's still bad?"
+      zh: "是否已经做过大约 6 周的物理治疗、锻炼或用药，但仍然不好？"
+    slot: aggravating / relieving
+    applies_to: [lower_back, shoulder, knee]
+    answers:
+      - value: yes_still_bad
+        label: {en: "Yes, and it's still bad", zh: "是的，还是不好"}
+        routes_to:
+          - "path:back_persistent_pain_v1"
+          - "tier:shoulder_chronic_clicking_v1.tendon_scan_mri"
+          - "tier:shoulder_chronic_clicking_v1.tendon_scan_ultrasound"
+          - "tier:knee_chronic_v1.knee_mri"
+      - value: "no"
+        label: {en: "No, not yet", zh: "还没有"}
+        routes_to: ["path:back_new_pain_v1"]
+    sources: [acr_low_back_pain_2021, acr_chronic_shoulder_2022]
+  - id: Q5
+    text:
+      en: "Does it catch, lock, click with pain, or feel like it slips out?"
+      zh: "活动时会不会卡住、锁住、伴随疼痛的咔哒声，或感觉要滑出来？"
+    slot: character
+    applies_to: [shoulder, knee]
+    note: "Painless clicking alone changes nothing (NHS: painless knee clicking is normal)."
+    answers:
+      - value: painful_catch
+        label: {en: "Yes, catching or clicking that hurts, or slipping", zh: "会，疼的卡顿/咔哒声，或有滑脱感"}
+        routes_to:
+          - "tier:shoulder_chronic_clicking_v1.mr_arthrogram"
+          - "tier:shoulder_acute_injury_v1.shoulder_mri"
+          - "tier:knee_chronic_v1.knee_mri"
+      - value: painless_click
+        label: {en: "It clicks, but it doesn't hurt", zh: "有响声，但不疼"}
+        routes_to: ["card:painless_click_ok"]
+      - value: "no"
+        label: {en: "No", zh: "没有"}
+        routes_to: ["next:Q6", "card:no_mechanical_symptoms"]
+    sources: [acr_chronic_shoulder_2022, acr_chronic_knee_2026, nhs_knee_pain]
+  - id: Q6
+    text:
+      en: "Can you lift your arm overhead by yourself? If someone else lifts it for you, does it go up?"
+      zh: "你自己能把手臂举过头顶吗？别人帮你抬的时候能抬上去吗？"
+    slot: character (function)
+    applies_to: [shoulder]
+    note: "[我判断] A patient-reportable stand-in for the active vs passive range-of-motion exam. Needs clinician review."
+    answers:
+      - value: weak_lift_only
+        label: {en: "I can't lift it well myself, but it goes up with help", zh: "自己抬不太起来，但别人帮忙可以"}
+        routes_to: ["tier:shoulder_acute_injury_v1.tendon_ultrasound", "tier:shoulder_acute_injury_v1.shoulder_mri"]
+      - value: stiff_both_ways
+        label: {en: "It's stiff either way", zh: "自己抬和别人帮忙都很僵"}
+        routes_to: ["tier:shoulder_chronic_clicking_v1.steroid_injection", "card:frozen_shoulder_note"]
+      - value: lifts_fine
+        label: {en: "It lifts fine, it just hurts", zh: "能抬起来，只是疼"}
+        routes_to: ["next:Q7", "card:lifts_fine_note"]
+    sources: [acr_chronic_shoulder_2022, acr_acute_shoulder_2024]
+  - id: Q7
+    text:
+      en: "Does pain, tingling or numbness travel down your arm or leg?"
+      zh: "疼痛、刺痛或麻木会不会放射到手臂或腿？"
+    slot: radiation
+    applies_to: [shoulder, lower_back]
+    answers:
+      - value: "yes"
+        label: {en: "Yes", zh: "会"}
+        routes_to: ["card:may_come_from_spine"]
+      - value: "no"
+        label: {en: "No", zh: "不会"}
+        routes_to: ["next:Q8", "card:no_radiation"]
+  - id: Q8
+    text:
+      en: "How old are you?"
+      zh: "你的年龄段？"
+    slot: patient factor
+    applies_to: [all]
+    answers:
+      - value: age_under_40
+        label: {en: "Under 40", zh: "40 岁以下"}
+        routes_to: ["card:screening_under_45"]
+      - value: age_40_44
+        label: {en: "40-44", zh: "40-44 岁"}
+        routes_to: ["card:screening_under_45"]
+      - value: age_45_59
+        label: {en: "45-59", zh: "45-59 岁"}
+        routes_to: ["path:colon_screening_v1", "card:colon_not_due_yet", "card:colon_higher_risk"]
+      - value: age_60_75
+        label: {en: "60-75", zh: "60-75 岁"}
+        routes_to: ["path:colon_screening_v1", "card:colon_not_due_yet", "card:colon_higher_risk"]
+      - value: age_76_85
+        label: {en: "76-85", zh: "76-85 岁"}
+        routes_to: ["card:screening_76_85"]
+      - value: age_over_85
+        label: {en: "Over 85", zh: "85 岁以上"}
+        routes_to: ["card:screening_over_85"]
+    sources: [uspstf_crc_2021]
+  - id: Q9
+    text:
+      en: "What's happening with the spot?"
+      zh: "这个斑点/痣有什么变化？"
+    slot: onset / character
+    applies_to: [skin_spot]
+    multi: true
+    answers:
+      - value: new
+        label: {en: "It's new", zh: "新长出来的"}
+        routes_to: ["path:skin_changing_mole_v1"]
+      - value: changing
+        label: {en: "It's changing in size, shape or color", zh: "大小、形状或颜色在变"}
+        routes_to: ["path:skin_changing_mole_v1"]
+      - value: different
+        label: {en: "It looks different from my other moles", zh: "和其他痣长得不一样"}
+        routes_to: ["path:skin_changing_mole_v1"]
+      - value: itch_bleed
+        label: {en: "It itches or bleeds", zh: "会痒或出血"}
+        routes_to: ["path:skin_changing_mole_v1"]
+      - value: none
+        label: {en: "None of these, I just want it checked", zh: "都没有，只是想检查一下"}
+        routes_to: ["card:skin_check_visit"]
+    sources: [uspstf_skin_2023, medlineplus_moles, medlineplus_melanoma]
+  - id: Q10
+    text:
+      en: "Where is the spot?"
+      zh: "斑点在哪里？"
+    slot: location
+    applies_to: [skin_spot]
+    answers:
+      - value: face_ears
+        label: {en: "Face or ears", zh: "脸或耳朵"}
+        routes_to: ["card:biopsy_may_be_partial"]
+      - value: palms_soles_nails
+        label: {en: "Palms, soles or nails", zh: "手掌、脚底或指甲"}
+        routes_to: ["card:biopsy_may_be_partial"]
+      - value: elsewhere
+        label: {en: "Somewhere else", zh: "其他部位"}
+        routes_to: ["card:biopsy_whole_spot"]
+  - id: Q11
+    text:
+      en: "Any of these: trouble swallowing, losing weight without trying, black or bloody stool, been told you're anemic, or vomiting that won't stop?"
+      zh: "有没有以下情况：吞咽困难、不明原因体重下降、黑便或便血、被告知贫血、或持续呕吐？"
+    slot: associated symptoms
+    applies_to: [heartburn_upper, bowel, screening]
+    answers:
+      - value: "yes"
+        label: {en: "Yes", zh: "有"}
+        routes_to: ["path:colon_diagnostic_v1", "card:upper_gi_alarm"]
+      - value: none
+        label: {en: "None of these", zh: "都没有"}
+        routes_to: ["path:gerd_heartburn_v1", "path:colon_screening_v1", "card:bowel_change_see_doctor"]
+    sources: [acg_gerd_2022, uspstf_crc_2021]
+  - id: Q12
+    text:
+      en: "Have you taken an acid-reducing medicine (like omeprazole) every day for about 8 weeks?"
+      zh: "你是否已经每天服用抑酸药（如奥美拉唑）大约 8 周？"
+    slot: aggravating / relieving
+    applies_to: [heartburn_upper]
+    answers:
+      - value: no_trial_yet
+        label: {en: "No", zh: "没有"}
+        routes_to: ["card:gerd_try_medicine_first"]
+      - value: yes_still_bad
+        label: {en: "Yes, and it's still bad (or came back when I stopped)", zh: "吃了，还是不好（或停药后复发）"}
+        routes_to: ["tier:gerd_heartburn_v1.upper_endoscopy"]
+      - value: yes_better
+        label: {en: "Yes, and it helped", zh: "吃了，有效"}
+        routes_to: ["card:gerd_feeling_better"]
+    sources: [acg_gerd_2022]
+  - id: Q13
+    text:
+      en: "Any of these: a positive home stool test, a parent, sibling or child with colon cancer, inflammatory bowel disease, or polyps found before? And when was your last colonoscopy?"
+      zh: "有没有：家用粪便检测阳性、父母/兄弟姐妹/子女患结肠癌、炎症性肠病、或以前查出过息肉？上次肠镜是什么时候？"
+    slot: history
+    applies_to: [screening]
+    answers:
+      - value: positive_stool_test
+        label: {en: "My home stool test came back positive", zh: "家用粪便检测阳性"}
+        routes_to: ["path:colon_screening_v1"]
+      - value: higher_risk_history
+        label: {en: "Family history, bowel disease, or polyps before", zh: "有家族史、肠病或以前有息肉"}
+        routes_to: ["card:colon_higher_risk"]
+      - value: normal_within_10y
+        label: {en: "I had a normal colonoscopy less than 10 years ago", zh: "10 年内做过正常的肠镜"}
+        routes_to: ["card:colon_not_due_yet"]
+      - value: none
+        label: {en: "None of these", zh: "都没有"}
+        routes_to: ["path:colon_screening_v1"]
+    sources: [uspstf_crc_2021, aca_faq_part51_2022]
+  - id: Q14
+    text:
+      en: "What kind of plan do you have?"
+      zh: "你的保险是哪种？"
+    slot: plan (not clinical)
+    applies_to: [all]
+    note: "Only switches the referral layer (layer 0). 'Not sure' shows it, to be safe."
+    answers:
+      - value: hmo_referral_required
+        label: {en: "HMO / my plan needs a referral", zh: "HMO / 需要转诊"}
+        routes_to: ["layer0:on"]
+      - value: ppo
+        label: {en: "PPO / no referral needed", zh: "PPO / 不需要转诊"}
+        routes_to: ["layer0:off"]
+      - value: medicare
+        label: {en: "Medicare", zh: "Medicare"}
+        routes_to: ["layer0:off"]
+      - value: masshealth
+        label: {en: "MassHealth", zh: "MassHealth"}
+        routes_to: ["layer0:on"]
+      - value: cash
+        label: {en: "No insurance / paying cash", zh: "没有保险 / 自费"}
+        routes_to: ["layer0:off"]
+      - value: unsure
+        label: {en: "Not sure", zh: "不确定"}
+        routes_to: ["layer0:on"]
+    sources: [hc_gov_glossary]
+cards:
+  - id: not_covered_yet
+    kind: exit
+    when_any: [{Q1: [other]}]
+    title: {en: "We haven't built this one yet", zh: "这个还没做"}
+    text: "We only cover a few common bone, joint, skin and stomach problems so far. You can still browse prices for a visit or a specific test."
+  - id: knee_injury_not_built
+    kind: exit
+    when_any: [{Q1: [knee], Q2: [injury]}]
+    title: {en: "Knee injury: not built yet", zh: "膝盖外伤：暂未覆盖"}
+    text: "A recent knee injury is checked with a quick exam first; whether you need a bone picture depends on that exam. We haven't priced this path yet."
+  - id: ankle_no_injury_not_built
+    kind: exit
+    when_any: [{Q1: [ankle], Q2: [no_injury]}]
+    title: {en: "Ankle pain without an injury: not built yet", zh: "无外伤的踝痛：暂未覆盖"}
+    text: "Long-lasting ankle pain without an injury has its own workup that we haven't priced yet."
+  - id: skin_check_visit
+    kind: exit
+    when_any: [{Q1: [skin_spot], Q9: [none]}]
+    title: {en: "A skin check visit", zh: "皮肤检查"}
+    text: "Routine skin checks for people with no changing spots are a judgment call. The national task force found too little evidence to recommend for or against them. If nothing is changing, a skin doctor visit is the main cost; a sample is taken only if something looks unusual."
+    citations:
+      - doc: uspstf_skin_2023
+        year: 2023
+        section: "Recommendation summary / population"
+        url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/skin-cancer-screening"
+        quote: "does not apply to persons with symptoms, such as changes in size, shape, or color"
+        claim_field: intro
+  - id: biopsy_may_be_partial
+    kind: note
+    when_any: [{Q10: [face_ears, palms_soles_nails]}]
+    title: {en: "On the face, hands or feet", zh: "在脸、手或脚上"}
+    text: "In these places the doctor may take only part of the spot first, to keep the scar small. That can change which removal line applies."
+  - id: biopsy_whole_spot
+    kind: note
+    when_any: [{Q10: [elsewhere]}]
+    title: {en: "Elsewhere on the body", zh: "身体其他部位"}
+    text: "On most of the body, doctors often remove the whole spot with a thin rim of normal skin, so one sample answers the question."
+  - id: upper_gi_alarm
+    kind: exit
+    when_any: [{Q1: [heartburn_upper], Q11: ["yes"]}]
+    title: {en: "Please see a doctor soon", zh: "请尽快就医"}
+    text: "Trouble swallowing, weight loss or bleeding with heartburn are reasons to skip the medicine trial and get a camera check of the food pipe and stomach first. We haven't priced that path yet; book a visit with your doctor or a stomach specialist."
+    citations:
+      - doc: acg_gerd_2022
+        year: 2022
+        section: "Recommendation 6 (diagnosis)"
+        url: "https://www.newswise.com/pdf_docs/163769644314928_ACG%20GERD%20Guidelines%20Katz%20et%20al%20AJG%20Jan%202022.pdf"
+        quote: "We recommend endoscopy as the first test for evaluation of patients presenting with dysphagia"
+        claim_field: intro
+  - id: bowel_change_see_doctor
+    kind: exit
+    when_any: [{Q1: [bowel], Q11: [none]}]
+    title: {en: "Bowel changes without warning signs", zh: "无报警症状的排便改变"}
+    text: "Changes like occasional constipation usually start with a regular doctor visit, not a procedure. We haven't priced this path yet."
+  - id: colon_not_due_yet
+    kind: exit
+    when_any: [{Q1: [screening], Q8: [age_45_59, age_60_75], Q13: [normal_within_10y]}]
+    title: {en: "You likely don't need one yet", zh: "你可能还不需要做"}
+    text: "After a normal, good-quality colon check, the usual wait for people at average risk is 10 years. Ask your doctor if anything has changed."
+    citations:
+      - doc: uspstf_crc_2021
+        year: 2021
+        section: "Screening strategies table"
+        url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening"
+        quote: "Colonoscopy screening every 10 years"
+        claim_field: intro
+  - id: colon_higher_risk
+    kind: exit
+    when_any: [{Q1: [screening], Q8: [age_45_59, age_60_75], Q13: [higher_risk_history]}]
+    title: {en: "A higher-risk schedule", zh: "高风险人群的筛查安排"}
+    text: "With a family history, bowel disease or past growths, your doctor sets a different schedule and insurance may count it differently. We don't estimate this one yet."
+  - id: screening_under_45
+    kind: exit
+    when_any: [{Q1: [screening], Q8: [age_under_40, age_40_44]}]
+    title: {en: "Screening usually starts at 45", zh: "筛查通常从 45 岁开始"}
+    text: "For people at average risk, the national task force recommends starting colon cancer screening at 45. If you have symptoms or a family history, talk to your doctor."
+    citations:
+      - doc: uspstf_crc_2021
+        year: 2021
+        section: "Recommendation summary"
+        url: "https://www.uspreventiveservicestaskforce.org/uspstf/recommendation/colorectal-cancer-screening"
+        quote: "The USPSTF recommends screening for colorectal cancer in adults aged 45 to 49 years."
+        claim_field: intro
+  - id: screening_76_85
+    kind: exit
+    when_any: [{Q1: [screening], Q8: [age_76_85]}]
+    title: {en: "Talk it over with your doctor", zh: "和医生商量"}
+    text: "Between 76 and 85, whether to keep screening depends on your health and past results, so it's a decision to make with your doctor."
+  - id: screening_over_85
+    kind: exit
+    when_any: [{Q1: [screening], Q8: [age_over_85]}]
+    title: {en: "Outside what this tool covers", zh: "超出本工具范围"}
+    text: "Routine screening isn't usually suggested after 85. Talk with your doctor."
+  - id: painless_click_ok
+    kind: note
+    when_any: [{Q5: [painless_click]}]
+    title: {en: "Painless clicking", zh: "不疼的响声"}
+    text: "Clicking that doesn't hurt is common and on its own doesn't change what tests you're likely to need."
+    citations:
+      - doc: nhs_knee_pain
+        year: 2023
+        section: "Urgent advice"
+        url: "https://www.nhs.uk/conditions/knee-pain/"
+        quote: "painless clicking is normal"
+        claim_field: intro
+  - id: no_mechanical_symptoms
+    kind: note
+    when_any: [{Q5: ["no"]}]
+    title: {en: "No catching or slipping", zh: "没有卡顿或滑脱"}
+    text: "That makes a tear of the cartilage rim less likely, so the more detailed scan with dye stays unlikely."
+  - id: frozen_shoulder_note
+    kind: note
+    when_any: [{Q6: [stiff_both_ways]}]
+    title: {en: "Stiff both ways", zh: "主动和被动都僵"}
+    text: "A shoulder that is stiff even when someone else moves it can be a frozen shoulder. The first steps are the same; a shot of anti-inflammatory medicine becomes more likely."
+  - id: lifts_fine_note
+    kind: note
+    when_any: [{Q6: [lifts_fine]}]
+    title: {en: "Your arm lifts fine", zh: "手臂能抬起"}
+    text: "Pain without weakness often settles with exercises; scans stay less likely."
+  - id: may_come_from_spine
+    kind: note
+    when_any: [{Q7: ["yes"]}]
+    title: {en: "It may be coming from your neck or back", zh: "可能来自颈椎或腰椎"}
+    text: "Pain or numbness that travels down the arm or leg can come from a pinched nerve in the spine. The doctor may check your neck or back too; this tool doesn't price that yet."
+  - id: no_radiation
+    kind: note
+    when_any: [{Q7: ["no"]}]
+    title: {en: "Stays in one place", zh: "疼痛不放射"}
+    text: "Pain that stays put points to the joint itself rather than a pinched nerve."
+  - id: gerd_try_medicine_first
+    kind: note
+    when_any: [{Q12: [no_trial_yet]}]
+    title: {en: "Medicine usually comes first", zh: "通常先吃药"}
+    text: "For classic heartburn without warning signs, doctors usually suggest about 8 weeks of a daily acid-reducing pill before any camera test."
+    citations:
+      - doc: acg_gerd_2022
+        year: 2022
+        section: "Diagnosis recommendations table"
+        url: "https://www.newswise.com/pdf_docs/163769644314928_ACG%20GERD%20Guidelines%20Katz%20et%20al%20AJG%20Jan%202022.pdf"
+        quote: "we recommend an 8-wk trial of empiric PPIs once daily before a meal."
+        claim_field: intro
+  - id: gerd_feeling_better
+    kind: note
+    when_any: [{Q12: [yes_better]}]
+    title: {en: "The medicine helped", zh: "药物有效"}
+    text: "When the 8-week trial works, doctors usually try stopping it or lowering the dose, and tests are rarely needed."
