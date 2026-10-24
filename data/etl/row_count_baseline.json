@@ -1,0 +1,129 @@
+{
+ "_what": "Row-count baseline for `python -m app.etl build --baseline-manifest` in CI (GitHub runners have no data/build). Per source: the last good copy's sha256 (also the last-good fallback) and its counts. Regenerate from a good build's manifest.json when a hospital legitimately changes size.",
+ "from_builds": {
+  "refresh": "20261024-10d8a893",
+  "franciscan_mrf": "20261024-1cb8089d (2026-05 import; the publisher's current file has the same sha256)"
+ },
+ "sources": {
+  "bidmc_mrf": {
+   "sha256": "7e4dd9074968e9bb6b0d9c961b8d8dd5ee94be2249496eadd5135404d2a24e23",
+   "bytes": 28109168,
+   "rate_rows": 217,
+   "payer_rate_rows": 177,
+   "staged_rows": 90199,
+   "last_updated_on": "2026-04-01",
+   "fetched_at": "2026-10-24T23:14:57+00:00",
+   "fetch_method": "download"
+  },
+  "bmc_brighton_mrf": {
+   "sha256": "82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed",
+   "bytes": 18044222,
+   "rate_rows": 1846,
+   "payer_rate_rows": 1846,
+   "staged_rows": 552814,
+   "last_updated_on": "2026-03-13",
+   "fetched_at": "2026-10-24T23:14:10+00:00",
+   "fetch_method": "download"
+  },
+  "bmc_mrf": {
+   "sha256": "77660f57289afcf250bc03eff8ef68819b813eb0b85d82e8e3a413c45c19ecde",
+   "bytes": 43012814,
+   "rate_rows": 4067,
+   "payer_rate_rows": 4067,
+   "staged_rows": 1329567,
+   "last_updated_on": "2026-03-13",
+   "fetched_at": "2026-10-24T23:14:09+00:00",
+   "fetch_method": "download"
+  },
+  "brigham_mrf": {
+   "sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+   "bytes": 2879322,
+   "rate_rows": 1160,
+   "payer_rate_rows": 1160,
+   "staged_rows": 109293,
+   "last_updated_on": "2026-03-27",
+   "fetched_at": "2026-10-24T23:14:05+00:00",
+   "fetch_method": "download"
+  },
+  "cha_mrf": {
+   "sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+   "bytes": 278296353,
+   "rate_rows": 4121,
+   "payer_rate_rows": 4121,
+   "staged_rows": 1022366,
+   "last_updated_on": "2026-03-20",
+   "fetched_at": "2026-10-24T23:14:40+00:00",
+   "fetch_method": "download"
+  },
+  "childrens_mrf": {
+   "sha256": "d989bdd477aabac960d371c851124d6cbfbd434a87b8388501ab70b2b7f0831f",
+   "bytes": 131908978,
+   "rate_rows": 1723,
+   "payer_rate_rows": 1723,
+   "staged_rows": 465548,
+   "last_updated_on": "2026-04-01",
+   "fetched_at": "2026-10-24T23:15:03+00:00",
+   "fetch_method": "download"
+  },
+  "dana_farber_mrf": {
+   "sha256": "ae1fb1fa761f9da37b4822c44a1740a07c8d7227097cea0891d9e95a4dde8c16",
+   "bytes": 18353800,
+   "rate_rows": 286,
+   "payer_rate_rows": 49,
+   "staged_rows": 55667,
+   "last_updated_on": "2026-04-01",
+   "fetched_at": "2026-10-24T23:15:05+00:00",
+   "fetch_method": "download"
+  },
+  "faulkner_mrf": {
+   "sha256": "d66cc4a4b284a5752be35855a0ac1dbd456f7bbbf258fb0114f58be3a25297ca",
+   "bytes": 998107,
+   "rate_rows": 250,
+   "payer_rate_rows": 250,
+   "staged_rows": 39202,
+   "last_updated_on": "2026-03-27",
+   "fetched_at": "2026-10-24T23:14:05+00:00",
+   "fetch_method": "download"
+  },
+  "franciscan_mrf": {
+   "sha256": "f7d22355fb08df5fc1fbf7655b7c632a6dc47b1c79c24d56498be2a9fccc2fcd",
+   "bytes": 336611,
+   "rate_rows": 297,
+   "payer_rate_rows": 297,
+   "staged_rows": 5085,
+   "last_updated_on": "2026-04-01",
+   "fetched_at": "2026-10-24T21:13:51+00:00",
+   "fetch_method": "import"
+  },
+  "mgh_mrf": {
+   "sha256": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba",
+   "bytes": 3756817,
+   "rate_rows": 1516,
+   "payer_rate_rows": 1516,
+   "staged_rows": 159489,
+   "last_updated_on": "2026-03-27",
+   "fetched_at": "2026-10-24T23:14:05+00:00",
+   "fetch_method": "download"
+  },
+  "mtauburn_mrf": {
+   "sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+   "bytes": 16217463,
+   "rate_rows": 212,
+   "payer_rate_rows": 184,
+   "staged_rows": 64504,
+   "last_updated_on": "2026-04-01",
+   "fetched_at": "2026-10-24T23:15:11+00:00",
+   "fetch_method": "download"
+  },
+  "tufts_mrf": {
+   "sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+   "bytes": 176859458,
+   "rate_rows": 9207,
+   "payer_rate_rows": 9207,
+   "staged_rows": 5877884,
+   "last_updated_on": "2026-04-01",
+   "fetched_at": "2026-10-24T23:14:47+00:00",
+   "fetch_method": "download"
+  }
+ }
+}

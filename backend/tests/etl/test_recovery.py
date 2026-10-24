@@ -258,3 +258,12 @@ def test_size_drop_error_thresholds():
     assert stage_mod.size_drop_error("s", 120, 100, 50) is None
     assert "40%" not in (stage_mod.size_drop_error("s", 40, 100, 50) or "")
     assert "60% smaller" in (stage_mod.size_drop_error("s", 40, 100, 50) or "")
+
+
+def test_committed_ci_baseline_covers_every_hospital_source(tmp_path):
+    """The CI build compares against data/etl/row_count_baseline.json; it must name every MRF."""
+    path = CONFIG_DIR / "row_count_baseline.json"
+    base = build_mod.load_baseline(Paths.resolve(tmp_path), path)
+    assert base is not None
+    assert {s.source_id for s in load_sources().rate_row_sources} <= set(base)
+    assert all(len(v["sha256"]) == 64 and v["rate_rows"] > 0 for v in base.values())

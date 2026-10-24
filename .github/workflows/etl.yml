@@ -2,9 +2,11 @@ name: ETL (hospital price files)
 
 # Same commands as a local run: python -m app.etl fetch|stage|normalize|build|report.
 # Output is uploaded as an artifact; nothing is committed, published or deployed from here.
-# Known gaps (2026-10-24): Tufts returns 403 to non-browser clients, and Franciscan /
-# Dana-Farber have no confirmed file URL yet, so a cold cache cannot build all 12 sources and
-# the source_present gate fails loudly until data/raw/store is seeded (cache or release asset).
+# Known gap (2026-10-24): franciscans.childrenshospital.org serves no intermediate TLS
+# certificate, so Franciscan cannot be fetched; a cold cache fails source_present for it.
+# A source that fails a gate is built from its last good copy (pins.yaml, else the baseline
+# sha below if the cached store has it), so stage/normalize failures do not stop the build:
+# the build step decides. Row counts compare against data/etl/row_count_baseline.json.
 
 on:
   workflow_dispatch:
@@ -36,11 +38,15 @@ jobs:
         continue-on-error: true
         run: python -m app.etl fetch
       - name: Stage
+        id: stage
+        continue-on-error: true
         run: python -m app.etl stage
       - name: Normalize
+        id: normalize
+        continue-on-error: true
         run: python -m app.etl normalize
-      - name: Build (quality gates)
-        run: python -m app.etl build
+      - name: Build (quality gates; per-source last-good fallback)
+        run: python -m app.etl build --baseline-manifest ../data/etl/row_count_baseline.json
       - name: Report
         if: always()
         run: python -m app.etl report
@@ -55,8 +61,8 @@ jobs:
             data/build/*/coverage.md
             data/build/*/coverage.csv
             data/build/*/rate_row.sqlite
-      - name: Fail if any fetch failed
-        if: steps.fetch.outcome == 'failure'
+      - name: Fail if any fetch / stage / normalize failed
+        if: steps.fetch.outcome == 'failure' || steps.stage.outcome == 'failure' || steps.normalize.outcome == 'failure'
         run: |
-          echo "::error::one or more sources failed to fetch (see the Fetch step)"
+          echo "::error::a source failed before build (it shipped from its last good copy, or the build failed)"
           exit 1
