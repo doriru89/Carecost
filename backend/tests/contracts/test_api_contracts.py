@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import copy
 import json
+from datetime import date
 from pathlib import Path
 
 import pytest
@@ -338,18 +339,156 @@ def test_not_offered_needs_elsewhere_and_no_cell():
         q.SiteQuote.model_validate(site)
 
 
-def test_late_source_needs_the_missed_deadline():
+def _fresh(**kw):
+    base = {
+        "last_updated": "2026-03-27",
+        "expected_by": "2027-03-27",
+        "late_to_refresh": False,
+        "source_rule": "hospital_mrf_365_days",
+        "fetched_at": "2026-10-24",
+        "our_refresh_due": "2026-11-24",
+        "stale_on_our_side": False,
+        "our_rule": "hospital_monthly",
+    }
+    base.update(kw)
+    return base
+
+
+def test_freshness_sides_need_their_deadlines():
     from app.sites.contracts import Freshness
 
-    with pytest.raises(ValidationError):
-        Freshness.model_validate(
-            {
-                "last_updated": "2026-03-27",
-                "expected_by": None,
-                "late_to_refresh": True,
-                "rule": "etl_warn_after_days",
-            }
-        )
+    Freshness.model_validate(_fresh())
+    with pytest.raises(ValidationError, match="expected_by"):
+        Freshness.model_validate(_fresh(expected_by=None, late_to_refresh=True))
+    with pytest.raises(ValidationError, match="our_refresh_due"):
+        Freshness.model_validate(_fresh(our_refresh_due=None, stale_on_our_side=True))
+
+
+def test_never_blame_the_publisher_while_we_are_stale():
+    from app.sites.contracts import Freshness
+
+    with pytest.raises(ValidationError, match="cannot blame the publisher"):
+        Freshness.model_validate(_fresh(late_to_refresh=True, stale_on_our_side=True))
+
+
+@pytest.mark.parametrize(
+    "kw, late, stale",
+    [
+        # hospital MRF: late only after 365 days (not the old 180)
+        (
+            dict(
+                source_rule="hospital_mrf_365_days",
+                last_updated=date(2026, 3, 27),
+                our_rule="hospital_monthly",
+                fetched_at=date(2026, 10, 24),
+            ),
+            False,
+            False,
+        ),
+        (
+            dict(
+                source_rule="hospital_mrf_365_days",
+                last_updated=date(2025, 10, 1),
+                our_rule="hospital_monthly",
+                fetched_at=date(2026, 10, 20),
+            ),
+            True,
+            False,
+        ),
+        # we stopped fetching: stale on our side, and we do not blame the hospital
+        (
+            dict(
+                source_rule="hospital_mrf_365_days",
+                last_updated=date(2025, 10, 1),
+                our_rule="hospital_monthly",
+                fetched_at=date(2026, 8, 1),
+            ),
+            False,
+            True,
+        ),
+        # TiC: late after 45 days
+        (
+            dict(
+                source_rule="tic_45_days",
+                last_updated=date(2026, 9, 1),
+                our_rule="tic_monthly",
+                fetched_at=date(2026, 10, 20),
+            ),
+            True,
+            False,
+        ),
+        (
+            dict(
+                source_rule="tic_45_days",
+                last_updated=date(2026, 9, 20),
+                our_rule="tic_monthly",
+                fetched_at=date(2026, 10, 20),
+            ),
+            False,
+            False,
+        ),
+        # clinic page with no date: never late; sites are checked weekly
+        (
+            dict(
+                source_rule="posted_page_date_365_days",
+                last_updated=None,
+                our_rule="sites_weekly",
+                fetched_at=date(2026, 10, 10),
+            ),
+            False,
+            True,
+        ),
+        # fee schedule: explicit next release; no newer release known -> never stale
+        (
+            dict(
+                source_rule="fee_schedule_quarterly",
+                last_updated=date(2026, 7, 1),
+                expected_by=date(2026, 10, 1),
+                our_rule="fee_schedule_per_release",
+                fetched_at=date(2026, 7, 2),
+                our_refresh_due=date(2026, 10, 1),
+            ),
+            False,
+            True,
+        ),
+        (
+            dict(
+                source_rule="fee_schedule_annual",
+                last_updated=date(2026, 1, 1),
+                expected_by=date(2027, 1, 1),
+                our_rule="fee_schedule_per_release",
+                fetched_at=date(2026, 1, 5),
+            ),
+            False,
+            False,
+        ),
+    ],
+)
+def test_freshness_compute_cadences(kw, late, stale):
+    from app.sites.contracts import Freshness
+
+    f = Freshness.compute(as_of=date(2026, 10, 24), **kw)
+    assert (f.late_to_refresh, f.stale_on_our_side) == (late, stale)
+
+
+def test_site_rollups_and_sources_behind_must_match_the_chips():
+    resp = _fixture("quote_bcbs_hmo_shoulder")
+    bad = copy.deepcopy(resp)
+    bad["sites"][1]["site"]["any_source_late"] = False  # Brigham's TiC chip is late
+    with pytest.raises(ValidationError, match="any_source_late"):
+        q.QuoteResponse.model_validate(bad)
+    bad = copy.deepcopy(resp)
+    bad["data_version"]["sources_behind"] = []
+    with pytest.raises(ValidationError, match="sources_behind"):
+        q.QuoteResponse.model_validate(bad)
+    bad = copy.deepcopy(resp)
+    bad["notices"].remove("late_to_refresh_sources")
+    with pytest.raises(ValidationError, match="late_to_refresh_sources"):
+        q.QuoteResponse.model_validate(bad)
+    cash = _fixture("quote_cash_shoulder")
+    cash["notices"].remove("stale_on_our_side_sources")
+    with pytest.raises(ValidationError, match="stale_on_our_side_sources"):
+        q.QuoteResponse.model_validate(cash)
 
 
 def test_chat_red_flag_and_pause_never_call_the_llm():

@@ -16,7 +16,8 @@
     "build_date": "2026-10-24",
     "tic_release": null,
     "sites_version": 1,
-    "care_paths_version": "1.0.0"
+    "care_paths_version": "1.0.0",
+    "sources_behind": []
   },
   "sites": [
     {
@@ -46,12 +47,19 @@
         "hours": null,
         "hours_label": "unknown",
         "price_label": "price_file",
+        "price_source_id": "brigham_mrf",
         "price_freshness": {
           "last_updated": "2026-03-27",
-          "expected_by": "2026-09-23",
-          "late_to_refresh": true,
-          "rule": "etl_warn_after_days"
+          "expected_by": "2027-03-27",
+          "late_to_refresh": false,
+          "source_rule": "hospital_mrf_365_days",
+          "fetched_at": "2026-10-24",
+          "our_refresh_due": "2026-11-24",
+          "stale_on_our_side": false,
+          "our_rule": "hospital_monthly"
         },
+        "any_source_late": false,
+        "any_source_stale_on_our_side": false,
         "service_areas": [
           "ortho",
           "skin",
@@ -84,14 +92,19 @@
             },
             "sources": [
               {
+                "source_id": "brigham_mrf",
                 "source_kind": "hospital_mrf",
                 "publisher": "Brigham and Women's Hospital",
                 "label_key": "source.hospital_mrf",
                 "freshness": {
                   "last_updated": "2026-03-27",
-                  "expected_by": "2026-09-23",
-                  "late_to_refresh": true,
-                  "rule": "etl_warn_after_days"
+                  "expected_by": "2027-03-27",
+                  "late_to_refresh": false,
+                  "source_rule": "hospital_mrf_365_days",
+                  "fetched_at": "2026-10-24",
+                  "our_refresh_due": "2026-11-24",
+                  "stale_on_our_side": false,
+                  "our_rule": "hospital_monthly"
                 },
                 "rows": 0
               }
@@ -135,6 +148,7 @@
             },
             "sources": [
               {
+                "source_id": "cms_pfs_rvu26a",
                 "source_kind": "medicare_pfs",
                 "publisher": "CMS (Medicare, Boston 2026)",
                 "label_key": "source.medicare_pfs",
@@ -142,7 +156,11 @@
                   "last_updated": "2026-01-01",
                   "expected_by": "2027-01-01",
                   "late_to_refresh": false,
-                  "rule": "fee_schedule_effective"
+                  "source_rule": "fee_schedule_annual",
+                  "fetched_at": "2026-10-24",
+                  "our_refresh_due": null,
+                  "stale_on_our_side": false,
+                  "our_rule": "fee_schedule_per_release"
                 },
                 "rows": null
               }
@@ -188,14 +206,19 @@
             },
             "sources": [
               {
+                "source_id": "brigham_mrf",
                 "source_kind": "hospital_mrf",
                 "publisher": "Brigham and Women's Hospital",
                 "label_key": "source.hospital_mrf",
                 "freshness": {
                   "last_updated": "2026-03-27",
-                  "expected_by": "2026-09-23",
-                  "late_to_refresh": true,
-                  "rule": "etl_warn_after_days"
+                  "expected_by": "2027-03-27",
+                  "late_to_refresh": false,
+                  "source_rule": "hospital_mrf_365_days",
+                  "fetched_at": "2026-10-24",
+                  "our_refresh_due": "2026-11-24",
+                  "stale_on_our_side": false,
+                  "our_rule": "hospital_monthly"
                 },
                 "rows": 0
               }
@@ -250,6 +273,7 @@
             },
             "sources": [
               {
+                "source_id": "cms_pfs_rvu26a",
                 "source_kind": "medicare_pfs",
                 "publisher": "CMS (Medicare, Boston 2026)",
                 "label_key": "source.medicare_pfs",
@@ -257,7 +281,11 @@
                   "last_updated": "2026-01-01",
                   "expected_by": "2027-01-01",
                   "late_to_refresh": false,
-                  "rule": "fee_schedule_effective"
+                  "source_rule": "fee_schedule_annual",
+                  "fetched_at": "2026-10-24",
+                  "our_refresh_due": null,
+                  "stale_on_our_side": false,
+                  "our_rule": "fee_schedule_per_release"
                 },
                 "rows": null
               }
@@ -322,14 +350,19 @@
             },
             "sources": [
               {
+                "source_id": "brigham_mrf",
                 "source_kind": "hospital_mrf",
                 "publisher": "Brigham and Women's Hospital",
                 "label_key": "source.hospital_mrf",
                 "freshness": {
                   "last_updated": "2026-03-27",
-                  "expected_by": "2026-09-23",
-                  "late_to_refresh": true,
-                  "rule": "etl_warn_after_days"
+                  "expected_by": "2027-03-27",
+                  "late_to_refresh": false,
+                  "source_rule": "hospital_mrf_365_days",
+                  "fetched_at": "2026-10-24",
+                  "our_refresh_due": "2026-11-24",
+                  "stale_on_our_side": false,
+                  "our_rule": "hospital_monthly"
                 },
                 "rows": 1
               }
@@ -393,18 +426,24 @@
             },
             "sources": [
               {
+                "source_id": "brigham_mrf",
                 "source_kind": "hospital_mrf",
                 "publisher": "Brigham and Women's Hospital",
                 "label_key": "source.hospital_mrf",
                 "freshness": {
                   "last_updated": "2026-03-27",
-                  "expected_by": "2026-09-23",
-                  "late_to_refresh": true,
-                  "rule": "etl_warn_after_days"
+                  "expected_by": "2027-03-27",
+                  "late_to_refresh": false,
+                  "source_rule": "hospital_mrf_365_days",
+                  "fetched_at": "2026-10-24",
+                  "our_refresh_due": "2026-11-24",
+                  "stale_on_our_side": false,
+                  "our_rule": "hospital_monthly"
                 },
                 "rows": 1
               },
               {
+                "source_id": "cms_pfs_rvu26a",
                 "source_kind": "medicare_pfs",
                 "publisher": "CMS (Medicare, Boston 2026)",
                 "label_key": "source.medicare_pfs",
@@ -412,7 +451,11 @@
                   "last_updated": "2026-01-01",
                   "expected_by": "2027-01-01",
                   "late_to_refresh": false,
-                  "rule": "fee_schedule_effective"
+                  "source_rule": "fee_schedule_annual",
+                  "fetched_at": "2026-10-24",
+                  "our_refresh_due": null,
+                  "stale_on_our_side": false,
+                  "our_rule": "fee_schedule_per_release"
                 },
                 "rows": null
               }
@@ -442,7 +485,8 @@
               "xray_reading"
             ],
             "includes_estimate": false,
-            "includes_late_source": false
+            "includes_late_source": false,
+            "includes_stale_source": false
           },
           "complete": false,
           "excluded": [
@@ -476,7 +520,6 @@
   ],
   "sites_without_service": [],
   "notices": [
-    "care_path_draft",
-    "late_to_refresh_sources"
+    "care_path_draft"
   ]
 }

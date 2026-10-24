@@ -68,7 +68,7 @@ def _literal_alias(tp: Any, doc: str) -> dict[str, Any]:
 SPECS: dict[str, dict[str, Any]] = {
     "quote_api.schema.json": {
         "title": "QuoteApi",
-        "models": [quote.QuoteRequest, quote.QuoteResponse],
+        "models": [quote.QuoteRequest, quote.QuoteResponse, quote.OurDataResponse],
         "mode": "serialization",
         "aliases": {
             "Cell": _union_alias(etl.Cell),
@@ -79,7 +79,8 @@ SPECS: dict[str, dict[str, Any]] = {
             "BillComponent": _literal_alias(quote.BillComponent, "which part of the bill"),
             "LadderExplanation": _literal_alias(quote.LadderExplanation, "doctor-fee copy key"),
             "ExcludedReason": _literal_alias(quote.ExcludedReason, "why a line is not summed"),
-            "FreshnessRule": _literal_alias(sites.FreshnessRule, "how expected_by was set"),
+            "SourceCadence": _literal_alias(sites.SourceCadence, "(a) publisher deadline rule"),
+            "OurCadence": _literal_alias(sites.OurCadence, "(b) our own refresh schedule"),
         },
         "ts": "quote_api.ts",
     },

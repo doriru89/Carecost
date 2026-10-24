@@ -30,9 +30,22 @@ Change the pydantic model, regenerate, and commit both. Drift tests fail CI when
 - Doctor fee: rung 1–8 plus a fixed `fee.*` copy key. Rung 6 carries its multiple, and its Money is
   `estimate_medicare_multiple`. Self-pay has no rung (`fee.self_pay_no_source`). `by_npi` (D6) needs ≥ 2
   different prices; otherwise the line shows a range.
-- Freshness: a source past its refresh deadline is shown, never hidden. It carries
-  `late_to_refresh: true` with `last_updated` and `expected_by`. This sits on each line's source chip (per
-  data point) and on `SiteSummary.price_freshness` (per site).
+- Freshness has two sides that are never merged (`Freshness` in `backend/app/sites/contracts.py`):
+  - (a) Publisher side, `late_to_refresh`: the hospital, insurer, agency or clinic is past its own deadline
+    (`last_updated`, `expected_by`, `source_rule`). A hospital MRF is late after 365 days, TiC after 45 days,
+    fee schedules at their next annual or quarterly release, and a clinic page 365 days after the date printed
+    on it (never, if the page has no date). The data is still shown, labelled "late to refresh".
+  - (b) Our side, `stale_on_our_side`: our last successful fetch or check (`fetched_at`) is past our own
+    schedule (`our_refresh_due`, `our_rule`): hospitals, TiC and NPPES monthly, sites weekly, fee schedules
+    per release. This is our fault and is never worded as the publisher's.
+  - We never call a publisher late while we are stale ourselves (validator). Build values with
+    `Freshness.compute(...)`, the one implementation of the cadences. `gates.yaml` `warn_after_days` stays an
+    internal ETL warning only.
+  - Both sides sit on every `SourceChip` (per data point, with `source_id`) and on each site
+    (`price_freshness` of the site's own price source, plus the `any_source_late` /
+    `any_source_stale_on_our_side` rollups). `DataVersion.sources_behind` lists every flagged source, and the
+    notices `late_to_refresh_sources` / `stale_on_our_side_sources` appear exactly when one applies.
+    `OurDataResponse` is the contract for a future `/our-data` page that lists every source with both sides.
 - No personal data. The quote request has no location: distance is computed in the browser, and
   `ElsewhereOption` carries coordinates so the browser can pick the nearest. The only personal field anywhere
   is the unverified `email` in `ChatRequest` (D2).
@@ -71,7 +84,8 @@ tier, every Gap kind, a Money range, a per-NPI breakdown, an AI-suggested line, 
 
 Values that do not exist in loaded data yet are placeholders: BCBS TiC (sha `000…`, group rates from
 research-v3/pro-fees.md), posted-page shas, NPIs `0000000001`/`0000000002` (an NPI never starts with 0), and
-hand-entered coordinates for the two Watertown clinics.
+hand-entered coordinates for the two Watertown clinics, and two freshness examples: the BCBS TiC check on 2026-10-20
+(publisher late, we are current) and the AFC page check on 2026-10-10 (we are stale, the page states no date).
 
 ## Regenerate / check
 

@@ -84,6 +84,10 @@ export interface DataVersion {
   tic_release: string | null;
   sites_version: number;
   care_paths_version: string | null;
+  /**
+   * Every source behind this answer that is late (publisher) or stale (ours)
+   */
+  sources_behind: SourceStatus[];
 }
 
 /**
@@ -118,6 +122,10 @@ export interface ElsewhereOption {
   lat: number;
   lon: number;
   cell: Money | NotPublished | NotLoaded | NoSource | PercentOnly | Conflict;
+  /**
+   * Chips for the price shown, with freshness
+   */
+  sources: SourceChip[];
 }
 
 export interface ExcludedLine {
@@ -131,28 +139,45 @@ export interface ExcludedLine {
 export type ExcludedReason = "possible_tier" | "ai_suggested" | "no_dollar_amount" | "conflict" | "not_offered_here" | "repeats" | "reference_only";
 
 /**
- * How current one data source is. Explicit fields, never free text.
+ * How current one source is, from two sides that must never be confused (Austin, 2026-10-24).
  *
- * ``late_to_refresh`` is computed by whoever builds the payload (ETL / quote engine) as
- * ``as_of > expected_by``. A late source is still shown, with the "late to refresh" label.
+ * (a) Source side -- ``late_to_refresh``: the publisher (hospital, insurer, agency, clinic) is
+ *     past its own deadline. Shown to users as "late to refresh"; the data is still shown.
+ * (b) Our side -- ``stale_on_our_side``: OUR last successful fetch/check is older than our own
+ *     schedule. That is our fault, never the publisher's; the UI and /our-data say so.
+ *
+ * Rule: we only call a publisher late when our own check is current. If we are stale we do not
+ * know whether they published since, so ``late_to_refresh`` must be False.
+ * Build these with ``Freshness.compute`` so every producer applies the same cadences.
  */
 export interface Freshness {
   /**
-   * The source's own date: file last_updated_on, fee schedule effective date, or the day a posted price was last checked. None = the source does not say.
+   * (a) The source's own date: file last_updated_on, fee schedule effective date, date printed on a clinic page. None = the source states no date.
    */
   last_updated: string | null;
   /**
-   * When a newer version was due under `rule`. None = no deadline known.
+   * (a) When the publisher owed a newer version under source_rule. None = no deadline.
    */
   expected_by: string | null;
+  /**
+   * (a) publisher past its deadline (and our check is current)
+   */
   late_to_refresh: boolean;
-  rule: "etl_warn_after_days" | "cms_annual" | "tic_monthly" | "fee_schedule_effective" | "posted_price_weekly_check" | "hours_weekly_check";
+  source_rule: "hospital_mrf_365_days" | "tic_45_days" | "fee_schedule_annual" | "fee_schedule_quarterly" | "posted_page_date_365_days" | "no_publisher_deadline";
+  /**
+   * (b) our last successful fetch / check of this source
+   */
+  fetched_at: string;
+  /**
+   * (b) when our next fetch/check was due under our_rule. None = no newer release known.
+   */
+  our_refresh_due: string | null;
+  /**
+   * (b) we are behind our own schedule
+   */
+  stale_on_our_side: boolean;
+  our_rule: "hospital_monthly" | "tic_monthly" | "nppes_monthly" | "sites_weekly" | "fee_schedule_per_release";
 }
-
-/**
- * how expected_by was set
- */
-export type FreshnessRule = "etl_warn_after_days" | "cms_annual" | "tic_monthly" | "fee_schedule_effective" | "posted_price_weekly_check" | "hours_weekly_check";
 
 export type Gap = NotPublished | NotLoaded | NoSource | PercentOnly | Conflict;
 
@@ -297,6 +322,20 @@ export interface OtherPayerRange {
   yours: "in_points" | "not_in_points";
 }
 
+/**
+ * (b) our own refresh schedule
+ */
+export type OurCadence = "hospital_monthly" | "tic_monthly" | "nppes_monthly" | "sites_weekly" | "fee_schedule_per_release";
+
+/**
+ * Future /our-data page: every registered source, both sides, so Austin can tell 'we forgot
+ * to update' (stale_on_our_side) from 'the publisher did not publish' (late_to_refresh).
+ */
+export interface OurDataResponse {
+  as_of: string;
+  sources: SourceStatus[];
+}
+
 export interface PayerPoint {
   /**
    * None when the file's payer is not mapped to a registry id
@@ -384,7 +423,7 @@ export interface QuoteResponse {
    * Sites filtered out because they offer none of it
    */
   sites_without_service: string[];
-  notices: ("care_path_draft" | "tic_not_loaded" | "late_to_refresh_sources" | "masshealth_aco_may_differ" | "medicare_advantage_is_insurance")[];
+  notices: ("care_path_draft" | "tic_not_loaded" | "late_to_refresh_sources" | "stale_on_our_side_sources" | "masshealth_aco_may_differ" | "medicare_advantage_is_insurance")[];
 }
 
 export interface Receipt {
@@ -464,16 +503,37 @@ export interface SiteSummary {
   hours_label: "live_by_operator" | "posted_hours" | "may_close_early" | "unknown";
   price_label: "price_file" | "posted_price" | "price_on_request" | "mixed";
   /**
-   * Per site: the oldest price source behind this receipt ('late to refresh')
+   * The site's own price source (its hospital MRF or posted page)
+   */
+  price_source_id: string;
+  /**
+   * Per site: freshness of the site's own price source (both sides)
    */
   price_freshness: Freshness;
+  /**
+   * (a) any source on this receipt is late to refresh (publisher side)
+   */
+  any_source_late: boolean;
+  /**
+   * (b) we are behind on refreshing any source on this receipt (our side)
+   */
+  any_source_stale_on_our_side: boolean;
   service_areas: ("ortho" | "skin" | "gi" | "urgent_care")[];
 }
+
+/**
+ * (a) publisher deadline rule
+ */
+export type SourceCadence = "hospital_mrf_365_days" | "tic_45_days" | "fee_schedule_annual" | "fee_schedule_quarterly" | "posted_page_date_365_days" | "no_publisher_deadline";
 
 /**
  * What the source chip on a line shows (hover text keys off source_kind, plan §2.2).
  */
 export interface SourceChip {
+  /**
+   * data/etl sources registry id, e.g. mtauburn_mrf (joins /our-data)
+   */
+  source_id: string;
   source_kind: SourceKind;
   /**
    * Who published it, e.g. 'Mount Auburn Hospital', 'BCBS MA', 'CMS'
@@ -484,7 +544,7 @@ export interface SourceChip {
    */
   label_key: string;
   /**
-   * Per data point: a stale price carries its own flag
+   * Per data point: (a) publisher late to refresh, (b) stale on our side
    */
   freshness: Freshness;
   /**
@@ -494,6 +554,16 @@ export interface SourceChip {
 }
 
 export type SourceKind = "hospital_mrf" | "insurer_tic" | "medicare_pfs" | "medicare_opps" | "medicare_asc" | "masshealth_fs" | "clinic_posted" | "chia_rp" | "estimate" | "ai_potential";
+
+/**
+ * One source and both freshness sides. Listed in DataVersion.sources_behind and /our-data.
+ */
+export interface SourceStatus {
+  source_id: string;
+  source_kind: SourceKind;
+  publisher: string;
+  freshness: Freshness;
+}
 
 /**
  * A sum of line Money values. Not a ``Money``: a sum has no single Provenance; each part's
@@ -511,6 +581,10 @@ export interface SummedAmount {
    * True when a 'late to refresh' price is in it
    */
   includes_late_source: boolean;
+  /**
+   * True when a price we are behind on refreshing (our side) is in it
+   */
+  includes_stale_source: boolean;
 }
 
 export interface Totals {

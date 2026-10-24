@@ -178,6 +178,10 @@ ExcludedReason = Literal[
 class SourceChip(_Strict):
     """What the source chip on a line shows (hover text keys off source_kind, plan §2.2)."""
 
+    source_id: str = Field(
+        pattern=ID_RE,
+        description="data/etl sources registry id, e.g. mtauburn_mrf (joins /our-data)",
+    )
     source_kind: SourceKind
     publisher: str = Field(
         description="Who published it, e.g. 'Mount Auburn Hospital', 'BCBS MA', 'CMS'"
@@ -185,7 +189,9 @@ class SourceChip(_Strict):
     label_key: str = Field(
         pattern=r"^source\.[a-z0-9_]+$", description="fixed copy key: source.<source_kind>"
     )
-    freshness: Freshness = Field(description="Per data point: a stale price carries its own flag")
+    freshness: Freshness = Field(
+        description="Per data point: (a) publisher late to refresh, (b) stale on our side"
+    )
     rows: int | None = Field(default=None, ge=0, description="price-file rows behind the number")
 
 
@@ -254,6 +260,13 @@ class ElsewhereOption(_Strict):
     lat: float
     lon: float
     cell: Cell
+    sources: list[SourceChip] = Field(description="Chips for the price shown, with freshness")
+
+    @model_validator(mode="after")
+    def _chip(self) -> ElsewhereOption:
+        if self.cell.kind == "money" and not self.sources:
+            raise ValueError(f"elsewhere {self.site_id}: a Money needs its source chip")
+        return self
 
 
 class LearnMore(_Strict):
@@ -340,6 +353,9 @@ class SummedAmount(_Strict):
     line_ids: list[str] = Field(min_length=1)
     includes_estimate: bool = Field(description="True when a rung-6 estimate is in the sum")
     includes_late_source: bool = Field(description="True when a 'late to refresh' price is in it")
+    includes_stale_source: bool = Field(
+        description="True when a price we are behind on refreshing (our side) is in it"
+    )
 
 
 class ExcludedLine(_Strict):
@@ -456,8 +472,17 @@ class SiteSummary(_Strict):
     hours: Hours | None
     hours_label: Literal["live_by_operator", "posted_hours", "may_close_early", "unknown"]
     price_label: Literal["price_file", "posted_price", "price_on_request", "mixed"]
+    price_source_id: str = Field(
+        pattern=ID_RE, description="The site's own price source (its hospital MRF or posted page)"
+    )
     price_freshness: Freshness = Field(
-        description="Per site: the oldest price source behind this receipt ('late to refresh')"
+        description="Per site: freshness of the site's own price source (both sides)"
+    )
+    any_source_late: bool = Field(
+        description="(a) any source on this receipt is late to refresh (publisher side)"
+    )
+    any_source_stale_on_our_side: bool = Field(
+        description="(b) we are behind on refreshing any source on this receipt (our side)"
     )
     service_areas: list[ServiceArea]
 
@@ -466,6 +491,38 @@ class SiteQuote(_Strict):
     site: SiteSummary
     receipt: Receipt
     other_payers: list[OtherPayerRange] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _site_freshness(self) -> SiteQuote:
+        chips = [c for ln in self.receipt.lines for c in ln.sources]
+        s = self.site
+        for c in chips:
+            if c.source_id == s.price_source_id and c.freshness != s.price_freshness:
+                raise ValueError(f"{s.site_id}: chip {c.source_id} disagrees with price_freshness")
+        late = any(c.freshness.late_to_refresh for c in chips) or s.price_freshness.late_to_refresh
+        stale = (
+            any(c.freshness.stale_on_our_side for c in chips) or s.price_freshness.stale_on_our_side
+        )
+        if (s.any_source_late, s.any_source_stale_on_our_side) != (late, stale):
+            raise ValueError(f"{s.site_id}: any_source_late / any_source_stale_on_our_side wrong")
+        return self
+
+
+class SourceStatus(_Strict):
+    """One source and both freshness sides. Listed in DataVersion.sources_behind and /our-data."""
+
+    source_id: str = Field(pattern=ID_RE)
+    source_kind: SourceKind
+    publisher: str
+    freshness: Freshness
+
+
+class OurDataResponse(_Strict):
+    """Future /our-data page: every registered source, both sides, so Austin can tell 'we forgot
+    to update' (stale_on_our_side) from 'the publisher did not publish' (late_to_refresh)."""
+
+    as_of: date
+    sources: list[SourceStatus]
 
 
 class DataVersion(_Strict):
@@ -476,6 +533,17 @@ class DataVersion(_Strict):
     tic_release: str | None = Field(description="e.g. tic-2026-11; None = TiC not loaded yet")
     sites_version: int
     care_paths_version: str | None
+    sources_behind: list[SourceStatus] = Field(
+        description="Every source behind this answer that is late (publisher) or stale (ours)"
+    )
+
+    @model_validator(mode="after")
+    def _behind_only(self) -> DataVersion:
+        for st in self.sources_behind:
+            f = st.freshness
+            if not (f.late_to_refresh or f.stale_on_our_side):
+                raise ValueError(f"{st.source_id} is current; only list sources that are behind")
+        return self
 
 
 class CarePathRef(_Strict):
@@ -501,6 +569,7 @@ class QuoteResponse(_Strict):
             "care_path_draft",
             "tic_not_loaded",
             "late_to_refresh_sources",
+            "stale_on_our_side_sources",
             "masshealth_aco_may_differ",
             "medicare_advantage_is_insurance",
         ]
@@ -511,6 +580,29 @@ class QuoteResponse(_Strict):
         ids = [s.site.site_id for s in self.sites]
         if len(ids) != len(set(ids)):
             raise ValueError("duplicate site in quote")
+        seen: dict[str, Freshness] = {}
+        for sq in self.sites:
+            pairs = [(c.source_id, c.freshness) for ln in sq.receipt.lines for c in ln.sources]
+            pairs.append((sq.site.price_source_id, sq.site.price_freshness))
+            pairs += [
+                (c.source_id, c.freshness)
+                for ln in sq.receipt.lines
+                for e in ln.elsewhere
+                for c in e.sources
+            ]
+            for sid, f in pairs:
+                if seen.setdefault(sid, f) != f:
+                    raise ValueError(f"source {sid} has two different freshness values")
+        flagged = {k for k, f in seen.items() if f.late_to_refresh or f.stale_on_our_side}
+        behind = {st.source_id: st.freshness for st in self.data_version.sources_behind}
+        if set(behind) != flagged or any(behind[k] != seen[k] for k in flagged):
+            raise ValueError("data_version.sources_behind must list exactly the flagged sources")
+        late = any(f.late_to_refresh for f in seen.values())
+        stale = any(f.stale_on_our_side for f in seen.values())
+        if late != ("late_to_refresh_sources" in self.notices):
+            raise ValueError("notice late_to_refresh_sources <=> some source is late (publisher)")
+        if stale != ("stale_on_our_side_sources" in self.notices):
+            raise ValueError("notice stale_on_our_side_sources <=> we are behind on some source")
         return self
 
 

@@ -13,11 +13,13 @@ import type {
   Cell,
   CertaintyTier,
   ExcludedReason,
-  FreshnessRule,
   Gap,
   LadderExplanation,
+  OurCadence,
   Likelihood,
   Payment,
+  QuoteResponse,
+  SourceCadence,
   SourceKind,
 } from "@/generated/contracts/quote_api";
 import type { ChatReply, Disposition } from "@/generated/contracts/chat_api";
@@ -86,14 +88,24 @@ export const EXCLUDED_REASON_KEY = {
   reference_only: "total.excluded.reference_only",
 } as const satisfies Record<ExcludedReason, string>;
 
-export const FRESHNESS_RULE_KEY = {
-  etl_warn_after_days: "fresh.etl_warn_after_days",
-  cms_annual: "fresh.cms_annual",
-  tic_monthly: "fresh.tic_monthly",
-  fee_schedule_effective: "fresh.fee_schedule_effective",
-  posted_price_weekly_check: "fresh.posted_price_weekly_check",
-  hours_weekly_check: "fresh.hours_weekly_check",
-} as const satisfies Record<FreshnessRule, string>;
+/** (a) Publisher side: "late to refresh" is the publisher's delay, shown with the data. */
+export const SOURCE_CADENCE_KEY = {
+  hospital_mrf_365_days: "fresh.source.hospital_mrf_365_days",
+  tic_45_days: "fresh.source.tic_45_days",
+  fee_schedule_annual: "fresh.source.fee_schedule_annual",
+  fee_schedule_quarterly: "fresh.source.fee_schedule_quarterly",
+  posted_page_date_365_days: "fresh.source.posted_page_date_365_days",
+  no_publisher_deadline: "fresh.source.no_publisher_deadline",
+} as const satisfies Record<SourceCadence, string>;
+
+/** (b) Our side: "stale on our side" is OUR missed refresh. Never worded as the publisher's fault. */
+export const OUR_CADENCE_KEY = {
+  hospital_monthly: "fresh.ours.hospital_monthly",
+  tic_monthly: "fresh.ours.tic_monthly",
+  nppes_monthly: "fresh.ours.nppes_monthly",
+  sites_weekly: "fresh.ours.sites_weekly",
+  fee_schedule_per_release: "fresh.ours.fee_schedule_per_release",
+} as const satisfies Record<OurCadence, string>;
 
 /** Source chip copy key per price source (SourceChip.label_key = `source.<kind>`). */
 export const SOURCE_CHIP_KEY = {
@@ -124,6 +136,16 @@ export const CHAT_REPLY_FULL_PAGE = {
   text: false,
   ai_paused: false,
 } as const satisfies Record<ChatReply["kind"], boolean>;
+
+/** Response-level notices. The two freshness notices are worded differently (publisher vs us). */
+export const NOTICE_KEY = {
+  care_path_draft: "notice.care_path_draft",
+  tic_not_loaded: "notice.tic_not_loaded",
+  late_to_refresh_sources: "notice.late_to_refresh_sources",
+  stale_on_our_side_sources: "notice.stale_on_our_side_sources",
+  masshealth_aco_may_differ: "notice.masshealth_aco_may_differ",
+  medicare_advantage_is_insurance: "notice.medicare_advantage_is_insurance",
+} as const satisfies Record<QuoteResponse["notices"][number], string>;
 
 export const DISPOSITION_RANK = {
   call_911: 4,

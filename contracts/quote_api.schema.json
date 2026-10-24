@@ -289,6 +289,14 @@
           "title": "Sites Version",
           "type": "integer"
         },
+        "sources_behind": {
+          "description": "Every source behind this answer that is late (publisher) or stale (ours)",
+          "items": {
+            "$ref": "#/$defs/SourceStatus"
+          },
+          "title": "Sources Behind",
+          "type": "array"
+        },
         "tic_release": {
           "anyOf": [
             {
@@ -307,7 +315,8 @@
         "build_date",
         "tic_release",
         "sites_version",
-        "care_paths_version"
+        "care_paths_version",
+        "sources_behind"
       ],
       "title": "DataVersion",
       "type": "object"
@@ -490,6 +499,14 @@
         "site_name": {
           "title": "Site Name",
           "type": "string"
+        },
+        "sources": {
+          "description": "Chips for the price shown, with freshness",
+          "items": {
+            "$ref": "#/$defs/SourceChip"
+          },
+          "title": "Sources",
+          "type": "array"
         }
       },
       "required": [
@@ -497,7 +514,8 @@
         "site_name",
         "lat",
         "lon",
-        "cell"
+        "cell",
+        "sources"
       ],
       "title": "ElsewhereOption",
       "type": "object"
@@ -545,7 +563,7 @@
     },
     "Freshness": {
       "additionalProperties": false,
-      "description": "How current one data source is. Explicit fields, never free text.\n\n``late_to_refresh`` is computed by whoever builds the payload (ETL / quote engine) as\n``as_of > expected_by``. A late source is still shown, with the \"late to refresh\" label.",
+      "description": "How current one source is, from two sides that must never be confused (Austin, 2026-10-24).\n\n(a) Source side -- ``late_to_refresh``: the publisher (hospital, insurer, agency, clinic) is\n    past its own deadline. Shown to users as \"late to refresh\"; the data is still shown.\n(b) Our side -- ``stale_on_our_side``: OUR last successful fetch/check is older than our own\n    schedule. That is our fault, never the publisher's; the UI and /our-data say so.\n\nRule: we only call a publisher late when our own check is current. If we are stale we do not\nknow whether they published since, so ``late_to_refresh`` must be False.\nBuild these with ``Freshness.compute`` so every producer applies the same cadences.",
       "properties": {
         "expected_by": {
           "anyOf": [
@@ -557,8 +575,14 @@
               "type": "null"
             }
           ],
-          "description": "When a newer version was due under `rule`. None = no deadline known.",
+          "description": "(a) When the publisher owed a newer version under source_rule. None = no deadline.",
           "title": "Expected By"
+        },
+        "fetched_at": {
+          "description": "(b) our last successful fetch / check of this source",
+          "format": "date",
+          "title": "Fetched At",
+          "type": "string"
         },
         "last_updated": {
           "anyOf": [
@@ -570,46 +594,68 @@
               "type": "null"
             }
           ],
-          "description": "The source's own date: file last_updated_on, fee schedule effective date, or the day a posted price was last checked. None = the source does not say.",
+          "description": "(a) The source's own date: file last_updated_on, fee schedule effective date, date printed on a clinic page. None = the source states no date.",
           "title": "Last Updated"
         },
         "late_to_refresh": {
+          "description": "(a) publisher past its deadline (and our check is current)",
           "title": "Late To Refresh",
           "type": "boolean"
         },
-        "rule": {
-          "enum": [
-            "etl_warn_after_days",
-            "cms_annual",
-            "tic_monthly",
-            "fee_schedule_effective",
-            "posted_price_weekly_check",
-            "hours_weekly_check"
+        "our_refresh_due": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
           ],
-          "title": "Rule",
+          "description": "(b) when our next fetch/check was due under our_rule. None = no newer release known.",
+          "title": "Our Refresh Due"
+        },
+        "our_rule": {
+          "enum": [
+            "hospital_monthly",
+            "tic_monthly",
+            "nppes_monthly",
+            "sites_weekly",
+            "fee_schedule_per_release"
+          ],
+          "title": "Our Rule",
           "type": "string"
+        },
+        "source_rule": {
+          "enum": [
+            "hospital_mrf_365_days",
+            "tic_45_days",
+            "fee_schedule_annual",
+            "fee_schedule_quarterly",
+            "posted_page_date_365_days",
+            "no_publisher_deadline"
+          ],
+          "title": "Source Rule",
+          "type": "string"
+        },
+        "stale_on_our_side": {
+          "description": "(b) we are behind our own schedule",
+          "title": "Stale On Our Side",
+          "type": "boolean"
         }
       },
       "required": [
         "last_updated",
         "expected_by",
         "late_to_refresh",
-        "rule"
+        "source_rule",
+        "fetched_at",
+        "our_refresh_due",
+        "stale_on_our_side",
+        "our_rule"
       ],
       "title": "Freshness",
       "type": "object"
-    },
-    "FreshnessRule": {
-      "description": "how expected_by was set",
-      "enum": [
-        "etl_warn_after_days",
-        "cms_annual",
-        "tic_monthly",
-        "fee_schedule_effective",
-        "posted_price_weekly_check",
-        "hours_weekly_check"
-      ],
-      "type": "string"
     },
     "Gap": {
       "oneOf": [
@@ -1129,6 +1175,41 @@
       "title": "OtherPayerRange",
       "type": "object"
     },
+    "OurCadence": {
+      "description": "(b) our own refresh schedule",
+      "enum": [
+        "hospital_monthly",
+        "tic_monthly",
+        "nppes_monthly",
+        "sites_weekly",
+        "fee_schedule_per_release"
+      ],
+      "type": "string"
+    },
+    "OurDataResponse": {
+      "additionalProperties": false,
+      "description": "Future /our-data page: every registered source, both sides, so Austin can tell 'we forgot\nto update' (stale_on_our_side) from 'the publisher did not publish' (late_to_refresh).",
+      "properties": {
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/SourceStatus"
+          },
+          "title": "Sources",
+          "type": "array"
+        }
+      },
+      "required": [
+        "as_of",
+        "sources"
+      ],
+      "title": "OurDataResponse",
+      "type": "object"
+    },
     "PayerPoint": {
       "additionalProperties": false,
       "properties": {
@@ -1427,6 +1508,7 @@
               "care_path_draft",
               "tic_not_loaded",
               "late_to_refresh_sources",
+              "stale_on_our_side_sources",
               "masshealth_aco_may_differ",
               "medicare_advantage_is_insurance"
             ],
@@ -1790,6 +1872,16 @@
           "title": "Address Line",
           "type": "string"
         },
+        "any_source_late": {
+          "description": "(a) any source on this receipt is late to refresh (publisher side)",
+          "title": "Any Source Late",
+          "type": "boolean"
+        },
+        "any_source_stale_on_our_side": {
+          "description": "(b) we are behind on refreshing any source on this receipt (our side)",
+          "title": "Any Source Stale On Our Side",
+          "type": "boolean"
+        },
         "billing_type": {
           "enum": [
             "office_visit",
@@ -1853,7 +1945,7 @@
         },
         "price_freshness": {
           "$ref": "#/$defs/Freshness",
-          "description": "Per site: the oldest price source behind this receipt ('late to refresh')"
+          "description": "Per site: freshness of the site's own price source (both sides)"
         },
         "price_label": {
           "enum": [
@@ -1863,6 +1955,12 @@
             "mixed"
           ],
           "title": "Price Label",
+          "type": "string"
+        },
+        "price_source_id": {
+          "description": "The site's own price source (its hospital MRF or posted page)",
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Price Source Id",
           "type": "string"
         },
         "service_areas": {
@@ -1922,11 +2020,26 @@
         "hours",
         "hours_label",
         "price_label",
+        "price_source_id",
         "price_freshness",
+        "any_source_late",
+        "any_source_stale_on_our_side",
         "service_areas"
       ],
       "title": "SiteSummary",
       "type": "object"
+    },
+    "SourceCadence": {
+      "description": "(a) publisher deadline rule",
+      "enum": [
+        "hospital_mrf_365_days",
+        "tic_45_days",
+        "fee_schedule_annual",
+        "fee_schedule_quarterly",
+        "posted_page_date_365_days",
+        "no_publisher_deadline"
+      ],
+      "type": "string"
     },
     "SourceChip": {
       "additionalProperties": false,
@@ -1934,7 +2047,7 @@
       "properties": {
         "freshness": {
           "$ref": "#/$defs/Freshness",
-          "description": "Per data point: a stale price carries its own flag"
+          "description": "Per data point: (a) publisher late to refresh, (b) stale on our side"
         },
         "label_key": {
           "description": "fixed copy key: source.<source_kind>",
@@ -1961,11 +2074,18 @@
           "description": "price-file rows behind the number",
           "title": "Rows"
         },
+        "source_id": {
+          "description": "data/etl sources registry id, e.g. mtauburn_mrf (joins /our-data)",
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Source Id",
+          "type": "string"
+        },
         "source_kind": {
           "$ref": "#/$defs/SourceKind"
         }
       },
       "required": [
+        "source_id",
         "source_kind",
         "publisher",
         "label_key",
@@ -1991,6 +2111,35 @@
       "title": "SourceKind",
       "type": "string"
     },
+    "SourceStatus": {
+      "additionalProperties": false,
+      "description": "One source and both freshness sides. Listed in DataVersion.sources_behind and /our-data.",
+      "properties": {
+        "freshness": {
+          "$ref": "#/$defs/Freshness"
+        },
+        "publisher": {
+          "title": "Publisher",
+          "type": "string"
+        },
+        "source_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_kind": {
+          "$ref": "#/$defs/SourceKind"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_kind",
+        "publisher",
+        "freshness"
+      ],
+      "title": "SourceStatus",
+      "type": "object"
+    },
     "SummedAmount": {
       "additionalProperties": false,
       "description": "A sum of line Money values. Not a ``Money``: a sum has no single Provenance; each part's\nprovenance stays on its line (``line_ids``).",
@@ -2008,6 +2157,11 @@
         "includes_late_source": {
           "description": "True when a 'late to refresh' price is in it",
           "title": "Includes Late Source",
+          "type": "boolean"
+        },
+        "includes_stale_source": {
+          "description": "True when a price we are behind on refreshing (our side) is in it",
+          "title": "Includes Stale Source",
           "type": "boolean"
         },
         "line_ids": {
@@ -2029,7 +2183,8 @@
         "high",
         "line_ids",
         "includes_estimate",
-        "includes_late_source"
+        "includes_late_source",
+        "includes_stale_source"
       ],
       "title": "SummedAmount",
       "type": "object"
@@ -2136,6 +2291,9 @@
     },
     {
       "$ref": "#/$defs/QuoteResponse"
+    },
+    {
+      "$ref": "#/$defs/OurDataResponse"
     }
   ],
   "title": "QuoteApi"

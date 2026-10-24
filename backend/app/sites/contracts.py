@@ -12,8 +12,9 @@ orthopedic walk-in clinic, a small specialist office. Plan §2.6 + D7:
 Ids are free strings validated against registries in tests, never closed enums: Austin wants many
 insurers, hospitals, urgent cares and small clinics inside the Greater Boston scope.
 
-``Freshness`` is shared with the quote contract: a source older than its refresh deadline is never
-hidden. If it has data the data is shown, labelled "late to refresh" (Austin, 2026-10-24).
+``Freshness`` is shared with the quote contract. It keeps two meanings apart: the publisher is
+late (shown, labelled "late to refresh", never hidden) vs we are behind our own fetch schedule
+("stale on our side", our fault). See the class docstring.
 
 ``python -m app.api_contracts`` regenerates ``contracts/site.schema.json``.
 """
@@ -21,7 +22,7 @@ hidden. If it has data the data is shown, labelled "late to refresh" (Austin, 20
 from __future__ import annotations
 
 import re
-from datetime import date
+from datetime import date, timedelta
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -37,35 +38,75 @@ class _Strict(BaseModel):
 # --------------------------------------------------------------------------- freshness
 
 
-FreshnessRule = Literal[
-    "etl_warn_after_days",  # hospital MRF: file's last_updated_on + gates.yaml staleness.warn_after_days
-    "cms_annual",  # federal floor: 45 CFR 180.50(e), one year after last_updated_on
-    "tic_monthly",  # insurer TiC files are due monthly
-    "fee_schedule_effective",  # government fee schedule: the next effective date
-    "posted_price_weekly_check",  # site's posted cash price: re-checked weekly by the price checker
-    "hours_weekly_check",
+SourceCadence = Literal[
+    "hospital_mrf_365_days",  # hospital MRF: >365 days after the file's own last_updated_on (Austin: 超过一年算没更新)
+    "tic_45_days",  # insurer TiC: due monthly; late after 45 days
+    "fee_schedule_annual",  # Medicare PFS / MassHealth: next annual effective date
+    "fee_schedule_quarterly",  # OPPS / ASC addenda: next quarterly release
+    "posted_page_date_365_days",  # clinic page: >365 days after the date printed on the page
+    "no_publisher_deadline",  # the source states no date / has no cycle: never "late"
 ]
+"""(a) Source side: when the *publisher* owed us a newer version."""
+
+OurCadence = Literal[
+    "hospital_monthly",
+    "tic_monthly",
+    "nppes_monthly",
+    "sites_weekly",  # posted prices + hours (the weekly price checker)
+    "fee_schedule_per_release",  # due when the publisher releases the next version
+]
+"""(b) Our side: when *we* owed ourselves a new fetch/check."""
+
+SOURCE_DEADLINE_DAYS: dict[str, int | None] = {
+    "hospital_mrf_365_days": 365,
+    "tic_45_days": 45,
+    "fee_schedule_annual": None,  # explicit next effective date
+    "fee_schedule_quarterly": None,  # explicit next release date
+    "posted_page_date_365_days": 365,
+    "no_publisher_deadline": None,
+}
+OUR_DEADLINE_DAYS: dict[str, int | None] = {
+    "hospital_monthly": 31,
+    "tic_monthly": 31,
+    "nppes_monthly": 31,
+    "sites_weekly": 7,
+    "fee_schedule_per_release": None,  # explicit next release date
+}
 
 
 class Freshness(_Strict):
-    """How current one data source is. Explicit fields, never free text.
+    """How current one source is, from two sides that must never be confused (Austin, 2026-10-24).
 
-    ``late_to_refresh`` is computed by whoever builds the payload (ETL / quote engine) as
-    ``as_of > expected_by``. A late source is still shown, with the "late to refresh" label.
+    (a) Source side -- ``late_to_refresh``: the publisher (hospital, insurer, agency, clinic) is
+        past its own deadline. Shown to users as "late to refresh"; the data is still shown.
+    (b) Our side -- ``stale_on_our_side``: OUR last successful fetch/check is older than our own
+        schedule. That is our fault, never the publisher's; the UI and /our-data say so.
+
+    Rule: we only call a publisher late when our own check is current. If we are stale we do not
+    know whether they published since, so ``late_to_refresh`` must be False.
+    Build these with ``Freshness.compute`` so every producer applies the same cadences.
     """
 
     last_updated: date | None = Field(
-        description="The source's own date: file last_updated_on, fee schedule effective date, "
-        "or the day a posted price was last checked. None = the source does not say."
+        description="(a) The source's own date: file last_updated_on, fee schedule effective date, "
+        "date printed on a clinic page. None = the source states no date."
     )
     expected_by: date | None = Field(
-        description="When a newer version was due under `rule`. None = no deadline known."
+        description="(a) When the publisher owed a newer version under source_rule. None = no deadline."
     )
-    late_to_refresh: bool
-    rule: FreshnessRule
+    late_to_refresh: bool = Field(
+        description="(a) publisher past its deadline (and our check is current)"
+    )
+    source_rule: SourceCadence
+    fetched_at: date = Field(description="(b) our last successful fetch / check of this source")
+    our_refresh_due: date | None = Field(
+        description="(b) when our next fetch/check was due under our_rule. None = no newer release known."
+    )
+    stale_on_our_side: bool = Field(description="(b) we are behind our own schedule")
+    our_rule: OurCadence
 
     @model_validator(mode="after")
-    def _late_needs_deadline(self) -> Freshness:
+    def _two_sides(self) -> Freshness:
         if self.late_to_refresh and self.expected_by is None:
             raise ValueError("late_to_refresh needs expected_by (the deadline that was missed)")
         if (
@@ -74,7 +115,46 @@ class Freshness(_Strict):
             and self.expected_by < self.last_updated
         ):
             raise ValueError("expected_by cannot be before last_updated")
+        if self.stale_on_our_side and self.our_refresh_due is None:
+            raise ValueError("stale_on_our_side needs our_refresh_due (the schedule we missed)")
+        if self.late_to_refresh and self.stale_on_our_side:
+            raise ValueError(
+                "cannot blame the publisher while our own check is stale: refresh first"
+            )
         return self
+
+    @classmethod
+    def compute(
+        cls,
+        *,
+        as_of: date,
+        source_rule: SourceCadence,
+        last_updated: date | None,
+        our_rule: OurCadence,
+        fetched_at: date,
+        expected_by: date | None = None,
+        our_refresh_due: date | None = None,
+    ) -> Freshness:
+        """The one implementation of both cadences. Day-based rules derive the deadline; release
+        rules (fee schedules) take the next release date explicitly."""
+        days = SOURCE_DEADLINE_DAYS[source_rule]
+        if days is not None:
+            expected_by = last_updated + timedelta(days=days) if last_updated else None
+        our_days = OUR_DEADLINE_DAYS[our_rule]
+        if our_days is not None:
+            our_refresh_due = fetched_at + timedelta(days=our_days)
+        stale = our_refresh_due is not None and as_of > our_refresh_due
+        late = (not stale) and expected_by is not None and as_of > expected_by
+        return cls(
+            last_updated=last_updated,
+            expected_by=expected_by,
+            late_to_refresh=late,
+            source_rule=source_rule,
+            fetched_at=fetched_at,
+            our_refresh_due=our_refresh_due,
+            stale_on_our_side=stale,
+            our_rule=our_rule,
+        )
 
 
 # --------------------------------------------------------------------------- site parts

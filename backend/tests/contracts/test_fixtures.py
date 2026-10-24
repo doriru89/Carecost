@@ -173,11 +173,19 @@ def test_fixtures_together_cover_the_whole_contract():
     assert any(ln.doctor_fee and ln.doctor_fee.by_npi for ln in lines)
     assert any(ln.ai_suggested for ln in lines)
     assert any(ln.availability == "not_offered" and ln.elsewhere for ln in lines)
-    assert any(c.freshness.late_to_refresh for ln in lines for c in ln.sources), "per data point"
-    assert any(not c.freshness.late_to_refresh for ln in lines for c in ln.sources)
-    assert any(sq.site.price_freshness.late_to_refresh for qr in quotes for sq in qr.sites), (
-        "per site"
+    chips = [c for ln in lines for c in ln.sources]
+    sites = [sq.site for qr in quotes for sq in qr.sites]
+    # (a) publisher late without (b), and (b) we are stale without (a): per data point and per site
+    assert any(c.freshness.late_to_refresh and not c.freshness.stale_on_our_side for c in chips)
+    assert any(c.freshness.stale_on_our_side and not c.freshness.late_to_refresh for c in chips)
+    assert any(not c.freshness.late_to_refresh and not c.freshness.stale_on_our_side for c in chips)
+    assert any(s.any_source_late and not s.any_source_stale_on_our_side for s in sites)
+    assert any(
+        s.price_freshness.stale_on_our_side and not s.price_freshness.late_to_refresh for s in sites
     )
+    behind = [b for qr in quotes for b in qr.data_version.sources_behind]
+    assert {b.freshness.late_to_refresh for b in behind} == {True, False}
+    assert {b.freshness.stale_on_our_side for b in behind} == {True, False}
     assert any(sq.other_payers for qr in quotes for sq in qr.sites)
     assert {qr.payment.kind for qr in quotes} == {"insurance", "cash", "medicare"}
     assert {sq.site.billing_type for qr in quotes for sq in qr.sites} >= {
@@ -193,15 +201,36 @@ def test_fixtures_together_cover_the_whole_contract():
     assert chats == {"red_flag", "clarify", "ai_paused", "care_paths"}
 
 
-def test_mgb_late_to_refresh_shows_on_brigham():
-    """Austin 2026-10-24: MGB data dated 2026-03-27 is shown, labelled late to refresh."""
+def test_hospital_files_use_the_365_day_rule():
+    """Austin 2026-10-24: a hospital MRF is late only >365 days after its own last-updated date.
+    MGB's 2026-03-27 file is therefore not late on 2026-10-24 (the old 180-day rule said it was)."""
     resp = _validated("quote_bcbs_hmo_shoulder")
     bwh = next(sq for sq in resp.sites if sq.site.site_id == "brigham_and_womens_hospital")
     f = bwh.site.price_freshness
-    assert f.late_to_refresh and str(f.last_updated) == "2026-03-27" and f.expected_by is not None
-    assert any(ln.cell is not None and ln.cell.kind == "money" for ln in bwh.receipt.lines), (
-        "data still shown"
-    )
+    assert f.source_rule == "hospital_mrf_365_days" and str(f.last_updated) == "2026-03-27"
+    assert str(f.expected_by) == "2027-03-27" and not f.late_to_refresh
+    assert not f.stale_on_our_side and f.our_rule == "hospital_monthly"
+
+
+def test_fixture_freshness_is_what_compute_gives():
+    """Every Freshness in the quote fixtures equals Freshness.compute on its own inputs."""
+    from datetime import date
+
+    from app.sites.contracts import Freshness
+
+    for name in ("quote_bcbs_hmo_shoulder", "quote_cash_shoulder", "quote_medicare_shoulder"):
+        _, body = _load(FIX / f"{name}.json")
+        for f in _walk(body, "freshness"):
+            got = Freshness.compute(
+                as_of=date(2026, 10, 24),
+                source_rule=f["source_rule"],
+                last_updated=f["last_updated"] and date.fromisoformat(f["last_updated"]),
+                our_rule=f["our_rule"],
+                fetched_at=date.fromisoformat(f["fetched_at"]),
+                expected_by=f["expected_by"] and date.fromisoformat(f["expected_by"]),
+                our_refresh_due=f["our_refresh_due"] and date.fromisoformat(f["our_refresh_due"]),
+            )
+            assert got.model_dump(mode="json") == f, (name, f)
 
 
 def test_committed_sites_yaml_matches_contract_when_present():
