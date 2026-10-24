@@ -1,0 +1,104 @@
+# Payer alias table for hospital MRF rows (normalize step).
+#
+# Matching runs on the *cleaned* payer string: upper-cased, whitespace collapsed, and the
+# hospital-internal id suffix removed ("AETNA [1001]" -> "AETNA"). Plans are upper-cased too.
+#
+# 1. payer_rules  (ordered, first match wins) -> payer_id. A rule may match on payer, plan or
+#    both. The payer column decides the payer; the plan never silently overrides it (the old
+#    _reconcile_payer_from_plan did). The one explicit exception is the UHC/HPHC "Alliance"
+#    product, which hospitals file under either carrier.
+# 2. exclusions   (ordered, first match wins) -> excluded=true + exclude_reason. Excluded rows
+#    are kept in rate_row (lossless) but never feed a consumer price.
+# 3. lob_rules    (ordered; plan first, then payer) -> line_of_business. A plan that only says
+#    MEDICARE / MEDICAID under a commercial carrier becomes medicare_advantage / medicaid_managed.
+# 4. carrier_tokens: if a plan names another carrier and not its own, payer_plan_mismatch=true.
+
+version: 1
+
+payers:
+  BCBS_MA:           {label: "Blue Cross Blue Shield of Massachusetts", default_lob: commercial}
+  BCBS_OTHER:        {label: "Out-of-state Blue Cross plans", default_lob: commercial}
+  AETNA:             {label: "Aetna", default_lob: commercial}
+  HARVARD_PILGRIM:   {label: "Harvard Pilgrim (Point32Health)", default_lob: commercial}
+  TUFTS_HP:          {label: "Tufts Health Plan (Point32Health)", default_lob: commercial}
+  UHC_HPHC_ALLIANCE: {label: "UnitedHealthcare / Harvard Pilgrim Alliance", default_lob: commercial}
+  UHC:               {label: "UnitedHealthcare", default_lob: commercial}
+  CIGNA:             {label: "Cigna", default_lob: commercial}
+  MGB_HP:            {label: "Mass General Brigham Health Plan (formerly AllWays)", default_lob: commercial}
+  WELLSENSE:         {label: "WellSense Health Plan", default_lob: medicaid_managed}
+  FALLON:            {label: "Fallon Health", default_lob: commercial}
+  CCA:               {label: "Commonwealth Care Alliance", default_lob: dual}
+  HNE:               {label: "Health New England", default_lob: commercial}
+  WELLPOINT:         {label: "Wellpoint / Unicare (GIC)", default_lob: commercial}
+  HUMANA:            {label: "Humana", default_lob: medicare_advantage}
+  MEDICARE:          {label: "Medicare (traditional)", default_lob: medicare}
+  MASSHEALTH:        {label: "MassHealth (Medicaid)", default_lob: medicaid}
+  TRICARE:           {label: "TRICARE", default_lob: other_government}
+  HSN:               {label: "MA Health Safety Net", default_lob: other_government}
+
+payer_rules:
+  - {payer_id: UHC_HPHC_ALLIANCE, plan: 'HPHC ALLIANCE'}
+  - {payer_id: BCBS_OTHER, payer: '^(BCBS|BLUE CROSS).*OUT OF STATE|^BLUE CROSS OF (NH|RI)|^ANTHEM'}
+  - {payer_id: BCBS_OTHER, payer: '^BCBS$', plan: 'OUT OF STATE'}
+  - {payer_id: MEDICARE, payer: '^(MEDICARE( ALTERNATE( PAYOR)?| PART B ALT)?|RR MEDICARE)$'}
+  - {payer_id: MASSHEALTH, payer: '^(MASS ?HEALTH( ALTERNATE| DENTAL)?|MEDICAID( MASSHEALTH| ACO| LIMITED| MANAGED CARE)?)$'}
+  - {payer_id: MGB_HP, payer: '^(MGB|MGBHP|MASS GEN(ERAL)? BRIGHAM)\b|ALLWAYS|^NEIGHBORHOOD HEALTH PLAN$'}
+  - {payer_id: TUFTS_HP, payer: '^(OTHER )?(TUFTS|THP)\b'}
+  - {payer_id: HARVARD_PILGRIM, payer: '^(HARVARD PILGRIM|HPHC)\b'}
+  - {payer_id: UHC, payer: '^(ZZZ)?(UNITED|UHC|UBH|UMR|OXFORD)\b|^AARP\b'}
+  - {payer_id: BCBS_MA, payer: '^(BCBS|BLUE CROSS|BLUE BENEFITS)\b'}
+  - {payer_id: AETNA, payer: '^(ZZZ)?AETNA'}
+  - {payer_id: CIGNA, payer: '^(ZZZ)?CIGNA'}
+  - {payer_id: WELLSENSE, payer: 'WELLSENSE'}
+  - {payer_id: FALLON, payer: '^FALLON'}
+  - {payer_id: CCA, payer: '^(ZZZ)?CCA\b|COMMONWEALTH CARE ALLIANCE'}
+  - {payer_id: HNE, payer: 'H(EA)?LTH NEW ENGLAND'}
+  - {payer_id: WELLPOINT, payer: '^(WELLPOINT|UNICARE)\b'}
+  - {payer_id: HUMANA, payer: '^HUMANA'}
+  - {payer_id: TRICARE, payer: 'TRICARE'}
+  - {payer_id: HSN, payer: '^HSN\b|HEALTH SAFETY NET'}
+
+exclusions:
+  - {reason: dental, payer: '\bDENTAL\b'}
+  - {reason: dental, plan: '\bDENTAL\b'}
+  - {reason: retired_contract, payer: '^ZZZ'}
+  - {reason: out_of_state, payer: 'OUT OF STATE|BLUE CROSS OF (NH|RI)|^ANTHEM|RI NJ NY|\bNH\b|NEW HAMPSHIRE|RHODE ISLAND|^RI |MEDICAID (CT|ME|NY|VT|OUT OF STATE|NON MASSACHUSETTS)|^OOS '}
+  - {reason: out_of_state, plan: 'OUT OF STATE|CT & NH ONLY|^ANTHEM OF NH'}
+  - {reason: workers_comp, payer: '^WC\b|WORK(ERS)? ?COMP'}
+  - {reason: workers_comp, plan: 'WORKERS COMP|\bWC\b'}
+  - {reason: catch_all, plan: 'CATCH-ALL'}
+  - {reason: behavioral_carveout, payer: '^UBH\b|BEHAVIOU?RI?AL|CARELON|BEACON|MBHP|MAGELLAN|COMPSYCH|MASS BH'}
+  - {reason: behavioral_carveout, plan: 'BEHAVIOU?RAL|CARELON|\bMBHP\b'}
+  - {reason: transplant, payer: 'TRANSPLANT|CENTERS OF EXCELLENCE|LIFESOURCE'}
+  - {reason: transplant, plan: 'TRANSPLANT'}
+  - {reason: international, payer: 'INTERNATIONAL'}
+  - {reason: international, plan: 'INTERNATIONAL|\bGMMI\b|\bQHM\b'}
+  - {reason: vision, payer: 'VISION|EYEMED|SPECTERA'}
+  - {reason: auto_liability, payer: '^MVA\b'}
+
+lob_rules:
+  - {lob: dual, re: '\bSCO\b|ONE ?CARE|\bDUAL\b|\bPACE\b|SENIOR WHOLE HEALTH|NAVICARE|ELDER SERVICE|ELEMENTCARE'}
+  - {lob: medicare_advantage, re: 'MEDICARE (ADVANTAGE|ADV|REPLACEMENT|REPLACEM|REP|MANAGED|PREFERRED|COMPLETE)|MEDICARE MANAGED CARE|\bMCARE\b|\bMCR\b|STRIDE|\bSNP\b|SECURE HORIZONS|GENERATIONS|MEDICARE ADVANTAGE'}
+  - {lob: medicaid_managed, re: 'MEDICAID (MANAGED|MNGED|REPLACEMENT|REPLACEMEN|REP)|\bMCD\b|\bACO\b|\bMCO\b|ACOS'}
+  - {lob: connector, re: 'CONNECTOR|\bQHP\b'}
+  - {lob: other_government, re: 'TRICARE|CHAMPVA|VETERANS|HEALTH SAFETY NET|\bHSN\b|CORRECTIONS|PRISON|\bCOUNTY\b|\bDPH\b|USFHP|US FAMILY HEALTH'}
+  - {lob: medicaid, re: 'MEDICAID|MASS ?HEALTH'}
+  - {lob: medicare, re: 'MEDICARE'}
+  - {lob: commercial, re: '\bHMO\b|\bPPO\b|\bPOS\b|INDEMNITY|COMMERCIAL|\bEPO\b|\bPPA\b|\bGIC\b|\bCOMM\b'}
+
+products: ['HMO', 'PPO', 'POS', 'EPO', 'INDEMNITY', 'PPA']
+
+carrier_tokens:
+  BCBS_MA: 'BLUE CROSS|BCBS'
+  BCBS_OTHER: 'BLUE CROSS|BCBS|ANTHEM'
+  AETNA: 'AETNA'
+  HARVARD_PILGRIM: 'HPHC|HARVARD PILGRIM'
+  TUFTS_HP: 'TUFTS|\bTHP'
+  UHC_HPHC_ALLIANCE: 'HPHC|HARVARD PILGRIM|UNITED|UHC'
+  UHC: 'UNITED|\bUHC\b|OPTUM|\bUBH\b'
+  CIGNA: 'CIGNA'
+  MGB_HP: 'MGBHP|MGB|MASS GENERAL BRIGHAM'
+  WELLSENSE: 'WELLSENSE'
+  FALLON: 'FALLON|FCHP'
+  CCA: '\bCCA\b|COMMONWEALTH CARE'
+  WELLPOINT: 'WELLPOINT|UNICARE'

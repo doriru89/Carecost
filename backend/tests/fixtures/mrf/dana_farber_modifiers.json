@@ -1,0 +1,486 @@
+﻿{
+ "hospital_name": "Dana-Farber Cancer Institute",
+ "last_updated_on": "2026-04-01",
+ "version": "3.0.0",
+ "location_name": [
+  "Dana-Farber Cancer Institute"
+ ],
+ "hospital_address": [
+  "450 Brookline Avenue, Boston, MA 02115"
+ ],
+ "license_information": {
+  "license_number": "2335",
+  "state": "MA"
+ },
+ "type_2_npi": [
+  "1851333686"
+ ],
+ "attestation": {
+  "attestation": "To the best of its knowledge and belief, this hospital has included all applicable standard charge information in accordance with the requirements of 45 CFR 180.50, and the information encoded is true, accurate, and complete as of the date in the file. This hospital has included all payer-specific negotiated charges in dollars that can be expressed as a dollar amount. For payer-specific negotiated charges that cannot be expressed as a dollar amount in the machine-readable file or not knowable in advance, the hospital attests that the payer-specific negotiated charge is based on a contractual algorithm, percentage or formula that precludes the provision of a dollar amount and has provided all necessary information available to the hospital for the public to be able to derive the dollar amount, including, but not limited to, the specific fee schedule or components referenced in such percentage, algorithm or formula.",
+  "confirm_attestation": true,
+  "attester_name": "Michael Reney"
+ },
+ "modifier_information": [
+  {
+   "description": "Left side (used to identify procedures performed on the left side of the body)",
+   "code": "LT",
+   "modifier_payer_information": [
+    {
+     "payer_name": "Aetna",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Aetna",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Aetna",
+     "plan_name": "Transplant",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "BCBS",
+     "plan_name": "Anthem of NH Other Commercial Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "BCBS",
+     "plan_name": "HMO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "BCBS",
+     "plan_name": "Indemnity Traditional",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "BCBS",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "BCBS",
+     "plan_name": "PPA/PPO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Care Dimensions",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Cigna",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Cigna",
+     "plan_name": "Transplant",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Commonwealth Care Alliance",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Community Health Options",
+     "plan_name": "Oncology All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Fallon Health",
+     "plan_name": "Atrius ACO Medicaid Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Fallon Health",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Harvard Pilgrim",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Harvard Pilgrim",
+     "plan_name": "Stride Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Humana",
+     "plan_name": "ChoiceCare All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Humana",
+     "plan_name": "Transplant",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "MGBHP",
+     "plan_name": "ACO Medicaid Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "MGBHP",
+     "plan_name": "Commercial & Qualified HMO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "MGBHP",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "MGBHP",
+     "plan_name": "PPO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "MGBHP",
+     "plan_name": "Select HMO Medicaid Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Multiplan",
+     "plan_name": "PPO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Old Colony Hospice",
+     "plan_name": "Hospice",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Optum",
+     "plan_name": "CRS Adult & Pediatric All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Optum",
+     "plan_name": "Select Medadvantage & Managed Medicaid Transplant",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Optum",
+     "plan_name": "TRS Adult Transplant",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Quality Health Management",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Senior Whole Health",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "Health Together Other Commercial Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "HMO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "One Care Medicare/Medicaid Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "POS",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "PPO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "Preferred HMO/PPO Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "UnitedHealthCare",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "UnitedHealthCare",
+     "plan_name": "VA Community Care Network Government",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Wellpoint",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "WellSense",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "WellSense",
+     "plan_name": "QHP Silver/ConnectorCare Other Commercial Plan",
+     "description": "The modified price is presented in the standard charge value."
+    }
+   ]
+  },
+  {
+   "description": "Right side (used to identify procedures performed on the right side of the body)",
+   "code": "RT",
+   "modifier_payer_information": [
+    {
+     "payer_name": "Aetna",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Aetna",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Aetna",
+     "plan_name": "Transplant",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "BCBS",
+     "plan_name": "Anthem of NH Other Commercial Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "BCBS",
+     "plan_name": "HMO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "BCBS",
+     "plan_name": "Indemnity Traditional",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "BCBS",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "BCBS",
+     "plan_name": "PPA/PPO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Care Dimensions",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Cigna",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Cigna",
+     "plan_name": "Transplant",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Commonwealth Care Alliance",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Community Health Options",
+     "plan_name": "Oncology All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Fallon Health",
+     "plan_name": "Atrius ACO Medicaid Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Fallon Health",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Harvard Pilgrim",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Harvard Pilgrim",
+     "plan_name": "Stride Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Humana",
+     "plan_name": "ChoiceCare All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Humana",
+     "plan_name": "Transplant",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "MGBHP",
+     "plan_name": "ACO Medicaid Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "MGBHP",
+     "plan_name": "Commercial & Qualified HMO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "MGBHP",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "MGBHP",
+     "plan_name": "PPO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "MGBHP",
+     "plan_name": "Select HMO Medicaid Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Multiplan",
+     "plan_name": "PPO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Old Colony Hospice",
+     "plan_name": "Hospice",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Optum",
+     "plan_name": "CRS Adult & Pediatric All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Optum",
+     "plan_name": "Select Medadvantage & Managed Medicaid Transplant",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Optum",
+     "plan_name": "TRS Adult Transplant",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Quality Health Management",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Senior Whole Health",
+     "plan_name": "Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "Health Together Other Commercial Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "HMO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "One Care Medicare/Medicaid Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "POS",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "PPO",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Tufts Health Plan",
+     "plan_name": "Preferred HMO/PPO Medicare Managed Care Plan",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "UnitedHealthCare",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "UnitedHealthCare",
+     "plan_name": "VA Community Care Network Government",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "Wellpoint",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "WellSense",
+     "plan_name": "All Commercial Plans",
+     "description": "The modified price is presented in the standard charge value."
+    },
+    {
+     "payer_name": "WellSense",
+     "plan_name": "QHP Silver/ConnectorCare Other Commercial Plan",
+     "description": "The modified price is presented in the standard charge value."
+    }
+   ]
+  }
+ ],
+ "standard_charge_information": [
+  {
+   "description": "Hc Dfci Mastectomy Bra",
+   "code_information": [
+    {
+     "code": "27000782",
+     "type": "CDM"
+    },
+    {
+     "code": "274",
+     "type": "RC"
+    },
+    {
+     "code": "L8000",
+     "type": "HCPCS"
+    }
+   ],
+   "standard_charges": [
+    {
+     "gross_charge": 43.41,
+     "discounted_cash": 32.56,
+     "setting": "both",
+     "modifiers": "LTRTNU",
+     "billing_class": "facility",
+     "additional_generic_notes": "Gross Charge Type: Unit Price | The modified price is presented in the standard charge value. | Modifier LT: Left side (used to identify procedures performed on the left side of the body) | Modifier RT: Right side (used to identify procedures performed on the right side of the body) | Modifier NU: New equipment"
+    }
+   ]
+  }
+ ]
+}

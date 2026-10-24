@@ -1,0 +1,829 @@
+{
+ "reporting_entity_name": "Blue Cross and Blue Shield of Massachusetts Inc",
+ "reporting_entity_type": "Health Insurance Issuer",
+ "last_updated_on": "2026-05-01",
+ "version": "2.0.0",
+ "provider_references": [
+  {
+   "provider_group_id": 700189,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1922103357
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2103565",
+      "business_name": "EMERSON HOSPITAL DBA EMERSON HOSPITA L HOME HEALTH SERVICES"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 700194,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1508867391
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2103575",
+      "business_name": "BAYSTATE FRANKLIN MEDICAL CENTER"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 700290,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1205823879,
+      1457685299
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2103581",
+      "business_name": "HENRY HEYWOOD MEMORIAL HOSPITAL DBA HEYWOOD HOSPITAL"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 700734,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1750381281
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2103586",
+      "business_name": "LAWRENCE GENERAL HOSPITAL"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 700868,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1407804669
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2103590",
+      "business_name": "THE LOWELL GENERAL HOSPITAL"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 700869,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1639101751
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2103591",
+      "business_name": "MASSACHUSETTS EYE AND EAR INFIRMARY"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 700884,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1477527497
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2103602",
+      "business_name": "MILFORD REGIONAL MEDICAL CENTER INC"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 700887,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1689670259
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2103606",
+      "business_name": "MOUNT AUBURN HOSPITAL"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 700941,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1992737761
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2103611",
+      "business_name": "NEWTON WELLESLEY HOSPITAL"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 7001101,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1205993110,
+      1447214622
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2103823",
+      "business_name": "NANTUCKET COTTAGE HOSPITAL"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 7002460,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1548202641
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2103881",
+      "business_name": "BETH ISRAEL DEACONESS MEDICAL CENTER"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 7003151,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1790740777
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2104434",
+      "business_name": "WINCHESTER HOSPITAL"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 7004193,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1316917941
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2121317",
+      "business_name": "NORTHEAST HEALTH SYSTEMS DBA BEVERLY BEVERLY HOSPITAL"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 7004213,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1336120047
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2126583",
+      "business_name": "ATHOL MEMORIAL HOSPITAL INCORPORATED DBA TULLY FAMILY MEDICIN"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 7004399,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1215247259
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2156082",
+      "business_name": "FRANCISCAN HOSPITAL FOR CHILDREN"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 7007186,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1790717650
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2312909",
+      "business_name": "BRIGHAM AND WOMENS HOSPITAL INC"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70012159,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1023049236
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2697983",
+      "business_name": "THE GENERAL HOSPITAL CORPORATION DBA MASS GENERAL HOSPITAL"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70018457,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1033121025,
+      1578677811
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-2768256",
+      "business_name": "BRIGHAM AND WOMENS FAULKNER HOSPITAL"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70044115,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1205893450
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-3229679",
+      "business_name": "BETH ISRAEL DEACONESS HOSPITAL"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70052013,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1043204316,
+      1750360798
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-3398280",
+      "business_name": "MERCY HOSPITAL INC DBA MERCY MEDICAL CENTER"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70052026,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1417972647,
+      1730121633
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-3399616",
+      "business_name": "NORTH SHORE MEDICAL CENTER INC"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70052325,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1730132515
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "04-3400617",
+      "business_name": "TUFTS MEDICAL CENTER INC"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70057265,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1063431286
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "22-2472997",
+      "business_name": "BROCKTON HOSPITAL INC"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70057411,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1962410233,
+      1992880736
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "22-2519813",
+      "business_name": "BAYSTATE WING HOSPITAL CORPORATION"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70058161,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1083776140,
+      1750395737
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "22-2520073",
+      "business_name": "HOLYOKE MEDICAL CENTER INC"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70058315,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1700816048
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "22-2537423",
+      "business_name": "BAYSTATE NOBLE HOSPITAL CORPORATION"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70059262,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1477596310
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "22-2617175",
+      "business_name": "COOLEY DICKINSON HOSP INC DBA COOLEY DICKINSON URGENT CARE"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70059536,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1043299001,
+      1760598700
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "22-2667354",
+      "business_name": "BETH ISRAEL DEACONESS HOSP PLYMOUTH"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70078208,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1538131214
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "62-1861198",
+      "business_name": "VHS ACQUISITION SUBSIDIARY NUMBER 7 INC DBA SAINT VINCENT HO"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70078209,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1740252592
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "62-1861200",
+      "business_name": "VHS ACQUISITION SUBSIDIARY NUMBER 9 DBA METROWEST MEDICAL CE"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70083643,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1265267991
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "99-4230642",
+      "business_name": "LG NEWCORP INC DBA MERRIMACK HEALTH HAVERHILL HOSPITA"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70083656,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1871329110
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "99-4491180",
+      "business_name": "BOSTON MEDICAL CENTER SOUTH CORPORATION DBA BMC SOUT"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70083961,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1265268510,
+      1720814072
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "99-4793550",
+      "business_name": "BOSTON MEDICAL CENTER BRIGHTON CORPORATION DBA BMC BRIG"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70083966,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1609603877
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "99-4836263",
+      "business_name": "LIFESPAN OF MASSACHUSETTS TAUNTON"
+     }
+    }
+   ]
+  },
+  {
+   "provider_group_id": 70083967,
+   "network_name": [
+    "HMO"
+   ],
+   "provider_groups": [
+    {
+     "npi": [
+      1013744200,
+      1972330165
+     ],
+     "tin": {
+      "type": "ein",
+      "value": "99-4841947",
+      "business_name": "LIFESPAN OF MASSACHUSETTS FALL RIVER DBA BROWN UNIVERSITY HEA"
+     }
+    }
+   ]
+  }
+ ],
+ "in_network": [
+  {
+   "negotiation_arrangement": "ffs",
+   "name": "RADIOLOGIC EXAM, SHOULDER; COMPLETE, MINIMUM OF TWO VIEWS",
+   "billing_code_type": "CPT",
+   "billing_code_type_version": "2025",
+   "billing_code": "73030",
+   "description": "RADIOLOGIC EXAM, SHOULDER; COMPLETE, MINIMUM OF TWO VIEWS",
+   "negotiated_rates": [
+    {
+     "provider_references": [
+      70012159,
+      70018457,
+      700189,
+      7002460,
+      70052026,
+      70052325,
+      70057411,
+      7007186,
+      700869,
+      700884,
+      700887,
+      700941
+     ],
+     "negotiated_prices": [
+      {
+       "setting": "outpatient",
+       "negotiated_type": "fee schedule",
+       "negotiated_rate": 110.42,
+       "expiration_date": "9999-12-31",
+       "service_code": [
+        "22"
+       ],
+       "billing_class": "institutional"
+      }
+     ]
+    },
+    {
+     "provider_references": [
+      700194,
+      7002460,
+      700290,
+      7003151,
+      7004193,
+      7004213,
+      70044115,
+      70052013,
+      70057265,
+      70058161,
+      70058315,
+      70059262,
+      70059536,
+      700734,
+      70078208,
+      70078209,
+      70083643,
+      70083656,
+      70083961,
+      70083966,
+      70083967,
+      700868
+     ],
+     "negotiated_prices": [
+      {
+       "setting": "outpatient",
+       "negotiated_type": "fee schedule",
+       "negotiated_rate": 44.53,
+       "expiration_date": "9999-12-31",
+       "service_code": [
+        "22"
+       ],
+       "billing_class": "institutional",
+       "billing_code_modifier": [
+        "52"
+       ]
+      }
+     ]
+    },
+    {
+     "provider_references": [
+      70012159,
+      70018457,
+      700189,
+      7002460,
+      70052026,
+      70052325,
+      70057411,
+      7007186,
+      700869,
+      700884,
+      700887,
+      700941
+     ],
+     "negotiated_prices": [
+      {
+       "setting": "outpatient",
+       "negotiated_type": "fee schedule",
+       "negotiated_rate": 55.21,
+       "expiration_date": "9999-12-31",
+       "service_code": [
+        "22"
+       ],
+       "billing_class": "institutional",
+       "billing_code_modifier": [
+        "52"
+       ]
+      }
+     ]
+    },
+    {
+     "provider_references": [
+      7001101,
+      700194,
+      7002460,
+      700290,
+      7003151,
+      7004193,
+      7004213,
+      70044115,
+      70052013,
+      70057265,
+      70058161,
+      70058315,
+      70059262,
+      70059536,
+      700734,
+      70078208,
+      70078209,
+      70083643,
+      70083656,
+      70083961,
+      70083966,
+      70083967,
+      700868
+     ],
+     "negotiated_prices": [
+      {
+       "setting": "outpatient",
+       "negotiated_type": "fee schedule",
+       "negotiated_rate": 89.05,
+       "expiration_date": "9999-12-31",
+       "service_code": [
+        "22"
+       ],
+       "billing_class": "institutional",
+       "billing_code_modifier": [
+        "52"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "negotiation_arrangement": "ffs",
+   "name": "PERIODIC ORAL EVALUATION-ESTABLISHED PATIENT",
+   "billing_code_type": "CDT",
+   "billing_code_type_version": "2025",
+   "billing_code": "D0120",
+   "description": "PERIODIC ORAL EVALUATION-ESTABLISHED PATIENT",
+   "negotiated_rates": [
+    {
+     "provider_references": [
+      7004399
+     ],
+     "negotiated_prices": [
+      {
+       "setting": "outpatient",
+       "negotiated_type": "percentage",
+       "negotiated_rate": 100,
+       "expiration_date": "9999-12-31",
+       "service_code": [
+        "22"
+       ],
+       "billing_class": "institutional"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,78 @@
+{
+  "$defs": {
+    "Method": {
+      "description": "How the number in a ``Money`` was obtained.",
+      "enum": [
+        "stated",
+        "derived_pct_x_gross",
+        "computed_fee_schedule",
+        "estimate_medicare_multiple",
+        "ai_drafted"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "SourceKind": {
+      "enum": [
+        "hospital_mrf",
+        "insurer_tic",
+        "medicare_pfs",
+        "medicare_opps",
+        "masshealth_fs",
+        "clinic_posted",
+        "chia_rp",
+        "estimate",
+        "ai_potential"
+      ],
+      "title": "SourceKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://carecost.local/contracts/provenance.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "method": {
+      "$ref": "#/$defs/Method"
+    },
+    "row_ref": {
+      "description": "<source_id>:<sha256[:12]>:<staged row ordinal>",
+      "title": "Row Ref",
+      "type": "string"
+    },
+    "source_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "The file's own last_updated_on (ISO).",
+      "title": "Source Date"
+    },
+    "source_file": {
+      "description": "Basename only; never an absolute or relative path.",
+      "title": "Source File",
+      "type": "string"
+    },
+    "source_kind": {
+      "$ref": "#/$defs/SourceKind"
+    },
+    "source_sha256": {
+      "title": "Source Sha256",
+      "type": "string"
+    }
+  },
+  "required": [
+    "source_kind",
+    "source_file",
+    "source_sha256",
+    "source_date",
+    "method",
+    "row_ref"
+  ],
+  "title": "Provenance",
+  "type": "object"
+}

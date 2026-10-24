@@ -1,0 +1,129 @@
+{
+  "$defs": {
+    "Method": {
+      "description": "How the number in a ``Money`` was obtained.",
+      "enum": [
+        "stated",
+        "derived_pct_x_gross",
+        "computed_fee_schedule",
+        "estimate_medicare_multiple",
+        "ai_drafted"
+      ],
+      "title": "Method",
+      "type": "string"
+    },
+    "PriceBasis": {
+      "description": "What the amount *is* (as opposed to how we got it).",
+      "enum": [
+        "negotiated",
+        "gross",
+        "discounted_cash",
+        "min_negotiated",
+        "max_negotiated",
+        "median_allowed",
+        "fee_schedule",
+        "posted_self_pay",
+        "estimate"
+      ],
+      "title": "PriceBasis",
+      "type": "string"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "$ref": "#/$defs/Method"
+        },
+        "row_ref": {
+          "description": "<source_id>:<sha256[:12]>:<staged row ordinal>",
+          "title": "Row Ref",
+          "type": "string"
+        },
+        "source_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The file's own last_updated_on (ISO).",
+          "title": "Source Date"
+        },
+        "source_file": {
+          "description": "Basename only; never an absolute or relative path.",
+          "title": "Source File",
+          "type": "string"
+        },
+        "source_kind": {
+          "$ref": "#/$defs/SourceKind"
+        },
+        "source_sha256": {
+          "title": "Source Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_kind",
+        "source_file",
+        "source_sha256",
+        "source_date",
+        "method",
+        "row_ref"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "SourceKind": {
+      "enum": [
+        "hospital_mrf",
+        "insurer_tic",
+        "medicare_pfs",
+        "medicare_opps",
+        "masshealth_fs",
+        "clinic_posted",
+        "chia_rp",
+        "estimate",
+        "ai_potential"
+      ],
+      "title": "SourceKind",
+      "type": "string"
+    }
+  },
+  "$id": "https://carecost.local/contracts/money.schema.json",
+  "additionalProperties": false,
+  "properties": {
+    "basis": {
+      "$ref": "#/$defs/PriceBasis"
+    },
+    "high": {
+      "minimum": 0,
+      "title": "High",
+      "type": "number"
+    },
+    "kind": {
+      "const": "money",
+      "default": "money",
+      "title": "Kind",
+      "type": "string"
+    },
+    "low": {
+      "minimum": 0,
+      "title": "Low",
+      "type": "number"
+    },
+    "prov": {
+      "$ref": "#/$defs/Provenance"
+    }
+  },
+  "required": [
+    "low",
+    "high",
+    "basis",
+    "prov"
+  ],
+  "title": "Money",
+  "type": "object"
+}

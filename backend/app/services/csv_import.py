@@ -340,6 +340,8 @@ def import_hospital_payer_rates_csv(db: Session, path: Path) -> int:
     deduped: dict[tuple, dict] = {}
     for r in raw_rows:
         row = {c: r.get(c, "") for c in PAYER_RATE_COLUMNS}
+        # CHECK constraint allows only commercial/medicare/medicaid/unknown; "" would violate it
+        row["plan_type"] = row["plan_type"] or "unknown"
         for col in _PAYER_RATE_FLOAT_COLS:
             row[col] = _parse_float_cell(row[col])
         key = tuple(row.get(k, "") for k in _NK)

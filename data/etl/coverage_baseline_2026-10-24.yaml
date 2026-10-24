@@ -1,0 +1,65 @@
+# Pre-re-ETL baseline, copied from the ETL audit of 2026-10-24
+# (AIOS WORK/PLANS/carecost-mvp-2026-10-24/research-v3/etl-audit.md §4). Used by `report`.
+#   files_payer_dollar  = hospital files (of 12) that have the code with a payer $ rate (raw census)
+#   raw_payer_dollar    = raw leaf rows with payer name and negotiated_dollar > 0 (raw census)
+#   raw_pct_alg_only    = raw payer rows with only a % or an algorithm
+#   db_hosp_mrf         = hospitals (of 12) with MRF payer rates in the old Postgres DB
+#   db_mrf_rows / db_tic_rows = old DB payer-rate rows by origin
+source: etl-audit.md §4 (2026-10-24)
+denominator_hospitals: 12
+codes:
+  "99202": {files_payer_dollar: 10, raw_payer_dollar: 395, raw_pct_alg_only: 15, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "99203": {files_payer_dollar: 11, raw_payer_dollar: 611, raw_pct_alg_only: 15, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "99204": {files_payer_dollar: 11, raw_payer_dollar: 568, raw_pct_alg_only: 15, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "99205": {files_payer_dollar: 11, raw_payer_dollar: 617, raw_pct_alg_only: 15, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "99212": {files_payer_dollar: 10, raw_payer_dollar: 998, raw_pct_alg_only: 24, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "99213": {files_payer_dollar: 11, raw_payer_dollar: 1272, raw_pct_alg_only: 26, db_hosp_mrf: 6, db_mrf_rows: 64, db_tic_rows: 6}
+  "99214": {files_payer_dollar: 11, raw_payer_dollar: 1089, raw_pct_alg_only: 30, db_hosp_mrf: 6, db_mrf_rows: 51, db_tic_rows: 6}
+  "99215": {files_payer_dollar: 12, raw_payer_dollar: 1177, raw_pct_alg_only: 32, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "73030": {files_payer_dollar: 11, raw_payer_dollar: 843, raw_pct_alg_only: 9, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "73221": {files_payer_dollar: 11, raw_payer_dollar: 663, raw_pct_alg_only: 10, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "73222": {files_payer_dollar: 10, raw_payer_dollar: 399, raw_pct_alg_only: 13, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "76881": {files_payer_dollar: 10, raw_payer_dollar: 688, raw_pct_alg_only: 9, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "76882": {files_payer_dollar: 11, raw_payer_dollar: 698, raw_pct_alg_only: 9, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "20610": {files_payer_dollar: 11, raw_payer_dollar: 802, raw_pct_alg_only: 76, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "20611": {files_payer_dollar: 11, raw_payer_dollar: 705, raw_pct_alg_only: 18, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "97161": {files_payer_dollar: 12, raw_payer_dollar: 579, raw_pct_alg_only: 18, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "97162": {files_payer_dollar: 12, raw_payer_dollar: 557, raw_pct_alg_only: 18, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "97163": {files_payer_dollar: 12, raw_payer_dollar: 467, raw_pct_alg_only: 15, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "97110": {files_payer_dollar: 12, raw_payer_dollar: 818, raw_pct_alg_only: 24, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "29826": {files_payer_dollar: 3, raw_payer_dollar: 7, raw_pct_alg_only: 0, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "29827": {files_payer_dollar: 6, raw_payer_dollar: 82, raw_pct_alg_only: 60, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "11102": {files_payer_dollar: 10, raw_payer_dollar: 506, raw_pct_alg_only: 19, db_hosp_mrf: 6, db_mrf_rows: 71, db_tic_rows: 6}
+  "11104": {files_payer_dollar: 11, raw_payer_dollar: 535, raw_pct_alg_only: 19, db_hosp_mrf: 7, db_mrf_rows: 83, db_tic_rows: 6}
+  "11300": {files_payer_dollar: 9, raw_payer_dollar: 341, raw_pct_alg_only: 12, db_hosp_mrf: 6, db_mrf_rows: 41, db_tic_rows: 6}
+  "11301": {files_payer_dollar: 8, raw_payer_dollar: 308, raw_pct_alg_only: 12, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "11302": {files_payer_dollar: 7, raw_payer_dollar: 306, raw_pct_alg_only: 12, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "11303": {files_payer_dollar: 7, raw_payer_dollar: 290, raw_pct_alg_only: 12, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "11305": {files_payer_dollar: 9, raw_payer_dollar: 324, raw_pct_alg_only: 12, db_hosp_mrf: 6, db_mrf_rows: 35, db_tic_rows: 6}
+  "11306": {files_payer_dollar: 9, raw_payer_dollar: 339, raw_pct_alg_only: 12, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "11307": {files_payer_dollar: 7, raw_payer_dollar: 292, raw_pct_alg_only: 12, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "11308": {files_payer_dollar: 6, raw_payer_dollar: 286, raw_pct_alg_only: 12, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "11310": {files_payer_dollar: 9, raw_payer_dollar: 351, raw_pct_alg_only: 12, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "11311": {files_payer_dollar: 10, raw_payer_dollar: 383, raw_pct_alg_only: 18, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "11312": {files_payer_dollar: 7, raw_payer_dollar: 295, raw_pct_alg_only: 12, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "11313": {files_payer_dollar: 6, raw_payer_dollar: 287, raw_pct_alg_only: 12, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "17000": {files_payer_dollar: 9, raw_payer_dollar: 431, raw_pct_alg_only: 12, db_hosp_mrf: 6, db_mrf_rows: 63, db_tic_rows: 6}
+  "17110": {files_payer_dollar: 10, raw_payer_dollar: 543, raw_pct_alg_only: 18, db_hosp_mrf: 6, db_mrf_rows: 75, db_tic_rows: 6}
+  "88305": {files_payer_dollar: 11, raw_payer_dollar: 737, raw_pct_alg_only: 16, db_hosp_mrf: 7, db_mrf_rows: 63, db_tic_rows: 6}
+  "45378": {files_payer_dollar: 10, raw_payer_dollar: 998, raw_pct_alg_only: 87, db_hosp_mrf: 7, db_mrf_rows: 92, db_tic_rows: 6}
+  "45380": {files_payer_dollar: 10, raw_payer_dollar: 618, raw_pct_alg_only: 96, db_hosp_mrf: 7, db_mrf_rows: 87, db_tic_rows: 6}
+  "45385": {files_payer_dollar: 10, raw_payer_dollar: 712, raw_pct_alg_only: 89, db_hosp_mrf: 7, db_mrf_rows: 82, db_tic_rows: 6}
+  "43239": {files_payer_dollar: 11, raw_payer_dollar: 664, raw_pct_alg_only: 87, db_hosp_mrf: 7, db_mrf_rows: 95, db_tic_rows: 6}
+  "00811": {files_payer_dollar: 0, raw_payer_dollar: 0, raw_pct_alg_only: 0, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "00812": {files_payer_dollar: 0, raw_payer_dollar: 0, raw_pct_alg_only: 0, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "00813": {files_payer_dollar: 0, raw_payer_dollar: 0, raw_pct_alg_only: 0, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "99051": {files_payer_dollar: 0, raw_payer_dollar: 0, raw_pct_alg_only: 0, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "S9083": {files_payer_dollar: 0, raw_payer_dollar: 0, raw_pct_alg_only: 0, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+  "S9088": {files_payer_dollar: 0, raw_payer_dollar: 0, raw_pct_alg_only: 0, db_hosp_mrf: 0, db_mrf_rows: 0, db_tic_rows: 0}
+totals:
+  target_payer_dollar_rows_raw: 23581
+  rows_mapped_to_4_payers: 4822
+  db_payer_rate_rows: 2494   # 2,254 mrf + 240 tic
+  db_mrf_rows: 2254
+  db_tic_rows: 240
+  hospitals_with_mrf_payer_rows: 7   # BIDMC, Mount Auburn, Dana-Farber, Franciscan had 0; Children's only TiC

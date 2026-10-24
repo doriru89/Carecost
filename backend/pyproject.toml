@@ -34,6 +34,11 @@ dev = [
   "testing.postgresql>=1.3.0",
   "ruff>=0.6.0",
   "mypy>=1.15.0",
+  "pyarrow>=17",
+]
+# ETL only (python -m app.etl); the FastAPI runtime does not need it.
+etl = [
+  "pyarrow>=17",
 ]
 
 [tool.setuptools.packages.find]
@@ -75,5 +80,5 @@ module = "alembic.*"
 ignore_errors = true
 
 [[tool.mypy.overrides]]
-module = ["ijson.*", "testing.*", "yaml.*", "openpyxl.*"]
+module = ["ijson.*", "testing.*", "yaml.*", "openpyxl.*", "pyarrow.*"]
 ignore_missing_imports = true

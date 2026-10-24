@@ -1,0 +1,62 @@
+name: ETL (hospital price files)
+
+# Same commands as a local run: python -m app.etl fetch|stage|normalize|build|report.
+# Output is uploaded as an artifact; nothing is committed, published or deployed from here.
+# Known gaps (2026-10-24): Tufts returns 403 to non-browser clients, and Franciscan /
+# Dana-Farber have no confirmed file URL yet, so a cold cache cannot build all 12 sources and
+# the source_present gate fails loudly until data/raw/store is seeded (cache or release asset).
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 3 * *"  # monthly, 06:17 UTC on the 3rd
+
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install
+        run: pip install -r requirements-dev.txt
+      - name: Restore raw store (content-addressed; newest cache wins)
+        uses: actions/cache@v4
+        with:
+          path: data/raw/store
+          key: etl-raw-${{ github.run_id }}
+          restore-keys: etl-raw-
+      - name: Fetch
+        id: fetch
+        continue-on-error: true
+        run: python -m app.etl fetch
+      - name: Stage
+        run: python -m app.etl stage
+      - name: Normalize
+        run: python -m app.etl normalize
+      - name: Build (quality gates)
+        run: python -m app.etl build
+      - name: Report
+        if: always()
+        run: python -m app.etl report
+      - name: Upload build
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: etl-build
+          path: |
+            data/build/*/manifest.json
+            data/build/*/gates.json
+            data/build/*/coverage.md
+            data/build/*/coverage.csv
+            data/build/*/rate_row.sqlite
+      - name: Fail if any fetch failed
+        if: steps.fetch.outcome == 'failure'
+        run: |
+          echo "::error::one or more sources failed to fetch (see the Fetch step)"
+          exit 1

@@ -145,6 +145,17 @@ Normalized ETL import (expects ETL output in `data/intermediate/etl_output/`):
 python scripts/import_csv_to_postgres.py
 ```
 
+The hospital price-file ETL is one CLI (same locally and in GitHub Actions; config in `data/etl/`):
+
+```bash
+cd backend && uv sync --extra dev
+uv run python -m app.etl fetch            # or: fetch --import-dir <dir with existing MRFs>
+uv run python -m app.etl stage            # lossless parquet, row-conservation checked
+uv run python -m app.etl normalize        # rate_row for the codes in data/etl/codes.yaml
+uv run python -m app.etl build            # rate_row.parquet + .sqlite, quality gates
+uv run python -m app.etl report           # coverage matrix vs the old DB baseline
+```
+
 Sample data (for development without running ETL):
 
 ```powershell
