@@ -151,7 +151,11 @@ networks:
      discover: {toc: tic_toc_mgb_hp, match: '/INN_ALLIES_HMO_\d{4}-\d{2}-\d{2}\.json\.gz$'}, why: "Allies HMO network."}
   - {source_id: tic_mgb_hp_value_hmo, label: "MGB Health Plan Value HMO", product: HMO, lob: commercial,
      discover: {toc: tic_toc_mgb_hp, match: '/INN_VALUE_HMO_\d{4}-\d{2}-\d{2}\.json\.gz$'}, why: "Value HMO."}
-  - {source_id: tic_mgb_hp_mgb_aso, label: "MGB Health Plan ASO (MGB employees)", product: "", lob: commercial,
+  # A6 (O audit): product PPO. MGB's TOC (raw/tic/toc/mgb_toc.json, last_updated_on 2026-09-27) lists
+  # 10 reporting plans on INN_MGB_ASO, sponsor "ASO PHS": CORE PPO, HIGH DEDUCTIBLE HEALTH PLAN PPO
+  # WITH HSA and PLUS PPO (each IN / OUT OF AREA: 6 PPO), PREMIUM EPO (2) and SELECT (2). With
+  # product "" the file joined every MGB product (an employee PPO rate read for Select HMO).
+  - {source_id: tic_mgb_hp_mgb_aso, label: "MGB Health Plan ASO (MGB employees)", product: PPO, lob: commercial,
      discover: {toc: tic_toc_mgb_hp, match: '/INN_MGB_ASO_\d{4}-\d{2}-\d{2}\.json\.gz$'}, why: "Self-funded plan for MGB's own employees."}
 
   # ---------------------------------------------------------------- Aetna (national networks; no MA-specific file)

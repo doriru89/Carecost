@@ -136,9 +136,26 @@ def site_type_of(r: dict[str, str]) -> str:
     return "specialist_office"
 
 
+# A6: a "multi" census row (clinicians of several specialties at one address) takes its areas
+# from its own name first: "Boston Dermatology and Laser Center" (CMS derm:3;ortho:1) is a skin
+# clinic, not an orthopedic site. Only a name that says nothing falls back to the CMS counts.
+NAME_AREAS = [
+    ("skin", re.compile(r"DERMATOLOG|\bSKIN\b|\bDERM\b", re.I)),
+    ("ortho", re.compile(r"ORTHOP|\bORTHO\b|SPORTS MED|\bSPINE\b", re.I)),
+    ("gi", re.compile(r"GASTRO|ENDOSCOP|DIGESTIVE|COLORECTAL|\bGI\b", re.I)),
+]
+
+
+def name_areas(name: str) -> list[str]:
+    return [a for a, rx in NAME_AREAS if rx.search(name or "")]
+
+
 def service_areas(r: dict[str, str]) -> list[str]:
     if r["category"] in CATEGORY_AREAS:
         return CATEGORY_AREAS[r["category"]]
+    by_name = name_areas(NAME_NOISE.sub("", r["name"]))
+    if by_name:
+        return by_name
     areas = []
     for part in r["cms_specialty_counts"].split(";"):
         k = part.split(":")[0].strip()
@@ -369,12 +386,23 @@ def posted_offered(site: dict[str, Any]) -> list[dict[str, Any]]:
     return out
 
 
+SERVICE_AREA_OF = {"endoscopy": "gi", "skin_biopsy": "skin"}
+"""Census-category services that belong to one area (A6: a curated area change drops them)."""
+
+
 def _merge(base: dict[str, Any], cur: dict[str, Any]) -> dict[str, Any]:
     out = dict(base)
     for k, v in cur.items():
         if k in ("match_census_id", "match_hospital_entity_id") or v in (None, [], ""):
             continue  # an empty curated field never wipes a derived one
         out[k] = v
+    if cur.get("service_areas") and not cur.get("offered"):
+        # the census category that a hand-checked area overrides is no evidence either
+        out["offered"] = [
+            o for o in out.get("offered") or []
+            if not (o["evidence"] == "census_category"
+                    and SERVICE_AREA_OF.get(o["service"], "") not in ("", *cur["service_areas"]))
+        ]  # fmt: skip
     out["offered"] = list(out.get("offered") or []) + posted_offered(out)
     return out
 

@@ -6,8 +6,8 @@ codes:
   "00731": {domains: ["gi"], used_by: ["gerd_heartburn_v1:anesthesia"]}
   "00811": {domains: ["gi"], used_by: ["colon_diagnostic_v1:anesthesia"]}
   "00812": {domains: ["gi"], used_by: ["colon_screening_v1:anesthesia"]}
-  "11102": {domains: ["derm"], used_by: ["skin_changing_mole_v1:skin_biopsy"]}
-  "11104": {domains: ["derm"], used_by: ["skin_changing_mole_v1:skin_biopsy"]}
+  "11102": {domains: ["derm"], used_by: ["rash_v1:skin_sample", "skin_changing_mole_v1:skin_biopsy"]}
+  "11104": {domains: ["derm"], used_by: ["rash_v1:skin_sample", "skin_changing_mole_v1:skin_biopsy"]}
   "11106": {domains: ["derm"], used_by: ["skin_changing_mole_v1:skin_biopsy"]}
   "11401": {domains: ["derm"], used_by: ["skin_changing_mole_v1:skin_biopsy"]}
   "11402": {domains: ["derm"], used_by: ["skin_changing_mole_v1:wider_removal"]}
@@ -32,16 +32,24 @@ codes:
   "73600": {domains: ["ortho"], used_by: ["ankle_sprain_urgent_care_v1:xray"]}
   "73610": {domains: ["ortho"], used_by: ["ankle_sprain_urgent_care_v1:xray"]}
   "73721": {domains: ["ortho"], used_by: ["ankle_sprain_urgent_care_v1:ankle_mri", "knee_chronic_v1:knee_mri"]}
+  "74177": {domains: ["gi"], used_by: ["stomach_ache_v1:belly_ct"]}
+  "76700": {domains: ["gi"], used_by: ["stomach_ache_v1:belly_ultrasound"]}
+  "76705": {domains: ["gi"], used_by: ["stomach_ache_v1:belly_ultrasound"]}
   "76881": {domains: ["ortho"], used_by: ["shoulder_acute_injury_v1:tendon_ultrasound", "shoulder_chronic_clicking_v1:tendon_scan_ultrasound"]}
   "76882": {domains: ["ortho"], used_by: ["shoulder_acute_injury_v1:tendon_ultrasound", "shoulder_chronic_clicking_v1:tendon_scan_ultrasound"]}
   "77002": {domains: ["ortho"], used_by: ["shoulder_chronic_clicking_v1:mr_arthrogram"]}
-  "88305": {domains: ["derm", "gi"], used_by: ["colon_diagnostic_v1:pathology", "colon_screening_v1:polyp_pathology", "gerd_heartburn_v1:pathology", "skin_changing_mole_v1:pathology"]}
+  "80053": {domains: ["gi"], used_by: ["stomach_ache_v1:blood_tests"]}
+  "81003": {domains: ["gi"], used_by: ["stomach_ache_v1:urine_test"]}
+  "81025": {domains: ["gi"], used_by: ["stomach_ache_v1:pregnancy_test"]}
+  "85025": {domains: ["gi"], used_by: ["stomach_ache_v1:blood_tests"]}
+  "87220": {domains: ["derm"], used_by: ["rash_v1:skin_scraping"]}
+  "88305": {domains: ["derm", "gi"], used_by: ["colon_diagnostic_v1:pathology", "colon_screening_v1:polyp_pathology", "gerd_heartburn_v1:pathology", "rash_v1:pathology", "skin_changing_mole_v1:pathology"]}
   "97110": {domains: ["ortho"], used_by: ["ankle_sprain_urgent_care_v1:physical_therapy", "back_new_pain_v1:physical_therapy", "back_persistent_pain_v1:physical_therapy", "knee_chronic_v1:physical_therapy", "shoulder_acute_injury_v1:physical_therapy", "shoulder_chronic_clicking_v1:physical_therapy"]}
   "97161": {domains: ["ortho"], used_by: ["ankle_sprain_urgent_care_v1:physical_therapy", "back_new_pain_v1:physical_therapy", "back_persistent_pain_v1:physical_therapy", "knee_chronic_v1:physical_therapy", "shoulder_acute_injury_v1:physical_therapy", "shoulder_chronic_clicking_v1:physical_therapy"]}
   "97162": {domains: ["ortho"], used_by: ["ankle_sprain_urgent_care_v1:physical_therapy", "back_new_pain_v1:physical_therapy", "back_persistent_pain_v1:physical_therapy", "knee_chronic_v1:physical_therapy", "shoulder_chronic_clicking_v1:physical_therapy"]}
   "97163": {domains: ["ortho"], used_by: ["shoulder_chronic_clicking_v1:physical_therapy"]}
-  "99203": {domains: ["derm", "gi", "ortho"], used_by: ["ankle_sprain_urgent_care_v1:visit", "back_new_pain_v1:visit", "back_persistent_pain_v1:visit", "colon_diagnostic_v1:office_visit", "colon_screening_v1:pre_procedure_consult", "gerd_heartburn_v1:visit", "knee_chronic_v1:visit", "shoulder_acute_injury_v1:visit", "shoulder_chronic_clicking_v1:visit", "skin_changing_mole_v1:derm_visit"]}
-  "99204": {domains: ["derm", "gi", "ortho"], used_by: ["back_new_pain_v1:visit", "back_persistent_pain_v1:visit", "colon_diagnostic_v1:office_visit", "knee_chronic_v1:visit", "shoulder_acute_injury_v1:visit", "shoulder_chronic_clicking_v1:visit", "skin_changing_mole_v1:derm_visit"]}
-  "99213": {domains: ["derm", "gi", "ortho"], used_by: ["ankle_sprain_urgent_care_v1:referral", "ankle_sprain_urgent_care_v1:visit", "back_new_pain_v1:referral", "back_persistent_pain_v1:referral", "colon_diagnostic_v1:referral", "colon_screening_v1:referral", "gerd_heartburn_v1:referral", "gerd_heartburn_v1:visit", "knee_chronic_v1:referral", "shoulder_acute_injury_v1:referral", "shoulder_chronic_clicking_v1:referral", "skin_changing_mole_v1:referral"]}
+  "99203": {domains: ["derm", "gi", "ortho"], used_by: ["ankle_sprain_urgent_care_v1:visit", "back_new_pain_v1:visit", "back_persistent_pain_v1:visit", "colon_diagnostic_v1:office_visit", "colon_screening_v1:pre_procedure_consult", "gerd_heartburn_v1:visit", "knee_chronic_v1:visit", "rash_v1:skin_doctor_visit", "rash_v1:visit", "shoulder_acute_injury_v1:visit", "shoulder_chronic_clicking_v1:visit", "skin_changing_mole_v1:derm_visit", "stomach_ache_v1:visit"]}
+  "99204": {domains: ["derm", "gi", "ortho"], used_by: ["back_new_pain_v1:visit", "back_persistent_pain_v1:visit", "colon_diagnostic_v1:office_visit", "knee_chronic_v1:visit", "rash_v1:skin_doctor_visit", "shoulder_acute_injury_v1:visit", "shoulder_chronic_clicking_v1:visit", "skin_changing_mole_v1:derm_visit"]}
+  "99213": {domains: ["derm", "gi", "ortho"], used_by: ["ankle_sprain_urgent_care_v1:referral", "ankle_sprain_urgent_care_v1:visit", "back_new_pain_v1:referral", "back_persistent_pain_v1:referral", "colon_diagnostic_v1:referral", "colon_screening_v1:referral", "gerd_heartburn_v1:referral", "gerd_heartburn_v1:visit", "knee_chronic_v1:referral", "rash_v1:visit", "shoulder_acute_injury_v1:referral", "shoulder_chronic_clicking_v1:referral", "skin_changing_mole_v1:referral", "stomach_ache_v1:visit"]}
   "G0121": {domains: ["gi"], used_by: ["colon_screening_v1:colonoscopy"]}
   "J3301": {domains: ["ortho"], used_by: ["shoulder_chronic_clicking_v1:steroid_injection (ai)"]}

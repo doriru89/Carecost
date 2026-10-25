@@ -45,6 +45,7 @@ domains:
     "17000": Destruction of premalignant lesion, first
     "17110": Destruction of benign lesions, up to 14
     "88305": Surgical pathology, level IV (tissue exam)
+    "87220": Tissue exam for fungi (KOH skin scraping)
   gi:
     "45378": Colonoscopy, diagnostic
     "45380": Colonoscopy with biopsy
@@ -54,6 +55,13 @@ domains:
     "00812": Anesthesia, screening colonoscopy
     "00813": Anesthesia, combined upper and lower GI endoscopy
     "88305": Surgical pathology, level IV (tissue exam)
+    "81003": Urinalysis, automated, without microscopy
+    "81025": Urine pregnancy test
+    "85025": Complete blood count (CBC) with differential
+    "80053": Comprehensive metabolic panel
+    "76700": Ultrasound abdomen, complete
+    "76705": Ultrasound abdomen, limited
+    "74177": CT abdomen and pelvis with contrast
   urgent_care:
     "99051": After-hours / evening / weekend service add-on
     "S9083": Urgent care center global fee
@@ -78,3 +86,5 @@ path_area_domains:
   skin: derm
   gi_lower: gi
   gi_upper: gi
+  gi_abdomen: gi      # stomach_ache_v1 (P12). Admission is engine.yaml `areas` (urgent_care + gi)
+  skin_rash: derm     # rash_v1 (P12). Admission is engine.yaml `areas` (urgent_care + skin)

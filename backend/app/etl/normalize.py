@@ -58,6 +58,43 @@ def _num(s: str | None) -> float | None:
         return None
 
 
+# O's outlier audit (docs/etl/outlier-audit.md), fixed at the source: rows that are not a CPT
+# line price. Each is kept in rate_row with ``excluded`` + ``exclude_reason`` (counted per source
+# in the normalize stats ``excluded``), so the pack never sums it and the row stays citable.
+NOT_DOLLARS_SHARE = 0.01
+NO_CONTRACT_TEXT = "no contract line matched"
+_NOT_LINE_PRICE = re.compile(r"\bper[\s-]*diem\b|\bhalf[\s-]*day\b|\bcase[\s-]*rate\b", re.I)
+SOURCE_EXCLUSIONS = ("not_dollars", "chargemaster_as_rate", "per_diem_or_case_rate")
+
+
+def source_exclusion(row: dict[str, Any]) -> str:
+    """'' or the reason a payer row is not a CPT line price (O audit, A6):
+
+    * ``per_diem_or_case_rate``: the item's description, methodology or plan says per diem /
+      half day / case rate (Children's "HC PER DIEM PAIN TREATMENT" carries CPT 99215).
+    * ``not_dollars``: the stated dollar is under 1% of the row's own gross (CHA $5.04 on a
+      $3,510.55 colonoscopy).
+    * ``chargemaster_as_rate``: the amount equals the row's gross and the file's own text says
+      "No contract line matched" (Tufts).
+    """
+    if row["row_kind"] != "payer_rate":
+        return ""
+    texts = (row["description"], row["methodology_raw"], row["plan_raw"])
+    if row["methodology"] in ("per_diem", "case_rate") or any(
+        _NOT_LINE_PRICE.search(t or "") for t in texts
+    ):
+        return "per_diem_or_case_rate"
+    amount, gross = row["amount"], row["gross"]
+    if amount is None or gross is None or row["gross_rule"] != "same_row" or gross <= 0:
+        return ""
+    if row["amount_method"] == "stated" and amount < NOT_DOLLARS_SHARE * gross:
+        return "not_dollars"
+    notes = f"{row['additional_generic_notes']} {row['additional_payer_notes']}".lower()
+    if abs(amount - gross) < 0.005 and NO_CONTRACT_TEXT in notes:
+        return "chargemaster_as_rate"
+    return ""
+
+
 def is_placeholder(amount: float) -> bool:
     return any(abs(amount - p) < 1e-9 for p in PLACEHOLDERS)
 
@@ -330,6 +367,10 @@ def normalize_file(
                 "stage_row": stage_row,
                 "row_ref": f"{spec.source_id}:{sha[:12]}:{stage_row}",
             }
+            if not row["excluded"]:
+                why = source_exclusion(row)
+                if why:
+                    row["excluded"], row["exclude_reason"] = True, why
             rows.append(row)
 
     ambiguous = {nk for nk, amts in nk_amounts.items() if len(amts) > 1}

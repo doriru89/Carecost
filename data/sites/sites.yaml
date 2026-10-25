@@ -62,7 +62,7 @@ sites:
     geocoded_by: census_batch
     geocoded_at: '2026-10-24'
   service_areas:
-  - gi
+  - ortho
   type_2_npis:
   - '1447995311'
   tins:
@@ -70,10 +70,6 @@ sites:
   tins_source: 'clinic-census.csv GB0005: org: 874311329: bcbs: org NPI 1447995311 -> "NEW ENGLAND BAPTIST SURGERY
     CENTER L"'
   offered:
-  - service: endoscopy
-    evidence: census_category
-    source: clinic-census.csv GB0005 category asc_endo
-    checked_at: '2026-10-24'
   - service: mri
     evidence: dph_license
     source: 'DPH licensed clinics list (licensed-clinic-services-sept-2026.xlsx): SHIELDS IMAGING DEDHAM ''Radiology
@@ -81,7 +77,8 @@ sites:
     checked_at: '2026-10-24'
   listing_status: multi_registry
   listing_checked_at: '2026-10-24'
-  notes: 'registries: nppes, cms_pos, dph_facility, hpc_rpo; flags: dph_asc'
+  notes: 'service_areas: orthopedic ASC per https://nebh.org/news-stories/all-news-stories/news/2023/06/nebh-partners-convert-an-outpatient-surgery-department-new-ambulatory-surgery-center-in-dedham
+    ("will focus on all outpatient orthopedic surgical subspecialties"); census category asc_endo overridden (A6)'
 - id: northeast_ambulatory_center_inc_stoneham
   census_id: GB0011
   name: NORTHEAST AMBULATORY CENTER, INC
@@ -2106,7 +2103,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - skin
-  - ortho
   type_2_npis:
   - '1073501649'
   - '1215276415'
@@ -2160,8 +2156,6 @@ sites:
     geocoded_by: census_batch
     geocoded_at: '2026-10-24'
   service_areas:
-  - skin
-  - gi
   - ortho
   type_2_npis:
   - '1164460580'
@@ -2466,7 +2460,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - skin
-  - gi
   type_2_npis:
   - '1932574332'
   tins:
@@ -2508,9 +2501,7 @@ sites:
     geocoded_by: census_batch
     geocoded_at: '2026-10-24'
   service_areas:
-  - skin
   - gi
-  - ortho
   type_2_npis:
   - '1104085604'
   - '1114084472'
@@ -2550,8 +2541,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - skin
-  - gi
-  - ortho
   type_2_npis:
   - '1013237809'
   - '1184661225'
@@ -2727,7 +2716,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - skin
-  - ortho
   type_2_npis:
   - '1104389154'
   - '1740323112'
@@ -2993,7 +2981,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - skin
-  - gi
   tins:
   - 042807148
   tins_source: 'clinic-census.csv GB0168: clinician billing TINs in BCBS TiC (share of the site''s CMS clinicians
@@ -3071,7 +3058,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - skin
-  - gi
   tins:
   - '043466314'
   - '831905041'
@@ -3229,9 +3215,7 @@ sites:
     geocoded_by: census_batch
     geocoded_at: '2026-10-24'
   service_areas:
-  - skin
   - gi
-  - ortho
   type_2_npis:
   - '1033535497'
   - '1073723367'
@@ -3352,8 +3336,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - skin
-  - gi
-  - ortho
   type_2_npis:
   - '1255463972'
   - '1992750996'
@@ -3516,7 +3498,6 @@ sites:
     geocoded_by: census_batch
     geocoded_at: '2026-10-24'
   service_areas:
-  - skin
   - gi
   type_2_npis:
   - '1699789339'
@@ -3599,8 +3580,6 @@ sites:
     geocoded_by: census_batch
     geocoded_at: '2026-10-24'
   service_areas:
-  - skin
-  - gi
   - ortho
   type_2_npis:
   - '1013279108'
@@ -3656,7 +3635,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - gi
-  - ortho
   type_2_npis:
   - '1538191218'
   tins:
@@ -3823,8 +3801,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - ortho
-  - skin
-  - gi
   offered:
   - service: visit
     evidence: census_category
@@ -3983,7 +3959,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - skin
-  - ortho
   type_2_npis:
   - '1144993940'
   - '1184377343'
@@ -4035,8 +4010,6 @@ sites:
     geocoded_by: census_batch
     geocoded_at: '2026-10-24'
   service_areas:
-  - ortho
-  - skin
   - gi
   offered:
   - service: visit

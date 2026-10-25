@@ -29,7 +29,7 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 from app.etl.contracts import TIC_FIELD_NAMES, RateRow
-from app.etl.normalize import RATE_ROW_SCHEMA, _arrow_type, is_placeholder
+from app.etl.normalize import _NOT_LINE_PRICE, RATE_ROW_SCHEMA, _arrow_type, is_placeholder
 from app.etl.tic.index import atomic_write_table, atomic_write_text
 from app.etl.tic.networks import TicNetwork
 from app.etl.tic.targets import Targets
@@ -67,6 +67,7 @@ class NormalizeStats:
     negotiated_type: dict[str, int] = field(default_factory=dict)
     billing_class: dict[str, int] = field(default_factory=dict)
     ambiguous_rows: int = 0
+    excluded: dict[str, int] = field(default_factory=dict)  # A6: reason -> rows (O audit)
     seconds: float = 0.0
 
 
@@ -164,6 +165,11 @@ def normalize_network(
             )
             setting = p["setting"].strip().lower()
             setting = setting if setting in _SETTING else "unknown"
+            # A6 / O audit: a per-diem or case-rate price is not a CPT line price
+            not_line = ntype == "per diem" or any(
+                _NOT_LINE_PRICE.search(x or "")
+                for x in (it.get("name"), it.get("description"), p["additional_information"])
+            )
             for g in hits:
                 entity = entity_for(g["tin_type"], g["tin_digits"], g["tin_value"])
                 nk_parts = [
@@ -201,7 +207,8 @@ def normalize_network(
                         "min_negotiated": None, "max_negotiated": None, "median_amount": None,
                         "p10_amount": None, "p90_amount": None, "allowed_count": "",
                         "above_gross": False, "ambiguous_multi_rate": False,
-                        "payer_plan_mismatch": False, "excluded": False, "exclude_reason": "",
+                        "payer_plan_mismatch": False, "excluded": not_line,
+                        "exclude_reason": "per_diem_or_case_rate" if not_line else "",
                         "additional_generic_notes": "",
                         "additional_payer_notes": p["additional_information"],
                         "source_file": run["source_file"], "source_sha256": sha,
@@ -243,6 +250,7 @@ def normalize_network(
     st.negotiated_type = dict(Counter(r["tic_negotiated_type"] for r in rows))
     st.billing_class = dict(Counter(r["billing_class"] for r in rows))
     st.ambiguous_rows = sum(1 for r in rows if r["ambiguous_multi_rate"])
+    st.excluded = dict(Counter(r["exclude_reason"] for r in rows if r["excluded"]))
     if st.rate_rows + sum(placeholders.values()) != st.expected_rows:
         raise RuntimeError(f"{net.source_id}: normalize row conservation failed")
     out = out or d / "rate_row.parquet"
