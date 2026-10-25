@@ -12,9 +12,9 @@
   },
   "service_codes": [],
   "picked_by": "person",
-  "as_of": "2026-10-24",
+  "as_of": "2026-10-25",
   "data_version": {
-    "build_id": "20261024-10d8a893",
+    "build_id": "20261024-336340ed",
     "build_date": "2026-10-24",
     "tic_release": "tic-2026-10",
     "sites_version": 1,
@@ -29,22 +29,36 @@
         "expected_by": "2027-03-27",
         "late_to_refresh": false,
         "source_rule": "hospital_mrf_365_days",
-        "fetched_at": "2026-10-24",
-        "our_refresh_due": "2026-11-24",
+        "fetched_at": "2026-10-25",
+        "our_refresh_due": "2026-11-25",
         "stale_on_our_side": false,
         "our_rule": "hospital_monthly"
       }
     },
-    "cms_pfs_rvu26a": {
-      "source_kind": "medicare_pfs",
-      "publisher": "CMS (Medicare, Boston 2026)",
+    "cms_opps_addb_2026q4": {
+      "source_kind": "medicare_opps",
+      "publisher": "CMS (Medicare hospital outpatient, OPPS) \u00b7 2026-10",
       "freshness": {
-        "last_updated": "2026-01-01",
+        "last_updated": "2026-10-01",
         "expected_by": "2027-01-01",
         "late_to_refresh": false,
-        "source_rule": "fee_schedule_annual",
-        "fetched_at": "2026-05-02",
-        "our_refresh_due": null,
+        "source_rule": "fee_schedule_quarterly",
+        "fetched_at": "2026-10-25",
+        "our_refresh_due": "2027-01-01",
+        "stale_on_our_side": false,
+        "our_rule": "fee_schedule_per_release"
+      }
+    },
+    "cms_pfs_rvu26d": {
+      "source_kind": "medicare_pfs",
+      "publisher": "CMS (Medicare physician fee schedule) \u00b7 RVU26D",
+      "freshness": {
+        "last_updated": "2026-10-01",
+        "expected_by": "2027-01-01",
+        "late_to_refresh": false,
+        "source_rule": "fee_schedule_quarterly",
+        "fetched_at": "2026-10-25",
+        "our_refresh_due": "2027-01-01",
         "stale_on_our_side": false,
         "our_rule": "fee_schedule_per_release"
       }
@@ -84,17 +98,20 @@
           "ortho",
           "skin",
           "gi"
-        ]
+        ],
+        "children_only": false,
+        "data_notices": []
       },
       "receipt": {
         "lines": [
           {
             "line_id": "visit_facility",
-            "tier": "not_in_public_data",
+            "tier": "certain",
             "likelihood": "certain",
             "step_id": "visit",
             "codes": [
-              "99203"
+              "99203",
+              "G0463"
             ],
             "modifier": null,
             "plain_name": "Visit with a bone & joint doctor: the hospital's fee",
@@ -108,17 +125,33 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "not_loaded",
-              "what": "Medicare's facility fee schedule for the hospital's clinic facility fee (HCPCS G0463 / revenue code 051x) (not loaded yet)",
-              "eta": null
+              "kind": "money",
+              "low": 136.02,
+              "high": 136.02,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_kind": "medicare_opps",
+                "source_file": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b.zip",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "cms_opps_addb_2026q4:2fc507a1fa67:14751:opps",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "our_judgment",
             "doctor_fee": null,
             "ai_suggested": false,
-            "in_total": false,
+            "in_total": true,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [
+              "price.national_unadjusted"
+            ],
             "at": "this_site"
           },
           {
@@ -144,13 +177,13 @@
               "high": 75.54,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
+                "source_id": "cms_pfs_rvu26d",
                 "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:12907",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13010:facility:01",
                 "payer_id": null,
                 "row_id": null
               },
@@ -172,11 +205,12 @@
             "in_total": true,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
             "line_id": "xray_facility",
-            "tier": "not_in_public_data",
+            "tier": "likely",
             "likelihood": "likely",
             "step_id": "xray",
             "codes": [
@@ -195,9 +229,22 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "not_loaded",
-              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
-              "eta": null
+              "kind": "money",
+              "low": 88.91,
+              "high": 88.91,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_kind": "medicare_opps",
+                "source_file": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b.zip",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "cms_opps_addb_2026q4:2fc507a1fa67:8244:opps",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": {
               "kind": "money",
@@ -220,7 +267,7 @@
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
-            "in_total": false,
+            "in_total": true,
             "elsewhere": [],
             "learn_more": [
               {
@@ -231,6 +278,9 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
+            ],
+            "price_notes": [
+              "price.national_unadjusted"
             ],
             "at": "this_site"
           },
@@ -259,13 +309,13 @@
               "high": 9.75,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
+                "source_id": "cms_pfs_rvu26d",
                 "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8009",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:8109:facility:01",
                 "payer_id": null,
                 "row_id": null
               },
@@ -296,6 +346,7 @@
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
             ],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -319,9 +370,13 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "not_loaded",
-              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
-              "eta": null
+              "kind": "not_published",
+              "what": "Medicare's rate for the facility's own fee for this item",
+              "ask": "Ask the billing office what Medicare pays here.",
+              "searched": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b"
+              }
             },
             "list_price": {
               "kind": "money",
@@ -347,6 +402,7 @@
             "in_total": false,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -370,9 +426,13 @@
             "unit": "per_15_minutes",
             "availability": "offered",
             "cell": {
-              "kind": "not_loaded",
-              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
-              "eta": null
+              "kind": "not_published",
+              "what": "Medicare's rate for the facility's own fee for this item",
+              "ask": "Ask the billing office what Medicare pays here.",
+              "searched": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b"
+              }
             },
             "list_price": {
               "kind": "money",
@@ -398,6 +458,7 @@
             "in_total": false,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -463,6 +524,7 @@
             "in_total": false,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -491,13 +553,13 @@
               "high": 42.2,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
+                "source_id": "cms_pfs_rvu26d",
                 "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:1671",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:1771:facility:01",
                 "payer_id": null,
                 "row_id": null
               },
@@ -519,6 +581,7 @@
             "in_total": false,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -540,7 +603,7 @@
             "component": "drug",
             "component_confirmed": false,
             "unit": "once",
-            "availability": "offered",
+            "availability": "unknown",
             "cell": {
               "kind": "not_loaded",
               "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
@@ -553,6 +616,7 @@
             "in_total": false,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -627,6 +691,7 @@
                 "url": "https://www.radiologyinfo.org/en/info/genus"
               }
             ],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -655,13 +720,13 @@
               "high": 46.14,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
+                "source_id": "cms_pfs_rvu26d",
                 "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8742",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:8842:facility:01",
                 "payer_id": null,
                 "row_id": null
               },
@@ -692,11 +757,12 @@
                 "url": "https://www.radiologyinfo.org/en/info/genus"
               }
             ],
+            "price_notes": [],
             "at": "this_site"
           },
           {
             "line_id": "tendon_scan_mri_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "possible",
             "step_id": "tendon_scan_mri",
             "codes": [
@@ -716,9 +782,22 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "not_loaded",
-              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
-              "eta": null
+              "kind": "money",
+              "low": 243.77,
+              "high": 243.77,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_kind": "medicare_opps",
+                "source_file": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b.zip",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "cms_opps_addb_2026q4:2fc507a1fa67:8266:opps",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": {
               "kind": "money",
@@ -753,6 +832,9 @@
                 "url": "https://www.radiologyinfo.org/en/info/shouldermr"
               }
             ],
+            "price_notes": [
+              "price.national_unadjusted"
+            ],
             "at": "this_site"
           },
           {
@@ -781,13 +863,13 @@
               "high": 67.92,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
+                "source_id": "cms_pfs_rvu26d",
                 "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8075",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:8175:facility:01",
                 "payer_id": null,
                 "row_id": null
               },
@@ -818,11 +900,12 @@
                 "url": "https://www.radiologyinfo.org/en/info/shouldermr"
               }
             ],
+            "price_notes": [],
             "at": "this_site"
           },
           {
             "line_id": "mr_arthrogram_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -843,9 +926,22 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "not_loaded",
-              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
-              "eta": null
+              "kind": "money",
+              "low": 800.9,
+              "high": 800.9,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_kind": "medicare_opps",
+                "source_file": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b.zip",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "cms_opps_addb_2026q4:2fc507a1fa67:8267:opps",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": {
               "kind": "money",
@@ -876,6 +972,9 @@
                 "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
               }
             ],
+            "price_notes": [
+              "price.national_unadjusted"
+            ],
             "at": "this_site"
           },
           {
@@ -905,13 +1004,13 @@
               "high": 80.84,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
+                "source_id": "cms_pfs_rvu26d",
                 "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8078",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:8178:facility:01",
                 "payer_id": null,
                 "row_id": null
               },
@@ -938,6 +1037,7 @@
                 "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
               }
             ],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -961,11 +1061,15 @@
             "component": "facility",
             "component_confirmed": true,
             "unit": "once",
-            "availability": "offered",
+            "availability": "unknown",
             "cell": {
-              "kind": "not_loaded",
-              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
-              "eta": null
+              "kind": "not_published",
+              "what": "Medicare's rate for the facility's own fee for this item",
+              "ask": "Ask the billing office what Medicare pays here.",
+              "searched": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b"
+              }
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -979,6 +1083,7 @@
                 "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
               }
             ],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -1001,20 +1106,20 @@
             "component": "professional",
             "component_confirmed": true,
             "unit": "once",
-            "availability": "offered",
+            "availability": "unknown",
             "cell": {
               "kind": "money",
               "low": 44.33,
               "high": 44.33,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
+                "source_id": "cms_pfs_rvu26d",
                 "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:2092",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:2192:facility:01",
                 "payer_id": null,
                 "row_id": null
               },
@@ -1041,6 +1146,7 @@
                 "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
               }
             ],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -1064,11 +1170,15 @@
             "component": "facility",
             "component_confirmed": true,
             "unit": "once",
-            "availability": "offered",
+            "availability": "unknown",
             "cell": {
-              "kind": "not_loaded",
-              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
-              "eta": null
+              "kind": "not_published",
+              "what": "Medicare's rate for the facility's own fee for this item",
+              "ask": "Ask the billing office what Medicare pays here.",
+              "searched": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b"
+              }
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -1082,6 +1192,7 @@
                 "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
               }
             ],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -1104,20 +1215,20 @@
             "component": "professional",
             "component_confirmed": true,
             "unit": "once",
-            "availability": "offered",
+            "availability": "unknown",
             "cell": {
               "kind": "money",
               "low": 29.29,
               "high": 29.29,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
+                "source_id": "cms_pfs_rvu26d",
                 "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8829",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:8929:facility:01",
                 "payer_id": null,
                 "row_id": null
               },
@@ -1144,15 +1255,18 @@
                 "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
               }
             ],
+            "price_notes": [],
             "at": "this_site"
           }
         ],
         "totals": {
           "likely": {
-            "low": 85.29,
-            "high": 85.29,
+            "low": 310.22,
+            "high": 310.22,
             "line_ids": [
+              "visit_facility",
               "visit_doctor",
+              "xray_facility",
               "xray_reading"
             ],
             "includes_estimate": false,
@@ -1160,16 +1274,8 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 4,
+          "missing": 2,
           "excluded": [
-            {
-              "line_id": "visit_facility",
-              "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "xray_facility",
-              "reason": "no_dollar_amount"
-            },
             {
               "line_id": "physical_therapy_facility",
               "reason": "no_dollar_amount"
@@ -1200,7 +1306,7 @@
             },
             {
               "line_id": "tendon_scan_mri_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "tendon_scan_mri_reading",
@@ -1208,7 +1314,7 @@
             },
             {
               "line_id": "mr_arthrogram_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_reading",

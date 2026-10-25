@@ -21,5 +21,10 @@
   },
   "service_codes": [],
   "picked_by": "person",
-  "site_ids": null
+  "site_ids": null,
+  "near": {
+    "lat": 42.3736,
+    "lon": -71.119
+  },
+  "max_sites": 12
 }

@@ -339,7 +339,25 @@
       "title": "Payer Raw",
       "type": "string"
     },
+    "place_of_service": {
+      "anyOf": [
+        {
+          "enum": [
+            "non_facility",
+            "facility"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Fee schedules: the place-of-service rate this row is (Medicare PFS / MassHealth non-facility = office POS 11, facility = hospital / ASC POS 19/22/24). None = the rate is not split by place of service (global, -26, -TC, OPPS, ASC, anesthesia) or the row is a hospital / TiC row (TiC keeps its POS list in tic_service_codes)",
+      "title": "Place Of Service"
+    },
     "plan_raw": {
+      "description": "The plan as the file names it (hospital / TiC); a fee schedule keeps the published column it was read from. Never a machine field: see place_of_service",
       "title": "Plan Raw",
       "type": "string"
     },

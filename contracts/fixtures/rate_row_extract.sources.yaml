@@ -2,7 +2,7 @@ version: 2
 note: Freshness inputs for the sources in rate_row_extract.csv. Written by python
   -m app.quote.fixtures_gen; do not edit by hand.
 data_version:
-  build_id: 20261024-10d8a893
+  build_id: 20261024-336340ed
   build_date: '2026-10-24'
   tic_release: tic-2026-10
 codes:
@@ -55,15 +55,368 @@ codes:
 - '99215'
 - S9083
 - S9088
+census_tins:
+  GB0034:
+  - 042807148
+  GB0037:
+  - 043397450
+  GB0042:
+  - 043487710
+  - '571146349'
+  - '832916287'
+  - '833063891'
+  GB0045:
+  - 042519087
+  GB0065:
+  - 042297845
+  - 042682152
+  - 043218267
+  - '043335166'
+  GB0066:
+  - 042697983
+  - 042807148
+  - 043459576
+  - '1851666978'
+  GB0067:
+  - '043320571'
+  - '1760607808'
+  - '814207696'
+  GB0068:
+  - 043278862
+  - '863792771'
+  - '873323847'
+  GB0075:
+  - '042472266'
+  - 043397450
+  GB0077:
+  - 043397450
+  GB0084:
+  - '042472266'
+  - '1346506763'
+  - '873221557'
+  GB0089:
+  - 043278862
+  - '863792771'
+  - '873323847'
+  GB0090:
+  - 043487710
+  - '571146349'
+  - '832916287'
+  - '833063891'
+  GB0092:
+  - 043397450
+  GB0096:
+  - 043397450
+  GB0098:
+  - 042743894
+  - 043218267
+  - '843477628'
+  - '874508256'
+  GB0099:
+  - 042743894
+  - 043218267
+  - '843477628'
+  - '881858984'
+  GB0102:
+  - '043466314'
+  GB0113:
+  - 042796795
+  - '874508256'
+  - '922805272'
+  GB0139:
+  - 043397450
+  GB0144:
+  - 043397450
+  - '222768204'
+  GB0145:
+  - 042697983
+  - 042807148
+  - 043459576
+  - 061651087
+  - '204012780'
+  - '270508726'
+  - '300761298'
+  - '352465814'
+  - '371711619'
+  - '471208235'
+  GB0148:
+  - 042312909
+  - '043466314'
+  GB0150:
+  - '042263040'
+  - '043466314'
+  GB0151:
+  - 043218267
+  - '043354360'
+  - '510172171'
+  GB0152:
+  - 042103881
+  - 043228556
+  - '222768204'
+  - '464043367'
+  - '470855942'
+  GB0153:
+  - 042103881
+  - '222768204'
+  GB0154:
+  - 042807148
+  - '222658209'
+  GB0155:
+  - 010632978
+  - 042648197
+  - 042697983
+  - 042807148
+  GB0157:
+  - 043278862
+  - '043464322'
+  - '202602054'
+  - '263152597'
+  - '824030385'
+  - '863792771'
+  - '873323847'
+  GB0158:
+  - '200786395'
+  - '201611897'
+  - '874508256'
+  GB0159:
+  - 042645468
+  - 043218267
+  GB0160:
+  - 042485590
+  - 043299688
+  - '832916287'
+  - '833063891'
+  - '834203732'
+  GB0162:
+  - 043397450
+  GB0163:
+  - '043320571'
+  GB0165:
+  - 042962214
+  - 043026897
+  - '043521464'
+  - '203179520'
+  - '471961259'
+  - '562619535'
+  - '820671467'
+  GB0166:
+  - 043026897
+  - '222768204'
+  - '820671467'
+  GB0168:
+  - 042807148
+  GB0169:
+  - '042472266'
+  - 043397450
+  GB0170:
+  - '043320571'
+  - '043466314'
+  - 043483843
+  - '831905041'
+  GB0171:
+  - 042103881
+  - '222768204'
+  GB0172:
+  - 043397450
+  GB0174:
+  - '043320571'
+  GB0175:
+  - 042312909
+  - '042451743'
+  - 042532699
+  - 042590456
+  - '043466314'
+  GB0176:
+  - 042103881
+  - '222768204'
+  GB0177:
+  - 042704683
+  GB0178:
+  - 043026897
+  - '043242075'
+  GB0180:
+  - 042103881
+  - '043243146'
+  - '222768204'
+  - '320058309'
+  GB0182:
+  - 042103881
+  - '222768204'
+  - '262308255'
+  - '832502123'
+  GB0187:
+  - '043466314'
+  - '222560501'
+  GB0188:
+  - 043397450
+  - '464649821'
+  GB0189:
+  - '043214763'
+  - 043278862
+  - 043397450
+  - '474307410'
+  - '844059500'
+  GB0193:
+  - 043397450
+  GB0194:
+  - '043320571'
+  GB0197:
+  - 042455168
+  - 043278862
+  - '832778031'
+  - '863792771'
+  - '873323847'
+  GB0204:
+  - '042604607'
+  - 043032822
+  - 043072629
+  - 043364590
+  - '571146349'
+  - '814207696'
+  GB0210:
+  - '043466314'
+  GB0216:
+  - 042697983
+  - 042807148
+  - '050542303'
+  GB0223:
+  - 042962214
+  - '811186412'
+  - '820671467'
+  GB0228:
+  - 042807148
+  GB0230:
+  - 042807148
+  - '043466314'
+  GB0233:
+  - 042502803
+  - 042797368
+  - 043235796
+  - 043397450
+  - 043532873
+  - '820671467'
+  - '993870308'
+  GB0235:
+  - 042103881
+  - '202838785'
+  - '222768204'
+  GB0238:
+  - 042103881
+  - '043354353'
+  - '222566792'
+  - '320058309'
+  GB0239:
+  - '043354353'
+  - '1740266477'
+  - '237425849'
+  - '510172171'
+  GB0255:
+  - '043320571'
+  GB0274:
+  - '454148303'
+  - '460903626'
+  - '472237031'
+  GB0275:
+  - '454148303'
+  - '460782127'
+  - '460903626'
+  - '472237031'
+  GB0292:
+  - '208550806'
+  GB0301:
+  - '1821254046'
+  - '454148303'
+  - '460782127'
+  - '460903626'
+  - '472237031'
+  GB0306:
+  - '454148303'
+  - '460782127'
+  - '460903626'
+  - '472237031'
+  GB0308:
+  - '208550806'
+  GB0325:
+  - '454148303'
+  - '460782127'
+  - '460903626'
+  - '472237031'
+  GB0326:
+  - 042103881
+  GB0327:
+  - '272343207'
+  - '454148303'
+  - '460903626'
+  - '472237031'
+  GB0328:
+  - '222768204'
+  GB0344:
+  - '272343207'
+  - '454148303'
+  - '460903626'
+  - '463251869'
+  - '472237031'
+  GB0345:
+  - '450666163'
+  - '454148303'
+  - '460782127'
+  - '460903626'
+  - '472237031'
+  GB0347:
+  - '208550806'
+  GB0354:
+  - '208550806'
+  GB0357:
+  - '454148303'
+  - '460782127'
+  - '460903626'
+  - '472237031'
+  - '933649266'
+  GB0363:
+  - '208550806'
+  GB0367:
+  - '1184972333'
+  - '1942383138'
+  - '272343207'
+  - '454148303'
+  - '454478857'
+  - '460903626'
+  - '472237031'
+  GB0372:
+  - '043320571'
+  GB0376:
+  - '454148303'
+  - '460782127'
+  - '460903626'
+  - '472237031'
+  GB0377:
+  - '454148303'
+  - '460782127'
+  - '460903626'
+  - '472237031'
+  GB0378:
+  - '460903626'
+  GB0380:
+  - '222768204'
+  GB0383:
+  - '208550806'
+  GB0389:
+  - 042103881
+  - '222768204'
+  - '320058309'
+  - '931375169'
+  GB0395:
+  - 042807148
+  - '471683619'
 sources:
-  brigham_mrf:
+  bidmc_mrf:
     source_kind: hospital_mrf
-    publisher: Brigham and Women's Hospital
-    source_file: 188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip
-    source_sha256: 188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce
-    source_date: '2026-03-27'
-    last_updated: '2026-03-27'
-    fetched_at: '2026-10-24'
+    publisher: Beth Israel Deaconess Medical Center
+    source_file: 7e4dd9074968e9bb6b0d9c961b8d8dd5ee94be2249496eadd5135404d2a24e23.json
+    source_sha256: 7e4dd9074968e9bb6b0d9c961b8d8dd5ee94be2249496eadd5135404d2a24e23
+    source_date: '2026-04-01'
+    last_updated: '2026-04-01'
+    fetched_at: '2026-10-25'
     source_rule: hospital_mrf_365_days
     our_rule: hospital_monthly
     expected_by: null
@@ -72,17 +425,194 @@ sources:
     product: ''
     network_label: ''
     line_of_business: ''
-  cms_pfs_rvu26a:
+  bmc_brighton_mrf:
+    source_kind: hospital_mrf
+    publisher: BMC Brighton (Formerly St. Elizabeth's)
+    source_file: 82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed.zip
+    source_sha256: 82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed
+    source_date: '2026-03-13'
+    last_updated: '2026-03-13'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  bmc_mrf:
+    source_kind: hospital_mrf
+    publisher: Boston Medical Center
+    source_file: 77660f57289afcf250bc03eff8ef68819b813eb0b85d82e8e3a413c45c19ecde.zip
+    source_sha256: 77660f57289afcf250bc03eff8ef68819b813eb0b85d82e8e3a413c45c19ecde
+    source_date: '2026-03-13'
+    last_updated: '2026-03-13'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  brigham_mrf:
+    source_kind: hospital_mrf
+    publisher: Brigham and Women's Hospital
+    source_file: 188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip
+    source_sha256: 188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce
+    source_date: '2026-03-27'
+    last_updated: '2026-03-27'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  cha_mrf:
+    source_kind: hospital_mrf
+    publisher: CHA Cambridge Hospital
+    source_file: 2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv
+    source_sha256: 2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233
+    source_date: '2026-03-20'
+    last_updated: '2026-03-20'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  cms_anes_base_units_cy2022:
     source_kind: medicare_pfs
-    publisher: CMS (Medicare, Boston 2026)
-    source_file: PPRRVU2026_Jan_nonQPP.csv
-    source_sha256: 9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de
-    source_date: '2026-01-01'
-    last_updated: '2026-01-01'
-    fetched_at: '2026-05-02'
+    publisher: CMS (Medicare physician fee schedule) · CY2022 base units x RVU26D
+      anesthesia CF
+    source_file: 3fbb43abb6ef2f4ba7680995c94572d7cc69f503a1c123264565223b2e2502d1.zip
+    source_sha256: 3fbb43abb6ef2f4ba7680995c94572d7cc69f503a1c123264565223b2e2502d1
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-25'
+    source_rule: fee_schedule_quarterly
+    our_rule: fee_schedule_per_release
+    expected_by: '2027-01-01'
+    our_refresh_due: '2027-01-01'
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  cms_opps_addb_2026q4:
+    source_kind: medicare_opps
+    publisher: CMS (Medicare hospital outpatient, OPPS) · 2026-10
+    source_file: 2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b.zip
+    source_sha256: 2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-25'
+    source_rule: fee_schedule_quarterly
+    our_rule: fee_schedule_per_release
+    expected_by: '2027-01-01'
+    our_refresh_due: '2027-01-01'
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  cms_pfs_rvu26d:
+    source_kind: medicare_pfs
+    publisher: CMS (Medicare physician fee schedule) · RVU26D
+    source_file: 521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip
+    source_sha256: 521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-25'
+    source_rule: fee_schedule_quarterly
+    our_rule: fee_schedule_per_release
+    expected_by: '2027-01-01'
+    our_refresh_due: '2027-01-01'
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  franciscan_mrf:
+    source_kind: hospital_mrf
+    publisher: Franciscan Childrens
+    source_file: f7d22355fb08df5fc1fbf7655b7c632a6dc47b1c79c24d56498be2a9fccc2fcd.csv
+    source_sha256: f7d22355fb08df5fc1fbf7655b7c632a6dc47b1c79c24d56498be2a9fccc2fcd
+    source_date: '2026-04-01'
+    last_updated: '2026-04-01'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  masshealth_316_20261001:
+    source_kind: masshealth_fs
+    publisher: MassHealth (EOHHS fee schedule) · 101 CMR 316.00
+    source_file: 10d41619694e49c618a50bedf83e1ff3732ef9cc8d73ab0babdcf0ebad2929bc.pdf
+    source_sha256: 10d41619694e49c618a50bedf83e1ff3732ef9cc8d73ab0babdcf0ebad2929bc
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-25'
     source_rule: fee_schedule_annual
     our_rule: fee_schedule_per_release
     expected_by: '2027-01-01'
+    our_refresh_due: '2027-01-01'
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  masshealth_317_20261001:
+    source_kind: masshealth_fs
+    publisher: MassHealth (EOHHS fee schedule) · 101 CMR 317.00
+    source_file: c2f42966300df40ab167721381813e7a7b25f6bbf3de5645c5716d499f7fc428.pdf
+    source_sha256: c2f42966300df40ab167721381813e7a7b25f6bbf3de5645c5716d499f7fc428
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-25'
+    source_rule: fee_schedule_annual
+    our_rule: fee_schedule_per_release
+    expected_by: '2027-01-01'
+    our_refresh_due: '2027-01-01'
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  masshealth_318_20261001:
+    source_kind: masshealth_fs
+    publisher: MassHealth (EOHHS fee schedule) · 101 CMR 318.00
+    source_file: 25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf
+    source_sha256: 25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-25'
+    source_rule: fee_schedule_annual
+    our_rule: fee_schedule_per_release
+    expected_by: '2027-01-01'
+    our_refresh_due: '2027-01-01'
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  mgh_mrf:
+    source_kind: hospital_mrf
+    publisher: Massachusetts General Hospital
+    source_file: 5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba.zip
+    source_sha256: 5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba
+    source_date: '2026-03-27'
+    last_updated: '2026-03-27'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
     our_refresh_due: null
     payer_id: null
     product: ''
@@ -95,7 +625,7 @@ sources:
     source_sha256: a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c
     source_date: '2026-04-01'
     last_updated: '2026-04-01'
-    fetched_at: '2026-10-24'
+    fetched_at: '2026-10-25'
     source_rule: hospital_mrf_365_days
     our_rule: hospital_monthly
     expected_by: null
@@ -104,6 +634,22 @@ sources:
     product: ''
     network_label: ''
     line_of_business: ''
+  tic_aetna_choice_pos2_pl_1s7:
+    source_kind: insurer_tic
+    publisher: Aetna · Aetna Choice POS II (pl-1s7)
+    source_file: 2026-10-05_pl-1s7-tr25_Aetna-Life-Insurance-Company.json.gz
+    source_sha256: f104407b97e97e6e3a9f1dc6c294ddc457067e22fdf587e29e73db9e56b3a0b9
+    source_date: '2026-10-05'
+    last_updated: '2026-10-05'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: AETNA
+    product: POS
+    network_label: Aetna Choice POS II (pl-1s7)
+    line_of_business: commercial
   tic_bcbs_ma_bce_fi:
     source_kind: insurer_tic
     publisher: Blue Cross Blue Shield of Massachusetts · Blue Care Elect PPO (fully
@@ -220,6 +766,22 @@ sources:
     product: HMO
     network_label: New England Managed Care (self insured)
     line_of_business: commercial
+  tic_fallon_community_care:
+    source_kind: insurer_tic
+    publisher: Fallon Health · Fallon Community Care (Connector)
+    source_file: 20260901-185656_sapphire-fallon_in-network-rates.json.gz
+    source_sha256: db426f7935b7026552366541dbeb9be73cdf7116ef192c0d10c572a2a83ae8a7
+    source_date: '2026-09-01'
+    last_updated: '2026-09-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: FALLON
+    product: HMO
+    network_label: Fallon Community Care (Connector)
+    line_of_business: connector
   tufts_mrf:
     source_kind: hospital_mrf
     publisher: Tufts Medical Center
@@ -227,7 +789,7 @@ sources:
     source_sha256: d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971
     source_date: '2026-04-01'
     last_updated: '2026-04-01'
-    fetched_at: '2026-10-24'
+    fetched_at: '2026-10-25'
     source_rule: hospital_mrf_365_days
     our_rule: hospital_monthly
     expected_by: null

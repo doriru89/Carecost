@@ -387,8 +387,8 @@ def _rung6(site: _Site) -> dict:
     }
     t = site["receipt"]["totals"]["likely"]
     t.update(low=90.66, high=135.97, includes_estimate=True, includes_late_source=False)
-    site.resp["sources"]["cms_pfs_rvu26a"] = copy.deepcopy(
-        _fixture("quote_bcbs_hmo_shoulder")["sources"]["cms_pfs_rvu26a"]
+    site.resp["sources"]["cms_pfs_rvu26d"] = copy.deepcopy(
+        _fixture("quote_bcbs_hmo_shoulder")["sources"]["cms_pfs_rvu26d"]
     )
     del site.resp["sources"]["bcbs_ma_tic_hmo"]
     site.resp["notices"].remove("late_to_refresh_sources")

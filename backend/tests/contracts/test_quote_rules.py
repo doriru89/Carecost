@@ -196,7 +196,7 @@ def test_rung_7_shows_only_the_medicare_reference():
     ln = _line(doc, MA, "visit_doctor")
     assert ln["doctor_fee"]["rung"] == 7
     ln["cell"] = copy.deepcopy(_line(doc, MA, "visit_facility")["cell"])  # a BCBS MRF rate
-    del doc["sources"]["cms_pfs_rvu26a"]  # no other line uses the PFS file now
+    del doc["sources"]["cms_pfs_rvu26d"]  # no other line uses the PFS file now
     _bad(doc, "rung 7 is the Medicare reference")
 
 

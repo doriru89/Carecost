@@ -11,8 +11,9 @@ Tests (tests/contracts/test_api_contracts.py) fail when the committed files drif
 
 Schema mode: API payloads (quote, chat, catalog) are exported in *serialization* mode with every
 field required, because the server always emits every field (pydantic dumps defaults). That keeps
-``kind`` required on Money / Gap, so TypeScript can narrow the unions. Request models have no
-defaults at all, so their schema is the same in both modes. ``site.schema.json`` describes a YAML
+``kind`` required on Money / Gap, so TypeScript can narrow the unions. ``QuoteRequest`` is exported
+in *validation* mode (C2): its ``near`` / ``max_sites`` have defaults, so a client may leave them
+out and TypeScript marks them optional; every other request field has no default. ``site.schema.json`` describes a YAML
 file people write by hand, so it is exported in *validation* mode (defaults may be omitted).
 
 The TypeScript generator is ~100 lines here instead of an npm dependency: it only needs the subset
@@ -70,6 +71,7 @@ SPECS: dict[str, dict[str, Any]] = {
         "title": "QuoteApi",
         "models": [quote.QuoteRequest, quote.QuoteResponse, quote.OurDataResponse],
         "mode": "serialization",
+        "input_models": [quote.QuoteRequest],  # validation mode: defaulted fields are optional
         "aliases": {
             "Cell": _union_alias(etl.Cell),
             "Gap": _union_alias(etl.Gap),
@@ -121,15 +123,20 @@ ROOT_MODELS: dict[str, type[BaseModel]] = {
 def build_schema(name: str) -> dict[str, Any]:
     spec = SPECS[name]
     gen = _EmittedSchema if spec["mode"] == "serialization" else GenerateJsonSchema
+
+    def mode(m: type[BaseModel]) -> str:
+        return "validation" if m in spec.get("input_models", ()) else spec["mode"]
+
     refs, top = models_json_schema(
-        [(m, spec["mode"]) for m in spec["models"]], schema_generator=gen
+        [(m, mode(m)) for m in spec["models"]],
+        schema_generator=gen,  # type: ignore[misc]
     )
     defs: dict[str, Any] = dict(top.get("$defs", {}))
     for alias, body in spec["aliases"].items():
         if alias in defs:
             raise ValueError(f"{name}: alias {alias} collides with a model")
         defs[alias] = body
-    roots = [refs[(m, spec["mode"])] for m in spec["models"]]
+    roots = [refs[(m, mode(m))] for m in spec["models"]]
     schema: dict[str, Any] = {
         "$schema": "https://json-schema.org/draft/2020-12/schema",
         "$id": ID_BASE + name,

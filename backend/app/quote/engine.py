@@ -31,6 +31,7 @@ doctor fees have no public source.
 
 from __future__ import annotations
 
+import math
 import statistics
 from collections import defaultdict
 from collections.abc import Callable, Iterable
@@ -50,7 +51,7 @@ from app.quote.contracts import (
     tier_basis_for_rating,
 )
 from app.quote.registry import Registry, posted_source
-from app.quote.store import DEFAULT_RULES, RateStore, Row, SourceMeta
+from app.quote.store import DEFAULT_RULES, FEE_SCHEDULE_KINDS, RateStore, Row, SourceMeta
 from app.sites.contracts import Freshness, Site
 
 Json = dict[str, Any]
@@ -60,6 +61,17 @@ GFE_ASK = (
     "Ask for a Good Faith Estimate (No Surprises Act). In Massachusetts the office must tell you "
     "the price within 2 business days (c.111 §228)."
 )
+
+
+def _km(near: Any, site: Site) -> float:
+    """Great-circle distance (km) from the request's point to a site (haversine)."""
+    la1, lo1 = math.radians(near.lat), math.radians(near.lon)
+    la2, lo2 = math.radians(site.coords.lat), math.radians(site.coords.lon)
+    h = (
+        math.sin((la2 - la1) / 2) ** 2
+        + math.cos(la1) * math.cos(la2) * math.sin((lo2 - lo1) / 2) ** 2
+    )
+    return 12742.0 * math.asin(math.sqrt(h))
 
 
 def _matches(when: dict[str, list[str]], answers: dict[str, list[str]]) -> bool:
@@ -146,17 +158,15 @@ class Engine:
         self.threshold = float(cfg["conflict_threshold"])
         self.posted = {s.id: m for s in self.reg.sites.values() if (m := posted_source(s))}
         self.posted_by_source = {m.source_id: m for m in self.posted.values()}
-        self.pfs = self._one("medicare_pfs")
-        self.opps = self._one("medicare_opps")
-        self.asc = self._one("medicare_asc")
-        self.mh = self._one("masshealth_fs")
+        # fee schedules: every loaded file of a kind (Medicare PFS = RVU file + anesthesia file;
+        # MassHealth = 101 CMR 316 / 317 / 318). One release per file id.
+        self.pfs = self.store.sources_of("medicare_pfs")
+        self.opps = self.store.sources_of("medicare_opps")
+        self.asc = self.store.sources_of("medicare_asc")
+        self.mh = self.store.sources_of("masshealth_fs")
         self._multiples: dict[tuple, Json | None] = {}
-
-    def _one(self, kind: str) -> str | None:
-        srcs = self.store.sources_of(kind)
-        if len(srcs) > 1:
-            raise SystemExit(f"two {kind} sources loaded ({srcs}); one release per pack")
-        return srcs[0] if srcs else None
+        self._evidence: dict[tuple[str, str], bool] = {}
+        self.tic_sources = self.store.sources_of("insurer_tic")
 
     # ------------------------------------------------------------------ money from rows
 
@@ -235,10 +245,31 @@ class Engine:
             }
         return cell, po
 
+    def _site_tins(self, site: Site) -> tuple[list[str], list[str]]:
+        """(the site's own billing TINs / NPIs, TINs the TiC matcher linked to its census id that
+        it does not list). Rows of a linked TIN count only when they name the site."""
+        own = self.reg.site_tins(site)
+        linked = sorted(self.store.census_tins.get(site.census_id or "", frozenset()) - set(own))
+        return own, linked
+
+    def _site_tic(self, q: Req, site: Site, codes: list[str], mod: str, pos: frozenset,
+                  billing_class: str, *, any_pos: bool = False,
+                  networks: list[str] | None = None) -> list[Row]:  # fmt: skip
+        own, linked = self._site_tins(site)
+        rows = self._tic_rows(q, own, codes, mod, pos, billing_class, any_pos=any_pos,
+                              networks=networks)  # fmt: skip
+        if linked:
+            cid = site.census_id or ""
+            more = self._tic_rows(q, linked, codes, mod, pos, billing_class, any_pos=any_pos,
+                                  networks=networks)  # fmt: skip
+            rows += [r for r in more if r.names_site(cid)]
+        return rows
+
     def _tic_rows(self, q: Req, tins: Iterable[str], codes: list[str], mod: str, pos: frozenset,
-                  billing_class: str, *, any_pos: bool = False) -> list[Row]:  # fmt: skip
+                  billing_class: str, *, any_pos: bool = False,
+                  networks: list[str] | None = None) -> list[Row]:  # fmt: skip
         rows: list[Row] = []
-        for sid in q.networks:
+        for sid in q.networks if networks is None else networks:
             for tin in tins:
                 for code in codes:
                     rows += self.store.get("tic", (sid, tin, code))
@@ -255,8 +286,8 @@ class Engine:
             cands = fac or cands
         return cands
 
-    def _facility_cell(self, site: Site, code: str, q: Req, cls: str):
-        """-> (cell, component_confirmed, list_price)."""
+    def _facility_cell3(self, site: Site, code: str, q: Req, cls: str):
+        """Cash / insurance -> (cell, component_confirmed, list_price)."""
         src = self._site_hospital_source(site)
         codes = [code]
         if cls == "visit":
@@ -297,8 +328,8 @@ class Engine:
                 first, pct = self._dollar_or_pct(rows, src)
                 confirmed = all(r.component == "facility" for r in rows if r.amount is not None)
             tic = None
-            if q.networks and site.tins and loaded:
-                trows = self._tic_rows(q, site.tins, loaded, "", frozenset(), "facility")
+            if q.networks and loaded:
+                trows = self._site_tic(q, site, loaded, "", frozenset(), "facility")
                 tic = self._money(
                     [r for r in trows if r.amount is not None and r.negotiated_type != "percentage"],
                     lambda r: r.amount, PriceBasis.negotiated,
@@ -325,38 +356,77 @@ class Engine:
             return _not_loaded(f"this insurer's rate for {what}: we have no price file for "
                                "your plan yet"), True, list_price  # fmt: skip
 
-        # government payment: the fee schedule, and the hospital file's own row for that payer
-        fs_src = self.mh if q.kind == "masshealth" else (
-            self.asc if site.billing_type == "asc" else self.opps
-        )  # fmt: skip
-        fs_codes = codes
-        fs = None
-        if fs_src:
-            fs_rows = [
-                r for c in fs_codes for r in self.store.get("by_code", (fs_src, c))
-                if r.modifiers in ("", "TC") and r.billing_class in ("facility", "unknown")
-                and (q.kind != "masshealth" or r.plan_raw in ("facility", ""))
-            ]  # fmt: skip
-            fs = self._money(fs_rows, lambda r: r.amount, PriceBasis.fee_schedule)
+        raise AssertionError(q.kind)  # government payments: _gov_facility_cell
+
+    def _facility_cell(self, site: Site, code: str, q: Req, cls: str):
+        """-> (cell, component_confirmed, list_price, extra) where extra may carry
+        ``price_notes`` and the ``codes`` the number was found under."""
+        if q.kind in ("medicare", "masshealth"):
+            return self._gov_facility_cell(site, code, q, cls)
+        cell, confirmed, lp = self._facility_cell3(site, code, q, cls)
+        return cell, confirmed, lp, {}
+
+    def _gov_facility_cell(self, site: Site, code: str, q: Req, cls: str):
+        """Medicare / MassHealth facility fee. The hospital file's own row for that payer wins (it
+        is what this hospital is paid). Else Medicare's national schedule: OPPS for a hospital,
+        ASC for a surgery center (national unadjusted: a Boston facility is paid it times a wage
+        adjustment we have not loaded; the line says so). MassHealth's hospital outpatient
+        payment (APAD / PAPE) is not loaded: not_loaded."""
+        src = self._site_hospital_source(site)
+        codes = [code]
+        if cls == "visit":
+            codes += self.cfg["hospital_visit_facility_codes"]
+        loaded = [c for c in codes if c in self.store.codes]
+        list_price = self._list_price(src, code) if src else None
+        what = "the facility's own fee for this item"
+        if cls == "visit":
+            what = "the hospital's clinic facility fee (HCPCS G0463 / revenue code 051x)"
+        label = {"medicare": "Medicare", "masshealth": "MassHealth"}[q.kind]
         own = None
         if src and loaded:
-            payer = q.payer or ""
             lobs = {"medicare"} if q.kind == "medicare" else {"medicaid"}
-            rows = self._hospital_rows(src, loaded, payer, lobs, None)
+            rows = self._hospital_rows(src, loaded, q.payer or "", lobs, None)
+            if q.kind == "masshealth":  # not the standard MassHealth plan (engine.yaml)
+                bad = [w.upper() for w in self.cfg["masshealth_plan_exclude"]]
+                rows = [r for r in rows if not any(w in r.plan_raw.upper() for w in bad)]
             own, _ = self._dollar_or_pct(rows, src)
-        cell = self._combine(fs, own) if fs and own and own["kind"] == "money" else fs or own
-        if cell:
-            return cell, True, list_price
-        label = {"medicare": "Medicare", "masshealth": "MassHealth"}[q.kind]
-        if fs_src:
-            return _not_published(self.store, fs_src, f"{label}'s rate for {what}",
-                                  "Ask the billing office what Medicare/MassHealth pays here."), \
-                True, list_price  # fmt: skip
+        if own:
+            return own, True, list_price, {}
+        if q.kind == "masshealth":
+            return _not_loaded(f"MassHealth's hospital outpatient payment for {what} (APAD; not "
+                               "loaded yet)"), True, list_price, {}  # fmt: skip
+        fs_srcs = self.asc if site.billing_type == "asc" else self.opps
+        rows = [
+            r for s in fs_srcs for c in codes for r in self.store.get("by_code", (s, c))
+            if r.modifiers in ("", "TC") and r.billing_class in ("facility", "unknown")
+        ]  # fmt: skip
+        fs = self._money(rows, lambda r: r.amount, PriceBasis.fee_schedule)
+        if fs:
+            priced = sorted({r.code for r in rows if r.amount is not None},
+                            key=codes.index)  # fmt: skip
+            return fs, True, list_price, {
+                "price_notes": ["price.national_unadjusted"],
+                "codes": list(dict.fromkeys([code, *priced])),
+            }  # fmt: skip
+        if fs_srcs:
+            return _not_published(self.store, self._fs_cite(fs_srcs, codes),
+                                  f"{label}'s rate for {what}",
+                                  "Ask the billing office what Medicare pays here."), \
+                True, list_price, {}  # fmt: skip
         return (
             _not_loaded(f"{label}'s facility fee schedule for {what} (not loaded yet)"),
             True,
             list_price,
+            {},
         )
+
+    def _fs_cite(self, srcs: list[str], codes: list[str]) -> str:
+        """The file a 'not published' fee-schedule claim names: the first that lists the code at
+        all (another variant), else the first of the kind."""
+        for s in srcs:
+            if any(self.store.get("by_code", (s, c)) for c in codes):
+                return s
+        return srcs[0]
 
     def _cash_rows(self, src: str, code: str) -> list[Row]:
         return [
@@ -381,28 +451,37 @@ class Engine:
 
     # ------------------------------------------------------------------ doctor side (ladder)
 
-    def _fs_rows(self, src: str | None, code: str, mod: str, setting: str) -> list[Row]:
-        if src is None:
-            return []
+    def _areas(self, site: Site | None) -> frozenset[str]:
+        """Fee-schedule price areas that apply at a site: its Medicare PFS locality, the national
+        OPPS / ASC rates, MassHealth's statewide schedule."""
+        loc = self.reg.medicare_locality(site) if site else self.cfg["medicare_locality"]["default"]
+        return frozenset({f"medicare_ma_{loc}", "medicare_national", "masshealth"})
+
+    def _fs_rows(self, srcs: list[str], code: str, mod: str, setting: str,
+                 site: Site | None) -> list[Row]:  # fmt: skip
+        """Doctor's-fee rows of a fee schedule: this modifier, this place of service (a rate not
+        split by place of service counts at any), this site's price area."""
+        areas = self._areas(site)
         return [
             r
+            for src in srcs
             for r in self.store.get("by_code", (src, code))
-            if r.modifiers == mod and (mod == "26" or r.plan_raw in (setting, ""))
-            and r.billing_class in ("professional", "unknown")
+            if r.modifiers == mod and r.place_of_service in (setting, "")
+            and r.billing_class in ("professional", "unknown") and r.entity_id in areas
         ]  # fmt: skip
 
-    def _fee_schedule_fee(self, src: str | None, code: str, mod: str, setting: str, rung: int,
-                          label: str):  # fmt: skip
-        rows = self._fs_rows(src, code, mod, setting)
+    def _fee_schedule_fee(self, srcs: list[str], code: str, mod: str, setting: str, rung: int,
+                          label: str, site: Site | None):  # fmt: skip
+        rows = self._fs_rows(srcs, code, mod, setting, site)
         m = self._money(rows, lambda r: r.amount, PriceBasis.fee_schedule)
         fee = {"rung": rung, "explanation_key": f"fee.rung_{rung}_" + (
             {4: "masshealth", 5: "medicare", 7: "medicare_reference"}[rung])}  # fmt: skip
         if m:
             return m, fee
-        if src:
+        if srcs:
             return _not_published(
                 self.store,
-                src,
+                self._fs_cite(srcs, [code]),
                 f"{label}'s rate for this doctor's fee",
                 "Ask the office what it bills for this service.",
             ), None
@@ -460,11 +539,12 @@ class Engine:
         lows, highs = [], []
         if self.pfs:
             for code in sorted(self.store.codes):
-                fs = [r.amount for r in self._fs_rows(self.pfs, code, "", setting) if r.amount]
+                fs = [r.amount for r in self._fs_rows(self.pfs, code, "", setting, site)
+                      if r.amount]  # fmt: skip
                 if not fs:
                     continue
                 rows = [
-                    r for r in self._tic_rows(q, site.tins, [code], "", pos, "professional")
+                    r for r in self._site_tic(q, site, [code], "", pos, "professional")
                     if r.amount is not None and r.negotiated_type != "percentage"
                 ]  # fmt: skip
                 if rows:
@@ -483,7 +563,7 @@ class Engine:
 
     def _estimate(self, q: Req, site: Site, code: str, mod: str, setting: str, pos: frozenset):
         mult = self._multiple(q, site, setting, pos)
-        rows = self._fs_rows(self.pfs, code, mod, setting)
+        rows = self._fs_rows(self.pfs, code, mod, setting, site)
         if not mult or not rows:
             return None
         base = min(rows, key=lambda r: (r.amount or 0, r.stage_row))
@@ -514,12 +594,13 @@ class Engine:
             return _no_source("the doctor's own fee for a self-pay patient"), {
                 "rung": None, "explanation_key": "fee.self_pay_no_source"}, [code]  # fmt: skip
         if q.kind == "medicare":
-            cell, fee = self._fee_schedule_fee(self.pfs, code, mod, setting, 5, "Medicare")
+            cell, fee = self._fee_schedule_fee(self.pfs, code, mod, setting, 5, "Medicare", site)
             return cell, fee, [code]
         if q.kind == "masshealth":
-            cell, fee = self._fee_schedule_fee(self.mh, code, mod, setting, 4, "MassHealth")
+            cell, fee = self._fee_schedule_fee(self.mh, code, mod, setting, 4, "MassHealth", site)
             if cell["kind"] != "money" and self.pfs:
-                ref, rfee = self._fee_schedule_fee(self.pfs, code, mod, setting, 7, "Medicare")
+                ref, rfee = self._fee_schedule_fee(self.pfs, code, mod, setting, 7, "Medicare",
+                                                   site)  # fmt: skip
                 if ref["kind"] == "money":
                     return ref, rfee, [code]
             return cell, fee, [code]
@@ -540,11 +621,15 @@ class Engine:
         if not q.networks:
             return _not_loaded("this insurer's rates for your plan: we have no price file for "
                                "this plan yet"), None, codes  # fmt: skip
-        if not site.tins and not site.type_2_npis:
+        own, linked = self._site_tins(site)
+        rad = (
+            self.reg.radiology_tins.get(site.hospital_entity_id or "", [])
+            if mod == "26" and hospital_line else []
+        )  # fmt: skip
+        if not own and not linked and not rad:
             return _not_loaded("the doctor's fee here: the insurer publishes it per billing "
                                "group, and we have not linked this site's doctor groups yet"), \
                 None, codes  # fmt: skip
-        tins = [*site.tins, *site.type_2_npis]
         # Austin 2026-10-24 (P1 #6): a professional reading (modifier 26) uses the group's TiC rate
         # even when the group lists it only at office place of service 11. Medicare pays the PC
         # of a diagnostic test the same in either setting: "For the professional component (PC)
@@ -553,8 +638,17 @@ class Engine:
         # 100-04, chapter 12, §20.4.2 Site of Service Payment Differential,
         # https://www.cms.gov/Regulations-and-Guidance/Guidance/Manuals/downloads/clm104c12.pdf,
         # read 2026-10-24). Every other professional line keeps the place-of-service filter.
-        rows = self._tic_rows(q, tins, codes, mod, pos, "professional", any_pos=(mod == "26"))
-        got = self._group_rate(rows)
+        # C2 (P1 #6): a hospital's reading (-26) is billed by the radiologists' group that reads
+        # there (radiology_groups.yaml: CMS Doctors & Clinicians at the hospital's address -> TiC
+        # NPI -> TIN); that group's rate first, the site's own billing groups only when it has none.
+        rows: list[Row] = []
+        got = None
+        if rad:
+            rows = self._tic_rows(q, rad, codes, mod, pos, "professional", any_pos=True)
+            got = self._group_rate(rows)
+        if got is None:
+            rows = self._site_tic(q, site, codes, mod, pos, "professional", any_pos=(mod == "26"))
+            got = self._group_rate(rows)
         if got:
             return got[0], got[1], codes
         src = self._site_hospital_source(site)
@@ -570,7 +664,7 @@ class Engine:
         if est:
             return est[0], est[1], codes
         if self.pfs:
-            ref = self._money(self._fs_rows(self.pfs, code, mod, setting), lambda r: r.amount,
+            ref = self._money(self._fs_rows(self.pfs, code, mod, setting, site), lambda r: r.amount,
                               PriceBasis.fee_schedule)  # fmt: skip
             if ref:
                 return ref, {"rung": 7, "explanation_key": "fee.rung_7_medicare_reference"}, codes
@@ -622,9 +716,10 @@ class Engine:
             return _no_source("your primary care office's self-pay fee"), {
                 "rung": None, "explanation_key": "fee.self_pay_no_source"}  # fmt: skip
         if q.kind == "medicare":
-            return self._fee_schedule_fee(self.pfs, code, "", "non_facility", 5, "Medicare")
+            return self._fee_schedule_fee(self.pfs, code, "", "non_facility", 5, "Medicare", None)
         if q.kind == "masshealth":
-            return self._fee_schedule_fee(self.mh, code, "", "non_facility", 4, "MassHealth")
+            return self._fee_schedule_fee(self.mh, code, "", "non_facility", 4, "MassHealth",
+                                          None)  # fmt: skip
         pcp = [
             t
             for s in self.reg.sites.values()
@@ -734,7 +829,8 @@ class Engine:
 
     def _line(self, item: Item, line_id: str, codes: list[str], mod: str | None, plain: str,
               tech: str, component: str, confirmed: bool, cell: Json, *, extra_gloss=(),
-              list_price: Json | None = None, doctor_fee: Json | None = None) -> Json:  # fmt: skip
+              list_price: Json | None = None, doctor_fee: Json | None = None,
+              price_notes: list[str] | None = None) -> Json:  # fmt: skip
         return {
             "line_id": line_id,
             "tier": "",
@@ -761,6 +857,7 @@ class Engine:
             "in_total": False,
             "elsewhere": [],
             "learn_more": item.learn,
+            "price_notes": list(price_notes or []),
             "at": item.at,
         }
 
@@ -790,14 +887,15 @@ class Engine:
                                         False, cell))  # fmt: skip
                 continue
             if two_part and cls != "anesthesia":
-                cell, confirmed, lp = self._facility_cell(site, code, q, cls)
+                cell, confirmed, lp, extra = self._facility_cell(site, code, q, cls)
                 who = (
                     "the hospital's fee" if billing == "hospital_outpatient" else "the center's fee"
                 )
                 lines.append(self._line(
-                    it, f"{it.stem}_facility", [code], shown, f"{it.plain}: {who}",
-                    f"{it.tech} (facility fee)", "facility", confirmed, cell,
-                    extra_gloss=["facility_fee"], list_price=lp))  # fmt: skip
+                    it, f"{it.stem}_facility", extra.get("codes", [code]), shown,
+                    f"{it.plain}: {who}", f"{it.tech} (facility fee)", "facility", confirmed, cell,
+                    extra_gloss=["facility_fee"], list_price=lp,
+                    price_notes=extra.get("price_notes", [])))  # fmt: skip
             if two_part and code in self.facility_only:
                 continue
             if two_part:
@@ -818,7 +916,70 @@ class Engine:
                 lines.append(self._line(
                     it, it.stem, codes, shown, it.plain, tech, "professional", True, cell,
                     doctor_fee=fee))  # fmt: skip
+        for ln in lines:
+            if ln["at"] == "this_site" and not self._offers(site, ln["codes"][0]):
+                ln["availability"] = "unknown"
+            if code_class(ln["codes"][0]) == "anesthesia" and self._fs_money(ln["cell"]):
+                ln["price_notes"].append("price.anesthesia_base_units_only")
         return lines
+
+    @staticmethod
+    def _fs_money(cell: Json) -> bool:
+        moneys = [cell] if cell["kind"] == "money" else (
+            [cell["a"], cell["b"]] if cell["kind"] == "conflict" else [])  # fmt: skip
+        return any(m["prov"]["source_kind"] in FEE_SCHEDULE_KINDS for m in moneys)
+
+    def _offers(self, site: Site, code: str) -> bool:
+        """Positive evidence that the site offers this code (Site.offered, P1 #14): an offered
+        entry naming the code or a service that covers it (engine.yaml offered_services), a
+        posted self-pay price for it, or any rate row for it in the site's own hospital file or
+        in a TiC file for the site's billing TINs. Absence = unknown, never 'not offered'."""
+        key = (site.id, code)
+        if key in self._evidence:
+            return self._evidence[key]
+        ok = any(code in o.codes or self._service_covers(o.service, code) for o in site.offered)
+        ok = ok or any(code in p.codes for p in site.cash_prices)
+        if not ok:
+            ok = self._first_row(site, code) is not None
+        self._evidence[key] = ok
+        return ok
+
+    def _first_row(self, site: Site, code: str) -> Row | None:
+        """The first rate row for the code in the site's own hospital file or a TiC file for its
+        TINs (any modifier, place of service, payer). Recorded alone, so the committed extract
+        reproduces the evidence without every row behind it."""
+        found: Row | None = None
+        src = self._site_hospital_source(site)
+        if src and self.store.by_code.get((src, code)):
+            found = self.store.by_code[(src, code)][0]
+        if found is None:
+            own, linked = self._site_tins(site)
+            cid = site.census_id or ""
+            for sid in self.tic_sources:
+                for t in [*own, *linked]:
+                    for r in self.store.tic.get((sid, t, code), ()):
+                        if t in own or r.names_site(cid):
+                            found = r
+                            break
+                    if found:
+                        break
+                if found:
+                    break
+        if found is not None and self.store.recorder is not None:
+            self.store.recorder.add([found])
+        return found
+
+    def _service_covers(self, service: str, code: str) -> bool:
+        rule = self.cfg["offered_services"].get(service) or {}
+        if "classes" in rule and code_class(code) not in rule["classes"]:
+            return False
+        if "words" in rule:
+            desc = self.reg.describe(code) or ""
+            if not any(w in desc for w in rule["words"]):
+                return False
+        if "ranges" in rule:
+            return any(lo <= code <= hi and len(code) == len(lo) for lo, hi in rule["ranges"])
+        return bool(rule)
 
     @staticmethod
     def _finish(lines: list[Json]) -> list[Json]:
@@ -970,9 +1131,11 @@ class Engine:
             "price_source_id": price_source_id,
             "listing_status": site.listing_status,
             "service_areas": list(site.service_areas),
+            "children_only": site.children_only,
+            "data_notices": self.reg.data_notices.get(price_source_id or "", []),
         }
 
-    def _price_source(self, site: Site, q: Req) -> tuple[str | None, str]:
+    def _price_source(self, site: Site, q: Req, lines: list[Json]) -> tuple[str | None, str]:
         src = self._site_hospital_source(site)
         if src:
             return src, "price_file"
@@ -982,7 +1145,13 @@ class Engine:
         if q.kind == "insurance":
             return (q.networks[0], "price_file") if q.networks else (None, "price_on_request")
         fs = self.pfs if q.kind == "medicare" else self.mh
-        return (fs, "price_file") if fs else (None, "price_on_request")
+        if not fs:
+            return None, "price_on_request"
+        cited = [  # the schedule file behind the site's first fee-schedule number
+            ln["cell"]["prov"]["source_id"] for ln in lines
+            if ln["cell"]["kind"] == "money" and ln["cell"]["prov"]["source_id"] in fs
+        ]  # fmt: skip
+        return (cited[0] if cited else fs[0]), "price_file"
 
     # ------------------------------------------------------------------ freshness
 
@@ -1040,24 +1209,21 @@ class Engine:
         quotable = {
             sid: s for sid, s in self.reg.sites.items() if s.listing_status != "registry_only"
         }
-        wanted = req.site_ids if req.site_ids is not None else sorted(quotable)
-        site_quotes, without = [], []
+        named = req.site_ids is not None
+        wanted = req.site_ids if named else sorted(quotable)
+        cands, without = [], []
         for sid in wanted:
             site = quotable.get(sid)
             if site is None:
                 raise ValueError(f"unknown or unquotable site {sid}")
+            if site.children_only and not named:
+                continue  # D27: a children-only site only when the person names it
             if not self.reg.area_ok(site, areas) or not items:
                 without.append(sid)
                 continue
-            lines = self._finish(self._site_lines(site, items, q))
-            src, label = self._price_source(site, q)
-            site_quotes.append({
-                "site": self._summary(site, src, label),
-                "receipt": {"lines": lines, "totals": {}},
-                "other_payers": self._other_payers(hs, lines, q)
-                if (hs := self._site_hospital_source(site)) else [],
-            })  # fmt: skip
-        self._elsewhere(site_quotes)
+            cands.append(site)
+        if req.near is not None:  # C2: the max_sites closest sites, then I7 inside that set
+            cands = sorted(cands, key=lambda s: (_km(req.near, s), s.id))[: req.max_sites]
 
         fresh_cache: dict[str, Freshness] = {}
 
@@ -1066,6 +1232,17 @@ class Engine:
                 fresh_cache[sid] = self.freshness(self._meta(sid, q), as_of)
             return fresh_cache[sid]
 
+        built = {site.id: self._site_quote(site, items, q) for site in cands}
+        if len(built) > req.max_sites:  # no point given: the best max_sites of the whole set (I7)
+            for sq in built.values():
+                sq["receipt"]["totals"] = self._totals(sq["receipt"]["lines"], q, fresh)
+            best = self._rank(list(built.values()))[: req.max_sites]
+            built = {sq["site"]["site_id"]: sq for sq in best}
+        site_quotes = list(built.values())
+        for sq in site_quotes:  # fresh copies of the mutable parts, then I7 inside the chosen set
+            for ln in sq["receipt"]["lines"]:
+                ln["elsewhere"] = []
+        self._elsewhere(site_quotes)
         for sq in site_quotes:
             sq["receipt"]["totals"] = self._totals(sq["receipt"]["lines"], q, fresh)
         site_quotes = self._rank(site_quotes)
@@ -1117,12 +1294,25 @@ class Engine:
         }  # fmt: skip
         return QuoteResponse.model_validate(body)
 
+    def _site_quote(self, site: Site, items: list[Item], q: Req) -> Json:
+        lines = self._finish(self._site_lines(site, items, q))
+        src, label = self._price_source(site, q, lines)
+        hs = self._site_hospital_source(site)
+        return {
+            "site": self._summary(site, src, label),
+            "receipt": {"lines": lines, "totals": {}},
+            "other_payers": self._other_payers(hs, lines, q) if hs else [],
+        }
+
     def _elsewhere(self, site_quotes: list[Json]) -> None:
         """'Available elsewhere': a line with no number here lists the cheapest other sites in
         this quote that have a dollar amount for the same part of the same step."""
         offers: dict[tuple, list[tuple[float, Json, Json]]] = defaultdict(list)
         for sq in site_quotes:
             for ln in sq["receipt"]["lines"]:
+                fee = ln["doctor_fee"]
+                if (fee and (fee["rung"] or 0) >= 7) or ln["ai_suggested"]:
+                    continue  # a reference-only number is not an offer (it never counts)
                 if ln["cell"]["kind"] == "money" and ln["at"] == "this_site":
                     k = (
                         ln["step_id"] or ",".join(ln["codes"]),
@@ -1156,7 +1346,7 @@ class Engine:
         """I7: missing = unpriced certain/likely lines + certain/likely steps another site lists
         and this one does not; then order by (missing, total low, site id)."""
 
-        def expected(ln: Json) -> bool:
+        def expected(ln: Json) -> bool:  # contracts._expected
             return ln["likelihood"] in ("certain", "likely") and not ln["ai_suggested"]
 
         def key(ln: Json) -> str:

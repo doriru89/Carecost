@@ -18,6 +18,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import Response
 from pydantic import ValidationError
 
+from app.quote.catalog import path_services
 from app.quote.contracts import OurDataResponse, QuoteRequest
 from app.quote.engine import Engine
 
@@ -59,7 +60,7 @@ def catalog_path_services(path_id: str, request: Request) -> list[dict]:
     cat = request.app.state.catalog
     if path_id not in {p.id for p in cat.care_paths}:
         raise HTTPException(status_code=404, detail=f"unknown care path {path_id}")
-    return [s.model_dump(mode="json") for s in cat.services if path_id in s.care_paths]
+    return path_services(cat, request.app.state.catalog_names, path_id)
 
 
 @router.get("/our-data")

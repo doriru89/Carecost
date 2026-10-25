@@ -70,6 +70,21 @@ export interface Coordinates {
 }
 
 /**
+ * One entry of data/etl/data_quality_notices.yaml (written by people, never by the AI).
+ */
+export interface DataNotice {
+  id: string;
+  /**
+   * e.g. content_changed_date_unchanged
+   */
+  kind: string;
+  source_id: string;
+  observed: string;
+  detail: string;
+  effect: string | null;
+}
+
+/**
  * Shown in 'Sources & dates'. Lets the UI say how old the whole answer is.
  */
 export interface DataVersion {
@@ -269,6 +284,18 @@ export interface Multiple {
 }
 
 /**
+ * Where to look from (C2, 208 sites). The browser sends the point the person chose; it is
+ * used only to pick the closest sites and is never stored or logged.
+ */
+export interface Near {
+  /**
+   * Greater Boston scope guard (as Coordinates)
+   */
+  lat: number;
+  lon: number;
+}
+
+/**
  * No public source exists at all (e.g. self-pay physician fee).
  */
 export interface NoSource {
@@ -422,9 +449,17 @@ export interface QuoteRequest {
   service_codes: string[];
   picked_by: "person" | "assistant";
   /**
-   * Only these sites; None = every site that offers the services
+   * Only these sites; None = every site that offers the services. A children-only site is quoted only when named here (D27)
    */
   site_ids: string[] | null;
+  /**
+   * C2: quote the max_sites sites closest to this point (straight-line distance). None = the max_sites best-ranked sites (I7) of the whole set
+   */
+  near?: Near | null;
+  /**
+   * C2: at most this many sites in the response; I7 ranks inside the chosen set
+   */
+  max_sites?: number;
 }
 
 export interface QuoteResponse {
@@ -512,6 +547,10 @@ export interface ReceiptLine {
   elsewhere: ElsewhereOption[];
   learn_more: LearnMore[];
   /**
+   * C2: fixed copy keys that explain how the line's number was made (e.g. a Medicare national rate not adjusted for Boston wages). Empty = nothing to add
+   */
+  price_notes: ("price.national_unadjusted" | "price.anesthesia_base_units_only")[];
+  /**
    * Where this part of the care happens. your_primary_care: an HMO referral visit happens at the person's own primary care office, not at this site; the price is a range over the primary care groups we have, never this site's (P1 problem 15)
    */
   at: "this_site" | "your_primary_care";
@@ -555,6 +594,14 @@ export interface SiteSummary {
    */
   listing_status: "web_verified" | "multi_registry";
   service_areas: ("ortho" | "skin" | "gi" | "urgent_care")[];
+  /**
+   * Pediatric-only site (D27)
+   */
+  children_only: boolean;
+  /**
+   * C2: data-quality notices about this site's own price file (data/etl/data_quality_notices.yaml), e.g. its content changed but its date did not
+   */
+  data_notices: DataNotice[];
 }
 
 /**

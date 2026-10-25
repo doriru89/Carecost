@@ -260,6 +260,59 @@
       "title": "Coordinates",
       "type": "object"
     },
+    "DataNotice": {
+      "additionalProperties": false,
+      "description": "One entry of data/etl/data_quality_notices.yaml (written by people, never by the AI).",
+      "properties": {
+        "detail": {
+          "title": "Detail",
+          "type": "string"
+        },
+        "effect": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Effect"
+        },
+        "id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "description": "e.g. content_changed_date_unchanged",
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Kind",
+          "type": "string"
+        },
+        "observed": {
+          "format": "date",
+          "title": "Observed",
+          "type": "string"
+        },
+        "source_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Source Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "source_id",
+        "observed",
+        "detail",
+        "effect"
+      ],
+      "title": "DataNotice",
+      "type": "object"
+    },
     "DataVersion": {
       "additionalProperties": false,
       "description": "Shown in 'Sources & dates'. Lets the UI say how old the whole answer is.",
@@ -965,6 +1018,31 @@
       "title": "Multiple",
       "type": "object"
     },
+    "Near": {
+      "additionalProperties": false,
+      "description": "Where to look from (C2, 208 sites). The browser sends the point the person chose; it is\nused only to pick the closest sites and is never stored or logged.",
+      "properties": {
+        "lat": {
+          "description": "Greater Boston scope guard (as Coordinates)",
+          "maximum": 43.5,
+          "minimum": 41.0,
+          "title": "Lat",
+          "type": "number"
+        },
+        "lon": {
+          "maximum": -69.5,
+          "minimum": -72.5,
+          "title": "Lon",
+          "type": "number"
+        }
+      },
+      "required": [
+        "lat",
+        "lon"
+      ],
+      "title": "Near",
+      "type": "object"
+    },
     "NoSource": {
       "additionalProperties": false,
       "description": "No public source exists at all (e.g. self-pay physician fee).",
@@ -1468,6 +1546,26 @@
           ],
           "title": "Care Path Id"
         },
+        "max_sites": {
+          "default": 12,
+          "description": "C2: at most this many sites in the response; I7 ranks inside the chosen set",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Max Sites",
+          "type": "integer"
+        },
+        "near": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Near"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C2: quote the max_sites sites closest to this point (straight-line distance). None = the max_sites best-ranked sites (I7) of the whole set"
+        },
         "payment": {
           "discriminator": {
             "mapping": {
@@ -1524,7 +1622,7 @@
               "type": "null"
             }
           ],
-          "description": "Only these sites; None = every site that offers the services",
+          "description": "Only these sites; None = every site that offers the services. A children-only site is quoted only when named here (D27)",
           "title": "Site Ids"
         }
       },
@@ -1868,6 +1966,18 @@
           "title": "Plain Name",
           "type": "string"
         },
+        "price_notes": {
+          "description": "C2: fixed copy keys that explain how the line's number was made (e.g. a Medicare national rate not adjusted for Boston wages). Empty = nothing to add",
+          "items": {
+            "enum": [
+              "price.national_unadjusted",
+              "price.anesthesia_base_units_only"
+            ],
+            "type": "string"
+          },
+          "title": "Price Notes",
+          "type": "array"
+        },
         "step_id": {
           "anyOf": [
             {
@@ -1953,6 +2063,7 @@
         "in_total",
         "elsewhere",
         "learn_more",
+        "price_notes",
         "at"
       ],
       "title": "ReceiptLine",
@@ -2028,8 +2139,22 @@
           "title": "Booking",
           "type": "array"
         },
+        "children_only": {
+          "default": false,
+          "description": "Pediatric-only site (D27)",
+          "title": "Children Only",
+          "type": "boolean"
+        },
         "coords": {
           "$ref": "#/$defs/Coordinates"
+        },
+        "data_notices": {
+          "description": "C2: data-quality notices about this site's own price file (data/etl/data_quality_notices.yaml), e.g. its content changed but its date did not",
+          "items": {
+            "$ref": "#/$defs/DataNotice"
+          },
+          "title": "Data Notices",
+          "type": "array"
         },
         "hours": {
           "anyOf": [
@@ -2164,7 +2289,9 @@
         "price_label",
         "price_source_id",
         "listing_status",
-        "service_areas"
+        "service_areas",
+        "children_only",
+        "data_notices"
       ],
       "title": "SiteSummary",
       "type": "object"

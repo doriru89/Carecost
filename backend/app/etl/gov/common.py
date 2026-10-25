@@ -10,10 +10,12 @@ rows. How the contract fields are used for a fee schedule:
                        national unadjusted), ``masshealth`` (statewide)
 ``row_kind``           ``payer_rate`` (a government payer's own rate)
 ``payer_raw/_id``      the schedule name / ``MEDICARE`` or ``MASSHEALTH``
-``plan_raw``           the place-of-service variant, machine readable: ``non_facility``
-                       (office, POS 11), ``facility`` (hospital / ASC, POS 22/24), ``global``,
-                       ``professional`` (-26), ``technical`` (-TC), ``opps``, ``asc``,
-                       ``anesthesia_base``
+``plan_raw``           the published column the amount was read from: ``non_facility``,
+                       ``facility``, ``global``, ``professional`` (-26), ``technical`` (-TC),
+                       ``opps``, ``asc``, ``anesthesia_base`` (kept for row_ref and audit; the
+                       engine never reads it)
+``place_of_service``   ``non_facility`` (office, POS 11) / ``facility`` (hospital / ASC, POS
+                       19/22/24) for a rate split by place of service, else None (stream C2)
 ``methodology``        ``fee_schedule``; ``dollar_basis`` ``dollar``
 ``amount``             the dollar amount; ``negotiated_algorithm`` holds the formula with the
                        inputs it used (PFS: RVUs x GPCIs x CF), so a number is re-derivable
@@ -21,11 +23,10 @@ rows. How the contract fields are used for a fee schedule:
                        the published table), unique within the source
 =====================  =====================================================================
 
-``RateRow.provenance()`` / ``to_cell()`` (``app/etl/contracts.py``, stream C) still label every
-payer row ``negotiated`` / ``stated``. Until C teaches them about fee schedules, use
-``fee_schedule_money`` here: basis ``fee_schedule``, method ``computed_fee_schedule`` for a
-computed PFS price, ``stated`` for a number copied from the table, and no ``payer_id`` (fee
-schedules are not a payer's negotiated rate).
+``RateRow.provenance()`` / ``to_cell()`` (``app/etl/contracts.py``) know fee schedules (stream
+C2): basis ``fee_schedule``, method ``computed_fee_schedule`` for the Medicare PFS, ``stated`` for
+a number copied from the table (OPPS / ASC / MassHealth), and no ``payer_id`` (``Money`` rejects a
+fee-schedule number that carries one). ``fee_schedule_money`` below renders the same Money.
 """
 
 from __future__ import annotations
@@ -116,6 +117,7 @@ def make_row(
         "component_rule": "none",
         "payer_raw": payer_raw,
         "plan_raw": variant,
+        "place_of_service": variant if variant in ("non_facility", "facility") else None,
         "payer_id": payer_id,
         "line_of_business": lob,
         "product": "",

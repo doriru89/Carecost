@@ -90,7 +90,7 @@ def test_our_data_lists_both_freshness_sides(client):
 
 def test_health(client):
     h = client.get("/api/health").json()
-    assert h["ok"] and h["rows"] > 1000 and h["build_id"] == "20261024-10d8a893"
+    assert h["ok"] and h["rows"] > 1000 and h["build_id"] == "20261024-336340ed"
 
 
 def test_chat_router_is_mounted_at_api(store, registry):
