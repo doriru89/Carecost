@@ -38,7 +38,7 @@ from dataclasses import dataclass, field
 from datetime import date
 from typing import Any
 
-from app.care_paths.models import CarePath, Step
+from app.care_paths.models import CarePath
 from app.etl.contracts import Method, PriceBasis
 from app.quote.contracts import (
     CashPayment,
@@ -271,7 +271,11 @@ class Engine:
             if src is None:
                 return _no_source(f"{what} for a self-pay patient"), True, None
             if not loaded:
-                return _not_loaded(f"{what}: we do not read this code from price files yet"), True, None
+                return (
+                    _not_loaded(f"{what}: we do not read this code from price files yet"),
+                    True,
+                    None,
+                )
             rows = [r for c in loaded for r in self._cash_rows(src, c)]
             m = self._money(rows, lambda r: r.discounted_cash, PriceBasis.discounted_cash)
             if m:
@@ -305,7 +309,11 @@ class Engine:
             if pct:
                 return pct, confirmed, list_price
             if not loaded:
-                return _not_loaded(f"{what}: we do not read this code from price files yet"), True, list_price
+                return (
+                    _not_loaded(f"{what}: we do not read this code from price files yet"),
+                    True,
+                    list_price,
+                )
             if src:
                 return _not_published(self.store, src, f"this insurer's rate for {what} here",
                                       "Ask the billing office for a Good Faith Estimate for your "
@@ -344,7 +352,11 @@ class Engine:
             return _not_published(self.store, fs_src, f"{label}'s rate for {what}",
                                   "Ask the billing office what Medicare/MassHealth pays here."), \
                 True, list_price  # fmt: skip
-        return _not_loaded(f"{label}'s facility fee schedule for {what} (not loaded yet)"), True, list_price
+        return (
+            _not_loaded(f"{label}'s facility fee schedule for {what} (not loaded yet)"),
+            True,
+            list_price,
+        )
 
     def _cash_rows(self, src: str, code: str) -> list[Row]:
         return [
@@ -388,8 +400,12 @@ class Engine:
         if m:
             return m, fee
         if src:
-            return _not_published(self.store, src, f"{label}'s rate for this doctor's fee",
-                                  "Ask the office what it bills for this service."), None
+            return _not_published(
+                self.store,
+                src,
+                f"{label}'s rate for this doctor's fee",
+                "Ask the office what it bills for this service.",
+            ), None
         if code_class(code) == "anesthesia":
             return _not_loaded(f"{label}'s anesthesia fee (base units x time x the anesthesia "
                                "conversion factor; not loaded yet)"), None  # fmt: skip
@@ -560,12 +576,16 @@ class Engine:
                 return ref, {"rung": 7, "explanation_key": "fee.rung_7_medicare_reference"}, codes
         pct = sorted((r.negotiated_pct, r.stage_row) for r in rows if r.negotiated_pct is not None)
         if pct:
-            return {
-                "kind": "percent_only",
-                "pct": pct[0][0],
-                "of": "the doctor group's billed charge",
-                "searched": _searched(self.store, q.networks[0]),
-            }, None, codes
+            return (
+                {
+                    "kind": "percent_only",
+                    "pct": pct[0][0],
+                    "of": "the doctor group's billed charge",
+                    "searched": _searched(self.store, q.networks[0]),
+                },
+                None,
+                codes,
+            )
         return _not_published(self.store, q.networks[0],
                               "this insurer's rate for this doctor group and item",
                               "Ask the office which doctor group bills for it and what your "
@@ -623,9 +643,12 @@ class Engine:
             fee.pop("by_npi", None)
             fee.pop("npi_count", None)
             return money, fee
-        return _not_published(self.store, q.networks[0],
-                              "this insurer's rate for a primary care visit",
-                              "Ask your primary care office what your plan pays for a visit."), None
+        return _not_published(
+            self.store,
+            q.networks[0],
+            "this insurer's rate for a primary care visit",
+            "Ask your primary care office what your plan pays for a visit.",
+        ), None
 
     # ------------------------------------------------------------------ items
 
@@ -673,7 +696,9 @@ class Engine:
                                         tech=desc, **base))  # fmt: skip
             for ai in st.ai_potential:
                 for c in ai.cpts:
-                    stem = f"{st.id}_drug_ai" if c.role == "drug" else f"{st.id}_{c.code.lower()}_ai"
+                    stem = (
+                        f"{st.id}_drug_ai" if c.role == "drug" else f"{st.id}_{c.code.lower()}_ai"
+                    )
                     out.append(Item(stem=stem, code=c.code, unit="once",
                                     plain="The medicine in the shot" if c.role == "drug"
                                     else "A part the assistant suggests",
@@ -720,8 +745,10 @@ class Engine:
             "plain_name": plain,
             "technical_name": tech,
             "why": item.why,
-            "glossary_keys": [*item.gloss, *[g for g in extra_gloss if g in self.reg.glossary
-                                               and g not in item.gloss]],  # fmt: skip
+            "glossary_keys": [
+                *item.gloss,
+                *[g for g in extra_gloss if g in self.reg.glossary and g not in item.gloss],
+            ],  # fmt: skip
             "component": component,
             "component_confirmed": confirmed,
             "unit": item.unit,
@@ -764,7 +791,9 @@ class Engine:
                 continue
             if two_part and cls != "anesthesia":
                 cell, confirmed, lp = self._facility_cell(site, code, q, cls)
-                who = "the hospital's fee" if billing == "hospital_outpatient" else "the center's fee"
+                who = (
+                    "the hospital's fee" if billing == "hospital_outpatient" else "the center's fee"
+                )
                 lines.append(self._line(
                     it, f"{it.stem}_facility", [code], shown, f"{it.plain}: {who}",
                     f"{it.tech} (facility fee)", "facility", confirmed, cell,
@@ -830,7 +859,12 @@ class Engine:
                     "portal_label": yp.get("portal_label"), "portal_url": yp.get("portal_url")}  # fmt: skip
         kind = {"cash": "cash_full_amount", "medicare": "medicare_20_percent",
                 "masshealth": "masshealth_small_or_no_copay"}[q.kind]  # fmt: skip
-        return {"kind": kind, "note_key": f"youpay.{kind}", "portal_label": None, "portal_url": None}
+        return {
+            "kind": kind,
+            "note_key": f"youpay.{kind}",
+            "portal_label": None,
+            "portal_url": None,
+        }
 
     def _totals(self, lines: list[Json], q: Req, fresh: Callable[[str], Freshness]) -> Json:
         summed = [ln for ln in lines if ln["in_total"]]
@@ -850,7 +884,9 @@ class Engine:
                 "includes_stale_source": any(x.stale_on_our_side for x in f),
             }
         partial = any(
-            ln["likelihood"] in ("certain", "likely") and not ln["in_total"] and not ln["ai_suggested"]
+            ln["likelihood"] in ("certain", "likely")
+            and not ln["in_total"]
+            and not ln["ai_suggested"]
             for ln in lines
         )
         return {
@@ -1001,7 +1037,9 @@ class Engine:
             items = self._code_items(q)
             areas = set().union(*(self.reg.code_areas(c) for c in req.service_codes))
             areas = areas or {"ortho", "skin", "gi", "urgent_care"}
-        quotable = {sid: s for sid, s in self.reg.sites.items() if s.listing_status != "registry_only"}
+        quotable = {
+            sid: s for sid, s in self.reg.sites.items() if s.listing_status != "registry_only"
+        }
         wanted = req.site_ids if req.site_ids is not None else sorted(quotable)
         site_quotes, without = [], []
         for sid in wanted:
@@ -1086,7 +1124,12 @@ class Engine:
         for sq in site_quotes:
             for ln in sq["receipt"]["lines"]:
                 if ln["cell"]["kind"] == "money" and ln["at"] == "this_site":
-                    k = (ln["step_id"] or ",".join(ln["codes"]), ln["component"], ln["codes"][0], ln["modifier"])
+                    k = (
+                        ln["step_id"] or ",".join(ln["codes"]),
+                        ln["component"],
+                        ln["codes"][0],
+                        ln["modifier"],
+                    )
                     offers[k].append((ln["cell"]["low"], sq["site"], ln["cell"]))
         n = self.cfg["elsewhere_max"]
         for sq in site_quotes:
@@ -1094,7 +1137,12 @@ class Engine:
             for ln in sq["receipt"]["lines"]:
                 if ln["cell"]["kind"] not in NO_NUMBER or ln["at"] != "this_site":
                     continue
-                k = (ln["step_id"] or ",".join(ln["codes"]), ln["component"], ln["codes"][0], ln["modifier"])
+                k = (
+                    ln["step_id"] or ",".join(ln["codes"]),
+                    ln["component"],
+                    ln["codes"][0],
+                    ln["modifier"],
+                )
                 opts = sorted((o for o in offers.get(k, []) if o[1]["site_id"] != me),
                               key=lambda o: (o[0], o[1]["site_id"]))[:n]  # fmt: skip
                 ln["elsewhere"] = [

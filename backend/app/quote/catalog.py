@@ -42,7 +42,9 @@ def build_catalog(reg: Registry) -> Catalog:
             svc["areas"] |= areas
             for c in st.cpts:
                 desc = reg.describe(c.code) or c.note or st.plain.technical_name
-                svc["codes"].setdefault(c.code, {"code": c.code, "role": c.role, "description": desc})
+                svc["codes"].setdefault(
+                    c.code, {"code": c.code, "role": c.role, "description": desc}
+                )
             if path.id not in svc["care_paths"]:
                 svc["care_paths"].append(path.id)
             for g in st.glossary:

@@ -159,7 +159,9 @@ def test_by_npi_when_prices_differ_else_range(engine):
     read = _line(r, TUFTS, "xray_reading")
     prices = {(p.money.low, p.money.high) for p in read.doctor_fee.by_npi}
     assert len(prices) >= 2  # D6
-    assert read.cell.low == min(p[0] for p in prices) and read.cell.high == max(p[1] for p in prices)
+    assert read.cell.low == min(p[0] for p in prices) and read.cell.high == max(
+        p[1] for p in prices
+    )
 
 
 def test_range_cites_both_ends(engine):
@@ -242,7 +244,9 @@ def test_freshness_is_computed_per_request(engine):
     r = _quote(engine, BCBS_HMO, as_of=later)
     assert all(s.freshness.stale_on_our_side for k, s in r.sources.items() if k != "cms_pfs_rvu26a")
     assert "stale_on_our_side_sources" in r.notices
-    assert any(sq.receipt.totals.likely.includes_stale_source for sq in r.sites if sq.receipt.totals.likely)
+    assert any(
+        sq.receipt.totals.likely.includes_stale_source for sq in r.sites if sq.receipt.totals.likely
+    )
     again = _quote(engine, BCBS_HMO)
     assert "stale_on_our_side_sources" not in again.notices
 

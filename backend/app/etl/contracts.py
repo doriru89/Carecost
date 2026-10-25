@@ -208,7 +208,9 @@ class Provenance(BaseModel):
         if not self.row_ref.startswith(prefix) or len(self.row_ref) == len(prefix):
             raise ValueError(f"row_ref {self.row_ref!r} must start with {prefix!r}")
         if self.source_kind == SourceKind.insurer_tic and self.row_id is None:
-            raise ValueError(f"{self.row_ref}: a TiC number needs row_id (row_ref is shared by groups)")
+            raise ValueError(
+                f"{self.row_ref}: a TiC number needs row_id (row_ref is shared by groups)"
+            )
         return self
 
 

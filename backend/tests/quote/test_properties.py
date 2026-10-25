@@ -86,7 +86,9 @@ def test_i2_no_negative_and_conflicts_never_summed(quotes):
 
 
 def test_i3_every_amount_cites_a_loaded_row(quotes, store, engine):
-    refs = {(m.row_ref(r), r.row_id) for r in store.rows.values() for m in [store.sources[r.source_id]]}
+    refs = {
+        (m.row_ref(r), r.row_id) for r in store.rows.values() for m in [store.sources[r.source_id]]
+    }
     ref_only = {a for a, _ in refs}
     for _, r in quotes:
         for sq in r.sites:

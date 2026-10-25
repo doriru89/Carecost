@@ -66,7 +66,9 @@ def posted_source(site: Site) -> SourceMeta | None:
         return None
     sha = next((p.page_sha256 for p in site.cash_prices if p.page_sha256), None)
     if sha is None:
-        table = [p.model_dump(mode="json") for p in sorted(site.cash_prices, key=lambda p: p.item_id)]
+        table = [
+            p.model_dump(mode="json") for p in sorted(site.cash_prices, key=lambda p: p.item_id)
+        ]
         sha = hashlib.sha256(json.dumps(table, sort_keys=True).encode()).hexdigest()
     url = site.cash_prices[0].source_url
     base = url.split("?", 1)[0].rstrip("/").rsplit("/", 1)[-1] or "page"

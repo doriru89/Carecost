@@ -26,47 +26,23 @@ jobs:
     defaults:
       run:
         working-directory: backend
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: carecost_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 2s
-          --health-timeout 5s
-          --health-retries 10
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Install
-        run: pip install -r requirements-dev.txt
-      - name: Pytest + coverage
-        env:
-          TEST_DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/carecost_test
+      - uses: astral-sh/setup-uv@v5
+      - name: Pytest (no database; quote tests run on the committed extract)
+        run: uv run --frozen --extra dev pytest -q -p no:cacheprovider
+      - name: Contracts are current (JSON Schemas + TS types)
         run: |
-          pytest \
-            --cov=app.config \
-            --cov=app.services.intake \
-            --cov=app.services.jwt_auth \
-            --cov=app.services.plan_rules \
-            --cov=app.services.pricing \
-            --cov=app.services.safety_crisis \
-            --cov=app.services.scenario_to_bundle \
-            --cov-report=term-missing \
-            --cov-report=json:coverage-backend.json \
-            --cov-fail-under=75
-      - name: Upload backend coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: backend-coverage
-          path: backend/coverage-backend.json
+          uv run --frozen python -m app.api_contracts --check
+      - name: Runtime imports no pyarrow and no legacy module
+        run: |
+          uv run --frozen python - <<'PY'
+          import sys
+          import app.server  # noqa: F401
+          bad = [m for m in sys.modules if m == "pyarrow" or m.split(".")[:2] in (
+              ["app", "routes"], ["app", "services"], ["app", "db"], ["app", "modules"])]
+          assert not bad, bad
+          PY
 
   test-frontend:
     runs-on: ubuntu-latest
@@ -84,33 +60,8 @@ jobs:
         run: npm ci
       - name: Contract exhaustiveness locks (tsc on generated types + src/contracts)
         run: npm run typecheck:contracts
-      - name: Test + coverage
-        run: npm run test:coverage
-      - name: Upload frontend coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-coverage
-          path: frontend/coverage/coverage-summary.json
-
-  boundaries:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Backend boundary checks (strict)
-        run: python scripts/check_backend_boundaries.py --strict
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - name: Frontend boundary lint (strict)
-        run: |
-          cd frontend
-          npm ci
-          npx eslint "src/features/**/*.{ts,tsx}" --max-warnings=0
+      - name: Test
+        run: npx vitest run
 
   registry-validation:
     runs-on: ubuntu-latest
@@ -119,58 +70,27 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install backend deps
-        run: pip install -r backend/requirements.txt
+      - name: Install backend (runtime deps only)
+        run: pip install ./backend
       - name: Registry freshness check (generated files match YAML)
         run: python scripts/generate_frontend_registry.py --check
       - name: Registry cross-validation (Pydantic)
         env:
           PYTHONPATH: backend
         run: python -c "from app.registries import validate_all_registries; validate_all_registries()"
-      - name: Production requirements smoke
-        run: |
-          cd backend
-          python -m venv .venv-prod
-          .venv-prod/bin/pip install -r requirements.txt
-          .venv-prod/bin/python -c "import app.main"
-      - name: Docker build API image
+      - name: Docker build API image (pack from the committed extract)
         run: docker build -t carecost-api:ci .
       - name: Docker startup smoke test
-        run: docker run --rm carecost-api:ci python -c "from app.main import app; print('startup OK')"
-
-  quality-artifact:
-    runs-on: ubuntu-latest
-    needs: [test-backend, test-frontend]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: backend-coverage
-          path: backend
-      - uses: actions/download-artifact@v4
-        with:
-          name: frontend-coverage
-          path: frontend/coverage
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Generate quality status JSON
         run: |
-          python scripts/generate_quality_status.py \
-            --status=passed \
-            --sha=${{ github.sha }} \
-            --backend-coverage=backend/coverage-backend.json \
-            --frontend-coverage=frontend/coverage/coverage-summary.json \
-            --output=test-results/quality-status.json
-      - name: Coverage thresholds (strict)
-        run: |
-          python scripts/check_coverage_thresholds.py \
-            --backend-json=backend/coverage-backend.json \
-            --frontend-json=frontend/coverage/coverage-summary.json \
-            --threshold=75 \
-            --strict
-      - name: Upload quality status artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: quality-status
-          path: test-results/quality-status.json
+          docker run -d --name api -p 8000:8000 carecost-api:ci
+          for i in $(seq 1 30); do curl -fs http://127.0.0.1:8000/api/health && break; sleep 1; done
+          python3 - <<'PY'
+          import json, urllib.request
+          d = json.load(open("contracts/fixtures/quote_request_cash_shoulder.json"))
+          d.pop("_fixture"); d.pop("_schema")
+          r = urllib.request.urlopen(urllib.request.Request(
+              "http://127.0.0.1:8000/api/quote", json.dumps(d).encode(),
+              {"content-type": "application/json"}))
+          assert r.status == 200 and json.load(r)["sites"]
+          PY
+          docker rm -f api

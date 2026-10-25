@@ -790,9 +790,7 @@ class QuoteResponse(_Strict):
             raise ValueError("a TiC price needs data_version.tic_release")
         if (self.data_version.tic_release is None) != ("tic_not_loaded" in self.notices):
             raise ValueError("notice tic_not_loaded <=> data_version.tic_release is None")
-        want_copy = (
-            ["copy.not_a_diagnosis", "copy.when_to_see_a_doctor"] if self.care_path else []
-        )
+        want_copy = ["copy.not_a_diagnosis", "copy.when_to_see_a_doctor"] if self.care_path else []
         if self.copy_keys != want_copy:
             raise ValueError(f"copy_keys must be {want_copy} (D33)")
         if self.picked_by == "assistant":

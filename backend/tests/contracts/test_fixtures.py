@@ -487,7 +487,9 @@ def _tic_candidates(rows, ln, site_id, payment, billing_class) -> list[dict]:
 def _check_money(rows, m, ln, sq, payment, where):
     kind = m.prov.source_kind.value
     if kind == "clinic_posted":
-        posted = [p for p in SITES[sq.site.site_id]["cash_prices"] if set(p["codes"]) & set(ln.codes)]
+        posted = [
+            p for p in SITES[sq.site.site_id]["cash_prices"] if set(p["codes"]) & set(ln.codes)
+        ]
         assert m.low == m.high == min(p["amount"] for p in posted), where
         return
     lo = _cited(rows, m.prov, m.low, m.basis.value, ln.codes, ln.modifier)
@@ -540,9 +542,9 @@ def test_fixture_numbers_match_the_build():
                 for m in moneys:
                     _check_money(rows, m, ln, sq, pay, where)
                 c = ln.cell
-                if isinstance(c, (etl.NotPublished, etl.PercentOnly)) and c.searched.source_id.endswith(
-                    "_mrf"
-                ):
+                if isinstance(
+                    c, (etl.NotPublished, etl.PercentOnly)
+                ) and c.searched.source_id.endswith("_mrf"):
                     cands = [
                         r
                         for r in rows.values()

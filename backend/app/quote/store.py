@@ -457,9 +457,7 @@ def _csv_value(v: Any) -> str:
     return str(v)
 
 
-def write_extract(
-    store: RateStore, uids: Iterable[str], csv_path: Path, sources_path: Path
-) -> int:
+def write_extract(store: RateStore, uids: Iterable[str], csv_path: Path, sources_path: Path) -> int:
     """Write the rows in ``uids`` (CSV, one per line, diffable) and their sources (YAML)."""
     out = sorted({store.rows[u] for u in uids}, key=lambda r: (r.source_id, r.stage_row, r.row_id))
     used = {r.source_id for r in out}
@@ -511,7 +509,9 @@ def read_extract(
                 )
     dv = doc["data_version"]
     version = DataVersionInfo(
-        build_id=str(dv["build_id"]), build_date=str(dv["build_date"]), tic_release=dv["tic_release"]
+        build_id=str(dv["build_id"]),
+        build_date=str(dv["build_date"]),
+        tic_release=dv["tic_release"],
     )
     return rows, sources, version, list(doc.get("codes") or []), npis
 
@@ -520,7 +520,9 @@ def pack_from_extract(
     out: Path, csv_path: Path = EXTRACT_CSV, sources_path: Path = EXTRACT_SOURCES
 ) -> int:
     rows, sources, version, codes, npis = read_extract(csv_path, sources_path)
-    return write_pack(out, rows=rows, sources=sources, version=version, codes=codes, group_npis=npis)
+    return write_pack(
+        out, rows=rows, sources=sources, version=version, codes=codes, group_npis=npis
+    )
 
 
 def store_from_extract(
