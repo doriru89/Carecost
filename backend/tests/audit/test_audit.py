@@ -296,3 +296,92 @@ def test_committed_outputs_agree() -> None:
     assert sum(1 for r in rows if r["trace"] == "not_found") == s["trace_status"].get(
         "not_found", 0
     )
+
+
+# --------------------------------------------------------------------------- A7
+
+
+def test_cause_flat_visit_rate_tufts_convenientmd_shape() -> None:
+    """Tufts Direct pays ConvenientMD $125 on 99203/99204/99213/99214/81003/81025: the lab line
+    at $125 is one amount per visit, not a 25x lab price."""
+    codes = ["99203", "99204", "99213", "99214", "81003", "81025"]
+    flat = [line("cmd", (125.0, row(i, 125.0, tin="cmd", code=c)), code=c, kind="urgent_care")
+            for i, c in enumerate(codes)]  # fmt: skip
+    others = [p for j, c in enumerate(codes)
+              for p in peers(5, 5.0 if c.startswith("81") else 120.0, code=c, kind="urgent_care",
+                             start=100 * (j + 1))]  # fmt: skip
+    lines = flat + others
+    ms = measure(lines)
+    m = next(x for x in ms if x.line is flat[4])  # 81003
+    assert m.outlier == "high"
+    v = Classifier(lines, ms).classify(m)
+    assert v.cause == "flat_visit_rate"
+    assert "99203" in v.detail and "81025" in v.detail
+
+
+def test_flat_visit_rate_needs_a_visit_code_and_three_codes() -> None:
+    def verdict(codes: list[str]) -> str:
+        flat = [line("g", (125.0, row(i, 125.0, tin="g", code=c)), code=c)
+                for i, c in enumerate(codes)]  # fmt: skip
+        others = [p for j, c in enumerate(codes)
+                  for p in peers(5, 5.0, code=c, start=100 * (j + 1))]  # fmt: skip
+        lines = flat + others
+        ms = measure(lines)
+        return Classifier(lines, ms).classify(next(x for x in ms if x.line is flat[-1])).cause
+
+    assert verdict(["81025", "85025", "81003"]) != "flat_visit_rate"  # no visit code
+    assert verdict(["99213", "81003"]) != "flat_visit_rate"  # two codes can be chance
+    assert verdict(["99051", "S9088", "81003"]) != "flat_visit_rate"  # add-ons are not visits
+    assert verdict(["99213", "99214", "99051"]) != "flat_visit_rate"  # ... nor non-visit items
+    assert verdict(["99213", "99214", "81003"]) == "flat_visit_rate"
+
+
+def test_anesthesia_base_units_cite_the_cy2022_file() -> None:
+    import inspect
+
+    from app.audit import causes
+
+    src = inspect.getsource(causes)
+    assert "ANES2026.csv): 00811" not in src
+    assert "CY2022" in src and causes.ANES_BASE_UNITS == {"00811": 4, "00812": 3, "00813": 5}
+
+
+def test_one_contract_in_many_network_files_counts_once() -> None:
+    from app.audit.__main__ import contract_key, distinct
+    from app.audit.causes import Verdict
+
+    ms = []
+    for k in range(15):  # the same HPHC contract copied into 15 network files
+        t = Line("office", "99213", "", "professional", "HPHC", "HMO", f"tic_hp_{k}", "bad",
+                 "tic")  # fmt: skip
+        t.rows["u"] = (400.0, row(1, 400.0, tin="bad", src=f"tic_hp_{k}"))
+        ps = []
+        for j in range(5):
+            p = Line("office", "99213", "", "professional", "HPHC", "HMO", f"tic_hp_{k}",
+                     f"g{j}", "tic")  # fmt: skip
+            p.rows[f"p{j}"] = (100.0, row(100 + j, 100.0, tin=f"g{j}", src=f"tic_hp_{k}"))
+            ps.append(p)
+        ms += [x for x in measure([t, *ps]) if x.line is t]
+    other = line("bad", (40.0, row(9, 40.0, tin="bad")))  # another amount: another contract
+    ms += [x for x in measure([other, *peers(5, 400.0)]) if x.line is other]
+    assert len(ms) == 16 and len({contract_key(m) for m in ms}) == 2
+    d = distinct(ms, [Verdict("unexplained", "")] * 16)
+    assert (d["outlier_rows"], d["outlier_contracts"]) == (16, 2)
+    assert (d["unexplained_rows"], d["unexplained_contracts"]) == (16, 2)
+
+
+def test_flat_visit_rate_is_not_read_into_a_hospital_file() -> None:
+    """CHA Cigna: 58.3% of the same $195 charge on 99213 / 97161 / 97162 is not a visit rate."""
+    codes = ["99213", "97162", "97161"]
+
+    def hosp(g, v, c, i):
+        return line(g, (v, row(i, v, src=g, kind="hospital_mrf", code=c)),
+                    kind="hospital_outpatient", code=c, comp="facility", family="mrf")  # fmt: skip
+
+    flat = [hosp("mrf:cha", 113.69, c, i) for i, c in enumerate(codes)]
+    others = [hosp(f"mrf:o{k}", 400.0, c, 100 * (j + 1) + k)
+              for j, c in enumerate(codes) for k in range(5)]  # fmt: skip
+    lines = flat + others
+    ms = measure(lines)
+    m = next(x for x in ms if x.line is flat[-1])
+    assert Classifier(lines, ms).classify(m).cause != "flat_visit_rate"

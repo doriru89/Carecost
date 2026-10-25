@@ -80,7 +80,7 @@
  "offered_by_evidence": {
   "census_category": 190,
   "dph_license": 79,
-  "posted_price": 1
+  "posted_price": 3
  },
  "offered_by_service": {
   "endoscopy": 5,
@@ -89,7 +89,7 @@
   "mri": 3,
   "physical_therapy": 10,
   "visit": 185,
-  "xray": 1
+  "xray": 3
  },
  "registry_only_flagged_rows_in_queue": 96,
  "restricted_left_out": [

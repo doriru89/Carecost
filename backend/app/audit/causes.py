@@ -12,6 +12,7 @@ is left. A rule is a test anyone can re-run on the source row, never a judgement
 | percent_as_dollars | hospital row: the amount equals the stated percentage (a 35% read as $35) |
 | per_diem_or_case_rate | hospital row: plan, item description or methodology in the raw row says per diem / half day / case rate (a program or episode charge carrying a CPT code) |
 | wrong_plan | hospital row: plan text names a non-commercial or non-contracted plan, or the payer and plan disagree, or the line of business is unknown |
+| flat_visit_rate | the group has this exact amount, for this payer and network, on a visit code (E/M 99202-99215 or S9083) and on a non-visit code, >= 3 codes in all, TiC rows only: one amount per visit, whatever is done (Tufts Direct pays ConvenientMD $125 on 99203 / 99204 / 99213 / 99214 / 81003 / 81025) |
 | facility_professional_mixup | the value sits inside 1/3x-3x of the *other* component's peer median (a facility line priced like a doctor's fee, or the reverse), and the two medians are > 3x apart |
 | anesthesia_per_unit | 008xx code and the group has the same amount on another 008xx code with different CMS base units (a conversion factor per unit, not a case price) |
 | pos_facility_rate_at_office | office site, every outlying TiC row omits POS 11 (it matched on POS 20 only: the payer's facility / non-office rate) |
@@ -42,6 +43,7 @@ CAUSES = [
     "percent_as_dollars",
     "per_diem_or_case_rate",
     "wrong_plan",
+    "flat_visit_rate",
     "facility_professional_mixup",
     "anesthesia_per_unit",
     "pos_facility_rate_at_office",
@@ -56,7 +58,10 @@ CAUSES = [
     "unexplained",
 ]
 
-# CMS 2026 anesthesia base units (ANES2026.csv): 00811 = 4, 00812 = 3, 00813 = 5
+# CMS anesthesia base units, CY2022 file (the newest CMS posts; source cms_anes_base_units_cy2022,
+# https://www.cms.gov/files/zip/2022-anesthesia-base-units-cpt-code.zip,
+# CY_2022_Anesthesia_Base_Units_110921 rows 102-104): 00811 = 4, 00812 = 3, 00813 = 5.
+# RVU26D ANES2026.csv holds the 2026 conversion factors only, not base units.
 ANES_BASE_UNITS = {"00811": 4, "00812": 3, "00813": 5}
 
 FAMILIES = [
@@ -76,6 +81,18 @@ FAMILIES = [
     ["99051", "S9083", "S9088"],
 ]  # fmt: skip
 FAMILY = {c: tuple(f) for f in FAMILIES for c in f}
+
+# flat_visit_rate: what counts as "the visit" (tic_visit_codes.yaml em_codes + Aetna's global
+# urgent-care code) and what is neither a visit nor a non-visit item (the visit add-ons)
+VISIT_CODES = frozenset(
+    ["99202", "99203", "99204", "99205", "99211", "99212", "99213", "99214", "99215", "S9083"]
+)
+VISIT_ADD_ONS = frozenset(["99051", "S9088"])
+# TiC rows only, >= 3 codes in all (the line's own included). A hospital file is one "group" of
+# thousands of items, and equal amounts there are chance or a % of an equal chargemaster price
+# (CHA Cigna: 58.3% of $195 on 99213 / 97161 / 97162), not a per-visit contract. ConvenientMD's
+# $125 is on 6 codes.
+FLAT_VISIT_MIN_CODES = 3
 
 WRONG_PLAN = re.compile(
     r"MEDICAID|MASSHEALTH|CMSP|MEDICARE|SENIOR|ADVANTAGE|\bDUAL|\bSCO\b|ONE ?CARE|"
@@ -148,6 +165,15 @@ class Classifier:
                 return statistics.median(vals)
         return None
 
+    def _flat_visit(self, ln: Line, key: tuple, vals: list[float]) -> tuple[list[str], list[str]]:
+        """The visit and non-visit codes (this line's own code included) on which the group has
+        one of the line's outlying amounts, same network, kind, payer and product."""
+        amts = {round(v, 2) for v in vals}
+        hit = sorted(c for c, a in self.amounts[key].items() if amts & a)
+        visit = [c for c in hit if c in VISIT_CODES]
+        non_visit = [c for c in hit if c not in VISIT_CODES and c not in VISIT_ADD_ONS]
+        return visit, non_visit
+
     def _peers_flat_share(self, m: Measured) -> float:
         ln = m.line
         fam = FAMILY.get(ln.code)
@@ -192,6 +218,11 @@ class Classifier:
             if len(bad_plan) == len(hosp) and ln.payer not in ("MEDICARE", "MASSHEALTH"):
                 r = bad_plan[0]
                 return Verdict("wrong_plan", f"plan {r.plan_raw!r} lob {r.line_of_business}")
+        visit, non_visit = self._flat_visit(ln, key, vals)
+        if visit and non_visit and len(visit) + len(non_visit) >= FLAT_VISIT_MIN_CODES and \
+                all(r.source_kind == "insurer_tic" for r in rows):  # fmt: skip
+            return Verdict("flat_visit_rate", f"same amount on visit {', '.join(visit)} and "
+                                              f"{', '.join(non_visit)}")  # fmt: skip
         other = self._other_component_median(ln)
         if other and (other / m.peer_median > HIGH or other / m.peer_median < LOW) and \
                 all(LOW <= v / other <= HIGH for v in vals):  # fmt: skip

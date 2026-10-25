@@ -67,6 +67,17 @@ domains:
     "S9083": Urgent care center global fee
     "S9088": Services provided in an urgent care center
 
+# Reference codes (A7, 2026-10-25): extracted and packed like the codes above, but no care path
+# uses them and no site area admits them, so a site is never ranked on them. The quote shows them
+# only as a response-level reference (C4b: "the ER visit alone"). Hospital MRFs give the facility
+# fee, TiC files the professional (ED physician) fee. AMA CPT 2026 descriptors, abridged.
+reference:
+  "99281": Emergency department visit, level 1 (may not need a physician)
+  "99282": Emergency department visit, level 2 (straightforward)
+  "99283": Emergency department visit, level 3 (low complexity)
+  "99284": Emergency department visit, level 4 (moderate complexity)
+  "99285": Emergency department visit, level 5 (high complexity)
+
 # Code types that count as "this CPT/HCPCS" in a hospital file. RC/CDM-only rows do not.
 code_types: ["CPT", "HCPCS", ""]
 
