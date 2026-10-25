@@ -49,6 +49,11 @@
     --sidebar-border: 340 40% 90%;
     --sidebar-ring: 345 50% 77%;
 
+    /* D8 receipt gradient: one ink at falling strength, plus a warning colour for gaps */
+    --tier-ink: 338 38% 30%;
+    --tier-warn: 32 92% 42%;
+    --tier-warn-bg: 40 100% 96%;
+
     --shadow-card: 0 4px 24px -4px rgba(236, 72, 153, 0.08);
     --shadow-elevated: 0 8px 40px -8px rgba(236, 72, 153, 0.12);
   }
@@ -77,4 +82,11 @@
   .shadow-elevated {
     box-shadow: var(--shadow-elevated);
   }
+}
+
+@layer components {
+  .tier-certain { border-left: 4px solid hsl(var(--tier-ink)); }
+  .tier-likely { border-left: 4px solid hsl(var(--tier-ink) / 0.45); }
+  .tier-possible { border-left: 2px dashed hsl(var(--tier-ink) / 0.35); }
+  .tier-gap { border-left: 4px solid hsl(var(--tier-warn)); background: hsl(var(--tier-warn-bg)); }
 }

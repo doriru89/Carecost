@@ -1,0 +1,110 @@
+{
+ "version": "0.1.0",
+ "cards": {
+  "not_covered_yet": {
+   "kind": "exit",
+   "title": "We haven't built this one yet",
+   "text": "We only cover a few common bone, joint, skin and stomach problems so far. You can still browse prices for a visit or a specific test."
+  },
+  "knee_injury_not_built": {
+   "kind": "exit",
+   "title": "Knee injury: not built yet",
+   "text": "A recent knee injury is checked with a quick exam first; whether you need a bone picture depends on that exam. We haven't priced this path yet."
+  },
+  "ankle_no_injury_not_built": {
+   "kind": "exit",
+   "title": "Ankle pain without an injury: not built yet",
+   "text": "Long-lasting ankle pain without an injury has its own workup that we haven't priced yet."
+  },
+  "skin_check_visit": {
+   "kind": "exit",
+   "title": "A skin check visit",
+   "text": "Routine skin checks for people with no changing spots are a judgment call. The national task force found too little evidence to recommend for or against them. If nothing is changing, a skin doctor visit is the main cost; a sample is taken only if something looks unusual."
+  },
+  "biopsy_may_be_partial": {
+   "kind": "note",
+   "title": "On the face, hands or feet",
+   "text": "In these places the doctor may take only part of the spot first, to keep the scar small. That can change which removal line applies."
+  },
+  "biopsy_whole_spot": {
+   "kind": "note",
+   "title": "Elsewhere on the body",
+   "text": "On most of the body, doctors often remove the whole spot with a thin rim of normal skin, so one sample answers the question."
+  },
+  "upper_gi_alarm": {
+   "kind": "exit",
+   "title": "Please see a doctor soon",
+   "text": "Trouble swallowing, weight loss or bleeding with heartburn are reasons to skip the medicine trial and get a camera check of the food pipe and stomach first. We haven't priced that path yet; book a visit with your doctor or a stomach specialist."
+  },
+  "bowel_change_see_doctor": {
+   "kind": "exit",
+   "title": "Bowel changes without warning signs",
+   "text": "Changes like occasional constipation usually start with a regular doctor visit, not a procedure. We haven't priced this path yet."
+  },
+  "colon_not_due_yet": {
+   "kind": "exit",
+   "title": "You likely don't need one yet",
+   "text": "After a normal, good-quality colon check, the usual wait for people at average risk is 10 years. Ask your doctor if anything has changed."
+  },
+  "colon_higher_risk": {
+   "kind": "exit",
+   "title": "A higher-risk schedule",
+   "text": "With a family history, bowel disease or past growths, your doctor sets a different schedule and insurance may count it differently. We don't estimate this one yet."
+  },
+  "screening_under_45": {
+   "kind": "exit",
+   "title": "Screening usually starts at 45",
+   "text": "For people at average risk, the national task force recommends starting colon cancer screening at 45. If you have symptoms or a family history, talk to your doctor."
+  },
+  "screening_76_85": {
+   "kind": "exit",
+   "title": "Talk it over with your doctor",
+   "text": "Between 76 and 85, whether to keep screening depends on your health and past results, so it's a decision to make with your doctor."
+  },
+  "screening_over_85": {
+   "kind": "exit",
+   "title": "Outside what this tool covers",
+   "text": "Routine screening isn't usually suggested after 85. Talk with your doctor."
+  },
+  "painless_click_ok": {
+   "kind": "note",
+   "title": "Painless clicking",
+   "text": "Clicking that doesn't hurt is common and on its own doesn't change what tests you're likely to need."
+  },
+  "no_mechanical_symptoms": {
+   "kind": "note",
+   "title": "No catching or slipping",
+   "text": "That makes a tear of the cartilage rim less likely, so the more detailed scan with dye stays unlikely."
+  },
+  "frozen_shoulder_note": {
+   "kind": "note",
+   "title": "Stiff both ways",
+   "text": "A shoulder that is stiff even when someone else moves it can be a frozen shoulder. The first steps are the same; a shot of anti-inflammatory medicine becomes more likely."
+  },
+  "lifts_fine_note": {
+   "kind": "note",
+   "title": "Your arm lifts fine",
+   "text": "Pain without weakness often settles with exercises; scans stay less likely."
+  },
+  "may_come_from_spine": {
+   "kind": "note",
+   "title": "It may be coming from your neck or back",
+   "text": "Pain or numbness that travels down the arm or leg can come from a pinched nerve in the spine. The doctor may check your neck or back too; this tool doesn't price that yet."
+  },
+  "no_radiation": {
+   "kind": "note",
+   "title": "Stays in one place",
+   "text": "Pain that stays put points to the joint itself rather than a pinched nerve."
+  },
+  "gerd_try_medicine_first": {
+   "kind": "note",
+   "title": "Medicine usually comes first",
+   "text": "For classic heartburn without warning signs, doctors usually suggest about 8 weeks of a daily acid-reducing pill before any camera test."
+  },
+  "gerd_feeling_better": {
+   "kind": "note",
+   "title": "The medicine helped",
+   "text": "When the 8-week trial works, doctors usually try stopping it or lowering the dose, and tests are rarely needed."
+  }
+ }
+}

@@ -1,23 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Menu, Settings, LogOut } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import CareCostLogo from '@/components/CareCostLogo';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 
+/** Site navigation. No accounts (D19): the price tool is open to everyone at /start. */
+const LINKS = [
+  { to: '/why-it-matters', label: 'Why it matters' },
+  { to: '/team', label: 'Team' },
+  { to: '/our-data', label: 'Our Data' },
+];
+
 const Navbar = () => {
-  const { isAuthenticated, profile, user, logout } = useAuth();
-  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [compactLogo, setCompactLogo] = useState(false);
 
@@ -30,17 +26,7 @@ const Navbar = () => {
   }, []);
 
   const closeMobile = () => setMobileOpen(false);
-
-  const initials = useMemo(() => {
-    const name = profile?.fullName || user?.email || '';
-    if (!name) return '?';
-    const parts = name.trim().split(/\s+/);
-    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    return name.slice(0, 2).toUpperCase();
-  }, [profile?.fullName, user?.email]);
-
-  const navLinkClass = 'text-foreground justify-start font-medium';
-  const sheetBtnClass = 'w-full h-12 justify-start text-base';
+  const sheetBtnClass = 'w-full h-12 justify-start text-base text-foreground font-medium';
 
   return (
     <nav
@@ -51,74 +37,22 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex items-center justify-between gap-2 min-h-14 md:h-16 py-2 md:py-0 px-4">
         <Link to="/" className="flex items-center min-w-0 pr-2" onClick={closeMobile}>
-          <CareCostLogo
-            showTagline={!isAuthenticated && !compactLogo}
-            compact={isAuthenticated || compactLogo}
-          />
+          <CareCostLogo showTagline={!compactLogo} compact={compactLogo} />
         </Link>
 
-        {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-2 lg:gap-3">
-          <Link to="/why-it-matters">
-            <Button variant="ghost" size="sm">Why it matters</Button>
+          {LINKS.map((l) => (
+            <Link key={l.to} to={l.to}>
+              <Button variant="ghost" size="sm">{l.label}</Button>
+            </Link>
+          ))}
+          <Link to="/start">
+            <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary-hover">
+              Get started
+            </Button>
           </Link>
-          <Link to="/team">
-            <Button variant="ghost" size="sm">Team</Button>
-          </Link>
-          <Link to="/our-data">
-            <Button variant="ghost" size="sm">Our Data</Button>
-          </Link>
-          {isAuthenticated ? (
-            <>
-              <Link to="/map">
-                <Button variant="ghost" size="sm">Map</Button>
-              </Link>
-              <Link to="/profile">
-                <Button variant="ghost" size="sm">Profile</Button>
-              </Link>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full h-9 w-9">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">
-                        {initials}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem asChild>
-                    <Link to="/settings" className="flex items-center gap-2 cursor-pointer">
-                      <Settings className="h-4 w-4" />
-                      Settings
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="flex items-center gap-2 cursor-pointer"
-                    onClick={() => { logout(); navigate('/'); }}
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Sign out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
-          ) : (
-            <>
-              <Link to="/login">
-                <Button variant="ghost" size="sm">Log in</Button>
-              </Link>
-              <Link to="/signup">
-                <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary-hover">
-                  Get started
-                </Button>
-              </Link>
-            </>
-          )}
         </div>
 
-        {/* Mobile menu */}
         <div className="flex md:hidden items-center shrink-0">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
@@ -136,50 +70,16 @@ const Navbar = () => {
                 <SheetTitle className="text-base">Menu</SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-1 py-2 overflow-y-auto flex-1">
-                <Link to="/why-it-matters" onClick={closeMobile}>
-                  <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Why it matters</Button>
+                {LINKS.map((l) => (
+                  <Link key={l.to} to={l.to} onClick={closeMobile}>
+                    <Button variant="ghost" className={sheetBtnClass}>{l.label}</Button>
+                  </Link>
+                ))}
+                <Link to="/start" onClick={closeMobile}>
+                  <Button className={cn(sheetBtnClass, 'mt-1 bg-primary text-primary-foreground hover:bg-primary-hover')}>
+                    Get started
+                  </Button>
                 </Link>
-                <Link to="/team" onClick={closeMobile}>
-                  <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Team</Button>
-                </Link>
-                <Link to="/our-data" onClick={closeMobile}>
-                  <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Our Data</Button>
-                </Link>
-                {isAuthenticated ? (
-                  <>
-                    <Link to="/map" onClick={closeMobile}>
-                      <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Map</Button>
-                    </Link>
-                    <Link to="/profile" onClick={closeMobile}>
-                      <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Profile</Button>
-                    </Link>
-                    <Link to="/settings" onClick={closeMobile}>
-                      <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Settings</Button>
-                    </Link>
-                    <Button
-                      variant="outline"
-                      className={cn(sheetBtnClass, 'mt-2')}
-                      onClick={() => {
-                        closeMobile();
-                        logout();
-                        navigate('/');
-                      }}
-                    >
-                      Sign out
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Link to="/login" onClick={closeMobile}>
-                      <Button variant="ghost" className={cn(sheetBtnClass, navLinkClass)}>Log in</Button>
-                    </Link>
-                    <Link to="/signup" onClick={closeMobile}>
-                      <Button className={cn(sheetBtnClass, 'mt-1 bg-primary text-primary-foreground hover:bg-primary-hover')}>
-                        Get started
-                      </Button>
-                    </Link>
-                  </>
-                )}
               </div>
             </SheetContent>
           </Sheet>

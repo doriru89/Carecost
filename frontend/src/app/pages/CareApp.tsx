@@ -1,0 +1,346 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Send } from "lucide-react";
+import CareCostLogo from "@/components/CareCostLogo";
+import { t } from "@/contracts/copy";
+import { CHAT_REPLY_FULL_PAGE } from "@/contracts/exhaustive";
+import type { Catalog, CatalogService } from "@/generated/contracts/catalog";
+import type { CandidatePath, ChatRequest, RedFlagReply, ServiceRef } from "@/generated/contracts/chat_api";
+import type { Payment, QuoteRequest } from "@/generated/contracts/quote_api";
+import { getApi, NoMockData } from "../api/client";
+import { ChatPane, type ChatTurn } from "../components/ChatPane";
+import { PaymentSelect } from "../components/PaymentSelect";
+import { ResultsPane, type QuoteState, type ResultsView } from "../components/ResultsPane";
+import { SplitView, type SplitState } from "../components/SplitView";
+import type { UserLocation } from "../lib/geo";
+import { paymentId } from "../lib/payments";
+import { RedFlagPage } from "./StopPages";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_HISTORY = 6;
+
+type Query = Pick<QuoteRequest, "care_path_id" | "service_codes" | "picked_by">;
+
+function requestKey(payment: Payment, q: Query): string {
+  return `${paymentId(payment)}|${q.care_path_id ?? q.service_codes.join(",")}|${q.picked_by}`;
+}
+
+declare global {
+  interface Window {
+    /** Measured insurance switches: select change -> next frame after the new receipt commits (ms). Read by scripts/screenshots.mjs. */
+    __carecostSwitch?: { ms: number; key: string }[];
+  }
+}
+
+export default function CareApp() {
+  const api = getApi();
+  const navigate = useNavigate();
+  const [payment, setPayment] = useState<Payment | null>(null);
+  const [email, setEmail] = useState("");
+  const [phase, setPhase] = useState<"start" | "work">("start");
+  const [draft, setDraft] = useState("");
+
+  const [turns, setTurns] = useState<ChatTurn[]>([]);
+  const [history, setHistory] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<Record<string, string[]>>({});
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [chatBusy, setChatBusy] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
+  const [redFlag, setRedFlag] = useState<RedFlagReply | null>(null);
+
+  const [query, setQuery] = useState<Query | null>(null);
+  const [quoteState, setQuoteState] = useState<QuoteState>({ status: "idle" });
+  const cache = useRef(new Map<string, QuoteState>());
+  const switchStart = useRef<{ t: number; key: string } | null>(null);
+
+  const [view, setView] = useState<ResultsView>("receipt");
+  const [location, setLocation] = useState<UserLocation | null>(null);
+  const [split, setSplit] = useState<SplitState>({ orientation: "side", swapped: false });
+  const [phoneTab, setPhoneTab] = useState<"chat" | "prices">("chat");
+  const [catalog, setCatalog] = useState<Catalog | null>(null);
+
+  useEffect(() => {
+    api.catalog().then(setCatalog, () => setCatalog(null));
+  }, [api]);
+
+  // ---- quotes: one request per (payment, query); cached so switching back is instant
+  useEffect(() => {
+    if (!payment || !query) return;
+    const key = requestKey(payment, query);
+    const hit = cache.current.get(key);
+    if (hit) {
+      setQuoteState(hit);
+      return;
+    }
+    let live = true;
+    setQuoteState((s) => (s.status === "ok" ? s : { status: "loading", key }));
+    api
+      .quote({ payment, ...query, answers, site_ids: null })
+      .then((quote) => {
+        const st: QuoteState = { status: "ok", key, quote };
+        cache.current.set(key, st);
+        if (live) setQuoteState(st);
+      })
+      .catch((e: unknown) => {
+        const st: QuoteState =
+          e instanceof NoMockData
+            ? { status: "nomock", key, message: e.message }
+            : { status: "error", key, message: e instanceof Error ? e.message : String(e) };
+        if (live) setQuoteState(st);
+      });
+    return () => {
+      live = false;
+    };
+  }, [api, payment, query]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ---- the <300 ms check: time from the payment change to the new receipt being committed
+  useEffect(() => {
+    const s = switchStart.current;
+    if (!s || quoteState.status === "loading" || quoteState.status === "idle") return;
+    if (quoteState.key !== s.key) return;
+    switchStart.current = null;
+    // next animation frame ≈ the new receipt has been painted
+    requestAnimationFrame(() => {
+      (window.__carecostSwitch ??= []).push({ ms: performance.now() - s.t, key: s.key });
+    });
+  }, [quoteState]);
+
+  const changePayment = (p: Payment) => {
+    if (query) switchStart.current = { t: performance.now(), key: requestKey(p, query) };
+    setPayment(p);
+  };
+
+  // ---- chat
+  const sendChat = useCallback(
+    async (text: string, nextAnswers: Record<string, string[]> = answers) => {
+      if (!payment) return;
+      if (!EMAIL_RE.test(email)) {
+        setChatError("Add your email above to use the AI helper (we don't verify it). Or skip AI and browse prices.");
+        return;
+      }
+      setTurns((ts) => [...ts, { role: "user", text }]);
+      setChatBusy(true);
+      setChatError(null);
+      const req: ChatRequest = {
+        conversation_id: conversationId,
+        text,
+        payment,
+        email,
+        answers: nextAnswers,
+        history: history.slice(-MAX_HISTORY),
+        focus: null,
+        locale: "en",
+      };
+      try {
+        const res = await api.chat(req);
+        setConversationId(res.conversation_id);
+        setHistory((h) => [...h, text].slice(-MAX_HISTORY));
+        if (CHAT_REPLY_FULL_PAGE[res.reply.kind] && res.reply.kind === "red_flag") {
+          setRedFlag(res.reply);
+          setQuery(null);
+          return;
+        }
+        setTurns((ts) => [...ts, { role: "assistant", res }]);
+        const r = res.reply;
+        if ((r.kind === "clarify" || r.kind === "care_paths") && r.candidates.length > 0) {
+          // Prices from turn one; later questions only refine (§4.1). An entry-matched path follows from the
+          // person's own answers (deterministic); an AI-ranked one is the assistant's pick, which the
+          // contract never sums (picked_by: assistant).
+          const top = r.candidates[0];
+          setQuery({ care_path_id: top.path_id, service_codes: [], picked_by: top.match === "entry_matched" ? "person" : "assistant" });
+          setView("receipt");
+        }
+      } catch (e) {
+        setChatError(e instanceof Error ? e.message : String(e));
+      } finally {
+        setChatBusy(false);
+      }
+    },
+    [api, answers, conversationId, email, history, payment],
+  );
+
+  const actions = {
+    send: (text: string) => void sendChat(text),
+    answer: (qid: string, values: string[], labels: string[]) => {
+      const next = { ...answers, [qid]: values };
+      setAnswers(next);
+      void sendChat(labels.join(", "), next);
+    },
+    pickPath: (c: CandidatePath) => {
+      setQuery({ care_path_id: c.path_id, service_codes: [], picked_by: "person" });
+      setView("receipt");
+      setPhoneTab("prices");
+    },
+    pickService: (s: ServiceRef) => {
+      const svc = catalog?.services.find((x) => x.service_id === s.service_id);
+      if (svc) pickService(svc, "assistant");
+    },
+    browse: () => {
+      setView("browse");
+      setPhoneTab("prices");
+    },
+  };
+
+  const pickPath = (id: string) => {
+    setQuery({ care_path_id: id, service_codes: [], picked_by: "person" });
+    setView("receipt");
+    setPhoneTab("prices");
+  };
+  const pickService = (s: CatalogService, by: "person" | "assistant" = "person") => {
+    const primary = s.codes.filter((c) => c.role === "primary").map((c) => c.code);
+    setQuery({ care_path_id: null, service_codes: primary.length ? primary : s.codes.map((c) => c.code).slice(0, 1), picked_by: by });
+    setView("receipt");
+    setPhoneTab("prices");
+  };
+
+  const resetAll = () => {
+    setRedFlag(null);
+    setTurns([]);
+    setHistory([]);
+    setAnswers({});
+    setConversationId(null);
+    setQuery(null);
+    setQuoteState({ status: "idle" });
+    setPhase("start");
+    navigate("/");
+  };
+
+  if (redFlag) return <RedFlagPage reply={redFlag} onBack={resetAll} />;
+
+  if (phase === "start" || !payment) {
+    const canChat = !!payment && draft.trim().length > 0;
+    return (
+      <main className="min-h-screen bg-background" data-testid="start-page">
+        <header className="container mx-auto flex items-center justify-between px-4 py-3">
+          <Link to="/">
+            <CareCostLogo compact />
+          </Link>
+          <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground">
+            {api.mode === "mock" ? "Test data" : "Live data"}
+          </span>
+        </header>
+        <div className="mx-auto max-w-xl px-4 pb-16 pt-6 sm:pt-12 space-y-6">
+          <h1 className="text-2xl sm:text-4xl font-bold leading-tight">{t("start.title")}</h1>
+          <div className="space-y-2">
+            <label htmlFor="payment" className="block text-sm font-semibold">
+              {t("start.payment")}
+            </label>
+            <PaymentSelect value={payment} onChange={setPayment} />
+          </div>
+          <form
+            className="space-y-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!canChat) return;
+              setPhase("work");
+              void sendChat(draft.trim());
+              setDraft("");
+            }}
+          >
+            <div className="flex items-end gap-2 rounded-2xl border border-border bg-card p-2 shadow-card">
+              <textarea
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                rows={3}
+                maxLength={1000}
+                placeholder={t("start.chat_placeholder")}
+                aria-label="Describe what's going on"
+                className="flex-1 resize-none bg-transparent px-2 py-1 text-base outline-none"
+                data-testid="start-chat"
+              />
+              <button type="submit" disabled={!canChat || !EMAIL_RE.test(email)} className="rounded-full bg-ink p-2.5 text-white disabled:opacity-40" aria-label="Send">
+                <Send className="h-4 w-4" />
+              </button>
+            </div>
+            <label className="block text-xs text-muted-foreground">
+              {t("start.email")}
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="mt-1 w-full rounded-xl border border-border bg-card px-3 py-2 text-sm text-foreground"
+                data-testid="email"
+              />
+            </label>
+            {!payment && <p className="text-xs text-muted-foreground">Choose how you're paying first.</p>}
+          </form>
+          <button
+            type="button"
+            disabled={!payment}
+            onClick={() => {
+              setPhase("work");
+              setView("browse");
+              setPhoneTab("prices");
+            }}
+            className="w-full rounded-xl border-2 border-ink px-4 py-3 text-sm font-semibold text-ink disabled:opacity-40"
+            data-testid="skip-ai"
+          >
+            {t("start.skip_ai")}
+          </button>
+          <p className="text-xs text-muted-foreground">{t("start.privacy")}</p>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-background" data-testid="workspace">
+      <header className="sticky top-0 z-30 border-b border-border bg-card/90 backdrop-blur">
+        <div className="flex items-center justify-between px-4 py-2">
+          <Link to="/">
+            <CareCostLogo compact />
+          </Link>
+          <div className="flex items-center gap-2 text-xs">
+            <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground">{api.mode === "mock" ? "Test data" : "Live data"}</span>
+            <button type="button" onClick={resetAll} className="underline text-muted-foreground">
+              Start over
+            </button>
+          </div>
+        </div>
+      </header>
+      <SplitView
+        state={split}
+        onState={setSplit}
+        phoneTab={phoneTab}
+        onPhoneTab={setPhoneTab}
+        chat={
+          <div className="flex h-full flex-col gap-2">
+            {!EMAIL_RE.test(email) && (
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={t("start.email")}
+                aria-label={t("start.email")}
+                className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs"
+              />
+            )}
+            <ChatPane
+              turns={turns}
+              busy={chatBusy}
+              error={chatError}
+              answers={answers}
+              actions={actions}
+              activePathId={query?.care_path_id ?? null}
+            />
+          </div>
+        }
+        prices={
+          <ResultsPane
+            payment={payment}
+            onPayment={changePayment}
+            state={quoteState}
+            view={view}
+            onView={setView}
+            catalog={catalog}
+            onPickPath={pickPath}
+            onPickService={(s) => pickService(s)}
+            location={location}
+            onLocation={setLocation}
+          />
+        }
+      />
+    </main>
+  );
+}

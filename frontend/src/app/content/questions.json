@@ -1,0 +1,135 @@
+{
+ "version": "0.1.0",
+ "questions": {
+  "Q0": {
+   "text": "Right now, do you have any of these?",
+   "answers": {
+    "any_checked": "Yes, at least one",
+    "none": "None of these"
+   }
+  },
+  "Q1": {
+   "text": "Where is the problem?",
+   "answers": {
+    "shoulder": "Shoulder",
+    "knee": "Knee",
+    "lower_back": "Lower back",
+    "ankle": "Ankle",
+    "skin_spot": "A spot or mole on the skin",
+    "heartburn_upper": "Heartburn or upper-belly pain",
+    "bowel": "Bowel changes or blood in stool",
+    "screening": "No symptoms, I want a colon cancer screening",
+    "other": "Something else"
+   }
+  },
+  "Q2": {
+   "text": "Did it start with an injury, like a fall, a twist or a hit?",
+   "answers": {
+    "injury": "Yes, an injury",
+    "no_injury": "No, it came on gradually"
+   }
+  },
+  "Q3": {
+   "text": "How long has it been going on?",
+   "answers": {
+    "lt_6w": "Less than 6 weeks",
+    "6w_6m": "6 weeks to 6 months",
+    "gt_6m": "More than 6 months"
+   }
+  },
+  "Q4": {
+   "text": "Have you already tried about 6 weeks of physical therapy, exercises or medicines, and it's still bad?",
+   "answers": {
+    "yes_still_bad": "Yes, and it's still bad",
+    "no": "No, not yet"
+   }
+  },
+  "Q5": {
+   "text": "Does it catch, lock, click with pain, or feel like it slips out?",
+   "answers": {
+    "painful_catch": "Yes, catching or clicking that hurts, or slipping",
+    "painless_click": "It clicks, but it doesn't hurt",
+    "no": "No"
+   }
+  },
+  "Q6": {
+   "text": "Can you lift your arm overhead by yourself? If someone else lifts it for you, does it go up?",
+   "answers": {
+    "weak_lift_only": "I can't lift it well myself, but it goes up with help",
+    "stiff_both_ways": "It's stiff either way",
+    "lifts_fine": "It lifts fine, it just hurts"
+   }
+  },
+  "Q7": {
+   "text": "Does pain, tingling or numbness travel down your arm or leg?",
+   "answers": {
+    "yes": "Yes",
+    "no": "No"
+   }
+  },
+  "Q8": {
+   "text": "How old are you?",
+   "answers": {
+    "age_under_40": "Under 40",
+    "age_40_44": "40-44",
+    "age_45_59": "45-59",
+    "age_60_75": "60-75",
+    "age_76_85": "76-85",
+    "age_over_85": "Over 85"
+   }
+  },
+  "Q9": {
+   "text": "What's happening with the spot?",
+   "answers": {
+    "new": "It's new",
+    "changing": "It's changing in size, shape or color",
+    "different": "It looks different from my other moles",
+    "itch_bleed": "It itches or bleeds",
+    "none": "None of these, I just want it checked"
+   }
+  },
+  "Q10": {
+   "text": "Where is the spot?",
+   "answers": {
+    "face_ears": "Face or ears",
+    "palms_soles_nails": "Palms, soles or nails",
+    "elsewhere": "Somewhere else"
+   }
+  },
+  "Q11": {
+   "text": "Any of these: trouble swallowing, losing weight without trying, black or bloody stool, been told you're anemic, or vomiting that won't stop?",
+   "answers": {
+    "yes": "Yes",
+    "none": "None of these"
+   }
+  },
+  "Q12": {
+   "text": "Have you taken an acid-reducing medicine (like omeprazole) every day for about 8 weeks?",
+   "answers": {
+    "no_trial_yet": "No",
+    "yes_still_bad": "Yes, and it's still bad (or came back when I stopped)",
+    "yes_better": "Yes, and it helped"
+   }
+  },
+  "Q13": {
+   "text": "Any of these: a positive home stool test, a parent, sibling or child with colon cancer, inflammatory bowel disease, or polyps found before? And when was your last colonoscopy?",
+   "answers": {
+    "positive_stool_test": "My home stool test came back positive",
+    "higher_risk_history": "Family history, bowel disease, or polyps before",
+    "normal_within_10y": "I had a normal colonoscopy less than 10 years ago",
+    "none": "None of these"
+   }
+  },
+  "Q14": {
+   "text": "What kind of plan do you have?",
+   "answers": {
+    "hmo_referral_required": "HMO / my plan needs a referral",
+    "ppo": "PPO / no referral needed",
+    "medicare": "Medicare",
+    "masshealth": "MassHealth",
+    "cash": "No insurance / paying cash",
+    "unsure": "Not sure"
+   }
+  }
+ }
+}
