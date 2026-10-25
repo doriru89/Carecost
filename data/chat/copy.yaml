@@ -1,0 +1,31 @@
+# Fixed chat copy (never LLM text). Keys are the ones ChatResponse carries (copy_keys, message_key).
+# The frontend (stream D) owns the copy file the UI renders; this is the chat stream's proposed
+# wording, to be copied there. D33: shown with every reply that shows care paths.
+# The two copy.* lines are patient-facing clinical wording: pending Austin + 1 outside reader (P10).
+version: 1
+review:
+  status: pending_austin
+  drafted_by: "ai:claude-opus-5.5"
+  drafted_at: 2026-10-24
+copy:
+  copy.not_a_diagnosis:
+    en: "These are common causes, not a diagnosis. A doctor needs to examine you to know what is going on."
+    zh: "这些是常见原因，不是诊断。需要医生检查才能确认是什么问题。"
+  copy.when_to_see_a_doctor:
+    en: "See a doctor soon if it gets worse quickly, keeps you up at night, or comes with fever, numbness or weakness. For chest pain, trouble breathing or thoughts of harming yourself, call 911 or 988 now."
+    zh: "如果症状很快加重、夜里痛醒，或者伴有发烧、麻木、无力，请尽快看医生。如果胸痛、呼吸困难或有伤害自己的念头，请立即拨打 911 或 988。"
+  ai.output_invalid:
+    en: "The assistant couldn't give a clear answer this time. You can still browse prices and pick a care path yourself."
+    zh: "助手这次没能给出清楚的回答。你仍然可以直接浏览价格、自己选择就医路径。"
+  ai.paused_ip_cap:
+    en: "The assistant has reached today's limit for this network. It comes back tomorrow; prices are still here."
+    zh: "此网络今天的助手使用已达上限，明天恢复；价格仍可浏览。"
+  ai.paused_wallet:
+    en: "The assistant is paused for today. You can still browse prices."
+    zh: "助手今天暂停使用，你仍然可以浏览价格。"
+  ai.paused_provider:
+    en: "The assistant isn't available right now. You can still browse prices."
+    zh: "助手暂时不可用，你仍然可以浏览价格。"
+  ai.paused_conversation_cap:
+    en: "This conversation is long enough. Start a new one, or browse prices directly."
+    zh: "这段对话已经够长了。请开始新的对话，或直接浏览价格。"
