@@ -1,10 +1,12 @@
 {
  "active": 271,
+ "billing_resolved_by_structure": 20,
+ "billing_to_verify": 23,
  "by_billing_type": {
   "asc": 4,
-  "hospital_outpatient": 48,
+  "hospital_outpatient": 68,
   "office_visit": 113,
-  "unknown": 43
+  "unknown": 23
  },
  "by_ownership": {
   "community_health_center": 7,
@@ -17,8 +19,8 @@
   "unknown": 1
  },
  "by_site_type": {
-  "ambulatory_surgery_center": 6,
-  "hospital_outpatient": 40,
+  "ambulatory_surgery_center": 5,
+  "hospital_outpatient": 41,
   "specialist_office": 97,
   "urgent_care": 65
  },

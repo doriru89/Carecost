@@ -39,7 +39,15 @@ from typing import Any
 
 import yaml
 
-from app.sites.contracts import Site, SitesFile, check_npi, normalize_tin
+from app.sites import billing as billing_mod
+from app.sites.contracts import (
+    BillingToVerify,
+    Site,
+    SitesFile,
+    ToVerifyFile,
+    check_npi,
+    normalize_tin,
+)
 
 REPO = Path(__file__).resolve().parents[3]
 SITES_DIR = REPO / "data" / "sites"
@@ -371,8 +379,31 @@ def _merge(base: dict[str, Any], cur: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def apply_billing(s: dict[str, Any], doc: dict[str, Any]) -> dict[str, Any]:
+    """billing_structure.yaml (``python -m app.sites.billing``) settles an unknown billing type
+    from public structure (R7): DPH hospital licence, HPC RPO provider-based status, NPPES."""
+    res = (doc.get("resolved") or {}).get(s.get("census_id") or "")
+    if s.get("billing_type") != "unknown" or not res:
+        return s
+    s = dict(s)
+    s["billing_type"] = res["billing_type"]
+    s["billing_type_confidence"] = res["confidence"]
+    s["billing_type_source"] = f"{'+'.join(res['rules'])}: {res['source']}"
+    if (
+        s["site_type"] == "ambulatory_surgery_center"
+        and res["billing_type"] == "hospital_outpatient"
+    ):
+        # licensed as part of a hospital (DPH satellite), so it bills as a hospital outpatient
+        # department, not as an ASC (contract: billing asc <=> site_type ASC)
+        s["site_type"] = "hospital_outpatient"
+        s["notes"] = (
+            s.get("notes") or ""
+        ) + "; site_type from billing_structure (hospital licence)"
+    return s
+
+
 def build(
-    census: Path, as_of: date, data_dir: Path | None = None
+    census: Path, as_of: date, data_dir: Path | None = None, *, use_billing: bool = True
 ) -> tuple[SitesFile, SitesFile, dict[str, Any]]:
     rows = list(csv.DictReader(census.open(newline="")))
     report: dict[str, Any] = {"census": census.name, "census_rows": len(rows)}
@@ -396,8 +427,10 @@ def build(
     }
     cands: list[dict[str, Any]] = []
     services = _dph_services()
+    billing_doc = billing_mod.load() if use_billing else {}
     for r in [x for x in active if x not in restricted] + inactive_registry:
         s = from_census(r, as_of, services)
+        s = apply_billing(s, billing_doc)
         if r["site_id"] in cur_by_census:
             s = _merge(s, cur_by_census[r["site_id"]])
         cands.append(s)
@@ -437,7 +470,18 @@ def build(
             quotable.append(s)
     no_coords = [s["census_id"] for s in cands if "coords" not in s]
     sites = SitesFile(version=1, sites=[Site.model_validate(s) for s in quotable])
-    todo = SitesFile(version=1, sites=[Site.model_validate(s) for s in verify])
+    by_census = {s.census_id: s for s in sites.sites if s.census_id}
+    billing_todo = [
+        BillingToVerify(census_id=cid, **{k: v for k, v in e.items() if k != "site_id"},
+                        site_id=by_census[cid].id)
+        for cid, e in sorted((billing_doc.get("to_verify") or {}).items())
+        if cid in by_census and by_census[cid].billing_type == "unknown"
+    ]  # fmt: skip
+    todo = ToVerifyFile(
+        version=1,
+        sites=[Site.model_validate(s) for s in verify],
+        billing_to_verify=billing_todo,
+    )
     report |= {
         "sites_yaml": len(sites.sites),
         "to_verify_yaml": len(todo.sites),
@@ -447,6 +491,10 @@ def build(
         "by_site_type": dict(Counter(s.site_type for s in sites.sites)),
         "by_ownership": dict(Counter(s.ownership for s in sites.sites)),
         "by_billing_type": dict(Counter(s.billing_type for s in sites.sites)),
+        "billing_resolved_by_structure": sum(
+            1 for s in sites.sites if (s.census_id or "") in (billing_doc.get("resolved") or {})
+        ),
+        "billing_to_verify": len(todo.billing_to_verify),
         "children_only": sorted(s.id for s in sites.sites if s.children_only),
         "with_tins": sum(1 for s in sites.sites if s.tins),
         "with_tin_npis": sum(1 for s in sites.sites if s.tin_npis),

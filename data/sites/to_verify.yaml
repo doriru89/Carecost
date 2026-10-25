@@ -4183,3 +4183,262 @@ sites:
   listing_status: registry_only
   listing_checked_at: '2026-10-24'
   notes: 'TO VERIFY (registry_only); registries: nppes; flags: nppes_secondary_location;registry_only_unverified'
+billing_to_verify:
+- site_id: new_england_baptist_surgery_center_llc_dedham
+  census_id: GB0005
+  name: NEW ENGLAND BAPTIST SURGERY CENTER, LLC
+  system_id: bilh
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'DPH Hospital Satellite licence 2ZGZ (NEW ENGLAND BAPTIST HOSPITAL  OUPATIENT CARE CENTE) at 40 ALLIED DRIVE,
+    SUITE 100 & 110, 02026 (list dated 2026-09-08, sha 163b969767c5): same system, but the site is not named as
+    this licensed location'
+  - 'DPH Clinic licence 47R2 (SHIELDS AND ATRIUS HEALTH PET/CT AT DEDHAM) at 40 ALLIED DRIVE, SUITE 112, 02026 (list
+    dated 2026-09-08, sha 163b969767c5): clinic licence (not decisive)'
+  - 'DPH Clinic Satellite licence 4IL1 (SHIELDS IMAGING DEDHAM) at 40 ALLIED DRIVE, 02026 (list dated 2026-09-08,
+    sha 163b969767c5): clinic licence (not decisive)'
+  - 'HPC RPO 2024 (via clinic-census row): provider-based YES for ''New England Baptist Hospital Outpatient Care
+    Center (NEBOCC), license 2059 Acute Hospital - Satellite'': not this site''s own location record, not used'
+  - 'NPPES 1447995311 NEW ENGLAND BAPTIST SURGERY CENTER LLC taxonomy 261QA1903X (Clinic/Center, Ambulatory Surgical)
+    at 40 ALLIED DR STE 200 02026: not a hospital NPI'
+- site_id: brigham_and_womens_gastroenterology_clinic_boston
+  census_id: GB0102
+  name: Brigham and Women's Gastroenterology Clinic
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+- site_id: massachusetts_general_physicians_organization_inc_chelse
+  census_id: GB0116
+  name: MASSACHUSETTS GENERAL PHYSICIANS ORGANIZATION INC
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'DPH Clinic Satellite licence 4CIA (MASS GENERAL IMAGING CHELSEA) at 80 EVERETT AVENUE SUITE 115, 02150 (list
+    dated 2026-09-08, sha 163b969767c5): clinic licence (not decisive)'
+  - 'HPC RPO 2024 (via clinic-census row): provider-based NO for ''Mass General Imaging Chelsea'': not this site''s
+    own location record, not used'
+  - 'HPC RPO 2024 (via clinic-census row): provider-based NO for ''Mass General Imagining Chelsea'': not this site''s
+    own location record, not used'
+- site_id: mass_general_brigham_medical_group_northern_massachusett
+  census_id: GB0121
+  name: MASS GENERAL BRIGHAM MEDICAL GROUP NORTHERN MASSACHUSETTS INC
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'HPC RPO 2024 (via clinic-census row): provider-based YES for ''Salem Hospital Outpatient Services, license
+    VFCN Acute Hospital - Satellite'': not this site''s own location record, not used'
+- site_id: boston_university_orthopaedic_surgical_associates_inc_bo_gb0147
+  census_id: GB0147
+  name: BOSTON UNIVERSITY ORTHOPAEDIC SURGICAL ASSOCIATES INC
+  system_id: bmc
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'NPPES 1164460580 BOSTON UNIVERSITY ORTHOPAEDIC SURGICAL ASSOCIATES, INC. taxonomy 207X00000X (Orthopaedic Surgery)
+    at 725 ALBANY ST, SUITE 4B 02118: not a hospital NPI'
+  - 'NPPES 1376532853 BOSTON UNIVERSITY DERMATOLOGY, INC. taxonomy 207N00000X (Dermatology) at 725 ALBANY ST, SUITE
+    8B 02118: not a hospital NPI'
+- site_id: evans_medical_foundation_inc_boston_gb0151
+  census_id: GB0151
+  name: EVANS MEDICAL FOUNDATION INC
+  system_id: bmc
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'NPPES 1245320910 BMC AFFILIATED PHYSICIANS, INC. taxonomy 207R00000X (Internal Medicine) at 1 BOSTON MEDICAL
+    CENTER PLACE 02118: not a hospital NPI'
+  - 'NPPES 1912954124 EVANS MEDICAL FOUNDATION, INC. taxonomy 207R00000X (Internal Medicine) at 1 BOSTON MEDICAL
+    CTR PL 02118: not a hospital NPI'
+- site_id: mount_auburn_professional_services_inc_cambridge_gb0165
+  census_id: GB0165
+  name: MOUNT AUBURN PROFESSIONAL SERVICES INC
+  system_id: bilh
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'NPPES 1144593757 MOUNT AUBURN GASTROENTEROLOGY ASSOCIATES taxonomy 207RG0100X (Internal Medicine, Gastroenterology)
+    at 300 MOUNT AUBURN ST 02138: not a hospital NPI'
+  - 'NPPES 1194895151 TORRE MORGAN MD PC taxonomy 207RG0100X (Internal Medicine, Gastroenterology) at 300 MOUNT
+    AUBURN ST 02138: not a hospital NPI'
+  - 'NPPES 1447467360 ROSALINE F. BARRON, MD taxonomy 207RG0100X (Internal Medicine, Gastroenterology) at 300 MOUNT
+    AUBURN ST 02138: not a hospital NPI'
+  - 'NPPES 1518971811 PRO SPORTS ORTHOPEDICS INC taxonomy 207X00000X (Orthopaedic Surgery) at 20 GUEST ST STE 225
+    02135: not a hospital NPI'
+  - 'NPPES 1538232871 MT AUBURN THERAPEUTIC ENDOSCOPY taxonomy 207RG0100X (Internal Medicine, Gastroenterology)
+    at 300 MOUNT AUBURN ST 02138: not a hospital NPI'
+  - 'NPPES 1649673724 CAMBRIDGE DIGESTIVE HEALTH PC taxonomy 207RG0100X (Internal Medicine, Gastroenterology) at
+    300 MOUNT AUBURN ST 02138: not a hospital NPI'
+  - 'NPPES 1750598652 MATTHEW S. LOEWENSTEIN, MD taxonomy 207RG0100X (Internal Medicine, Gastroenterology) at 300
+    MOUNT AUBURN ST 02138: not a hospital NPI'
+  - 'NPPES 1811015944 GASTROENTEROLOGY & HEPATOLOGY ASSOCIATES, P. C. taxonomy 207RG0100X (Internal Medicine, Gastroenterology)
+    at 300 MOUNT AUBURN ST STE 406 02138: not a hospital NPI'
+- site_id: lexington_waltham_dermatology_group_inc_lexington
+  census_id: GB0178
+  name: LEXINGTON-WALTHAM DERMATOLOGY GROUP INC
+  system_id: bilh
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'DPH Clinic licence 4UI2 (HARMONY BAY WELLNESS LLC) at 57 BEDFORD STREET SUITE 105, 02420 (list dated 2026-09-08,
+    sha 163b969767c5): clinic licence (not decisive)'
+  - 'NPPES 1255463972 LEXINGTON-WALTHAM DERMATOLOGY GROUP INC taxonomy 174400000X (Specialist) at 57 BEDFORD ST
+    STE 201 02420: not a hospital NPI'
+  - 'NPPES 1992750996 MOUNT AUBURN PROFESSIONAL SERVICES INC taxonomy 207R00000X (Internal Medicine) at 330 MOUNT
+    AUBURN ST 02138: not a hospital NPI'
+- site_id: orthoboston_llc_needham
+  census_id: GB0185
+  name: ORTHOBOSTON LLC
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'DPH Hospital Satellite licence 2W77 (CTR WOUND HEALING & DIABETES CARE) at 145 ROSEMARY STREET 1FL SUITE D,
+    02494 (list dated 2026-09-08, sha 163b969767c5): another organisation''s licence, not used'
+  - 'HPC RPO 2024 (via clinic-census row): provider-based YES for ''Center for Wound Healing and Diabetes Care,
+    license 2054 Acute Hospital - Satellite'': not this site''s own location record, not used'
+  - 'NPPES 1154982833 ESSENTIAL DERMATOLOGY NWH, PLLC taxonomy 207N00000X (Dermatology) at 220 N MAIN ST STE 201
+    01760: not a hospital NPI'
+  - 'NPPES 1619479052 ORTHOBOSTON STEWARD taxonomy 207X00000X (Orthopaedic Surgery) at 145 ROSEMARY ST STE C 02494:
+    not a hospital NPI'
+  - 'NPPES 1619538394 ESSENTIAL DERMATOLOGY BILH PLLC taxonomy 207N00000X (Dermatology) at 220 N MAIN ST STE 201
+    01760: not a hospital NPI'
+  - 'NPPES 1750883195 ORTHOBOSTON - BIDC LLC taxonomy 207X00000X (Orthopaedic Surgery) at 145 ROSEMARY ST STE C
+    02494: not a hospital NPI'
+  - 'NPPES 1861023590 ESSENTIAL DERMATOLOGY, PLLC taxonomy 207N00000X (Dermatology) at 220 N MAIN ST STE 201 01760:
+    not a hospital NPI'
+- site_id: mass_general_brigham_orthopedics_and_sports_medicine_cli_gb0186
+  census_id: GB0186
+  name: Mass General Brigham Orthopedics and Sports Medicine Clinic at Newton-Wellesley Hospital
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'NPPES 1013279108 NEW ENGLAND EAR NOSE AND THROAT LLC taxonomy 207YX0905X (Otolaryngology, Otolaryngology/Facial
+    Plastic Surgery) at 2000 WASHINGTON ST 02462: not a hospital NPI'
+  - 'NPPES 1174729628 DERMATOLOGY CONSULTANTS AT NEWTON-WELLESLEY PC taxonomy 207NS0135X (Dermatology, Procedural
+    Dermatology) at 2000 WASHINGTON ST 02462: not a hospital NPI'
+  - 'NPPES 1225194509 BOSTON HAND TO SHOULDER PC taxonomy 207XS0106X (Orthopaedic Surgery, Hand Surgery) at 2000
+    WASHINGTON ST 02462: not a hospital NPI'
+  - 'NPPES 1356430896 NEWTON WELLESLEY ORTHOPEDIC ASSOCIATES INC taxonomy 207X00000X (Orthopaedic Surgery) at 2000
+    WASHINGTON ST STE 341 02462: not a hospital NPI'
+  - 'NPPES 1427371194 ORTHOPEDICS NEW ENGLAND, INC taxonomy 207X00000X (Orthopaedic Surgery) at 2000 WASHINGTON
+    ST 02462: not a hospital NPI'
+  - 'NPPES 1629139472 UNIVERSITY ORTHOPEDICS OF BOSTON taxonomy 207X00000X (Orthopaedic Surgery) at 2000 WASHINGTON
+    ST 02462: not a hospital NPI'
+  - 'NPPES 1639399876 GASTROENTEROLOGY HEALTHCARE ASSOCIATES PC taxonomy 207RG0100X (Internal Medicine, Gastroenterology)
+    at 2000 WASHINGTON STREET 02462: not a hospital NPI'
+  - 'NPPES 1730257080 ALEXANDER KOPP, MD, PC taxonomy 207R00000X (Internal Medicine) at 2000 WASHINGTON ST 02462:
+    not a hospital NPI'
+- site_id: cambridge_public_health_commission_somerville_gb0194
+  census_id: GB0194
+  name: CAMBRIDGE PUBLIC HEALTH COMMISSION
+  system_id: cha
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+- site_id: harbor_medical_associates_inc_south_weymouth
+  census_id: GB0195
+  name: HARBOR MEDICAL ASSOCIATES INC
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'DPH Clinic Satellite licence 4533 (MENTOR SOUTH BAY) at 541 MAIN STREET STE 317, 02190 (list dated 2026-09-08,
+    sha 163b969767c5): clinic licence (not decisive)'
+  - 'HPC RPO 2024 (via clinic-census row): provider-based NO for ''South Bay Mental Health Center, Inc., DBA: South
+    Bay Community Services'': not this site''s own location record, not used'
+  - 'NPPES 1124079561 HARBOR MEDICAL ASSOCIATES, INC. taxonomy 207RC0000X (Internal Medicine, Cardiovascular Disease)
+    at 541 MAIN ST 02190: not a hospital NPI'
+  - 'NPPES 1578991113 GK DERMATOLOGY, PC taxonomy 207N00000X (Dermatology) at 541 MAIN ST 02190: not a hospital
+    NPI'
+  - 'NPPES 1891239083 GK DERMATOLOGY SHN, LLC taxonomy 207N00000X (Dermatology) at 541 MAIN STREET 02190: not a
+    hospital NPI'
+  - 'NPPES 1982889853 DAVID H. HELLER, MD PC taxonomy 207X00000X (Orthopaedic Surgery) at 541 MAIN ST 02190: not
+    a hospital NPI'
+- site_id: dermatology_partners_inc_wellesley
+  census_id: GB0199
+  name: DERMATOLOGY PARTNERS INC
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'DPH Hospital Satellite licence 21Y1 (SPAULDING OUTPATIENT CTR - WELLESLE) at 65 WALNUT STREET, 02481 (list
+    dated 2026-09-08, sha 163b969767c5): same system, but the site is not named as this licensed location'
+  - 'NPPES 1326166596 NEWTON WELLESLEY DERMATOLOGY ASSOCIATES taxonomy 207N00000X (Dermatology) at 65 WALNUT ST
+    02481: not a hospital NPI'
+  - 'NPPES 1427676394 WELLESLEY DERMATOLOGY CARE LLC taxonomy 207N00000X (Dermatology) at 65 WALNUT ST STE 440 02481:
+    not a hospital NPI'
+  - 'NPPES 1508930868 DERMATOLOGY PARTNERS INC taxonomy 207N00000X (Dermatology) at 65 WALNUT ST 02481: not a hospital
+    NPI'
+  - 'NPPES 1699102970 WILLIAM A. MITCHELL JR. MD PC taxonomy 207X00000X (Orthopaedic Surgery) at 65 WALNUT ST 02481:
+    not a hospital NPI'
+- site_id: brigham_and_womens_spine_center_boston
+  census_id: GB0210
+  name: Brigham and Women's Spine Center
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+- site_id: mass_general_brigham_orthopedics_walk_in_clinic_at_bosto
+  census_id: GB0224
+  name: Mass General Brigham Orthopedics Walk-in Clinic at Boston Landing
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+- site_id: massachusetts_general_physicians_organization_inc_cambri
+  census_id: GB0228
+  name: MASSACHUSETTS GENERAL PHYSICIANS ORGANIZATION INC
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'DPH Hospital Satellite licence 2RCQ (SPAULDING OUTPATIENT CTR -CAMBRIDGE) at 1575 CAMBRIDGE STREET, FIRST FLOOR,
+    02138 (list dated 2026-09-08, sha 163b969767c5): same system, but the site is not named as this licensed location'
+- site_id: massachusetts_general_physicians_organization_inc_charle
+  census_id: GB0230
+  name: MASSACHUSETTS GENERAL PHYSICIANS ORGANIZATION INC
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+- site_id: boston_medical_center_corporation_roslindale
+  census_id: GB0252
+  name: BOSTON MEDICAL CENTER CORPORATION
+  system_id: bmc
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'DPH Hospital Satellite licence 2LXF (GREATER ROSLINDALE MED & DENTAL) at 4199 WASHINGTON STREET, 02131 (list
+    dated 2026-09-08, sha 163b969767c5): another organisation''s licence, not used'
+  - 'HPC RPO 2024 (via clinic-census row): provider-based NO for ''Greater Roslindale Medical and Dental Center'':
+    not this site''s own location record, not used'
+- site_id: mass_general_brigham_orthopedics_walk_in_clinic_in_welle
+  census_id: GB0262
+  name: Mass General Brigham Orthopedics Walk-In Clinic in Wellesley
+  system_id: mgb
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+- site_id: south_shore_health_urgent_care_braintree_formerly_health
+  census_id: GB0296
+  name: South Shore Health Urgent Care Braintree (formerly Health Express)
+  system_id: south_shore_health
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'NPPES 1487203246 SOUTH SHORE HEALTH EXPRESS, INC taxonomy 261QU0200X (Clinic/Center, Urgent Care) at 310 GROVE
+    ST 02184: not a hospital NPI'
+- site_id: cha_somerville_urgent_care_center_somerville
+  census_id: GB0372
+  name: CHA Somerville Urgent Care Center
+  system_id: cha
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'NPPES 1780214338 CAMBRIDGE PUBLIC HEALTH COMMISSION taxonomy 261QU0200X (Clinic/Center, Urgent Care) at 33
+    TOWER ST 02143: not a hospital NPI'
+- site_id: bilh_urgent_care_watertown
+  census_id: GB0380
+  name: BILH Urgent Care Watertown
+  system_id: bilh
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'DPH Hospital Satellite licence 2LG7 (MOUNT AUBURN HOSPITAL RADIOLOGY - WATERTOWN) at 480 PLEASANT STREET, STE
+    A100, 02472 (list dated 2026-09-08, sha 163b969767c5): same system, but the site is not named as this licensed
+    location'
+  - 'DPH Clinic Satellite licence 4BW7 (NORTHEAST HEALTH SERVICES - WATERTOWN) at 480 PLEASANT ST., SUITE A400,
+    02472 (list dated 2026-09-08, sha 163b969767c5): clinic licence (not decisive)'
+  - 'NPPES 1548090376 HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC taxonomy 261QU0200X (Clinic/Center,
+    Urgent Care) at 480 PLEASANT ST 02472: not a hospital NPI'
+- site_id: south_shore_health_urgent_care_weymouth_formerly_health
+  census_id: GB0392
+  name: South Shore Health Urgent Care Weymouth (formerly Health Express)
+  system_id: south_shore_health
+  reason: no licence, provider-based record or hospital NPI of the site's own system at this address
+  evidence_seen:
+  - 'NPPES 1053692327 HEALTH EXPRESS LLC taxonomy 261QU0200X (Clinic/Center, Urgent Care) at 330 WASHINGTON ST 02188:
+    not a hospital NPI'
+  - 'NPPES 1205329265 SOUTH SHORE HEALTH EXPRESS, INC taxonomy 261QU0200X (Clinic/Center, Urgent Care) at 330 WASHINGTON
+    ST 02188: not a hospital NPI'
+  - 'NPPES 1477044212 SOUTH SHORE HEALTH EXPRESS, INC taxonomy 261QU0200X (Clinic/Center, Urgent Care) at 55 FOGG
+    RD 02190: not a hospital NPI'
+  - 'NPPES 1952725756 MASSACHUSETTS EXPRESS CARE PLLC taxonomy 261QU0200X (Clinic/Center, Urgent Care) at 330 WASHINGTON
+    STREET 02188: not a hospital NPI'
