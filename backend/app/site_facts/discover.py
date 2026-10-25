@@ -97,7 +97,9 @@ def sitemap_urls(fetcher: Fetcher, url: str, depth: int = 0) -> list[str]:
 def score(site: dict[str, Any], url: str) -> tuple[int, bool]:
     """(distinctive name words found in the URL path, town found in the URL path)."""
     slug = _slug_tokens(url)
-    town = _tokens(site["address"]["city"])
+    town = re.findall(
+        r"[a-z0-9]+", site["address"]["city"].lower()
+    )  # no stopwords: "boston" is a town
     town_hit = bool(town) and all(t in slug for t in town)
     name = [t for t in _tokens(site["name"]) if t not in town]
     return sum(1 for t in set(name) if t in slug), town_hit

@@ -41,3 +41,81 @@ sites:
     source: hand_checked
     pages:
     - {url: 'https://bidmc.org/locations/beth-israel-deaconess-medical-center', role: location}
+  # hospitals: the hospital's own location page on its system site, or its own homepage
+  massachusetts_general_hospital:
+    source: hand_checked
+    pages: [{url: 'https://www.massgeneralbrigham.org/en/locations/boston-ma/massachusetts-general-hospital-loc0000246778', role: location}]
+  brigham_and_womens_hospital:
+    source: hand_checked
+    pages: [{url: 'https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-hospital-loc0000246983', role: location}]
+  brigham_and_womens_faulkner:
+    source: hand_checked
+    pages: [{url: 'https://www.massgeneralbrigham.org/en/locations/jamaica-plain-ma/brigham-and-womens-faulkner-hospital-loc0000280330', role: location}]
+  beth_israel_deaconess_hospital_needham:
+    source: web_search
+    query: BIDMC Needham 148 Chestnut Street gastroenterology orthopedics location
+    pages: [{url: 'https://bidneedham.org/contact', role: location}, {url: 'https://bidneedham.org/services', role: services}]
+  boston_medical_center:
+    source: hand_checked  # operator homepage (known domain); the fetched TITLE confirms it
+    pages: [{url: 'https://www.bmc.org/', role: location}]
+  tufts_medical_center:
+    source: hand_checked
+    pages: [{url: 'https://www.tuftsmedicalcenter.org/', role: location}]
+  boston_childrens_hospital:
+    source: hand_checked
+    pages: [{url: 'https://www.childrenshospital.org/', role: location}]
+  dana_farber_cancer_institute:
+    source: hand_checked
+    pages: [{url: 'https://www.dana-farber.org/', role: location}]
+  franciscan_childrens:
+    source: hand_checked
+    pages: [{url: 'https://franciscanchildrens.org/', role: location}]
+  beth_israel_deaconess_hospital_milton:
+    source: hand_checked
+    pages: [{url: 'https://www.bidmilton.org/', role: location}]
+  # community health centers
+  codman_square_health_center_dorchester:
+    source: web_search
+    query: Codman Square Health Center 637 Washington Street urgent care
+    pages: [{url: 'https://www.codman.org/', role: location}]
+  codman_square_health_center_inc_dorchester:
+    source: web_search
+    query: Codman Square Health Center 637 Washington Street urgent care
+    pages: [{url: 'https://www.codman.org/', role: location}]
+  neighborhealth_satellite_emergency_facility_east_boston:
+    source: web_search
+    query: NeighborHealth East Boston 10 Gove Street urgent care emergency
+    pages: [{url: 'https://www.neighborhealth.com/care-and-services/emergency-care/', role: services}, {url: 'https://www.neighborhealth.com/community/east-boston', role: location}]
+  internal_medical_associates_ebnhc_east_boston:
+    source: web_search
+    query: NeighborHealth East Boston 10 Gove Street urgent care emergency
+    pages: [{url: 'https://www.neighborhealth.com/community/east-boston', role: location}]
+  uphams_corner_health_center_urgent_care_dorchester:
+    source: web_search
+    query: Upham's Corner Health Center urgent care 415 Columbia Road (domain named by a dorchesteratheneum.org page)
+    pages: [{url: 'https://uphamscornerhealthcenter.org/our-clinic/', role: location}]
+  # searched, only third-party listings found (query in the reason)
+  minuteclinic_braintree: {no_own_page: 'web_search "MinuteClinic 270 Grove Street Braintree MA": only WebMD / Solv / HUGHP; cvs.com robots allows /minuteclinic/ but no location URL surfaced'}
+  parity_urgent_care_roslindale: {no_own_page: 'web_search "Parity Urgent Care Roslindale American Legion Hwy": only a 2024 Bay State Banner ad; may be closed'}
+  lynn_urgent_care_lynn: {no_own_page: 'web_search "Lynn Urgent Care 776 Western Ave Lynn MA": only ZoomInfo / directories (ZoomInfo ties it to MyTownHealth)'}
+  mytownhealth_urgent_care_woburn_woburn: {no_own_page: 'web_search "MyTownHealth Urgent Care Woburn 19 Pleasant St": no MyTownHealth page; a Solv listing names it Woburn Urgent Care'}
+  northeast_ambulatory_center_inc_stoneham: {no_own_page: 'web_search "Northeast Ambulatory Center Stoneham 3 Woodland Rd endoscopy": only Yellow Pages / WebMD; specialty not stated anywhere'}
+  weymouth_endoscopy_llc_weymouth: {no_own_page: 'web_search "Weymouth Endoscopy 97 Libbey Parkway": only 2024 DoN filings on mass.gov (relocation from 1085 Main St)'}
+  needham_gastroenterology_associates_pc_needham: {no_own_page: 'web_search "Needham Gastroenterology Associates 464 Hillside Ave": only WebMD / directories'}
+  northeast_orthopedic_associates_pc_braintree: {no_own_page: 'web_search "Northeast Orthopedic Associates Braintree 250 Pond St": nothing ties the group to 250 Pond St (Brigham Orthopaedic and Arthritis Center is there)'}
+  excel_orthopaedic_specialists_woburn: {no_own_page: 'web_search "Excel Orthopaedic Specialists Woburn Unicorn Park": only WebMD / Sharecare / Checkbook'}
+  new_england_baptist_surgery_center_llc_dedham: {no_own_page: 'web_search "New England Baptist Surgery Center Dedham 40 Allied Drive": only a nebh.org 2023 news story (says orthopedic ASC; census lists it as asc_endo)'}
+  south_end_community_health_center_boston: {no_own_page: 'web_search "South End Community Health Center 1601 Washington St urgent care hours": only CDC NPIN / directories'}
+  lynn_community_health_center_urgent_care_lynn: {no_own_page: 'web_search "Lynn Community Health Center urgent care 269 Union Street": only directories / MGB Salem page'}
+  dothouse_health_inc_dorchester: {no_own_page: 'web_search "DotHouse Health 1353 Dorchester Ave dermatology orthopedics": only BMC / mass.gov / Zocdoc pages'}
+  # census address clusters ("Clinicians at <address>"): no single named operator, so no own page by construction
+  clinicians_at_588_providence_hwy_dedham: {no_own_page: census address cluster (Clinicians at an address), no single named operator}
+  clinicians_at_450_bedford_st_lexington: {no_own_page: census address cluster (Clinicians at an address), no single named operator}
+  clinicians_at_60_dedham_ave_ste_201_needham: {no_own_page: census address cluster (Clinicians at an address), no single named operator}
+  clinicians_at_147_milk_street_boston: {no_own_page: census address cluster (Clinicians at an address), no single named operator}
+  clinicians_at_1180_beacon_st_ste_6b_brookline: {no_own_page: census address cluster (Clinicians at an address), no single named operator}
+  clinicians_at_77_warren_st_brighton: {no_own_page: census address cluster (Clinicians at an address), no single named operator}
+  clinicians_at_1269_beacon_st_brookline: {no_own_page: census address cluster (Clinicians at an address), no single named operator}
+  clinicians_at_721_main_st_melrose: {no_own_page: census address cluster (Clinicians at an address), no single named operator}
+  mount_auburn_professional_services_inc_cambridge_gb0165: {no_own_page: 'finder:bilh matched mount-auburn-pediatrics-cambridge (pediatrics; this record is GI/ortho at 300 Mount Auburn St); not found yet'}
+  mount_auburn_professional_services_inc_cambridge_gb0166: {no_own_page: 'finder:bilh matched mount-auburn-pediatrics-cambridge (pediatrics; this record is GI/ortho); not found yet'}

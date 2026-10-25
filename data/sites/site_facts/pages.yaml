@@ -11,16 +11,13 @@ sites:
   new_england_baptist_surgery_center_llc_dedham:
     site_type: ambulatory_surgery_center
     pages: []
-    candidates:
-    - https://bilh.org/locations/bilh-urgent-care-dedham
-    - https://bilh.org/locations/bilh-pc-dedham-westwood-family-medicine
-    - https://nebh.org/locations/new-england-baptist-hospital
-    - https://nebh.org/locations/new-england-baptist-orthopedic-specialists-spine
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "New England Baptist Surgery Center Dedham 40 Allied Drive": only a nebh.org 2023 news story
+      (says orthopedic ASC; census lists it as asc_endo)'
   northeast_ambulatory_center_inc_stoneham:
     site_type: ambulatory_surgery_center
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Northeast Ambulatory Center Stoneham 3 Woodland Rd endoscopy": only Yellow Pages / WebMD; specialty
+      not stated anywhere'
   newton_wellesley_outpatient_surgery_center_wellesley:
     site_type: ambulatory_surgery_center
     pages:
@@ -34,7 +31,8 @@ sites:
   weymouth_endoscopy_llc_weymouth:
     site_type: ambulatory_surgery_center
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Weymouth Endoscopy 97 Libbey Parkway": only 2024 DoN filings on mass.gov (relocation from 1085
+      Main St)'
   dermatology_institute_of_boston_pc_boston:
     site_type: specialist_office
     pages: []
@@ -74,11 +72,11 @@ sites:
   clinicians_at_588_providence_hwy_dedham:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: census address cluster (Clinicians at an address)
   clinicians_at_450_bedford_st_lexington:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: census address cluster (Clinicians at an address)
   atrius_health_inc_medford:
     site_type: specialist_office
     pages:
@@ -88,7 +86,7 @@ sites:
   clinicians_at_60_dedham_ave_ste_201_needham:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: census address cluster (Clinicians at an address)
   adams_street_dermatology_assoc_pc_quincy:
     site_type: specialist_office
     pages: []
@@ -193,7 +191,7 @@ sites:
   clinicians_at_147_milk_street_boston:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: census address cluster (Clinicians at an address)
   atrius_health_inc_boston_gb0096:
     site_type: specialist_office
     pages: []
@@ -215,7 +213,7 @@ sites:
   clinicians_at_1180_beacon_st_ste_6b_brookline:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: census address cluster (Clinicians at an address)
   massachusetts_general_physicians_organization_inc_chelse:
     site_type: specialist_office
     pages: []
@@ -235,7 +233,7 @@ sites:
   dothouse_health_inc_dorchester:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "DotHouse Health 1353 Dorchester Ave dermatology orthopedics": only BMC / mass.gov / Zocdoc pages'
   mass_general_brigham_medical_group_northern_massachusett:
     site_type: specialist_office
     pages: []
@@ -284,6 +282,12 @@ sites:
   brigham_and_womens_physicians_organization_inc_boston:
     site_type: specialist_office
     pages: []
+    candidates:
+    - https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-hospital-loc0000246983
+    - https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-lung-center-loc0000280295
+    - https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-spine-center-loc0000280307
+    - https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-urology-clinic-loc0000280310
+    - https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-infusion-center-loc0000280292
     no_own_page: not found yet (census, finders, found.yaml)
   childrens_hospital_pediatric_associates_inc_boston:
     site_type: specialist_office
@@ -301,6 +305,8 @@ sites:
     site_type: specialist_office
     pages: []
     candidates:
+    - https://bilh.org/locations/bilh-pc-267-boston-road
+    - https://bilh.org/locations/bilh-pc-boston-street-topsfield
     - https://bidmc.org/locations/beth-israel-deaconess-medical-center
     - https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
     - https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
@@ -310,6 +316,8 @@ sites:
     site_type: specialist_office
     pages: []
     candidates:
+    - https://bilh.org/locations/bilh-pc-267-boston-road
+    - https://bilh.org/locations/bilh-pc-boston-street-topsfield
     - https://bidmc.org/locations/beth-israel-deaconess-medical-center
     - https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
     - https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
@@ -338,7 +346,7 @@ sites:
   clinicians_at_77_warren_st_brighton:
     site_type: hospital_outpatient
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: census address cluster (Clinicians at an address)
   bmc_affiliated_physicians_inc_brighton_gb0159:
     site_type: specialist_office
     pages: []
@@ -369,16 +377,13 @@ sites:
     no_own_page: not found yet (census, finders, found.yaml)
   mount_auburn_professional_services_inc_cambridge_gb0165:
     site_type: specialist_office
-    pages:
-    - url: https://bilh.org/locations/mount-auburn-pediatrics-cambridge
-      role: location
-      source: finder:bilh
+    pages: []
+    no_own_page: finder:bilh matched mount-auburn-pediatrics-cambridge (pediatrics; this record is GI/ortho at 300 Mount Auburn
+      St); not found yet
   mount_auburn_professional_services_inc_cambridge_gb0166:
     site_type: hospital_outpatient
-    pages:
-    - url: https://bilh.org/locations/mount-auburn-pediatrics-cambridge
-      role: location
-      source: finder:bilh
+    pages: []
+    no_own_page: finder:bilh matched mount-auburn-pediatrics-cambridge (pediatrics; this record is GI/ortho); not found yet
   massachusetts_general_dermatology_clinic_at_chelsea_comm:
     site_type: specialist_office
     pages:
@@ -474,7 +479,7 @@ sites:
   needham_gastroenterology_associates_pc_needham:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Needham Gastroenterology Associates 464 Hillside Ave": only WebMD / directories'
   orthoboston_llc_needham:
     site_type: specialist_office
     pages: []
@@ -597,7 +602,8 @@ sites:
   northeast_orthopedic_associates_pc_braintree:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Northeast Orthopedic Associates Braintree 250 Pond St": nothing ties the group to 250 Pond St
+      (Brigham Orthopaedic and Arthritis Center is there)'
   boston_orthopaedic_and_spine_llc_brighton:
     site_type: specialist_office
     pages: []
@@ -612,7 +618,7 @@ sites:
   clinicians_at_1269_beacon_st_brookline:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: census address cluster (Clinicians at an address)
   massachusetts_general_physicians_organization_inc_cambri:
     site_type: specialist_office
     pages: []
@@ -652,16 +658,20 @@ sites:
     no_own_page: not found yet (census, finders, found.yaml)
   codman_square_health_center_inc_dorchester:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.codman.org/
+      role: location
+      source: web_search
   internal_medical_associates_ebnhc_east_boston:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.neighborhealth.com/community/east-boston
+      role: location
+      source: web_search
   clinicians_at_721_main_st_melrose:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: census address cluster (Clinicians at an address)
   mass_general_brigham_orthopedics_clinic_in_newton_newton:
     site_type: hospital_outpatient
     pages:
@@ -702,7 +712,7 @@ sites:
   excel_orthopaedic_specialists_woburn:
     site_type: hospital_outpatient
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Excel Orthopaedic Specialists Woburn Unicorn Park": only WebMD / Sharecare / Checkbook'
   afc_urgent_care_arlington_arlington:
     site_type: urgent_care
     pages:
@@ -750,7 +760,7 @@ sites:
   south_end_community_health_center_boston:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "South End Community Health Center 1601 Washington St urgent care hours": only CDC NPIN / directories'
   afc_urgent_care_braintree_braintree:
     site_type: urgent_care
     pages:
@@ -766,7 +776,8 @@ sites:
   minuteclinic_braintree:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "MinuteClinic 270 Grove Street Braintree MA": only WebMD / Solv / HUGHP; cvs.com robots allows
+      /minuteclinic/ but no location URL surfaced'
   south_shore_health_urgent_care_braintree_formerly_health:
     site_type: urgent_care
     pages:
@@ -867,24 +878,34 @@ sites:
       source: finder:pm_pediatrics
   codman_square_health_center_dorchester:
     site_type: urgent_care
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.codman.org/
+      role: location
+      source: web_search
   uphams_corner_health_center_urgent_care_dorchester:
     site_type: urgent_care
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://uphamscornerhealthcenter.org/our-clinic/
+      role: location
+      source: web_search
   neighborhealth_satellite_emergency_facility_east_boston:
     site_type: urgent_care
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.neighborhealth.com/care-and-services/emergency-care/
+      role: services
+      source: web_search
+    - url: https://www.neighborhealth.com/community/east-boston
+      role: location
+      source: web_search
   lynn_community_health_center_urgent_care_lynn:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Lynn Community Health Center urgent care 269 Union Street": only directories / MGB Salem page'
   lynn_urgent_care_lynn:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Lynn Urgent Care 776 Western Ave Lynn MA": only ZoomInfo / directories (ZoomInfo ties it to
+      MyTownHealth)'
   mass_general_brigham_express_care_lynn_lynn:
     site_type: urgent_care
     pages:
@@ -948,7 +969,8 @@ sites:
   parity_urgent_care_roslindale:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Parity Urgent Care Roslindale American Legion Hwy": only a 2024 Bay State Banner ad; may be
+      closed'
   afc_urgent_care_saugus_saugus:
     site_type: urgent_care
     pages:
@@ -1048,7 +1070,8 @@ sites:
   mytownhealth_urgent_care_woburn_woburn:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "MyTownHealth Urgent Care Woburn 19 Pleasant St": no MyTownHealth page; a Solv listing names
+      it Woburn Urgent Care'
   pm_pediatrics_at_woburn_woburn:
     site_type: urgent_care
     pages:
@@ -1057,20 +1080,28 @@ sites:
       source: finder:pm_pediatrics
   massachusetts_general_hospital:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.massgeneralbrigham.org/en/locations/boston-ma/massachusetts-general-hospital-loc0000246778
+      role: location
+      source: hand_checked
   brigham_and_womens_hospital:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-hospital-loc0000246983
+      role: location
+      source: hand_checked
   brigham_and_womens_faulkner:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.massgeneralbrigham.org/en/locations/jamaica-plain-ma/brigham-and-womens-faulkner-hospital-loc0000280330
+      role: location
+      source: hand_checked
   boston_medical_center:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.bmc.org/
+      role: location
+      source: hand_checked
   bmc_brighton_formerly_st_elizabeths:
     site_type: hospital_outpatient
     pages: []
@@ -1083,12 +1114,16 @@ sites:
       source: hand_checked
   tufts_medical_center:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.tuftsmedicalcenter.org/
+      role: location
+      source: hand_checked
   franciscan_childrens:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://franciscanchildrens.org/
+      role: location
+      source: hand_checked
   beth_israel_deaconess_medical_center:
     site_type: hospital_outpatient
     pages:
@@ -1097,12 +1132,16 @@ sites:
       source: hand_checked
   boston_childrens_hospital:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.childrenshospital.org/
+      role: location
+      source: hand_checked
   dana_farber_cancer_institute:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.dana-farber.org/
+      role: location
+      source: hand_checked
   mount_auburn_hospital:
     site_type: hospital_outpatient
     pages:
@@ -1115,6 +1154,9 @@ sites:
     - url: https://nebh.org/locations/new-england-baptist-hospital
       role: location
       source: finder:nebh
+    candidates:
+    - https://bilh.org/locations/bilh-pc-267-boston-road
+    - https://bilh.org/locations/bilh-pc-boston-street-topsfield
   newton_wellesley_hospital:
     site_type: hospital_outpatient
     pages:
@@ -1123,23 +1165,19 @@ sites:
       source: hand_checked
   beth_israel_deaconess_hospital_needham:
     site_type: hospital_outpatient
-    pages: []
-    candidates:
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/bidmc-emergency-department
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://bidneedham.org/contact
+      role: location
+      source: web_search
+    - url: https://bidneedham.org/services
+      role: services
+      source: web_search
   beth_israel_deaconess_hospital_milton:
     site_type: hospital_outpatient
-    pages: []
-    candidates:
-    - https://bilh.org/locations/bilh-pc-milton-landing
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/bidmc-emergency-department
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.bidmilton.org/
+      role: location
+      source: hand_checked
   boston_medical_center_south:
     site_type: hospital_outpatient
     pages: []

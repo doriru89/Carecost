@@ -15,6 +15,7 @@ import yaml
 from app.site_facts import discover as disc
 from app.site_facts.fetch import Fetcher, PageRecord, cached_text, load_manifest, write_manifest
 from app.site_facts.merge import load_reviews, merge, write_facts, write_review
+from app.site_facts.text import LEGAL_LINK
 from app.site_facts.paths import CACHE_DIR, MANIFEST, PAGES, RUNS_DIR, SITES_YAML
 from app.site_facts.verify import load_run, report, verify
 
@@ -22,6 +23,15 @@ HOURS_TEXT = re.compile(
     r"(?i)\b(mon(day)?|tue(s(day)?)?|wed(nesday)?|thu(rs(day)?)?|fri(day)?|sat(urday)?|sun(day)?|"
     r"weekdays?|weekends?|daily|7 days)\b[^\n]{0,60}?\b\d{1,2}(:\d{2})?\s*([ap]\.?m\.?)"
 )
+
+
+# MGB location pages print hours as a 24h table: "Monday\n08:00\n20:00"
+HOURS_24 = re.compile(r"\n(Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day\n\d\d:\d\d\n\d\d:\d\d")
+
+
+def _has_hours(text: str) -> bool:
+    """Heuristic: the page prints opening hours as text (a day word near a time)."""
+    return bool(HOURS_TEXT.search(text) or HOURS_24.search(text))
 
 
 def cmd_discover(a: argparse.Namespace) -> int:
@@ -61,13 +71,17 @@ def cmd_fetch(a: argparse.Namespace) -> int:
             if url in seen:
                 continue
             seen.add(url)
+            prev = f.load_meta(url)  # a URL shared by several sites keeps every site id
             rec = f.fetch(url, needs_js=js, refresh=a.refresh)
-            rec.site_ids = sorted(set(rec.site_ids) | {sid})
-            rec.roles = sorted(set(rec.roles) | {role})
+            rec.site_ids = sorted(set(rec.site_ids) | set(prev.site_ids if prev else []) | {sid})
+            rec.roles = sorted(set(rec.roles) | set(prev.roles if prev else []) | {role})
             f._save(rec)
             per_site.setdefault(sid, []).append(rec)
             if a.follow and role == "location" and rec.status == "ok":
-                todo += [(u, "related", False) for u in rec.related[: a.follow]]
+                todo += [
+                    (u, "related", False)
+                    for u in [x for x in rec.related if not LEGAL_LINK.search(x)][: a.follow]
+                ]
         if want:
             n_ok = sum(r.status == "ok" for r in per_site.get(sid, []))
             print(
@@ -132,7 +146,7 @@ def coverage() -> dict[str, Any]:
             k["fetched_ok"] += 1
         if any(r["status"] == "manual" for r in rows) and not ok:
             k["manual"] += 1
-        if any(HOURS_TEXT.search(cached_text(r["url"]) or "") for r in ok):
+        if any(_has_hours(cached_text(r["url"]) or "") for r in ok):
             k["hours_in_text"] += 1
         if any(r.get("jsonld_hours") for r in ok):
             k["hours_jsonld"] += 1

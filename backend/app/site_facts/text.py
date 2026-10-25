@@ -124,6 +124,9 @@ SERVICE_LINK = re.compile(
 )
 
 
+LEGAL_LINK = re.compile(r"(?i)terms|privacy|policy|cookie|legal|careers?|jobs")
+
+
 def related_links(html: str, base_url: str, limit: int = 6) -> list[str]:
     """Same-host links whose anchor text or path names services or hours (follow-up pages)."""
     from urllib.parse import urljoin, urlparse
@@ -136,6 +139,8 @@ def related_links(html: str, base_url: str, limit: int = 6) -> list[str]:
         u = urljoin(base_url, href).split("#")[0]
         pu = urlparse(u)
         if pu.scheme != "https" or pu.hostname != host or u.rstrip("/") == base_url.rstrip("/"):
+            continue
+        if LEGAL_LINK.search(text) or LEGAL_LINK.search(pu.path):
             continue
         if SERVICE_LINK.search(text) or SERVICE_LINK.search(pu.path.replace("-", " ")):
             if u not in out:

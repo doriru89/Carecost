@@ -2,6 +2,101 @@
 # itself is in the gitignored cache (data/sites/site_facts/cache/), keyed by URL.
 version: 1
 pages:
+- url: https://bidmc.org/locations/beth-israel-deaconess-medical-center
+  status: ok
+  method: http
+  final_url: https://bidmc.org/locations/beth-israel-deaconess-medical-center
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:09+00:00'
+  page_sha256: 04a46206aa4c5020e69c33d797e3e3f2cb5313c047d603b7cc79cc9efa1cad04
+  text_chars: 16940
+  site_ids:
+  - beth_israel_deaconess_medical_center
+  roles:
+  - location
+  related:
+  - https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmc.org/services
+  - https://bidmc.org/patients-visitors/billing-financial-services
+  - https://bidmc.org/patients-visitors/language-assistance-interpreter
+  - https://bidmc.org/patients-visitors/social-work-services
+  - https://bidmc.org/patients-visitors/visiting-hours-policies
+- url: https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  status: ok
+  method: http
+  final_url: https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:10+00:00'
+  page_sha256: 6b9953690b92e2a819630397ff9d43930eadc0ac9105b35c9c76ae4ab3181e07
+  text_chars: 4809
+  site_ids:
+  - beth_israel_deaconess_medical_center
+  roles:
+  - related
+  related:
+  - https://bidmc.org/services
+  - https://bidmc.org/patients-visitors/billing-financial-services
+  - https://bidmc.org/patients-visitors/language-assistance-interpreter
+  - https://bidmc.org/patients-visitors/social-work-services
+  - https://bidmc.org/patients-visitors/visiting-hours-policies
+  - https://bidmc.org/patients-visitors/billing-financial-services/assistance
+- url: https://bidmc.org/services
+  status: ok
+  method: http
+  final_url: https://bidmc.org/services
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:11+00:00'
+  page_sha256: edac63b6bb7ae1cec9769a12981f9f25de14eaac55e1a722dd38c758bbb6e025
+  text_chars: 3257
+  site_ids:
+  - beth_israel_deaconess_medical_center
+  roles:
+  - related
+  related:
+  - https://bidmc.org/services/addiction-recovery
+  - https://bidmc.org/services/allergy
+  - https://bidmc.org/services/anesthesiology
+  - https://bidmc.org/services/arthritis
+  - https://bidmc.org/services/bariatric-surgery
+  - https://bidmc.org/services/behavioral-health
+- url: https://bidmilton.org/patients-visitors/billing-financial-services/bill-pay
+  status: ok
+  method: http
+  final_url: https://bidmilton.org/patients-visitors/billing-financial-services/bill-pay
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:26+00:00'
+  page_sha256: ab48796f8cdbfc7889c4342e0e333b49dabda73a51c4ee16e6e5809e22d27ae7
+  text_chars: 5981
+  site_ids:
+  - beth_israel_deaconess_hospital_milton
+  roles:
+  - related
+  related:
+  - https://bidmilton.org/services
+  - https://bidmilton.org/patients-visitors/billing-financial-services
+  - https://bidmilton.org/patients-visitors/language-assistance-interpreter
+  - https://bidmilton.org/patients-visitors/social-work
+  - https://bidmilton.org/patients-visitors/visiting-hours-policies
+  - https://bidmilton.org/patients-visitors/billing-financial-services/781-744-5554
+- url: https://bidmilton.org/services
+  status: ok
+  method: http
+  final_url: https://bidmilton.org/services
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:27+00:00'
+  page_sha256: 7b28b415d74a3268905a656238f2d1074d5ef754d52655aaba5fe07c869187c1
+  text_chars: 3197
+  site_ids:
+  - beth_israel_deaconess_hospital_milton
+  roles:
+  - related
+  related:
+  - https://bidmilton.org/services/pharmacy
+  - https://bidmilton.org/services/vascular
+  - https://bidmilton.org/services/anesthesiology
+  - https://bidmilton.org/services/arthritis-care-rheumatology
+  - https://bidmilton.org/services/bariatric-surgery
+  - https://bidmilton.org/services/behavioral-health
 - url: https://bidneedham.org/contact
   status: ok
   method: http
@@ -11,6 +106,7 @@ pages:
   page_sha256: 5ba5407ed827d552afb388d5919aae51f10c528349cea82a784ed1b59c7be30b
   text_chars: 5214
   site_ids:
+  - beth_israel_deaconess_hospital_needham
   - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0182
   roles:
   - location
@@ -49,6 +145,7 @@ pages:
   page_sha256: 6811fc7924a7b78fb2e75220dcfa5112fb46c34696a5c3f2a9b01e2991f6998c
   text_chars: 3112
   site_ids:
+  - beth_israel_deaconess_hospital_needham
   - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0182
   roles:
   - related
@@ -68,9 +165,11 @@ pages:
   page_sha256: 4ff95c343ea60dd0dfcaf4513e4537edf4f6eb5ba284873480c2ed5db630efe7
   text_chars: 3612
   site_ids:
+  - beth_israel_deaconess_hospital_needham
   - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0182
   roles:
   - related
+  - services
   related:
   - https://bidneedham.org/services/allergy-immunology
   - https://bidneedham.org/services/anesthesiology
@@ -97,6 +196,1550 @@ pages:
   - https://bidneedham.org/services
   - https://bidneedham.org/patients-visitors/billing-financial-services
   - https://bidneedham.org/patients-visitors/language-assistance-interpreter
+- url: https://bilh.org/billing-financial-services/pay-bill
+  status: ok
+  method: http
+  final_url: https://bilh.org/billing-financial-services/pay-bill
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:33+00:00'
+  page_sha256: 48c60ba907a0e57bcb7addbef3b98a7228ce6624b5b880be5e76197c602a1a4d
+  text_chars: 5542
+  site_ids:
+  - beth_israel_lahey_health_urgent_care_chestnut_hill_chest
+  - beth_israel_lahey_health_urgent_care_dedham_dedham
+  - bilh_urgent_care_watertown
+  - lahey_health_urgent_care_woburn_woburn
+  roles:
+  - related
+  related:
+  - https://bilh.org/care-options/pharmacy
+  - https://bilh.org/billing-financial-services
+  - https://bilh.org/billing-financial-services/assistance
+  - https://bilh.org/billing-financial-services/price-transparency
+  - https://bilh.org/privacy-legal-notices/terms-conditions
+- url: https://bilh.org/care-options/pharmacy
+  status: ok
+  method: http
+  final_url: https://bilh.org/care-options/pharmacy
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:34+00:00'
+  page_sha256: 0c38d2b5230d7e80a5c491ed53b1d7bc54a6742cc739bbd52b9569801f9eae64
+  text_chars: 5088
+  site_ids:
+  - beth_israel_lahey_health_urgent_care_chestnut_hill_chest
+  - beth_israel_lahey_health_urgent_care_dedham_dedham
+  - bilh_urgent_care_watertown
+  - lahey_health_urgent_care_woburn_woburn
+  roles:
+  - related
+  related:
+  - https://bilh.org/billing-financial-services/pay-bill
+  - https://bilh.org/-/media/files/bilh/bilh-specialty-pharmacy-welcome-kit.pdf
+  - https://bilh.org/privacy-legal-notices/terms-conditions
+- url: https://bilh.org/locations/bilh-urgent-care-chestnut-hill
+  status: ok
+  method: http
+  final_url: https://bilh.org/locations/bilh-urgent-care-chestnut-hill
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:32+00:00'
+  page_sha256: 027c7a0e3b81fbd6f7f4f34dbb257fe34d1dc6c929cd96f35aea040d635b6237
+  text_chars: 7113
+  site_ids:
+  - beth_israel_lahey_health_urgent_care_chestnut_hill_chest
+  roles:
+  - location
+  related:
+  - https://bilh.org/billing-financial-services/pay-bill
+  - https://bilh.org/care-options/pharmacy
+  - https://bilh.org/privacy-legal-notices/terms-conditions
+- url: https://bilh.org/locations/bilh-urgent-care-dedham
+  status: ok
+  method: http
+  final_url: https://bilh.org/locations/bilh-urgent-care-dedham
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:37+00:00'
+  page_sha256: 0671c8d17258a7e96be3abca37da0250abe449d2b03c3131c561eff022863f3f
+  text_chars: 7241
+  site_ids:
+  - beth_israel_lahey_health_urgent_care_dedham_dedham
+  roles:
+  - location
+  related:
+  - https://bilh.org/billing-financial-services/pay-bill
+  - https://bilh.org/care-options/pharmacy
+  - https://bilh.org/privacy-legal-notices/terms-conditions
+- url: https://bilh.org/locations/bilh-urgent-care-watertown
+  status: ok
+  method: http
+  final_url: https://bilh.org/locations/bilh-urgent-care-watertown
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:11+00:00'
+  page_sha256: ab3d4fc7221792ca2b7c9bfaa4c85d7be60c427f14ba315c16c95a52e89842d1
+  text_chars: 6510
+  site_ids:
+  - bilh_urgent_care_watertown
+  roles:
+  - location
+  related:
+  - https://bilh.org/billing-financial-services/pay-bill
+  - https://bilh.org/care-options/pharmacy
+  - https://bilh.org/privacy-legal-notices/terms-conditions
+- url: https://bilh.org/locations/winchester-hospital-urgent-care-woburn
+  status: ok
+  method: http
+  final_url: https://bilh.org/locations/winchester-hospital-urgent-care-woburn
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:59+00:00'
+  page_sha256: 0a28491c0dea85aa11b777b636f4b2946c17abe684270d1495118ffb211890f3
+  text_chars: 3811
+  site_ids:
+  - lahey_health_urgent_care_woburn_woburn
+  roles:
+  - location
+  related:
+  - https://bilh.org/billing-financial-services/pay-bill
+  - https://bilh.org/care-options/pharmacy
+  - https://bilh.org/privacy-legal-notices/terms-conditions
+- url: https://carbonhealth.com/get-care/cold-flu-symptoms
+  status: ok
+  method: http
+  final_url: https://carbonhealth.com/get-care/cold-flu-symptoms
+  http_status: 200
+  fetched_at: '2026-10-25T13:50:02+00:00'
+  page_sha256: 34cc02dd6f6f1f80411826668cd421091f37d5ea25dc2630b7df95554e53224c
+  text_chars: 6560
+  site_ids:
+  - carbon_health_boston_ma_back_bay_boylston_boston
+  - carbon_health_boston_ma_downtown_boston_boston
+  - carbon_health_boston_ma_fenway_boylston_boston
+  - carbon_health_brighton_ma_washington_st_brighton
+  - carbon_health_west_roxbury_ma_spring_st_west_roxbury
+  roles:
+  - related
+  related:
+  - https://carbonhealth.com/terms-of-use
+- url: https://carbonhealth.com/locations/boston-ma-back-bay-boylston
+  status: ok
+  method: http
+  final_url: https://carbonhealth.com/locations/boston-ma-back-bay-boylston
+  http_status: 200
+  fetched_at: '2026-10-25T13:50:01+00:00'
+  page_sha256: dfe91de9d62a86c75797a55dac28ac9442a1a9b82f378aa3dae1ceedb69fc792
+  text_chars: 4027
+  site_ids:
+  - carbon_health_boston_ma_back_bay_boylston_boston
+  roles:
+  - location
+  related:
+  - https://carbonhealth.com/get-care/cold-flu-symptoms
+  - https://carbonhealth.com/terms-of-use
+- url: https://carbonhealth.com/locations/boston-ma-downtown-boston
+  status: ok
+  method: http
+  final_url: https://carbonhealth.com/locations/boston-ma-downtown-boston
+  http_status: 200
+  fetched_at: '2026-10-25T13:50:49+00:00'
+  page_sha256: d7a3076b604bce5ecdbd349a5af2d0e5fece7a2bbf91366223fc955b89137b58
+  text_chars: 3934
+  site_ids:
+  - carbon_health_boston_ma_downtown_boston_boston
+  roles:
+  - location
+  related:
+  - https://carbonhealth.com/get-care/cold-flu-symptoms
+  - https://carbonhealth.com/terms-of-use
+- url: https://carbonhealth.com/locations/boston-ma-fenway-boylston
+  status: ok
+  method: http
+  final_url: https://carbonhealth.com/locations/boston-ma-fenway-boylston
+  http_status: 200
+  fetched_at: '2026-10-25T13:51:37+00:00'
+  page_sha256: d4c40c303464db616f6fbb28f582517f38cbccb5e0cb105c81530ec64cc9b591
+  text_chars: 4021
+  site_ids:
+  - carbon_health_boston_ma_fenway_boylston_boston
+  roles:
+  - location
+  related:
+  - https://carbonhealth.com/get-care/cold-flu-symptoms
+  - https://carbonhealth.com/terms-of-use
+- url: https://carbonhealth.com/locations/brighton-ma-washington-st
+  status: ok
+  method: http
+  final_url: https://carbonhealth.com/locations/brighton-ma-washington-st
+  http_status: 200
+  fetched_at: '2026-10-25T13:52:30+00:00'
+  page_sha256: 15a163c473ed1302601b99b2fc55bba62ebb87211594739103faed1d86ad4a8e
+  text_chars: 3989
+  site_ids:
+  - carbon_health_brighton_ma_washington_st_brighton
+  roles:
+  - location
+  related:
+  - https://carbonhealth.com/get-care/cold-flu-symptoms
+  - https://carbonhealth.com/terms-of-use
+- url: https://carbonhealth.com/locations/west-roxbury-ma-spring-st
+  status: ok
+  method: http
+  final_url: https://carbonhealth.com/locations/west-roxbury-ma-spring-st
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:11+00:00'
+  page_sha256: c21f40213cc06d5745671fa472916c1cef2050cbf57efb5936b803f80abd5573
+  text_chars: 4050
+  site_ids:
+  - carbon_health_west_roxbury_ma_spring_st_west_roxbury
+  roles:
+  - location
+  related:
+  - https://carbonhealth.com/get-care/cold-flu-symptoms
+  - https://carbonhealth.com/terms-of-use
+- url: https://convenientmd.com/employer-services/
+  status: ok
+  method: http
+  final_url: https://convenientmd.com/employer-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:22+00:00'
+  page_sha256: 0ca6182a81e1d23c80310ae65d64d5c26f4867cbf67c09b6fc7bb74672472cfc
+  text_chars: 5522
+  site_ids:
+  - convenientmd_urgent_care_burlington_burlington
+  - convenientmd_urgent_care_dedham_dedham
+  - convenientmd_urgent_care_quincy_quincy
+  - convenientmd_urgent_care_saugus_saugus
+  - convenientmd_urgent_care_weymouth_weymouth
+  roles:
+  - related
+  related:
+  - https://convenientmd.com/urgent-care/lab-services/
+  - https://convenientmd.com/wp-content/uploads/2025/03/Occupational_Health_Policy_Revision_03-07-20251.pdf
+- url: https://convenientmd.com/locations/burlington-ma-urgent-care/
+  status: ok
+  method: http
+  final_url: https://convenientmd.com/locations/burlington-ma-urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:21+00:00'
+  page_sha256: 54433ab358b78d83e10fd28c8edc1226fe6e2f8ae9b62379fbb584c328cdaf70
+  text_chars: 3786
+  site_ids:
+  - convenientmd_urgent_care_burlington_burlington
+  roles:
+  - location
+  related:
+  - https://convenientmd.com/employer-services/
+  - https://convenientmd.com/urgent-care/lab-services/
+- url: https://convenientmd.com/locations/dedham-ma-urgent-care/
+  status: ok
+  method: http
+  final_url: https://convenientmd.com/locations/dedham-ma-urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:37+00:00'
+  page_sha256: 8bc3ae75fb0af2117016e1deebbcf8d9c320355f4753219f10314b0e9bbcbffd
+  text_chars: 3715
+  site_ids:
+  - convenientmd_urgent_care_dedham_dedham
+  roles:
+  - location
+  related:
+  - https://convenientmd.com/employer-services/
+  - https://convenientmd.com/urgent-care/lab-services/
+- url: https://convenientmd.com/locations/quincy-ma-urgent-care/
+  status: ok
+  method: http
+  final_url: https://convenientmd.com/locations/quincy-ma-urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:56+00:00'
+  page_sha256: a71c4580d3f0cf8e612dd0a04d57f08e0f4fc601020b909af25484ce9b70e283
+  text_chars: 3610
+  site_ids:
+  - convenientmd_urgent_care_quincy_quincy
+  roles:
+  - location
+  related:
+  - https://convenientmd.com/employer-services/
+  - https://convenientmd.com/urgent-care/lab-services/
+- url: https://convenientmd.com/locations/saugus-ma-urgent-care/
+  status: ok
+  method: http
+  final_url: https://convenientmd.com/locations/saugus-ma-urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:02+00:00'
+  page_sha256: 538e50656493a63d7d525eb6c6068d892befc8840a8e8895b5ac590e7f486ad6
+  text_chars: 3227
+  site_ids:
+  - convenientmd_urgent_care_saugus_saugus
+  roles:
+  - location
+  related:
+  - https://convenientmd.com/employer-services/
+  - https://convenientmd.com/urgent-care/lab-services/
+- url: https://convenientmd.com/locations/weymouth-ma-urgent-care/
+  status: ok
+  method: http
+  final_url: https://convenientmd.com/locations/weymouth-ma-urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:59+00:00'
+  page_sha256: 5821d8944b2ef49ab8415aadbeabf4286506e7b905cfa1a36d84dcb7b6004f99
+  text_chars: 3697
+  site_ids:
+  - convenientmd_urgent_care_weymouth_weymouth
+  roles:
+  - location
+  related:
+  - https://convenientmd.com/employer-services/
+  - https://convenientmd.com/urgent-care/lab-services/
+- url: https://convenientmd.com/urgent-care/lab-services/
+  status: ok
+  method: http
+  final_url: https://convenientmd.com/urgent-care/lab-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:23+00:00'
+  page_sha256: 054d8cc7e2f48af6525ea2f13bc6fb0c10ed89b14d718a42abdd9af6421ba704
+  text_chars: 3463
+  site_ids:
+  - convenientmd_urgent_care_burlington_burlington
+  - convenientmd_urgent_care_dedham_dedham
+  - convenientmd_urgent_care_quincy_quincy
+  - convenientmd_urgent_care_saugus_saugus
+  - convenientmd_urgent_care_weymouth_weymouth
+  roles:
+  - related
+  related:
+  - https://convenientmd.com/employer-services/
+- url: https://franciscanchildrens.org/
+  status: manual
+  method: http
+  reason: 'robots.txt unreadable: ConnectError: [SSL: CERTIFICATE_VERIFY_FAILED] certificate
+    verify failed: unable to get local issuer certificate (_ssl.c:1081) (https://franciscanchildrens.org/robots.txt)'
+  site_ids:
+  - franciscan_childrens
+  roles:
+  - location
+- url: https://mountauburnhospital.org/locations/mount-auburn-hospital
+  status: ok
+  method: http
+  final_url: https://mountauburnhospital.org/locations/mount-auburn-hospital
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:19+00:00'
+  page_sha256: c672c6e34c86fbba1b6f5c7b6f6fae8a19c89bb8f089e14dc29dfa641134b51d
+  text_chars: 6424
+  site_ids:
+  - mount_auburn_hospital
+  roles:
+  - location
+  related:
+  - https://mountauburnhospital.org/patients-visitors/billing-financial-services/bill-pay
+  - https://mountauburnhospital.org/services
+  - https://mountauburnhospital.org/patients-visitors/billing-financial-services
+  - https://mountauburnhospital.org/patients-visitors/language-assistance-interpreter
+  - https://mountauburnhospital.org/patients-visitors/visiting-hours-policies
+  - https://mountauburnhospital.org/services/digestive-care
+- url: https://mountauburnhospital.org/patients-visitors/billing-financial-services/bill-pay
+  status: ok
+  method: http
+  final_url: https://mountauburnhospital.org/patients-visitors/billing-financial-services/bill-pay
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:20+00:00'
+  page_sha256: c1200fe82f79a094f6ce4757a5975a15c089acb4a53dcb99ac99d712a7156574
+  text_chars: 4322
+  site_ids:
+  - mount_auburn_hospital
+  roles:
+  - related
+  related:
+  - https://mountauburnhospital.org/services
+  - https://mountauburnhospital.org/patients-visitors/billing-financial-services
+  - https://mountauburnhospital.org/patients-visitors/language-assistance-interpreter
+  - https://mountauburnhospital.org/patients-visitors/visiting-hours-policies
+  - https://mountauburnhospital.org/patients-visitors/billing-financial-services/assistance
+  - https://mountauburnhospital.org/patients-visitors/billing-financial-services/price-transparency
+- url: https://mountauburnhospital.org/services
+  status: ok
+  method: http
+  final_url: https://mountauburnhospital.org/services
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:21+00:00'
+  page_sha256: aba9cec2577b67baeb64180ad0185a6f2627489d84bc5dc5b238d9ff5ca4f887
+  text_chars: 3320
+  site_ids:
+  - mount_auburn_hospital
+  roles:
+  - related
+  related:
+  - https://mountauburnhospital.org/services/addiction-recovery
+  - https://mountauburnhospital.org/services/anesthesiology
+  - https://mountauburnhospital.org/services/arthritis-rheumatology
+  - https://mountauburnhospital.org/services/behavioral-health
+  - https://mountauburnhospital.org/services/breast-health
+  - https://mountauburnhospital.org/services/cancer
+- url: https://nebh.org/locations/new-england-baptist-hospital
+  status: ok
+  method: http
+  final_url: https://nebh.org/locations/new-england-baptist-hospital
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:22+00:00'
+  page_sha256: a4b83ab8ca7ad57777076b62a9a798a16db1c11c5f0d74f66903cb208efa75c2
+  text_chars: 2766
+  site_ids:
+  - new_england_baptist_hospital
+  roles:
+  - location
+  related:
+  - https://nebh.org/patients-visitors/billing-financial-services/bill-pay
+  - https://nebh.org/services
+  - https://nebh.org/patients-visitors/billing-financial-services
+  - https://nebh.org/patients-visitors/language-assistance-interpreter
+  - https://nebh.org/patients-visitors/visiting-hours-policies
+  - https://nebh.org/services/joint-health-replacement/replacement
+- url: https://nebh.org/patients-visitors/billing-financial-services/bill-pay
+  status: ok
+  method: http
+  final_url: https://nebh.org/patients-visitors/billing-financial-services/bill-pay
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:23+00:00'
+  page_sha256: de374c7ac78b226eadbfb68cf4ad67c775bafdaa875dfce55edd2f369556cacc
+  text_chars: 3801
+  site_ids:
+  - new_england_baptist_hospital
+  roles:
+  - related
+  related:
+  - https://nebh.org/services
+  - https://nebh.org/patients-visitors/billing-financial-services
+  - https://nebh.org/patients-visitors/language-assistance-interpreter
+  - https://nebh.org/patients-visitors/visiting-hours-policies
+  - https://nebh.org/patients-visitors/billing-financial-services/price-transparency
+  - https://nebh.org/patients-visitors/billing-financial-services/assistance
+- url: https://nebh.org/services
+  status: ok
+  method: http
+  final_url: https://nebh.org/services
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:24+00:00'
+  page_sha256: 1d2fe7a00a061370307971ddb3373b0cff41b8bfc738d1bc2917321b42afb286
+  text_chars: 2187
+  site_ids:
+  - new_england_baptist_hospital
+  roles:
+  - related
+  related:
+  - https://nebh.org/services/arthritis
+  - https://nebh.org/services/critical
+  - https://nebh.org/services/foot-ankle
+  - https://nebh.org/services/hand-wrist-elbow
+  - https://nebh.org/services/hip
+  - https://nebh.org/services/home-infusion-therapy
+- url: https://pmpediatriccare.com/location/dedham/
+  status: ok
+  method: http
+  final_url: https://pmpediatriccare.com/location/dedham/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:39+00:00'
+  page_sha256: beb6113271c7c13328c27319975101e429ff53e9590eeaa3dbaaba07bddfda74
+  text_chars: 16556
+  jsonld_hours: true
+  site_ids:
+  - pm_pediatrics_at_dedham_dedham
+  roles:
+  - location
+  related:
+  - https://pmpediatriccare.com/opening-your-xray-images/
+  - https://pmpediatriccare.com/mental-health/medication-management-and-psychiatry-services/
+  - https://pmpediatriccare.com/mental-health/maternal-mental-health/
+  - https://pmpediatriccare.com/mental-health/adhd/
+  - https://pmpediatriccare.com/terms-and-conditions/
+- url: https://pmpediatriccare.com/location/massachusetts-saugus/
+  status: ok
+  method: http
+  final_url: https://pmpediatriccare.com/location/massachusetts-saugus/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:02+00:00'
+  page_sha256: 6294e015d78326a102bdb27dfb0be2214b6a4c123fcbde00cc7f593fe6f32dd5
+  text_chars: 16577
+  jsonld_hours: true
+  site_ids:
+  - pm_pediatic_care_saugus_saugus
+  roles:
+  - location
+  related:
+  - https://pmpediatriccare.com/opening-your-xray-images/
+  - https://pmpediatriccare.com/mental-health/medication-management-and-psychiatry-services/
+  - https://pmpediatriccare.com/mental-health/maternal-mental-health/
+  - https://pmpediatriccare.com/mental-health/adhd/
+  - https://pmpediatriccare.com/terms-and-conditions/
+- url: https://pmpediatriccare.com/location/massachusetts-woburn/
+  status: ok
+  method: http
+  final_url: https://pmpediatriccare.com/location/massachusetts-woburn/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:59+00:00'
+  page_sha256: ddcef62c6ca9689543ff540c83ef87a02ee97309275f6139912842c9624d122d
+  text_chars: 16520
+  jsonld_hours: true
+  site_ids:
+  - pm_pediatrics_at_woburn_woburn
+  roles:
+  - location
+  related:
+  - https://pmpediatriccare.com/opening-your-xray-images/
+  - https://pmpediatriccare.com/mental-health/medication-management-and-psychiatry-services/
+  - https://pmpediatriccare.com/mental-health/maternal-mental-health/
+  - https://pmpediatriccare.com/mental-health/adhd/
+  - https://pmpediatriccare.com/terms-and-conditions/
+- url: https://pmpediatriccare.com/mental-health/medication-management-and-psychiatry-services/
+  status: ok
+  method: http
+  final_url: https://pmpediatriccare.com/mental-health/medication-management-and-psychiatry-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:41+00:00'
+  page_sha256: c1f874f41861a3c519829600c65a8c4c32667d52532f1e9fab88af589b8657f8
+  text_chars: 19220
+  site_ids:
+  - pm_pediatic_care_saugus_saugus
+  - pm_pediatrics_at_dedham_dedham
+  - pm_pediatrics_at_woburn_woburn
+  roles:
+  - related
+  related:
+  - https://pmpediatriccare.com/opening-your-xray-images/
+  - https://pmpediatriccare.com/mental-health/maternal-mental-health/
+  - https://pmpediatriccare.com/mental-health/adhd/
+  - https://pmpediatriccare.com/terms-and-conditions/
+- url: https://pmpediatriccare.com/opening-your-xray-images/
+  status: ok
+  method: http
+  final_url: https://pmpediatriccare.com/opening-your-xray-images/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:40+00:00'
+  page_sha256: e15e067e8fb31c6c628405c5685f93ca1e14ff8f3cd577c1abb5d79d6635f2f5
+  text_chars: 8060
+  site_ids:
+  - pm_pediatic_care_saugus_saugus
+  - pm_pediatrics_at_dedham_dedham
+  - pm_pediatrics_at_woburn_woburn
+  roles:
+  - related
+  related:
+  - https://pmpediatriccare.com/mental-health/medication-management-and-psychiatry-services/
+  - https://pmpediatriccare.com/mental-health/maternal-mental-health/
+  - https://pmpediatriccare.com/mental-health/adhd/
+  - https://pmpediatriccare.com/terms-and-conditions/
+- url: https://uphamscornerhealthcenter.org/contact-us/
+  status: ok
+  method: http
+  final_url: https://uphamscornerhealthcenter.org/contact-us/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:43+00:00'
+  page_sha256: a343d1d0aeaee18e486d4d0e067fb1602d5349e75bf6ad2e45f3dd96499dc343
+  text_chars: 7272
+  site_ids:
+  - uphams_corner_health_center_urgent_care_dorchester
+  roles:
+  - related
+  related:
+  - https://uphamscornerhealthcenter.org/services-programs/
+  - https://uphamscornerhealthcenter.org/services-programs/dental/
+  - https://uphamscornerhealthcenter.org/services-programs/eye-care/
+  - https://uphamscornerhealthcenter.org/services-programs/pharmacy/
+  - https://uphamscornerhealthcenter.org/uphams-elder-service-plan-pace/
+  - https://uphamscornerhealthcenter.org/interpreter-services/
+- url: https://uphamscornerhealthcenter.org/our-clinic/
+  status: ok
+  method: http
+  final_url: https://uphamscornerhealthcenter.org/our-clinic/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:42+00:00'
+  page_sha256: 7bbf1bd48765cb00decf4720a543a157da6fb832cd96b341fe58a93199878a89
+  text_chars: 7744
+  site_ids:
+  - uphams_corner_health_center_urgent_care_dorchester
+  roles:
+  - location
+  related:
+  - https://uphamscornerhealthcenter.org/contact-us/
+  - https://uphamscornerhealthcenter.org/services-programs/
+  - https://uphamscornerhealthcenter.org/services-programs/dental/
+  - https://uphamscornerhealthcenter.org/services-programs/eye-care/
+  - https://uphamscornerhealthcenter.org/services-programs/pharmacy/
+  - https://uphamscornerhealthcenter.org/uphams-elder-service-plan-pace/
+- url: https://uphamscornerhealthcenter.org/services-programs/
+  status: ok
+  method: http
+  final_url: https://uphamscornerhealthcenter.org/services-programs/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:44+00:00'
+  page_sha256: 0d3c75d13ad781d834dee9310c67279674fc7c876213c0acac1bc67557f73bb8
+  text_chars: 4906
+  site_ids:
+  - uphams_corner_health_center_urgent_care_dorchester
+  roles:
+  - related
+  related:
+  - https://uphamscornerhealthcenter.org/services-programs/dental/
+  - https://uphamscornerhealthcenter.org/services-programs/eye-care/
+  - https://uphamscornerhealthcenter.org/services-programs/pharmacy/
+  - https://uphamscornerhealthcenter.org/contact-us/
+  - https://uphamscornerhealthcenter.org/uphams-elder-service-plan-pace/
+  - https://uphamscornerhealthcenter.org/interpreter-services/
+- url: https://www.afcurgentcare.com/arlington/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/arlington/
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:55+00:00'
+  page_sha256: a9cceee1b8efcfe4d596ddf9b34876d5470f513abf7ce28601696e3c83d27570
+  text_chars: 9415
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_arlington_arlington
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/arlington/patient-services/
+  - https://www.afcurgentcare.com/arlington/patient-services/telemedicine-urgent-care/
+  - https://www.afcurgentcare.com/arlington/patient-services/patient-focused-urgent-care/
+  - https://www.afcurgentcare.com/arlington/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/arlington/patient-services/digital-x-ray-and-imaging-in-arlington-ma/
+  - https://www.afcurgentcare.com/arlington/patient-services/er-alternative/
+- url: https://www.afcurgentcare.com/arlington/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/arlington/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:56+00:00'
+  page_sha256: 269eb7ecbdc3f489f5eac4055d873eff2d255b6fb9337b3df914e49cb1b90190
+  text_chars: 6997
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_arlington_arlington
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/arlington/patient-services/telemedicine-urgent-care/
+  - https://www.afcurgentcare.com/arlington/patient-services/patient-focused-urgent-care/
+  - https://www.afcurgentcare.com/arlington/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/arlington/patient-services/digital-x-ray-and-imaging-in-arlington-ma/
+  - https://www.afcurgentcare.com/arlington/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/arlington/patient-services/physical-examinations/
+- url: https://www.afcurgentcare.com/arlington/patient-services/telemedicine-urgent-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/arlington/patient-services/telemedicine-urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:57+00:00'
+  page_sha256: 0d571842760bc7e8fa4786a5f04f9fab20a11135cdf3b74330ef363ad61125bd
+  text_chars: 8399
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_arlington_arlington
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/arlington/patient-services/
+  - https://www.afcurgentcare.com/arlington/patient-services/patient-focused-urgent-care/
+  - https://www.afcurgentcare.com/arlington/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/arlington/patient-services/digital-x-ray-and-imaging-in-arlington-ma/
+  - https://www.afcurgentcare.com/arlington/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/arlington/patient-services/physical-examinations/
+- url: https://www.afcurgentcare.com/back-bay/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/back-bay/
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:58+00:00'
+  page_sha256: bcc37f6e810514b75c19425bc8b2eea6420ef746037e3496d3abf1cc04806ca2
+  text_chars: 8228
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_back_bay_boston
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/back-bay/patient-services/
+  - https://www.afcurgentcare.com/back-bay/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/back-bay/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/back-bay/patient-services/acute-injury-treatment/
+  - https://www.afcurgentcare.com/back-bay/patient-services/travel-vaccinations/
+  - https://www.afcurgentcare.com/back-bay/patient-services/cold-flu-covid-19-treatment/
+- url: https://www.afcurgentcare.com/back-bay/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/back-bay/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:59+00:00'
+  page_sha256: 33e6610e8f5ef335f36471b6693ae703b16e0acb64d695177aa537837cf92950
+  text_chars: 5863
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_back_bay_boston
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/back-bay/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/back-bay/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/back-bay/patient-services/acute-injury-treatment/
+  - https://www.afcurgentcare.com/back-bay/patient-services/travel-vaccinations/
+  - https://www.afcurgentcare.com/back-bay/patient-services/cold-flu-covid-19-treatment/
+  - https://www.afcurgentcare.com/back-bay/patient-services/urgent-care-for-travelers-and-tourists-in-boston-ma/
+- url: https://www.afcurgentcare.com/back-bay/patient-services/urgent-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/back-bay/patient-services/urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:50:00+00:00'
+  page_sha256: fa5a8a82a57533f74aee7c59aef63b995b5fb1c71fcfc4dcfaff2bdb0c25d98d
+  text_chars: 5513
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_back_bay_boston
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/back-bay/patient-services/
+  - https://www.afcurgentcare.com/back-bay/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/back-bay/patient-services/acute-injury-treatment/
+  - https://www.afcurgentcare.com/back-bay/patient-services/travel-vaccinations/
+  - https://www.afcurgentcare.com/back-bay/patient-services/cold-flu-covid-19-treatment/
+  - https://www.afcurgentcare.com/back-bay/patient-services/urgent-care-for-travelers-and-tourists-in-boston-ma/
+- url: https://www.afcurgentcare.com/braintree/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/braintree/
+  http_status: 200
+  fetched_at: '2026-10-25T13:52:25+00:00'
+  page_sha256: add359081f510ad2577fe5a8262b2cf4f41958a75d3e0cecec8c50553c499366
+  text_chars: 12176
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_braintree_braintree
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/braintree/patient-services/
+  - https://www.afcurgentcare.com/braintree/patient-services/covid-19-testing/
+  - https://www.afcurgentcare.com/braintree/patient-services/vaccines-travel-medicine/
+  - https://www.afcurgentcare.com/braintree/patient-services/physicals/
+  - https://www.afcurgentcare.com/braintree/patient-services/routine-checkups/
+  - https://www.afcurgentcare.com/braintree/patient-services/wellness-vaccines/
+- url: https://www.afcurgentcare.com/braintree/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/braintree/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:52:26+00:00'
+  page_sha256: 6490816f6e99ba7e5d8640b6d2792c0438c1e99400f8b66438b48ccf1c338b4f
+  text_chars: 6811
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_braintree_braintree
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/braintree/patient-services/covid-19-testing/
+  - https://www.afcurgentcare.com/braintree/patient-services/vaccines-travel-medicine/
+  - https://www.afcurgentcare.com/braintree/patient-services/physicals/
+  - https://www.afcurgentcare.com/braintree/patient-services/routine-checkups/
+  - https://www.afcurgentcare.com/braintree/patient-services/wellness-vaccines/
+  - https://www.afcurgentcare.com/braintree/patient-services/tuberculosis-testing/
+- url: https://www.afcurgentcare.com/braintree/patient-services/covid-19-testing/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/braintree/patient-services/covid-19-testing/
+  http_status: 200
+  fetched_at: '2026-10-25T13:52:27+00:00'
+  page_sha256: e2cf76ea3271e1627736b7a1c2c67a6d444966f6f95fe862ccbdcb6ea9bdf906
+  text_chars: 8063
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_braintree_braintree
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/braintree/patient-services/
+  - https://www.afcurgentcare.com/braintree/patient-services/vaccines-travel-medicine/
+  - https://www.afcurgentcare.com/braintree/patient-services/physicals/
+  - https://www.afcurgentcare.com/braintree/patient-services/routine-checkups/
+  - https://www.afcurgentcare.com/braintree/patient-services/wellness-vaccines/
+  - https://www.afcurgentcare.com/braintree/patient-services/tuberculosis-testing/
+- url: https://www.afcurgentcare.com/burlington/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/burlington/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:18+00:00'
+  page_sha256: a2ca4afa5846c1eab4ae2932705f46f9930d972b21a01111700746e23c9c9cae
+  text_chars: 8477
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_burlington_burlington
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/burlington/patient-services/
+  - https://www.afcurgentcare.com/burlington/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/burlington/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/burlington/patient-services/general-illness/
+  - https://www.afcurgentcare.com/burlington/patient-services/bronchitis-treatment/
+  - https://www.afcurgentcare.com/burlington/patient-services/tick-bite-and-lyme-disease-treatment/
+- url: https://www.afcurgentcare.com/burlington/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/burlington/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:19+00:00'
+  page_sha256: 2a79cc18cda593a5c98e80bbfd877004e01fc16a2035361c06fd7d175e72eb46
+  text_chars: 6588
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_burlington_burlington
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/burlington/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/burlington/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/burlington/patient-services/general-illness/
+  - https://www.afcurgentcare.com/burlington/patient-services/bronchitis-treatment/
+  - https://www.afcurgentcare.com/burlington/patient-services/tick-bite-and-lyme-disease-treatment/
+  - https://www.afcurgentcare.com/burlington/patient-services/urgent-care-vs-minuteclinic/
+- url: https://www.afcurgentcare.com/burlington/patient-services/urgent-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/burlington/patient-services/urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:20+00:00'
+  page_sha256: 0c8dfc52772e51af650ca5c1689899da1df108fb1a41692baf14b528b6e9fc6e
+  text_chars: 6178
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_burlington_burlington
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/burlington/patient-services/
+  - https://www.afcurgentcare.com/burlington/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/burlington/patient-services/general-illness/
+  - https://www.afcurgentcare.com/burlington/patient-services/bronchitis-treatment/
+  - https://www.afcurgentcare.com/burlington/patient-services/tick-bite-and-lyme-disease-treatment/
+  - https://www.afcurgentcare.com/burlington/patient-services/urgent-care-vs-minuteclinic/
+- url: https://www.afcurgentcare.com/cambridge-inman-square/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/cambridge-inman-square/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:26+00:00'
+  page_sha256: fcd019a06cbc79b724d2800a3e4377e57f4fbc2868fd714b475adc4bb82935df
+  text_chars: 8315
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_cambridge_inman_square_cambridge
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/general-illness-care/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/flu-shots/
+- url: https://www.afcurgentcare.com/cambridge-inman-square/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/cambridge-inman-square/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:28+00:00'
+  page_sha256: 44bf94fec8acc8d13b70e72390e6e2ce4f7a99bd3ab7d8aaac1a65c3bd48fae5
+  text_chars: 6483
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_cambridge_inman_square_cambridge
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/general-illness-care/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/flu-shots/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/immigration-physicals/
+- url: https://www.afcurgentcare.com/cambridge-inman-square/patient-services/urgent-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/cambridge-inman-square/patient-services/urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:28+00:00'
+  page_sha256: c2d631d062ea38f9e2a89ed2850f73dfacba9e212a7e556b2cf08f2bed976d05
+  text_chars: 6346
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_cambridge_inman_square_cambridge
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/general-illness-care/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/flu-shots/
+  - https://www.afcurgentcare.com/cambridge-inman-square/patient-services/immigration-physicals/
+- url: https://www.afcurgentcare.com/cambridge/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/cambridge/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:23+00:00'
+  page_sha256: 7b191d2293c9b1a040063002a789bcf01e400672c24d4998ba3989c731e32d44
+  text_chars: 8415
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_cambridge_cambridge
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/cambridge/patient-services/
+  - https://www.afcurgentcare.com/cambridge/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/cambridge/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/cambridge/patient-services/general-illness-care/
+  - https://www.afcurgentcare.com/cambridge/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/cambridge/patient-services/flu-shots/
+- url: https://www.afcurgentcare.com/cambridge/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/cambridge/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:24+00:00'
+  page_sha256: 8c0e700d61384fb1f57902aedbdc10671650a94edb130a87c349eab5e32f8d71
+  text_chars: 6682
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_cambridge_cambridge
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/cambridge/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/cambridge/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/cambridge/patient-services/general-illness-care/
+  - https://www.afcurgentcare.com/cambridge/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/cambridge/patient-services/flu-shots/
+  - https://www.afcurgentcare.com/cambridge/patient-services/immigration-physicals/
+- url: https://www.afcurgentcare.com/cambridge/patient-services/urgent-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/cambridge/patient-services/urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:25+00:00'
+  page_sha256: 3b294eeb354b3bc614436e274bc479cf987119ef682e158f522db4d8fd30d6e2
+  text_chars: 6461
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_cambridge_cambridge
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/cambridge/patient-services/
+  - https://www.afcurgentcare.com/cambridge/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/cambridge/patient-services/general-illness-care/
+  - https://www.afcurgentcare.com/cambridge/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/cambridge/patient-services/flu-shots/
+  - https://www.afcurgentcare.com/cambridge/patient-services/immigration-physicals/
+- url: https://www.afcurgentcare.com/chestnuthill/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/chestnuthill/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:29+00:00'
+  page_sha256: 0d3f63579d0da3cd82a7ca7916a8dee5100365bb0a117052e329354be21fa17d
+  text_chars: 8115
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_chestnuthill_chestnut_hill
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/general-illness-treatment/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/walk-in-injury-treatment/
+- url: https://www.afcurgentcare.com/chestnuthill/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/chestnuthill/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:30+00:00'
+  page_sha256: c92e3fd9c4b522807587abd568be562fe5c8c5709ddb908a51372c24bac56711
+  text_chars: 5996
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_chestnuthill_chestnut_hill
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/general-illness-treatment/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/walk-in-injury-treatment/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/on-site-labs/
+- url: https://www.afcurgentcare.com/chestnuthill/patient-services/urgent-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/chestnuthill/patient-services/urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:31+00:00'
+  page_sha256: 9248ff0c24ae7d8afa986a18db2e4d99d79acf080b8a53a8ad23c181a0fa9c02
+  text_chars: 6586
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_chestnuthill_chestnut_hill
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/general-illness-treatment/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/walk-in-injury-treatment/
+  - https://www.afcurgentcare.com/chestnuthill/patient-services/on-site-labs/
+- url: https://www.afcurgentcare.com/dedham/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/dedham/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:35+00:00'
+  page_sha256: db7d10a624c9b356cf22b7018f8f47ecd0ea298a13be8349090efb69984e3cd1
+  text_chars: 9848
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_dedham_dedham
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/dedham/patient-services/
+  - https://www.afcurgentcare.com/dedham/conditions/cold-sinus-respiratory/
+  - https://www.afcurgentcare.com/dedham/patient-services/covid-19-services/
+  - https://www.afcurgentcare.com/dedham/patient-services/coronavirus-antibody-testing-in-dedham/
+  - https://www.afcurgentcare.com/dedham/patient-services/covid-19-faq/
+  - https://www.afcurgentcare.com/dedham/patient-services/covid-19-rapid-diagnostic-swab-testing-in-dedham-ma/
+- url: https://www.afcurgentcare.com/dedham/conditions/cold-sinus-respiratory/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/dedham/conditions/cold-sinus-respiratory/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:37+00:00'
+  page_sha256: 3ffd020d762e4246060bebad294fdb2ca41c63d655043c50873614c7dc742d60
+  text_chars: 10949
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_dedham_dedham
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/dedham/patient-services/
+  - https://www.afcurgentcare.com/dedham/patient-services/covid-19-services/
+  - https://www.afcurgentcare.com/dedham/patient-services/coronavirus-antibody-testing-in-dedham/
+  - https://www.afcurgentcare.com/dedham/patient-services/covid-19-faq/
+  - https://www.afcurgentcare.com/dedham/patient-services/covid-19-rapid-diagnostic-swab-testing-in-dedham-ma/
+  - https://www.afcurgentcare.com/dedham/patient-services/covid-19-fact-sheets/
+- url: https://www.afcurgentcare.com/dedham/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/dedham/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:36+00:00'
+  page_sha256: a303b6c029b75a22e7df61c075e1cda84b80d314eadbe2e5dc069f705e352404
+  text_chars: 5894
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_dedham_dedham
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/dedham/patient-services/covid-19-services/
+  - https://www.afcurgentcare.com/dedham/patient-services/coronavirus-antibody-testing-in-dedham/
+  - https://www.afcurgentcare.com/dedham/patient-services/covid-19-faq/
+  - https://www.afcurgentcare.com/dedham/patient-services/covid-19-rapid-diagnostic-swab-testing-in-dedham-ma/
+  - https://www.afcurgentcare.com/dedham/patient-services/covid-19-fact-sheets/
+  - https://www.afcurgentcare.com/dedham/patient-services/family-care/
+- url: https://www.afcurgentcare.com/malden/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/malden/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:44+00:00'
+  page_sha256: d5d7a93a8cd80d4506aedf40c9ae82aecaa69d30e94351aa8d5b56a0bebc49f6
+  text_chars: 9669
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_malden_malden
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/malden/patient-services/
+  - https://www.afcurgentcare.com/malden/conditions/cold-sinus-respiratory/
+  - https://www.afcurgentcare.com/malden/patient-services/covid-19-services/
+  - https://www.afcurgentcare.com/malden/patient-services/coronavirus-antibody-testing-in-malden-ma/
+  - https://www.afcurgentcare.com/malden/patient-services/covid-19-diagnostic-testing-in-malden-ma/
+  - https://www.afcurgentcare.com/malden/patient-services/covid-19-fact-sheets/
+- url: https://www.afcurgentcare.com/malden/conditions/cold-sinus-respiratory/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/malden/conditions/cold-sinus-respiratory/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:46+00:00'
+  page_sha256: 0db7a027b5f4070d40127247ce08cc9d2f319decd22d649d6e3fde18afe37a2d
+  text_chars: 10923
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_malden_malden
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/malden/patient-services/
+  - https://www.afcurgentcare.com/malden/patient-services/covid-19-services/
+  - https://www.afcurgentcare.com/malden/patient-services/coronavirus-antibody-testing-in-malden-ma/
+  - https://www.afcurgentcare.com/malden/patient-services/covid-19-diagnostic-testing-in-malden-ma/
+  - https://www.afcurgentcare.com/malden/patient-services/covid-19-fact-sheets/
+  - https://www.afcurgentcare.com/malden/patient-services/covid-19-rapid-test-faq/
+- url: https://www.afcurgentcare.com/malden/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/malden/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:45+00:00'
+  page_sha256: f48b13783b479007c0c8dcd463ceeb4ca9abf3c931180e00ad29aa0789c34da6
+  text_chars: 6272
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_malden_malden
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/malden/patient-services/covid-19-services/
+  - https://www.afcurgentcare.com/malden/patient-services/coronavirus-antibody-testing-in-malden-ma/
+  - https://www.afcurgentcare.com/malden/patient-services/covid-19-diagnostic-testing-in-malden-ma/
+  - https://www.afcurgentcare.com/malden/patient-services/covid-19-fact-sheets/
+  - https://www.afcurgentcare.com/malden/patient-services/covid-19-rapid-test-faq/
+  - https://www.afcurgentcare.com/malden/patient-services/er-alternative/
+- url: https://www.afcurgentcare.com/medford/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/medford/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:47+00:00'
+  page_sha256: 3200fb89b9432f68504211fb1ad4fb0410a810d6dbbad7b010f14d4a1d074224
+  text_chars: 8042
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_medford_medford
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/medford/patient-services/
+  - https://www.afcurgentcare.com/medford/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/medford/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/medford/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/medford/patient-services/general-illness-treatment/
+  - https://www.afcurgentcare.com/medford/patient-services/walk-in-injury-treatment/
+- url: https://www.afcurgentcare.com/medford/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/medford/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:48+00:00'
+  page_sha256: 7bb2af0b3fe73bed12cf209fb8c2f9f410712e1e7a95300de65b8bfc5cad226a
+  text_chars: 5988
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_medford_medford
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/medford/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/medford/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/medford/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/medford/patient-services/general-illness-treatment/
+  - https://www.afcurgentcare.com/medford/patient-services/walk-in-injury-treatment/
+  - https://www.afcurgentcare.com/medford/patient-services/on-site-labs/
+- url: https://www.afcurgentcare.com/medford/patient-services/urgent-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/medford/patient-services/urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:49+00:00'
+  page_sha256: e208c922bb56fa3224c7704b35b5dfa113bf94e6399ded0064f2064ac5c6fb0b
+  text_chars: 6437
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_medford_medford
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/medford/patient-services/
+  - https://www.afcurgentcare.com/medford/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/medford/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/medford/patient-services/general-illness-treatment/
+  - https://www.afcurgentcare.com/medford/patient-services/walk-in-injury-treatment/
+  - https://www.afcurgentcare.com/medford/patient-services/on-site-labs/
+- url: https://www.afcurgentcare.com/needham/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/needham/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:50+00:00'
+  page_sha256: 25fe4166a9e690990174a10365e53f87d9f1cb74feb7af98d9a51df078d6f691
+  text_chars: 8124
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_needham_needham
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/needham/patient-services/
+  - https://www.afcurgentcare.com/needham/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/needham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/needham/patient-services/general-illness-care/
+  - https://www.afcurgentcare.com/needham/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/needham/patient-services/flu-shots/
+- url: https://www.afcurgentcare.com/needham/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/needham/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:52+00:00'
+  page_sha256: c605ff212075147dfecd7a840be9d47360d03a2a1c16643236323d1adcde2224
+  text_chars: 6322
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_needham_needham
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/needham/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/needham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/needham/patient-services/general-illness-care/
+  - https://www.afcurgentcare.com/needham/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/needham/patient-services/flu-shots/
+  - https://www.afcurgentcare.com/needham/patient-services/immigration-physicals/
+- url: https://www.afcurgentcare.com/needham/patient-services/urgent-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/needham/patient-services/urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:52+00:00'
+  page_sha256: f459099827955a703359b7d276556f8fdb586112ef29446328e3604b89f8dbbb
+  text_chars: 6153
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_needham_needham
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/needham/patient-services/
+  - https://www.afcurgentcare.com/needham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/needham/patient-services/general-illness-care/
+  - https://www.afcurgentcare.com/needham/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/needham/patient-services/flu-shots/
+  - https://www.afcurgentcare.com/needham/patient-services/immigration-physicals/
+- url: https://www.afcurgentcare.com/north-waltham/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/north-waltham/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:53+00:00'
+  page_sha256: 2a011a26c81693788fea298f3b90bebd52935adc98712e2479557642d0b3d747
+  text_chars: 8140
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_north_waltham_north_waltham
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/north-waltham/patient-services/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/general-illness-treatment/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/walk-in-injury-treatment/
+- url: https://www.afcurgentcare.com/north-waltham/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/north-waltham/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:54+00:00'
+  page_sha256: 593df07311c7285c89619a664430b44e0a25fee5cd1e468236243e4d077910e3
+  text_chars: 6021
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_north_waltham_north_waltham
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/north-waltham/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/general-illness-treatment/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/walk-in-injury-treatment/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/on-site-labs/
+- url: https://www.afcurgentcare.com/north-waltham/patient-services/urgent-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/north-waltham/patient-services/urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:55+00:00'
+  page_sha256: 4bb18992d661471246026535b2483a7756e40638f8793a5668bd8c45fd30e639
+  text_chars: 6647
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_north_waltham_north_waltham
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/north-waltham/patient-services/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/general-illness-treatment/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/walk-in-injury-treatment/
+  - https://www.afcurgentcare.com/north-waltham/patient-services/on-site-labs/
+- url: https://www.afcurgentcare.com/revere/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/revere/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:56+00:00'
+  page_sha256: 32985634ae30e0f2a4335a8a778ecb52e23456c4519ebe98cd993a3aa6d239d7
+  text_chars: 12140
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_revere_revere
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/revere/patient-services/
+  - https://www.afcurgentcare.com/revere/patient-services/family-care/
+  - https://www.afcurgentcare.com/revere/patient-services/vaccines-immunizations/
+  - https://www.afcurgentcare.com/revere/patient-services/wellness-physicals/
+  - https://www.afcurgentcare.com/revere/patient-services/strep-throat/
+  - https://www.afcurgentcare.com/revere/patient-services/covid-19-testing/
+- url: https://www.afcurgentcare.com/revere/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/revere/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:57+00:00'
+  page_sha256: ca1b10f9b7a0f3c9146832849935ab342d26907f1f16a5f92a4ce2631ab2b4cb
+  text_chars: 7446
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_revere_revere
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/revere/patient-services/family-care/
+  - https://www.afcurgentcare.com/revere/patient-services/vaccines-immunizations/
+  - https://www.afcurgentcare.com/revere/patient-services/wellness-physicals/
+  - https://www.afcurgentcare.com/revere/patient-services/strep-throat/
+  - https://www.afcurgentcare.com/revere/patient-services/covid-19-testing/
+  - https://www.afcurgentcare.com/revere/patient-services/insect-bite-sting-treatment/
+- url: https://www.afcurgentcare.com/revere/patient-services/family-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/revere/patient-services/family-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:58+00:00'
+  page_sha256: 6defa37169975e7b0926e00e2152b1ac30e8332828cfd151997436ede83223a1
+  text_chars: 6950
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_revere_revere
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/revere/patient-services/
+  - https://www.afcurgentcare.com/revere/patient-services/vaccines-immunizations/
+  - https://www.afcurgentcare.com/revere/patient-services/wellness-physicals/
+  - https://www.afcurgentcare.com/revere/patient-services/strep-throat/
+  - https://www.afcurgentcare.com/revere/patient-services/covid-19-testing/
+  - https://www.afcurgentcare.com/revere/patient-services/insect-bite-sting-treatment/
+- url: https://www.afcurgentcare.com/saugus/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/saugus/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:59+00:00'
+  page_sha256: 8e2829166e022a036a1cbb3eeb959c3f2050b88ef61ba11f6e331533e7ff2011
+  text_chars: 10008
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_saugus_saugus
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/saugus/patient-services/
+  - https://www.afcurgentcare.com/saugus/conditions/cold-sinus-respiratory/
+  - https://www.afcurgentcare.com/saugus/patient-services/frequently-asked-questions-about-covid/
+  - https://www.afcurgentcare.com/saugus/patient-services/coronavirus-antibody-testing-in-saugus-ma/
+  - https://www.afcurgentcare.com/saugus/patient-services/rapid-covid-19-testing-in-saugus-ma/
+  - https://www.afcurgentcare.com/saugus/conditions/ear-care/
+- url: https://www.afcurgentcare.com/saugus/conditions/cold-sinus-respiratory/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/saugus/conditions/cold-sinus-respiratory/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:01+00:00'
+  page_sha256: 718c245a6cd65ded344d3c9fe705e623700a8c8ec50aeb384e07c8ebee475096
+  text_chars: 11057
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_saugus_saugus
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/saugus/patient-services/
+  - https://www.afcurgentcare.com/saugus/patient-services/frequently-asked-questions-about-covid/
+  - https://www.afcurgentcare.com/saugus/patient-services/coronavirus-antibody-testing-in-saugus-ma/
+  - https://www.afcurgentcare.com/saugus/patient-services/rapid-covid-19-testing-in-saugus-ma/
+  - https://www.afcurgentcare.com/saugus/conditions/ear-care/
+  - https://www.afcurgentcare.com/saugus/patient-services/er-alternative/
+- url: https://www.afcurgentcare.com/saugus/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/saugus/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:00+00:00'
+  page_sha256: aea1777e39bbb1b7ff4ebdfca3f8e1724550d2228228d1d10ed537966e068fee
+  text_chars: 6076
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_saugus_saugus
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/saugus/patient-services/frequently-asked-questions-about-covid/
+  - https://www.afcurgentcare.com/saugus/patient-services/coronavirus-antibody-testing-in-saugus-ma/
+  - https://www.afcurgentcare.com/saugus/patient-services/rapid-covid-19-testing-in-saugus-ma/
+  - https://www.afcurgentcare.com/saugus/patient-services/er-alternative/
+  - https://www.afcurgentcare.com/saugus/patient-services/family-care/
+  - https://www.afcurgentcare.com/saugus/patient-services/flu-shots/
+- url: https://www.afcurgentcare.com/stoneham/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/stoneham/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:05+00:00'
+  page_sha256: e058e885fc3e159f1119f58c2c7e2a2dc1b51695da8c801582b3f1d2eb26cae5
+  text_chars: 8321
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_stoneham_stoneham
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/stoneham/patient-services/
+  - https://www.afcurgentcare.com/stoneham/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/stoneham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/stoneham/patient-services/std-testing/
+  - https://www.afcurgentcare.com/stoneham/patient-services/urgent-care-vs-minuteclinic/
+  - https://www.afcurgentcare.com/stoneham/patient-services/health-and-wellness-guidance/
+- url: https://www.afcurgentcare.com/stoneham/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/stoneham/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:07+00:00'
+  page_sha256: b29e854dfd37e6ea0a4c6aed011aeb20a4aab7403db64411ec25a96d87fcd514
+  text_chars: 6436
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_stoneham_stoneham
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/stoneham/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/stoneham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/stoneham/patient-services/std-testing/
+  - https://www.afcurgentcare.com/stoneham/patient-services/urgent-care-vs-minuteclinic/
+  - https://www.afcurgentcare.com/stoneham/patient-services/health-and-wellness-guidance/
+  - https://www.afcurgentcare.com/stoneham/patient-services/general-illness/
+- url: https://www.afcurgentcare.com/stoneham/patient-services/urgent-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/stoneham/patient-services/urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:08+00:00'
+  page_sha256: 454c1ae92c370eb83caf2fe440943e1fccf054dfae1917b84130cb0ba0974452
+  text_chars: 5370
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_stoneham_stoneham
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/stoneham/patient-services/
+  - https://www.afcurgentcare.com/stoneham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/stoneham/patient-services/std-testing/
+  - https://www.afcurgentcare.com/stoneham/patient-services/urgent-care-vs-minuteclinic/
+  - https://www.afcurgentcare.com/stoneham/patient-services/health-and-wellness-guidance/
+  - https://www.afcurgentcare.com/stoneham/patient-services/general-illness/
+- url: https://www.afcurgentcare.com/waltham/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/waltham/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:09+00:00'
+  page_sha256: 6df671e8ad6b795a79e8c87f1f2cd4f26c76bbe1b1f7e9e4e6c7bf4e62899958
+  text_chars: 8513
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_waltham_waltham
+  roles:
+  - location
+  related:
+  - https://www.afcurgentcare.com/waltham/patient-services/
+  - https://www.afcurgentcare.com/waltham/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/waltham/patient-services/telemedicine-urgent-care/
+  - https://www.afcurgentcare.com/waltham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/waltham/patient-services/std-testing/
+  - https://www.afcurgentcare.com/waltham/patient-services/health-and-wellness-services/
+- url: https://www.afcurgentcare.com/waltham/patient-services/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/waltham/patient-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:09+00:00'
+  page_sha256: 13f287bf9d5cc899b2a86b5fb0fc051e90d96fef1907388c55088d4c5d2c1978
+  text_chars: 6724
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_waltham_waltham
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/waltham/patient-services/urgent-care/
+  - https://www.afcurgentcare.com/waltham/patient-services/telemedicine-urgent-care/
+  - https://www.afcurgentcare.com/waltham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/waltham/patient-services/std-testing/
+  - https://www.afcurgentcare.com/waltham/patient-services/health-and-wellness-services/
+  - https://www.afcurgentcare.com/waltham/patient-services/urgent-care-vs-minuteclinic/
+- url: https://www.afcurgentcare.com/waltham/patient-services/urgent-care/
+  status: ok
+  method: http
+  final_url: https://www.afcurgentcare.com/waltham/patient-services/urgent-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:11+00:00'
+  page_sha256: 3801571cff2f8e9aa2388499b4c8ad3330ecffbf0b987cf2eb9009f85d31db97
+  text_chars: 5656
+  jsonld_hours: true
+  site_ids:
+  - afc_urgent_care_waltham_waltham
+  roles:
+  - related
+  related:
+  - https://www.afcurgentcare.com/waltham/patient-services/
+  - https://www.afcurgentcare.com/waltham/patient-services/telemedicine-urgent-care/
+  - https://www.afcurgentcare.com/waltham/patient-services/walk-in-clinic/
+  - https://www.afcurgentcare.com/waltham/patient-services/std-testing/
+  - https://www.afcurgentcare.com/waltham/patient-services/health-and-wellness-services/
+  - https://www.afcurgentcare.com/waltham/patient-services/urgent-care-vs-minuteclinic/
 - url: https://www.afcurgentcare.com/watertown/
   status: ok
   method: http
@@ -177,6 +1820,513 @@ pages:
   - https://www.afcurgentcare.com/watertown/patient-services/emergency-room-alternative/
   - https://www.afcurgentcare.com/watertown/patient-services/physical-examinations/
   - https://www.afcurgentcare.com/watertown/patient-services/sports-camp-physicals/
+- url: https://www.atriushealth.org/locations/braintree
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/braintree
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:29+00:00'
+  page_sha256: d1252a59d3b8f7744d137cbb0ba2c3f32b9d7776a6f801905880f5345026ca39
+  text_chars: 7636
+  site_ids:
+  - atrius_health_inc_braintree
+  - atrius_health_urgent_care_harvard_vanguard_braintree_bra
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/burlington
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/burlington
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:38+00:00'
+  page_sha256: debb7f742cb9b30905af3b3648cf4d07d76b3f8ec31d1d45fb0c8eeafec16ca8
+  text_chars: 8749
+  site_ids:
+  - atrius_health_inc_burlington
+  - atrius_health_urgent_care_harvard_vanguard_burlington_bu
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/chestnut-hill-west-roxbury
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/chestnut-hill-west-roxbury
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:38+00:00'
+  page_sha256: 36246a057c19048b0e9e451786c029a7d271855478f9cd0a44b8a6bcf27f633a
+  text_chars: 8305
+  site_ids:
+  - atrius_health_inc_chestnut_hill
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/dedham
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/dedham
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:40+00:00'
+  page_sha256: d4827c2ccd98912f7df64c8db86918d567d2e8619255e3ff1b47fe889aca5407
+  text_chars: 8666
+  site_ids:
+  - atrius_health_inc_dedham
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/medford
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/medford
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:32+00:00'
+  page_sha256: 59eefa6fd4c8f1bda2071ad40c35271c2d4b5ddf6e06066b0f4b39cb041fb5fa
+  text_chars: 7844
+  site_ids:
+  - atrius_health_inc_medford
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/somerville
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/somerville
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:46+00:00'
+  page_sha256: 8d9fba28b47c6e0ecc84ef216daffcafa7e39774362e16ee0474fbd746f35287
+  text_chars: 9022
+  site_ids:
+  - atrius_health_inc_somerville
+  - atrius_health_urgent_care_harvard_vanguard_somerville_so
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/watertown
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/watertown
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:33+00:00'
+  page_sha256: 7fa55085c0228e970eac2d23904a02458d913ed37e5a4149dab2eb0bbcb2cf9a
+  text_chars: 7054
+  site_ids:
+  - atrius_health_inc_watertown
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/wellesley
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/wellesley
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:34+00:00'
+  page_sha256: 535879ec8763d8ae301dd05b8912b9175c390ad888031d3e73dc6f74dc06182b
+  text_chars: 8356
+  site_ids:
+  - atrius_health_inc_wellesley
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/weymouth-weymouth-mri
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/weymouth-weymouth-mri
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:35+00:00'
+  page_sha256: 06331963673287b672abb69a2e674f8a9bba58f365d0c57bdd710a09c0f22817
+  text_chars: 5157
+  site_ids:
+  - atrius_health_inc_weymouth_gb0139
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/services
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/services
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:30+00:00'
+  page_sha256: 8fcffcac9dceda79745f59e5bfcd0c5f479eb237e1495783a327d2be4dfec936
+  text_chars: 5230
+  site_ids:
+  - atrius_health_inc_braintree
+  - atrius_health_inc_burlington
+  - atrius_health_inc_chestnut_hill
+  - atrius_health_inc_dedham
+  - atrius_health_inc_medford
+  - atrius_health_inc_somerville
+  - atrius_health_inc_watertown
+  - atrius_health_inc_wellesley
+  - atrius_health_inc_weymouth_gb0139
+  - atrius_health_urgent_care_harvard_vanguard_braintree_bra
+  - atrius_health_urgent_care_harvard_vanguard_burlington_bu
+  - atrius_health_urgent_care_harvard_vanguard_somerville_so
+  roles:
+  - related
+  related:
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+  - https://www.atriushealth.org/services/eye-care
+- url: https://www.atriushealth.org/services/internal-medicine
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/services/internal-medicine
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:31+00:00'
+  page_sha256: 5cc757ac0a875ab8e5c27915b6142b83c239671f346b8c36e8efff75afca92ed
+  text_chars: 5893
+  site_ids:
+  - atrius_health_inc_braintree
+  - atrius_health_inc_burlington
+  - atrius_health_inc_chestnut_hill
+  - atrius_health_inc_dedham
+  - atrius_health_inc_medford
+  - atrius_health_inc_somerville
+  - atrius_health_inc_watertown
+  - atrius_health_inc_wellesley
+  - atrius_health_inc_weymouth_gb0139
+  - atrius_health_urgent_care_harvard_vanguard_braintree_bra
+  - atrius_health_urgent_care_harvard_vanguard_burlington_bu
+  - atrius_health_urgent_care_harvard_vanguard_somerville_so
+  roles:
+  - related
+  related:
+  - https://www.atriushealth.org/services/internal-medicine/why-choose-an-atrius-health-primary-care-physician
+  - https://www.atriushealth.org/services/internal-medicine/choosing-a-primary-care-physician
+  - https://www.atriushealth.org/services/internal-medicine/home-based-primary-care
+  - https://www.atriushealth.org/services/internal-medicine/advanced-practice-clinician-collaborative
+  - https://www.atriushealth.org/services/internal-medicine/hiv-care-program
+  - https://www.atriushealth.org/services/internal-medicine/pride-plus-care
+- url: https://www.bidmilton.org/
+  status: ok
+  method: http
+  final_url: https://bidmilton.org/
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:25+00:00'
+  page_sha256: be3c7820d9920710ca4faacd2dbc9acab64fcad9679fc69531d373efa1f828d3
+  text_chars: 5067
+  site_ids:
+  - beth_israel_deaconess_hospital_milton
+  roles:
+  - location
+  related:
+  - https://bidmilton.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmilton.org/services
+  - https://bidmilton.org/patients-visitors/billing-financial-services
+  - https://bidmilton.org/patients-visitors/language-assistance-interpreter
+  - https://bidmilton.org/patients-visitors/social-work
+  - https://bidmilton.org/patients-visitors/visiting-hours-policies
+- url: https://www.bmc.org/
+  status: ok
+  method: http
+  final_url: https://www.bmc.org/
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:03+00:00'
+  page_sha256: 38694979142308b5f5ce12b784ccbba41fe382d70ff48b445cc76d510785dc3c
+  text_chars: 5315
+  site_ids:
+  - boston_medical_center
+  roles:
+  - location
+  related:
+  - https://www.bmc.org/volunteer-services
+  - https://www.bmc.org/conditions-we-treat
+  - https://www.bmc.org/departments/addiction-treatment-programs
+  - https://www.bmc.org/departments/lab-services
+  - https://www.bmc.org/interpreter-services
+  - https://www.bmc.org/services/medical-records
+- url: https://www.bmc.org/conditions-we-treat
+  status: ok
+  method: http
+  final_url: https://www.bmc.org/conditions-we-treat
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:05+00:00'
+  page_sha256: 0738f468a9e1bc591c85e9311371e3eb14c7f008c0373bb07502b4d1444dde0b
+  text_chars: 2013
+  site_ids:
+  - boston_medical_center
+  roles:
+  - related
+  related:
+  - https://www.bmc.org/volunteer-services
+  - https://www.bmc.org/departments/addiction-treatment-programs
+  - https://www.bmc.org/departments/lab-services
+  - https://www.bmc.org/interpreter-services
+  - https://www.bmc.org/services/medical-records
+- url: https://www.bmc.org/volunteer-services
+  status: ok
+  method: http
+  final_url: https://www.bmc.org/volunteer-services
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:04+00:00'
+  page_sha256: 8cc31c7b1ffc46832999b73446f4c9f5078fe5b66d319d1727ebfdf4eecfe8a8
+  text_chars: 4057
+  site_ids:
+  - boston_medical_center
+  roles:
+  - related
+  related:
+  - https://www.bmc.org/volunteer-services/volunteer-application-process
+  - https://www.bmc.org/volunteer-services/volunteer-opportunities
+  - https://www.bmc.org/volunteer-services/junior-summer-volunteer-program
+  - https://www.bmc.org/volunteer-services/experience
+  - https://www.bmc.org/volunteer-services/volunteer-frequently-asked-questions-faq
+  - https://www.bmc.org/volunteer-services/current-volunteers
+- url: https://www.challiance.org/locations/cambridge/cha-cambridge-hospital
+  status: ok
+  method: http
+  final_url: https://www.challiance.org/locations/cambridge/cha-cambridge-hospital
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:06+00:00'
+  page_sha256: 3312189af6ce23cf04724c1d3ef7a8bc28c136ec226e099a8e1eb12bb281af33
+  text_chars: 11260
+  site_ids:
+  - cha_cambridge_hospital
+  roles:
+  - location
+  related:
+  - https://www.challiance.org/services-programs/vaccines-and-immunizations
+  - https://www.challiance.org/services-programs
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/psychiatry-crisis-services
+  - https://www.challiance.org/services-programs/specialty-care/imaging-radiology
+  - https://www.challiance.org/patients-visitors/shuttle-service
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/substance-use-addiction/substance-use-addiction
+- url: https://www.challiance.org/locations/somerville/cha-urgent-care-center
+  status: ok
+  method: http
+  final_url: https://www.challiance.org/locations/somerville/cha-urgent-care-center
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:03+00:00'
+  page_sha256: 319c2f5c577b74c63d549c9a6fc1be59bed53a5fc526e792f3fefb248496d78b
+  text_chars: 8870
+  site_ids:
+  - cha_somerville_urgent_care_center_somerville
+  roles:
+  - location
+  related:
+  - https://www.challiance.org/services-programs/vaccines-and-immunizations
+  - https://www.challiance.org/services-programs
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/psychiatry-crisis-services
+  - https://www.challiance.org/patients-visitors/shuttle-service
+  - https://www.challiance.org/services-programs/laboratory-and-pathology
+  - https://www.challiance.org/services-programs/specialty-care/imaging-radiology/radiology-and-imaging
+- url: https://www.challiance.org/services-programs
+  status: ok
+  method: http
+  final_url: https://www.challiance.org/services-programs
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:05+00:00'
+  page_sha256: 78b986b7094da41e5d11ec6ca519c3f02f7edec83e1b782155e2a4d74e9f4da1
+  text_chars: 4635
+  site_ids:
+  - cha_cambridge_hospital
+  - cha_somerville_urgent_care_center_somerville
+  roles:
+  - related
+  related:
+  - https://www.challiance.org/services-programs/vaccines-and-immunizations
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/substance-use-addiction/substance-use-addiction
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/adult-psychiatry/adult-psychiatry
+  - https://www.challiance.org/services-programs/specialty-care/ear-nose-and-throat-otolaryngology/ear-nose-and-throat
+  - https://www.challiance.org/services-programs/anesthesia
+  - https://www.challiance.org/services-programs/primary-care/back-pain-clinic/back-pain-clinic
+- url: https://www.challiance.org/services-programs/vaccines-and-immunizations
+  status: ok
+  method: http
+  final_url: https://www.challiance.org/services-programs/vaccines-and-immunizations
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:04+00:00'
+  page_sha256: da685f7a2ca118d4f07145c4c8c71105527f94d942b9b55db57343d27ea9c9dd
+  text_chars: 17154
+  site_ids:
+  - cha_cambridge_hospital
+  - cha_somerville_urgent_care_center_somerville
+  roles:
+  - related
+  related:
+  - https://www.challiance.org/services-programs
+  - https://www.challiance.org/services-programs/www.challiance.org
+  - https://www.challiance.org/services-programs/services-programs/vaccines-and-immunizations
+  - https://www.challiance.org/services-programs/pharmacy
+  - https://www.challiance.org/file%20library/services%20and%20programs/pharmacy/vis-qr-codes.pdf
+  - https://www.challiance.org/file%20library/services%20and%20programs/vaccines/questions-and-answers-about-the-covid-19-vaccine_updated.pdf
+- url: https://www.childrenshospital.org/
+  status: ok
+  method: http
+  final_url: https://www.childrenshospital.org/
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:13+00:00'
+  page_sha256: 533e595f4df049220df12f0f4e76c67bfdc1e8bc281fc3bcc267bd82f1a5f58d
+  text_chars: 4176
+  site_ids:
+  - boston_childrens_hospital
+  roles:
+  - location
+  related:
+  - https://www.childrenshospital.org/conditions-treatments
+  - https://www.childrenshospital.org/services
+  - https://www.childrenshospital.org/services/online-second-opinions
+  - https://www.childrenshospital.org/patients-families/about-boston-childrens/billing-insurance/resources-self-service/charges-services
+- url: https://www.childrenshospital.org/conditions-treatments
+  status: ok
+  method: http
+  final_url: https://www.childrenshospital.org/conditions-treatments
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:14+00:00'
+  page_sha256: 5411f8e3e8cf3904af1acaae5a2ecc5a3aa03e248f7e5e7c71066615cc20d35c
+  text_chars: 210840
+  site_ids:
+  - boston_childrens_hospital
+  roles:
+  - related
+  related:
+  - https://www.childrenshospital.org/conditions-treatments/abdominal-pain-children
+  - https://www.childrenshospital.org/conditions-treatments/abrasions
+  - https://www.childrenshospital.org/conditions-treatments/ac-joint-injuries
+  - https://www.childrenshospital.org/conditions-treatments/achalasia
+  - https://www.childrenshospital.org/conditions-treatments/achilles-tendon-injuries
+  - https://www.childrenshospital.org/conditions-treatments/achondroplasia
+- url: https://www.childrenshospital.org/services
+  status: ok
+  method: http
+  final_url: https://www.childrenshospital.org/services
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:15+00:00'
+  page_sha256: e2ef727a6f96c49e5952b8f68c951c78cfc3f43d7ffaf0824e335eaea28f5e57
+  text_chars: 83707
+  site_ids:
+  - boston_childrens_hospital
+  roles:
+  - related
+  related:
+  - https://www.childrenshospital.org/services/abcd-family-planning-services
+  - https://www.childrenshospital.org/services/addiction-medicine
+  - https://www.childrenshospital.org/services/adolescent-and-young-adult-medicine
+  - https://www.childrenshospital.org/services/adolescent-breast-center
+  - https://www.childrenshospital.org/services/adolescent-medicine-complex-diagnosis-consult-program
+  - https://www.childrenshospital.org/services/adolescent-substance-use-and-addiction-program
+- url: https://www.codman.org/
+  status: manual
+  method: http
+  reason: robots.txt disallows
+  site_ids:
+  - codman_square_health_center_dorchester
+  - codman_square_health_center_inc_dorchester
+  roles:
+  - location
+- url: https://www.dana-farber.org/
+  status: ok
+  method: http
+  final_url: https://www.dana-farber.org/
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:16+00:00'
+  page_sha256: f16d414561b9925482f161718a4b8f7b9ac8fbd1cced6c05ec8f282b68abf193
+  text_chars: 11267
+  site_ids:
+  - dana_farber_cancer_institute
+  roles:
+  - location
+  related:
+  - https://www.dana-farber.org/cancer-care
+  - https://www.dana-farber.org/cancer-care/types
+  - https://www.dana-farber.org/cancer-care/treatment
+  - https://www.dana-farber.org/cancer-care/treatment/early-detection-interception
+  - https://www.dana-farber.org/cancer-care/care-team/nursing
+  - https://www.dana-farber.org/patient-family/support-services
+- url: https://www.dana-farber.org/cancer-care
+  status: ok
+  method: http
+  final_url: https://www.dana-farber.org/cancer-care
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:17+00:00'
+  page_sha256: 93dba2113f0712087c5828b0c3e3bbd3d56cea067a21d6e6a0703c22f00ddba1
+  text_chars: 7345
+  site_ids:
+  - dana_farber_cancer_institute
+  roles:
+  - related
+  related:
+  - https://www.dana-farber.org/cancer-care/types
+  - https://www.dana-farber.org/cancer-care/treatment
+  - https://www.dana-farber.org/cancer-care/treatment/early-detection-interception
+  - https://www.dana-farber.org/cancer-care/care-team/nursing
+  - https://www.dana-farber.org/cancer-care/treatment/supportive-oncology
+  - https://www.dana-farber.org/patient-family/support-services
+- url: https://www.dana-farber.org/cancer-care/types
+  status: ok
+  method: http
+  final_url: https://www.dana-farber.org/cancer-care/types
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:18+00:00'
+  page_sha256: 2e76ac71d70715b4e9ff2d349ca489b901cfbac701d16b2e59dd72926d70aae3
+  text_chars: 4761
+  site_ids:
+  - dana_farber_cancer_institute
+  roles:
+  - related
+  related:
+  - https://www.dana-farber.org/cancer-care
+  - https://www.dana-farber.org/cancer-care/treatment
+  - https://www.dana-farber.org/cancer-care/treatment/early-detection-interception
+  - https://www.dana-farber.org/cancer-care/care-team/nursing
+  - https://www.dana-farber.org/patient-family/support-services
 - url: https://www.kraussdermatology.com/conditions/
   status: ok
   method: http
@@ -277,6 +2427,216 @@ pages:
   - https://www.kraussdermatology.com/conditions/actinic-keratosis/
   - https://www.kraussdermatology.com/conditions/basal-cell-skin-cancer/
   - https://www.kraussdermatology.com/conditions/common-spots/
+- url: https://www.lahey.org/locations/lahey-outpatient-center-lexington
+  status: ok
+  method: http
+  final_url: https://www.lahey.org/locations/lahey-outpatient-center-lexington
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:41+00:00'
+  page_sha256: 7d714af1e4bf30821120a23125350e3c5442d5e945d31d099d076cfd04ce9086
+  text_chars: 3842
+  site_ids:
+  - lahey_clinic_inc_lexington
+  roles:
+  - location
+  related:
+  - https://www.lahey.org/patients-visitors/billing-financial-services/bill-pay
+  - https://www.lahey.org/services
+  - https://www.lahey.org/patients-visitors/billing-financial-services
+  - https://www.lahey.org/patients-visitors/international-patients
+  - https://www.lahey.org/patients-visitors/language-assistance-interpreter
+  - https://www.lahey.org/patients-visitors/visiting-hours-policies
+- url: https://www.lahey.org/patients-visitors/billing-financial-services/bill-pay
+  status: ok
+  method: http
+  final_url: https://www.lahey.org/patients-visitors/billing-financial-services/bill-pay
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:42+00:00'
+  page_sha256: a798d5af6df56e872d20ed69645b625430fb8243777605be31f632ee4fac78a4
+  text_chars: 3422
+  site_ids:
+  - lahey_clinic_inc_lexington
+  roles:
+  - related
+  related:
+  - https://www.lahey.org/services
+  - https://www.lahey.org/patients-visitors/billing-financial-services
+  - https://www.lahey.org/patients-visitors/international-patients
+  - https://www.lahey.org/patients-visitors/language-assistance-interpreter
+  - https://www.lahey.org/patients-visitors/visiting-hours-policies
+  - https://www.lahey.org/patients-visitors/billing-financial-services/assistance
+- url: https://www.lahey.org/services
+  status: ok
+  method: http
+  final_url: https://www.lahey.org/services
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:43+00:00'
+  page_sha256: ef32116bfa38a34530d692414f120ba9525caf70523f2fef9e3d89417959f310
+  text_chars: 2777
+  site_ids:
+  - lahey_clinic_inc_lexington
+  roles:
+  - related
+  related:
+  - https://www.lahey.org/services/allergy-immunology
+  - https://www.lahey.org/services/anesthesiology
+  - https://www.lahey.org/services/arthritis-rheumatology
+  - https://www.lahey.org/services/audiology
+  - https://www.lahey.org/services/bariatric-surgery
+  - https://www.lahey.org/services/behavioral-health
+- url: https://www.massgeneralbrigham.org/en/find-care/express-care/services
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/find-care/express-care/services
+  http_status: 200
+  fetched_at: '2026-10-25T13:52:25+00:00'
+  page_sha256: b25309eb9771cbd35000495f8948bb3ec5f05708046b43d2208f2349dcbd1725
+  text_chars: 3394
+  site_ids:
+  - mass_general_brigham_express_care_boston_common_boston
+  - mass_general_brigham_express_care_brookline_brookline
+  - mass_general_brigham_express_care_lynn_lynn
+  - mass_general_brigham_express_care_newton_newton
+  - mass_general_brigham_express_care_south_weymouth_south_w
+  - mass_general_brigham_express_care_woburn_woburn
+  roles:
+  - related
+- url: https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-gastroenterology-clinic-loc0000280286
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-gastroenterology-clinic-loc0000280286
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:34+00:00'
+  page_sha256: 2ecb314165b3ca4b560787e039a41d42bb08f42e27f0f5099dbb64ed0a49270b
+  text_chars: 852
+  site_ids:
+  - brigham_and_womens_gastroenterology_clinic_boston
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-hospital-loc0000246983
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-hospital-loc0000246983
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:01+00:00'
+  page_sha256: 8d596b475f29a1f0b99d19c586791da5299f37ac605f1da3424f9a52613b65ae
+  text_chars: 4422
+  site_ids:
+  - brigham_and_womens_hospital
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-spine-center-loc0000280307
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-spine-center-loc0000280307
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:46+00:00'
+  page_sha256: ead8706ffbd141d99c64e03a1c5e8152172c017bd26d6bd8f6e3034a93ccebc9
+  text_chars: 697
+  site_ids:
+  - brigham_and_womens_spine_center_boston
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-dermatology-associates-loc0000280314
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-dermatology-associates-loc0000280314
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:39+00:00'
+  page_sha256: 03f5f3cea9d9bc6c94d06502fee2d77173591b02dc3e248f9a8f97160801e9dd
+  text_chars: 844
+  site_ids:
+  - brigham_dermatology_associates_chestnut_hill
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/boston-ma/mass-eye-and-ear-dermatology-clinic-loc0000280542
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/boston-ma/mass-eye-and-ear-dermatology-clinic-loc0000280542
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:36+00:00'
+  page_sha256: c9f9bae81377fcbd4c23c94868c43aa55d33ad4d34f3c39cf0d73804024078cc
+  text_chars: 653
+  site_ids:
+  - mass_eye_and_ear_dermatology_clinic_boston
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/boston-ma/mass-general-brigham-express-care-boston-common-loc0000280951
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/boston-ma/mass-general-brigham-express-care-boston-common-loc0000280951
+  http_status: 200
+  fetched_at: '2026-10-25T13:52:24+00:00'
+  page_sha256: b81894c5540600be7830286d33aba70cbd1128a7d43eaf19f2af527f04588f6b
+  text_chars: 3882
+  site_ids:
+  - mass_general_brigham_express_care_boston_common_boston
+  roles:
+  - location
+  related:
+  - https://www.massgeneralbrigham.org/en/find-care/express-care/services
+- url: https://www.massgeneralbrigham.org/en/locations/boston-ma/mass-general-brigham-for-children-gastroenterology-clinic-loc0000280194
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/boston-ma/mass-general-brigham-for-children-gastroenterology-clinic-loc0000280194
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:37+00:00'
+  page_sha256: f978de3f42eb93fb0596a195c2ec869b49107147aa098f279690d766944095cd
+  text_chars: 797
+  site_ids:
+  - mass_general_brigham_for_children_gastroenterology_clini
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/boston-ma/mass-general-brigham-orthopedics-and-sports-medicine-at-charles-river-plaza-loc0000290321
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/boston-ma/mass-general-brigham-orthopedics-and-sports-medicine-at-charles-river-plaza-loc0000290321
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:47+00:00'
+  page_sha256: 6510de13f3474f10cbedc47d6347dfb37e8d9623b86c201730812f772f33c762
+  text_chars: 1178
+  site_ids:
+  - mass_general_brigham_orthopedics_and_sports_medicine_at_gb0216
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/boston-ma/mass-general-brigham-orthopedics-and-sports-medicine-at-massachusetts-general-hospital-loc0000280265
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/boston-ma/mass-general-brigham-orthopedics-and-sports-medicine-at-massachusetts-general-hospital-loc0000280265
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:48+00:00'
+  page_sha256: 95d61d375bebf3cc2c79cc352689dd1697d6471e51fffe2cc547b5624e340f46
+  text_chars: 4348
+  site_ids:
+  - mass_general_brigham_orthopedics_and_sports_medicine_at_gb0217
+  roles:
+  - location
+  related:
+  - https://www.massgeneralbrigham.org/en/services/orthopedics
+- url: https://www.massgeneralbrigham.org/en/locations/boston-ma/massachusetts-general-dermatology-clinic-loc0000280226
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/boston-ma/massachusetts-general-dermatology-clinic-loc0000280226
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:27+00:00'
+  page_sha256: 1f99cfe1c412e910aecdff5e501d0c25ae184ab6aa129b62c2a0dfbd28c6ac97
+  text_chars: 725
+  site_ids:
+  - massachusetts_general_dermatology_clinic_boston
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/boston-ma/massachusetts-general-hospital-loc0000246778
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/boston-ma/massachusetts-general-hospital-loc0000246778
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:00+00:00'
+  page_sha256: 4d96c5b71d0e7fc9089d255b0cf502244ad282776b2aaed3c0cc0e63b5e5b2a9
+  text_chars: 3426
+  site_ids:
+  - massachusetts_general_hospital
+  roles:
+  - location
 - url: https://www.massgeneralbrigham.org/en/locations/braintree-ma/mass-general-brigham-endoscopy-clinic-loc0000280988
   status: ok
   method: http
@@ -289,6 +2649,150 @@ pages:
   - mass_general_brigham_endoscopy_clinic_braintree
   roles:
   - location
+- url: https://www.massgeneralbrigham.org/en/locations/brighton-ma/mass-general-brigham-orthopedics-walkin-clinic-at-boston-landing-loc0000280929
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/brighton-ma/mass-general-brigham-orthopedics-walkin-clinic-at-boston-landing-loc0000280929
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:49+00:00'
+  page_sha256: 47efd5a6fcb83f297e704a16519d1aae16bb85de00ed9acf1d16c04f59c7c8f0
+  text_chars: 1186
+  site_ids:
+  - mass_general_brigham_orthopedics_walk_in_clinic_at_bosto
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/brookline-ma/mass-general-brigham-express-care-brookline-loc0000247010
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/brookline-ma/mass-general-brigham-express-care-brookline-loc0000247010
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:17+00:00'
+  page_sha256: d88691599423b9fbe9c5aa35d485b0e56d7414949ae034d973ecc97a08335e14
+  text_chars: 3741
+  site_ids:
+  - mass_general_brigham_express_care_brookline_brookline
+  roles:
+  - location
+  related:
+  - https://www.massgeneralbrigham.org/en/find-care/express-care/services
+- url: https://www.massgeneralbrigham.org/en/locations/chelsea-ma/chelsea-community-health-center-urgent-care-loc0000292207
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/chelsea-ma/chelsea-community-health-center-urgent-care-loc0000292207
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:28+00:00'
+  page_sha256: c7a059ae1701efcb7e49a988bedcd714d8d59fba59da9e370fd1e09c04460f26
+  text_chars: 1261
+  site_ids:
+  - chelsea_community_health_center_urgent_care_chelsea
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/chelsea-ma/mass-general-brigham-for-children-gastroenterology-and-nutrition-clinic-loc0000282116
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/chelsea-ma/mass-general-brigham-for-children-gastroenterology-and-nutrition-clinic-loc0000282116
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:35+00:00'
+  page_sha256: 9e4de2da99d257643e7ff53edfa99b61024b5bdb7f4b24bdf02b92ea488221be
+  text_chars: 789
+  site_ids:
+  - mass_general_brigham_for_children_gastroenterology_and_n_gb0117
+  - mass_general_brigham_for_children_gastroenterology_and_n_gb0187
+  - mass_general_brigham_for_children_gastroenterology_and_n_gb0198
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/chelsea-ma/massachusetts-general-dermatology-clinic-at-chelsea-community-health-center-loc0000280758
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/chelsea-ma/massachusetts-general-dermatology-clinic-at-chelsea-community-health-center-loc0000280758
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:38+00:00'
+  page_sha256: a6b0cbf61f7f4ad1e1d3fde9900dcbd5b9c47e1a091a52a5fec9ca2120b4e44b
+  text_chars: 776
+  site_ids:
+  - massachusetts_general_dermatology_clinic_at_chelsea_comm
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/jamaica-plain-ma/brigham-and-womens-faulkner-gastroenterology-clinic-loc0000280326
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/jamaica-plain-ma/brigham-and-womens-faulkner-gastroenterology-clinic-loc0000280326
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:40+00:00'
+  page_sha256: 7ebd4bf10d09dc4c4ee763c556ab01453c0f2d31fdeb81b88d4e42927fb93add
+  text_chars: 752
+  site_ids:
+  - brigham_and_womens_faulkner_gastroenterology_clinic_jama
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/jamaica-plain-ma/brigham-and-womens-faulkner-hospital-loc0000280330
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/jamaica-plain-ma/brigham-and-womens-faulkner-hospital-loc0000280330
+  http_status: 200
+  fetched_at: '2026-10-25T13:55:02+00:00'
+  page_sha256: 08fe3cd3d982a3602af1523137e2a70bd37851ac549a4afe7598c818a5ff2ef6
+  text_chars: 3239
+  site_ids:
+  - brigham_and_womens_faulkner
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/lynn-ma/mass-general-brigham-express-care-lynn-loc0000280813
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/lynn-ma/mass-general-brigham-express-care-lynn-loc0000280813
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:44+00:00'
+  page_sha256: 73279400e5fb72bc9ba75fa9b9883f0e65fbbb07a260e71602342ec310cadfa2
+  text_chars: 3751
+  site_ids:
+  - mass_general_brigham_express_care_lynn_lynn
+  roles:
+  - location
+  related:
+  - https://www.massgeneralbrigham.org/en/find-care/express-care/services
+- url: https://www.massgeneralbrigham.org/en/locations/newton-ma/mass-general-brigham-express-care-newton-loc0000281607
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/newton-ma/mass-general-brigham-express-care-newton-loc0000281607
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:53+00:00'
+  page_sha256: 56e267d51f95c5f7f35070007e70dd58593096d643eaf7b5ae99d488811bf225
+  text_chars: 3748
+  site_ids:
+  - mass_general_brigham_express_care_newton_newton
+  roles:
+  - location
+  related:
+  - https://www.massgeneralbrigham.org/en/find-care/express-care/services
+- url: https://www.massgeneralbrigham.org/en/locations/newton-ma/mass-general-brigham-orthopedics-and-sports-medicine-clinic-at-newtonwellesley-hospital-loc0000280380
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/newton-ma/mass-general-brigham-orthopedics-and-sports-medicine-clinic-at-newtonwellesley-hospital-loc0000280380
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:43+00:00'
+  page_sha256: 2e7615361268dd0417cf1336081ec904bd3b02e957a99d3f4e02096449343a96
+  text_chars: 4354
+  site_ids:
+  - mass_general_brigham_orthopedics_and_sports_medicine_cli_gb0186
+  roles:
+  - location
+  related:
+  - https://www.massgeneralbrigham.org/en/services/orthopedics
+- url: https://www.massgeneralbrigham.org/en/locations/newton-ma/mass-general-brigham-orthopedics-clinic-in-newton-loc0000280798
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/newton-ma/mass-general-brigham-orthopedics-clinic-in-newton-loc0000280798
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:53+00:00'
+  page_sha256: 6374ebbd75c9d0cb784352386253ca53cf4fad34606d93be138d43bb338b55c0
+  text_chars: 2235
+  site_ids:
+  - mass_general_brigham_orthopedics_clinic_in_newton_newton
+  roles:
+  - location
+  related:
+  - https://www.massgeneralbrigham.org/en/services/orthopedics
 - url: https://www.massgeneralbrigham.org/en/locations/newton-ma/newtonwellesley-hospital-loc0000246998
   status: ok
   method: http
@@ -299,5 +2803,235 @@ pages:
   text_chars: 3848
   site_ids:
   - newton_wellesley_hospital
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/revere-ma/mass-general-brigham-orthopedics-clinic-at-revere-community-health-center-loc0000282071
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/revere-ma/mass-general-brigham-orthopedics-clinic-at-revere-community-health-center-loc0000282071
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:45+00:00'
+  page_sha256: 8037ab591ad66ea81f247761588325b81c3d19b60cf33a3450c43a9eeaba4882
+  text_chars: 767
+  site_ids:
+  - mass_general_brigham_orthopedics_clinic_at_revere_commun
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/mass-general-brigham-express-care-south-weymouth-loc0000280711
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/mass-general-brigham-express-care-south-weymouth-loc0000280711
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:05+00:00'
+  page_sha256: 97ff4c0742d95aa313e803b427b047e2cecc6d8db5f40931fe8379e828044bef
+  text_chars: 3947
+  site_ids:
+  - mass_general_brigham_express_care_south_weymouth_south_w
+  roles:
+  - location
+  related:
+  - https://www.massgeneralbrigham.org/en/find-care/express-care/services
+- url: https://www.massgeneralbrigham.org/en/locations/wellesley-ma/mass-general-brigham-orthopedics-walkin-clinic-in-wellesley-loc0000290358
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/wellesley-ma/mass-general-brigham-orthopedics-walkin-clinic-in-wellesley-loc0000290358
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:54+00:00'
+  page_sha256: 34d5be97debefb63918e342242b35ba3696726beae0c13f5bbf88fb72bf9c187
+  text_chars: 1490
+  site_ids:
+  - mass_general_brigham_orthopedics_walk_in_clinic_in_welle
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/wellesley-ma/newtonwellesley-outpatient-surgery-center-loc0000281105
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/wellesley-ma/newtonwellesley-outpatient-surgery-center-loc0000281105
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:26+00:00'
+  page_sha256: b85b87df35d34eeb299a83f07338d16f0ef1f755615de0163b199a34a61df657
+  text_chars: 1016
+  site_ids:
+  - newton_wellesley_outpatient_surgery_center_wellesley
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/woburn-ma/mass-general-brigham-express-care-woburn-loc0000280961
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/woburn-ma/mass-general-brigham-express-care-woburn-loc0000280961
+  http_status: 200
+  fetched_at: '2026-10-25T13:54:59+00:00'
+  page_sha256: aded3e211d20bc9a10174d93c45f654d9c2e8c884ef4c44a4f823f60b750d042
+  text_chars: 3887
+  site_ids:
+  - mass_general_brigham_express_care_woburn_woburn
+  roles:
+  - location
+  related:
+  - https://www.massgeneralbrigham.org/en/find-care/express-care/services
+- url: https://www.massgeneralbrigham.org/en/services/orthopedics
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/services/orthopedics
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:44+00:00'
+  page_sha256: fdb12babe2e43c045c18f710d94c0b0567620558c8ecdf38cf5b555584f617b6
+  text_chars: 13546
+  site_ids:
+  - mass_general_brigham_orthopedics_and_sports_medicine_at_gb0217
+  - mass_general_brigham_orthopedics_and_sports_medicine_cli_gb0186
+  - mass_general_brigham_orthopedics_clinic_in_newton_newton
+  roles:
+  - related
+  related:
+  - https://www.massgeneralbrigham.org/en/services/orthopedics/directory
+  - https://www.massgeneralbrigham.org/content/dam/unified-xwalk/images/services/orthopedics/bl-22-ortho.jpg
+  - https://www.massgeneralbrigham.org/en/services/orthopedic-trauma
+  - https://www.massgeneralbrigham.org/en/services/pediatric-orthopedics
+  - https://www.massgeneralbrigham.org/en/services/joint-replacement
+  - https://www.massgeneralbrigham.org/en/services/foot-ankle
+- url: https://www.neighborhealth.com/care-and-services/emergency-care/
+  status: ok
+  method: http
+  final_url: https://www.neighborhealth.com/en/care-and-services/emergency-care/
+  http_status: 200
+  fetched_at: '2026-10-25T13:53:44+00:00'
+  page_sha256: 812a0f1bbb8f89c1691a74e4b9215dce18e5e1bf445e05060e16926e7be1618e
+  text_chars: 3568
+  site_ids:
+  - neighborhealth_satellite_emergency_facility_east_boston
+  roles:
+  - services
+  related:
+  - https://www.neighborhealth.com/en/care-and-services/emergency-care/pediatrics-same-day-clinic/
+  - https://www.neighborhealth.com/en/care-and-services/emergency-care/bhucs/
+  - https://www.neighborhealth.com/en/patients-and-visitors/interpreter-services/
+  - https://www.neighborhealth.com/en/care-and-services/
+  - https://www.neighborhealth.com/en/care-and-services/adult-care/
+  - https://www.neighborhealth.com/en/care-and-services/pediatric-adolescent-care/
+- url: https://www.neighborhealth.com/community/east-boston
+  status: ok
+  method: http
+  final_url: https://www.neighborhealth.com/en/community/east-boston/
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:51+00:00'
+  page_sha256: 99c02ae31e5b716f55802f08be025fe3b6a3cfb95ffac1a86971f0aa7bd01294
+  text_chars: 9056
+  site_ids:
+  - internal_medical_associates_ebnhc_east_boston
+  - neighborhealth_satellite_emergency_facility_east_boston
+  roles:
+  - location
+  related:
+  - https://www.neighborhealth.com/en/patients-and-visitors/interpreter-services/
+  - https://www.neighborhealth.com/en/care-and-services/
+  - https://www.neighborhealth.com/en/care-and-services/adult-care/
+  - https://www.neighborhealth.com/en/care-and-services/pediatric-adolescent-care/
+  - https://www.neighborhealth.com/en/care-and-services/emergency-care/
+  - https://www.neighborhealth.com/en/care-and-services/emergency-department/
+- url: https://www.neighborhealth.com/en/care-and-services/
+  status: ok
+  method: http
+  final_url: https://www.neighborhealth.com/en/care-and-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:52+00:00'
+  page_sha256: 849995995d6fab0d0b1ae1d5dfb40259f594ea1d3c62a2ebe300f08a1994ac8e
+  text_chars: 3915
+  site_ids:
+  - internal_medical_associates_ebnhc_east_boston
+  - neighborhealth_satellite_emergency_facility_east_boston
+  roles:
+  - related
+  related:
+  - https://www.neighborhealth.com/en/care-and-services/adult-care/
+  - https://www.neighborhealth.com/en/care-and-services/pediatric-adolescent-care/
+  - https://www.neighborhealth.com/en/care-and-services/emergency-care/
+  - https://www.neighborhealth.com/en/care-and-services/emergency-department/
+  - https://www.neighborhealth.com/en/care-and-services/community-care/
+  - https://www.neighborhealth.com/en/care-and-services/behavioral-health/
+- url: https://www.neighborhealth.com/en/patients-and-visitors/interpreter-services/
+  status: ok
+  method: http
+  final_url: https://www.neighborhealth.com/en/patients-and-visitors/interpreter-services/
+  http_status: 200
+  fetched_at: '2026-10-25T13:49:51+00:00'
+  page_sha256: 2e5598888451c2f866d4cc6cc7f25f1ed6273e549dd78783777c89b2f4ef2142
+  text_chars: 3424
+  site_ids:
+  - internal_medical_associates_ebnhc_east_boston
+  - neighborhealth_satellite_emergency_facility_east_boston
+  roles:
+  - related
+  related:
+  - https://www.neighborhealth.com/en/care-and-services/
+  - https://www.neighborhealth.com/en/care-and-services/adult-care/
+  - https://www.neighborhealth.com/en/care-and-services/pediatric-adolescent-care/
+  - https://www.neighborhealth.com/en/care-and-services/emergency-care/
+  - https://www.neighborhealth.com/en/care-and-services/emergency-department/
+  - https://www.neighborhealth.com/en/care-and-services/community-care/
+- url: https://www.southshorehealth.org/locations/health-expressbraintree
+  status: ok
+  method: http
+  final_url: https://www.southshorehealth.org/locations/south-shore-health-urgent-care-braintree
+  http_status: 200
+  fetched_at: '2026-10-25T13:52:28+00:00'
+  page_sha256: 081d8eb88214ef0fbc6cbe2d309371917284c5e93b9b6ac82fffcaa243d5eb39
+  text_chars: 6709
+  site_ids:
+  - south_shore_health_urgent_care_braintree_formerly_health
+  roles:
+  - location
+  related:
+  - https://www.southshorehealth.org/services-care/primary-care
+  - https://www.southshorehealth.org/services-care/home-care/south-shore-vna
+  - https://www.southshorehealth.org/services-care
+  - https://www.southshorehealth.org/services-care/pregnancy-childbirth
+  - https://www.southshorehealth.org/services-care/orthopedics
+  - https://www.southshorehealth.org/services-care/weight-loss-surgery
+- url: https://www.southshorehealth.org/services-care/home-care/south-shore-vna
+  status: ok
+  method: http
+  final_url: https://www.southshorehealth.org/services-care/home-care/south-shore-vna
+  http_status: 200
+  fetched_at: '2026-10-25T13:52:30+00:00'
+  page_sha256: 1e89fbaf90f12864d496ef9cd39234afaa44b750d09396c75af3d517c9144c55
+  text_chars: 5500
+  site_ids:
+  - south_shore_health_urgent_care_braintree_formerly_health
+  roles:
+  - related
+  related:
+  - https://www.southshorehealth.org/services-care/primary-care
+  - https://www.southshorehealth.org/services-care
+  - https://www.southshorehealth.org/services-care/pregnancy-childbirth
+  - https://www.southshorehealth.org/services-care/orthopedics
+  - https://www.southshorehealth.org/services-care/weight-loss-surgery
+  - https://www.southshorehealth.org/services-care/south-shore-health-urgent-care
+- url: https://www.southshorehealth.org/services-care/primary-care
+  status: ok
+  method: http
+  final_url: https://www.southshorehealth.org/services-care/primary-care
+  http_status: 200
+  fetched_at: '2026-10-25T13:52:29+00:00'
+  page_sha256: 2efcc43b783b8453c982b9c7bb4285b83c89de0be55afcee5f0d7c28539bcc02
+  text_chars: 7934
+  site_ids:
+  - south_shore_health_urgent_care_braintree_formerly_health
+  roles:
+  - related
+  related:
+  - https://www.southshorehealth.org/services-care/primary-care/pediatrics
+  - https://www.southshorehealth.org/services-care/primary-care/family-medicine
+  - https://www.southshorehealth.org/services-care/primary-care/internal-medicine
+  - https://www.southshorehealth.org/services-care/primary-care/specialty-care-south-shore-medical-center
+  - https://www.southshorehealth.org/services-care/primary-care/virtual-visits-south-shore-medical-center
+  - https://www.southshorehealth.org/services-care/home-care/south-shore-vna
+- url: https://www.tuftsmedicalcenter.org/
+  status: manual
+  method: http
+  reason: 'robots.txt unreadable: https://www.tuftsmedicine.org/robots.txt is not
+    https on the domain allowlist'
+  site_ids:
+  - tufts_medical_center
   roles:
   - location
