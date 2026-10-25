@@ -4,7 +4,7 @@
  * contract Money).
  */
 import { hasCopy, t } from "@/contracts/copy";
-import { CELL_HAS_DOLLARS, TIER_ORDER } from "@/contracts/exhaustive";
+import { AVAILABILITY_REASON_KEY, CELL_HAS_DOLLARS, TIER_ORDER } from "@/contracts/exhaustive";
 import type {
   CertaintyTier,
   Money,
@@ -169,8 +169,8 @@ export function priceHidden(line: ReceiptLine, payment: Payment): HiddenReason |
 }
 
 /**
- * A chain's short name for the R12 line. The contract carries only `chain_id` (asked of C3: a display
- * name); unknown ids read "This chain".
+ * A chain's short name for the R12 line, for responses without C4b's `SiteSummary.chain_name` (which the
+ * receipt uses first); unknown ids read "This chain".
  */
 const CHAIN_NAMES: Record<string, string> = { afc_urgent_care: "AFC" };
 export function chainName(chainId: string | null): string {
@@ -184,6 +184,6 @@ export function chainName(chainId: string | null): string {
  */
 export function availabilityKey(reason: ReceiptLine["availability_reason"], payment: Payment): string | null {
   if (!reason) return null;
-  if (reason === "insurer_lists_rate" && payment.kind !== "insurance") return "receipt.availability.no_evidence";
-  return `receipt.availability.${reason}`;
+  if (reason === "insurer_lists_rate" && payment.kind !== "insurance") return AVAILABILITY_REASON_KEY.no_evidence;
+  return AVAILABILITY_REASON_KEY[reason];
 }

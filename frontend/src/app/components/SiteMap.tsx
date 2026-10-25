@@ -6,6 +6,7 @@ import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import type { UserLocation } from "../lib/geo";
 import type { SiteView } from "../lib/sites";
 import { stepOf, stepPin } from "../lib/steps";
+import { headlinePin, type MapItem } from "../lib/headline";
 
 /** OpenFreeMap: free vector tiles, no key (§4.3). */
 export const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
@@ -24,14 +25,17 @@ export function SiteMap({
   selectedId,
   onOpen,
   location,
-  step,
+  item,
 }: {
   views: SiteView[];
   selectedId: string | null;
   onOpen: (siteId: string) => void;
   location: UserLocation | null;
-  /** P3: the one step whose price the pins show; null = places only */
-  step: string | null;
+  /**
+   * P3 / D-UI-3: the one item the pins price: one option's headline per site, or one step; null = places only.
+   * Never a mix.
+   */
+  item: MapItem | null;
 }) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -68,8 +72,15 @@ export function SiteMap({
     const bounds = new maplibregl.LngLatBounds();
     for (const v of views) {
       const { site } = v.sq;
-      const sp = step ? stepPin(stepOf(v.sq, step)) : null;
-      if (step && !sp) continue; // P6: no pin where the site does not say it offers this step
+      const sp =
+        item?.kind === "step"
+          ? stepPin(stepOf(v.sq, item.key))
+          : item?.kind === "headline"
+            ? headlinePin(v.sq, item.optionId)
+            : null;
+      // P6: no pin where the site does not say it offers this step; an option's headline: only its own sites
+      if (item && !sp) continue;
+      const partial = sp?.kind === "price" && "partial" in sp && sp.partial;
       const pin = document.createElement("button");
       pin.type = "button";
       pin.dataset.testid = "map-pin";
@@ -82,12 +93,13 @@ export function SiteMap({
           "rounded-full border-2 px-2 py-0.5 text-xs font-bold shadow-md tabular-nums " +
           (sp.estimated ? "border-dashed border-amber-500 " : "border-white ") +
           on;
-        pin.textContent = `${sp.estimated ? "~" : ""}${sp.text}`;
+        pin.textContent = `${sp.estimated ? "~" : ""}${partial && !sp.text.startsWith("from") ? "≥ " : ""}${sp.text}`;
       } else if (sp?.kind === "no_price") {
         // offered, but no dollar figure here: never a cheap-looking pin
-        pin.setAttribute("aria-label", `${site.name}: ${sp.unusual ? "price looks unusual, being checked" : "no price"}`);
+        const unusual = "unusual" in sp && sp.unusual;
+        pin.setAttribute("aria-label", `${site.name}: ${unusual ? "price looks unusual, being checked" : "no price"}`);
         pin.className = "rounded-full border-2 border-white px-2 py-0.5 text-xs font-bold shadow-md text-muted-foreground " + on;
-        pin.textContent = sp.unusual ? "?" : "—";
+        pin.textContent = unusual ? "?" : "—";
       } else {
         // a place, not a price
         pin.setAttribute("aria-label", site.name);
@@ -108,7 +120,7 @@ export function SiteMap({
       bounds.extend([location.lon, location.lat]);
     }
     if (!bounds.isEmpty()) m.fitBounds(bounds, { padding: 60, maxZoom: 13, duration: 0 });
-  }, [views, selectedId, location, step]);
+  }, [views, selectedId, location, item]);
 
   return <div ref={el} className="h-[420px] md:h-[calc(100vh-15rem)] min-h-[320px] w-full rounded-xl overflow-hidden border border-border" data-testid="site-map" />;
 }

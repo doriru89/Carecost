@@ -12,16 +12,21 @@ import type {
   BillComponent,
   Cell,
   CertaintyTier,
+  ErReference,
   ExcludedReason,
   Gap,
+  HeadlineRange,
   LadderExplanation,
   OurCadence,
   Likelihood,
   Payment,
+  QuoteOption,
   QuoteResponse,
+  ReceiptLine,
   SourceCadence,
   SiteSummary,
   SourceKind,
+  StepSummary,
   TierBasis,
   YouPay,
 } from "@/generated/contracts/quote_api";
@@ -91,6 +96,8 @@ export const EXCLUDED_REASON_KEY = {
   reference_only: "total.excluded.reference_only",
   availability_unknown: "total.excluded.availability_unknown",
   unusual: "total.excluded.unusual",
+  // C4b item 5: the insurer pays one amount per visit; the test's line adds $0
+  flat_visit_rate: "total.excluded.flat_visit_rate",
 } as const satisfies Record<ExcludedReason, string>;
 
 /** (a) Publisher side: "late to refresh" is the publisher's delay, shown with the data. */
@@ -175,7 +182,65 @@ export const NOTICE_KEY = {
   masshealth_aco_may_differ: "notice.masshealth_aco_may_differ",
   medicare_advantage_is_insurance: "notice.medicare_advantage_is_insurance",
   chain_price_spread: "notice.chain_price_spread",
+  // C4b 3c: shown at the top of the specialist option, never inside a receipt
+  hmo_referral_for_specialist: "notice.hmo_referral_for_specialist",
 } as const satisfies Record<QuoteResponse["notices"][number], string>;
+
+/**
+ * C4b: how complete a site's headline figure is (HeadlineRange.basis). The plain line under a headline.
+ * `complete` says nothing extra: the figure is the place's own prices.
+ */
+export const HEADLINE_BASIS_KEY = {
+  complete: null,
+  includes_estimate: "headline.basis.includes_estimate",
+  partial: "headline.basis.partial",
+} as const satisfies Record<HeadlineRange["basis"], string | null>;
+
+/** C4b (Austin 2026-10-25): the honest wording next to "cheapest place for this" (QuoteOption.cheapest_basis). */
+export const CHEAPEST_BASIS_KEY = {
+  complete: "cheapest.complete",
+  includes_estimate: "cheapest.includes_estimate",
+  partial: "cheapest.partial",
+} as const satisfies Record<NonNullable<QuoteOption["cheapest_basis"]>, string>;
+
+/**
+ * Where a step's figure comes from (StepSummary.figure, MayAlsoOrder.figure). `own` / `estimate` are this
+ * place's own figure; `elsewhere` / `elsewhere_estimate` are the typical price nearby, never this place's
+ * own price; `none` = no figure.
+ */
+export const STEP_FIGURE = {
+  own: "own",
+  estimate: "own",
+  elsewhere: "nearby",
+  elsewhere_estimate: "nearby",
+  none: "none",
+} as const satisfies Record<StepSummary["figure"], "own" | "nearby" | "none">;
+
+/** P6 / C4b 3e: why a line is not "offered" -> its plain sentence. */
+export const AVAILABILITY_REASON_KEY = {
+  insurer_lists_rate: "receipt.availability.insurer_lists_rate",
+  price_file_lists_rate: "receipt.availability.price_file_lists_rate",
+  no_evidence: "receipt.availability.no_evidence",
+  site_says_not_offered: "receipt.availability.site_says_not_offered",
+} as const satisfies Record<NonNullable<ReceiptLine["availability_reason"]>, string>;
+
+/**
+ * How the server ordered the sites. `option_then_*` (C4b): grouped by entry option, by distance (default) or
+ * by price (the engine sorts by completeness first); `true` = the list is grouped by option.
+ */
+export const ORDERING_BY_OPTION = {
+  rank: false,
+  kind_then_distance: false,
+  option_then_distance: true,
+  option_then_price: true,
+} as const satisfies Record<QuoteResponse["ordering"], boolean>;
+
+/** C4b item 7: the ER reference is shown only when priced or not published; `not_loaded` hides it. */
+export const ER_SHOWN = {
+  priced: true,
+  not_published: true,
+  not_loaded: false,
+} as const satisfies Record<ErReference["status"], boolean>;
 
 /** Why the AI is paused -> fixed copy key (backend: app.chat.contracts.PAUSE_KEY). */
 export const PAUSE_REASON_KEY = {

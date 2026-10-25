@@ -136,7 +136,8 @@ describe("Chat2 · fixed_text_key replaces the model's lead-in / text", () => {
 
 describe("C3 item 9 · a list row needs no receipt; an opened site's receipt is fetched by site_ids", () => {
   it("the card reads the headline: total, estimate flag, steps done elsewhere (P4), never the receipt", () => {
-    const sq = { ...site(BCBS, AFC_INMAN), receipt: null, other_payers: [] };
+    // D6: a response without a C4b headline range (headline_range null) keeps the C3 card
+    const sq = { ...site(BCBS, AFC_INMAN), receipt: null, other_payers: [], headline_range: null };
     const labels = stepLabels(BCBS);
     render(<SiteCard v={{ sq, rank: 0, distance: null, open: closed }} onOpen={() => {}} labels={labels} />);
     // headline.likely 178.76-204.50 (whole dollars on cards), a floor: the referral has no dollar amount
@@ -145,7 +146,22 @@ describe("C3 item 9 · a list row needs no receipt; an opened site's receipt is 
     expect(screen.getByTestId("card-estimate")).toBeTruthy();
     // physical therapy is likely and done elsewhere: p25-p75 196.43-257.00 over 14 groups
     const away = screen.getAllByTestId("card-elsewhere").map((e) => e.textContent);
-    expect(away).toEqual(["+ Guided exercise program for the shoulder: elsewhere, about $196–$257"]);
+    expect(away).toEqual(["+ Guided exercise program for the shoulder: about $196–$257 (typical price nearby)"]);
+  });
+
+  it("C4b: the card reads headline_range (certain + likely, with the step done elsewhere at its nearby range)", () => {
+    const sq = { ...site(BCBS, AFC_INMAN), receipt: null, other_payers: [] };
+    // visit 135.61 (estimate) + X-ray 43.15 (estimate) + PT elsewhere 196.43-257.00 = 375.19-461.50, partial
+    expect(sq.headline_range).toMatchObject({ low: 375.19, high: 461.5, basis: "partial", from_only: false });
+    render(<SiteCard v={{ sq, rank: 0, distance: null, open: closed }} onOpen={() => {}} labels={stepLabels(BCBS)} />);
+    expect(screen.getByTestId("headline-figure").textContent).toBe("$375–$462");
+    expect(screen.getByTestId("headline-includes").textContent).toBe(
+      "Includes the visit, plus: quick picture of the shoulder bones and guided exercise program for the shoulder",
+    );
+    expect(screen.getByTestId("headline-basis").textContent).toBe("Only partial prices found here");
+    // the old "≥ total" and the separate "elsewhere" lines are not repeated next to the range
+    expect(screen.queryByTestId("card-total")).toBeNull();
+    expect(screen.queryByTestId("card-elsewhere")).toBeNull();
   });
 
   it("opening a summary-only site asks for it by site_ids once, then shows its receipt with its own sources", async () => {
@@ -166,7 +182,7 @@ describe("C3 item 9 · a list row needs no receipt; an opened site's receipt is 
     await waitFor(() => expect(screen.getByTestId("receipt")).toBeTruthy());
     expect(loadSite).toHaveBeenCalledTimes(1);
     expect(loadSite).toHaveBeenCalledWith(target.site.site_id);
-    expect(screen.getByTestId("total-top").textContent).toContain(String(full.receipt!.totals.likely!.low.toFixed(2)));
+    expect(screen.getByTestId("total-bottom").textContent).toContain(String(full.receipt!.totals.likely!.low.toFixed(2)));
   });
 
   it("a failed fetch says so; it never shows another site's receipt", async () => {
@@ -188,8 +204,12 @@ describe("P3 · the map prices one selected step, from SiteQuote.steps", () => {
     expect(pt("mount_auburn_hospital")).toEqual({ kind: "price", text: "$246", estimated: false });
     // an estimated step is marked as one (AFC Inman's visit: estimate 135.61-161.35)
     expect(stepPin(stepOf(site(BCBS, AFC_INMAN), "visit"))).toEqual({ kind: "price", text: "$136–$161", estimated: true });
-    // offered with no dollar figure (CHA's visit: its facility row is set aside as unusual): a pin with no price
-    expect(stepPin(stepOf(site(BCBS, "cha_cambridge_hospital"), "visit"))).toEqual({ kind: "no_price", unusual: true });
+    // offered with no dollar figure (CHA's visit: the doctor's fee is not published, so the step has no
+    // figure, C4b data): a pin with no price
+    expect(stepPin(stepOf(site(BCBS, "cha_cambridge_hospital"), "visit"))).toEqual({ kind: "no_price", unusual: false });
+    // synthetic: the same step with a line set aside as unusual says so (never a cheap-looking pin)
+    const st = { ...stepOf(site(BCBS, "cha_cambridge_hospital"), "visit")!, unusual: true };
+    expect(stepPin(st)).toEqual({ kind: "no_price", unusual: true });
   });
 
   it("the step chips leave out steps nobody prices; no step selected = places only", () => {
@@ -213,10 +233,12 @@ describe("P4 / P5 / P6 · own steps make the total; the rest are 'elsewhere' lin
     renderReceipt(BCBS, sq);
     const steps = screen.getAllByTestId("elsewhere-step");
     const pt = steps.find((s) => s.getAttribute("data-step") === "physical_therapy")!;
-    expect(within(pt).getByTestId("elsewhere-about").textContent).toBe("Elsewhere, about $196.43–$257.00");
+    expect(within(pt).getByTestId("elsewhere-about").textContent).toBe("About $196.43–$257.00 (typical price nearby)");
     expect(pt.textContent).toContain("14 places that do it");
-    // the total is the own steps only: visit 135.61 + X-ray 43.15-70.72
-    expect(screen.getByTestId("total-top").textContent).toBe("≥ $178.76–$206.33");
+    // this place's own bills are the own steps only: visit 135.61 + X-ray 43.15-70.72
+    expect(screen.getByTestId("total-bottom").textContent).toBe("≥ $178.76–$206.33");
+    // the headline counts PT at its nearby range (C4b P4): 375.19-463.33
+    expect(within(screen.getByTestId("receipt-headline")).getByTestId("headline-figure").textContent).toBe("$375–$463");
   });
 
   it("P6: the insurer-listed wording, and no Medicare figure shown as a BCBS person's price (rung 7 folded away)", () => {
@@ -224,14 +246,11 @@ describe("P4 / P5 / P6 · own steps make the total; the rest are 'elsewhere' lin
     renderReceipt(BCBS, sq);
     const why = screen.getAllByTestId("availability-why");
     expect(why[0].textContent).toBe("Your insurer lists a rate for this group, but this place doesn't say it offers this. Call to check.");
-    // every rung-7 line's amount sits inside a closed <details>, labelled a Medicare reference
+    // C4b 3d (1a7d986): no rung-7 Medicare figure is sent for a BCBS person at all; the fold-away guard for
+    // one is tested on a synthetic line below and in receipt.test.tsx
     const rung7 = sq.receipt!.lines.filter((l) => l.doctor_fee?.explanation_key === "fee.rung_7_medicare_reference");
-    expect(rung7.length).toBeGreaterThan(0);
-    const amounts = screen.getAllByTestId("line-amount");
-    for (const l of rung7) {
-      const shown = amounts.filter((a) => a.textContent === `$${(l.cell as { low: number }).low.toFixed(2)}`);
-      for (const a of shown) expect(a.closest("details")?.open).toBe(false);
-    }
+    expect(rung7).toEqual([]);
+    expect(screen.queryAllByTestId("hidden-price").filter((h) => h.getAttribute("data-hidden") === "medicare_reference")).toEqual([]);
   });
 
   it("P6: 'your insurer lists a rate' is said only to a person paying with insurance", () => {
@@ -243,7 +262,7 @@ describe("P4 / P5 / P6 · own steps make the total; the rest are 'elsewhere' lin
 
   it("a card with no total says there is no price for this way of paying (never a bare dash)", () => {
     const base = site(CASH, AFC_CAMBRIDGE);
-    const sq = { ...base, receipt: null, headline: { ...base.headline, likely_low: null, likely_high: null } };
+    const sq = { ...base, receipt: null, headline_range: null, headline: { ...base.headline, likely_low: null, likely_high: null } };
     render(<SiteCard v={{ sq, rank: 0, distance: null, open: closed }} onOpen={() => {}} />);
     expect(screen.getByTestId("card-total").textContent).toBe("—");
     expect(screen.getByTestId("card-no-total").textContent).toBe(t("list.no_total"));
@@ -253,9 +272,22 @@ describe("P4 / P5 / P6 · own steps make the total; the rest are 'elsewhere' lin
     const all: [QuoteResponse, ReceiptLine][] = [BCBS, CASH, MEDICARE, MASSHEALTH].flatMap((q) =>
       q.sites.flatMap((s) => s.receipt.lines.map((l) => [q, l] as [QuoteResponse, ReceiptLine])),
     );
-    const r7 = all.filter(([, l]) => l.doctor_fee?.explanation_key === "fee.rung_7_medicare_reference" && l.cell?.kind === "money");
-    expect(r7.length).toBeGreaterThan(0);
-    for (const [q, l] of r7) expect(priceHidden(l, q.payment)).toBe(q.payment.kind === "medicare" ? (l.availability === "unknown" ? "listed_price" : null) : "medicare_reference");
+    // C4b 3d: the fixtures carry no rung-7 line any more, so every money line is made one (synthetic)
+    const r7 = all
+      .filter(([, l]) => l.cell?.kind === "money")
+      .map(([q, l]) => [q, { ...l, doctor_fee: { rung: 7, explanation_key: "fee.rung_7_medicare_reference", group_name: null, group_tin: null, npi_count: null, chia_badge: null, by_npi: null } }] as [QuoteResponse, ReceiptLine]);
+    expect(r7.length).toBeGreaterThan(50);
+    expect(new Set(r7.map(([q]) => q.payment.kind))).toEqual(new Set(["insurance", "cash", "medicare", "masshealth"]));
+    for (const [q, l] of r7)
+      expect(priceHidden(l, q.payment)).toBe(
+        q.payment.kind === "medicare"
+          ? l.availability === "unknown" && l.at === "this_site"
+            ? "listed_price"
+            : l.unusual?.whole_line
+              ? "unusual"
+              : null
+          : "medicare_reference",
+      );
   });
 
   it("P5: an estimated line says it is one and what it rests on; the total says it includes an estimate", () => {
@@ -267,7 +299,9 @@ describe("P4 / P5 / P6 · own steps make the total; the rest are 'elsewhere' lin
     const basis = screen.getAllByTestId("estimate-basis").map((b) => b.textContent);
     expect(basis.length).toBe(2);
     expect(basis[0]).toMatch(new RegExp(`^Estimate: the middle half of prices at ${est[0].estimate!.n_groups} `));
-    expect(screen.getByTestId("total-top").parentElement?.parentElement?.textContent).toMatch(/Includes an estimate/);
+    expect(screen.getByTestId("total-bottom").parentElement?.parentElement?.textContent).toMatch(/Includes an estimate/);
+    // each estimated line's plain footnote says so
+    expect(screen.getAllByTestId("line-footnote").filter((f) => f.getAttribute("data-kind") === "estimate").length).toBe(2);
   });
 });
 
@@ -294,20 +328,39 @@ describe("P7 · no location: every place, grouped by kind, by distance from Bost
 
 describe("P8 / P8a / P9 / anesthesia / chains on the receipt", () => {
   it("P8: a whole-line unusual price says 'being checked' and is not in the total (CHA visit facility fee)", () => {
-    const sq = site(BCBS, "cha_cambridge_hospital");
-    const line = sq.receipt!.lines.find((l) => l.line_id === "visit_facility")!;
-    expect(line.unusual?.whole_line).toBe(true);
-    expect(line.in_total).toBe(false);
+    // Data change (C4b fixtures, 1a7d986): CHA's visit facility line is now a summed peer estimate (78.46) and no
+    // fixture line is whole-line unusual. Synthetic: that line with every row set aside, as the engine sends it.
+    const base = site(BCBS, "cha_cambridge_hospital");
+    const orig = base.receipt!.lines.find((l) => l.line_id === "visit_facility")!;
+    expect(orig.unusual).toBeNull();
+    const line = { ...orig, in_total: false, unusual: { peer_median: 235.0, n_groups: 7, whole_line: true, set_aside: [] } } as ReceiptLine;
+    const sq = { ...base, receipt: { ...base.receipt!, lines: base.receipt!.lines.map((l) => (l.line_id === "visit_facility" ? line : l)) } };
+    expect(priceHidden(line, BCBS.payment)).toBe("unusual");
     renderReceipt(BCBS, sq);
     expect(screen.getAllByTestId("unusual")[0].textContent).toBe("Price looks unusual, being checked");
   });
 
   it("P9: possible steps are 'might add $X–$Y', never in the headline (Mount Auburn)", () => {
-    const sq = site(BCBS, "mount_auburn_hospital");
+    // without a C4b headline range (older response): the C3 'might add' line under the receipt total
+    const sq = { ...site(BCBS, "mount_auburn_hospital"), headline_range: null };
     renderReceipt(BCBS, sq);
     const m = screen.getByTestId("might-add").textContent ?? "";
     expect(m).toMatch(/^Might add \$281\.49–\$4,224\.80 if the doctor decides you need: /);
     expect(screen.getByTestId("total-top").textContent).toBe("≥ $669.03–$723.38");
+  });
+
+  it("C4b: possible steps are listed on their own (plain name, why, own price), never in the headline (Mount Auburn)", () => {
+    const sq = site(BCBS, "mount_auburn_hospital");
+    renderReceipt(BCBS, sq);
+    expect(screen.queryByTestId("might-add")).toBeNull();
+    const rows = screen.getAllByTestId("may-also-step").map((r) => [r.getAttribute("data-step"), r.querySelector("span.ml-auto")?.textContent]);
+    expect(rows).toEqual([
+      ["steroid_injection", "$536–$558"],
+      ["tendon_scan_ultrasound", "$281"],
+      ["tendon_scan_mri", "$780"],
+      ["mr_arthrogram", "$2,581–$2,605"],
+    ]);
+    expect(screen.getByTestId("headline-figure").textContent).toBe("$669–$723");
   });
 
   it("P9: unknown billing says it is priced as a hospital clinic; a facility line with no price says the fee may apply", () => {
@@ -339,7 +392,9 @@ describe("P8 / P8a / P9 / anesthesia / chains on the receipt", () => {
     );
     renderReceipt(BCBS, { ...sq, site: { ...sq.site, chain_id: "afc_urgent_care" }, receipt: { ...sq.receipt!, lines } });
     expect(screen.getAllByTestId("price-note").map((n) => n.textContent)).toContain("This group's prices are consistently higher than similar places here.");
-    expect(screen.getByTestId("chain-price").textContent).toBe("AFC's posted self-pay price for all its locations");
+    // C4b: the chain's display name comes from the contract (SiteSummary.chain_name)
+    expect(sq.site.chain_name).toBe("AFC Urgent Care");
+    expect(screen.getByTestId("chain-price").textContent).toBe("AFC Urgent Care's posted self-pay price for all its locations");
     expect(screen.getByTestId("anesthesia-time").textContent).toBe("With a typical time (30 min), about $210.00–$260.00. Not in the total.");
   });
 });

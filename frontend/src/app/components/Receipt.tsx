@@ -11,16 +11,29 @@ import { Booking } from "./Booking";
 import { GLOSSARY_CREDIT } from "../lib/glossary";
 import { ReceiptLineView } from "./ReceiptLineView";
 import { elsewhereSteps, stepLabels } from "../lib/steps";
+import { optionLetter, siteOption } from "../lib/headline";
+import { CallQuestions, HeadlineFigure, MayAlsoOrderList, RangeBuild } from "./Headline";
 import { ChildrenOnlyBadge } from "./SiteList";
 
-function Total({ totals, where, labels }: { totals: Totals; where: "top" | "bottom"; labels: Record<string, string> }) {
+function Total({
+  totals,
+  where,
+  labels,
+  label = "receipt.total",
+}: {
+  totals: Totals;
+  where: "top" | "bottom";
+  labels: Record<string, string>;
+  /** C4b: with a headline range on top, the bottom line is this place's own bills, added up */
+  label?: "receipt.total" | "breakdown.own_total";
+}) {
   const l = totals.likely;
   const might = totals.might_add;
   return (
     <div className={cn("py-3", where === "bottom" && "pt-3 pb-0 border-t-2 border-foreground/80")}>
       <div className="flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("receipt.total")}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t(label)}</p>
           {!totals.complete && <p className="text-[11px] text-warn">{t("receipt.total_floor")}</p>}
           <div className="flex flex-wrap gap-1 mt-0.5">
             {l?.includes_estimate && <Flag>{t("receipt.includes_estimate")}</Flag>}
@@ -82,10 +95,16 @@ function ElsewhereStep({
           {e ? t("receipt.elsewhere_about", { range: range(e.low, e.high) }) : "—"}
         </p>
       </div>
-      {step.availability !== "offered" && (
+      {step.figure === "elsewhere_estimate" ? (
         <p className="mt-1 text-xs text-foreground/85" data-testid="elsewhere-why">
-          {reason ? t(availabilityKey(reason, payment)!) : t("receipt.not_offered")}
+          {t("receipt.elsewhere_estimate_why")}
         </p>
+      ) : (
+        step.availability !== "offered" && (
+          <p className="mt-1 text-xs text-foreground/85" data-testid="elsewhere-why">
+            {reason ? t(availabilityKey(reason, payment)!) : t("receipt.not_offered")}
+          </p>
+        )
       )}
       <p className="mt-0.5 text-[11px] text-muted-foreground">
         {e ? t("receipt.elsewhere_basis", { n: e.n_groups }) : t("receipt.elsewhere_none")}
@@ -118,6 +137,12 @@ export function Receipt({
   location: UserLocation | null;
 }) {
   const { site, receipt } = sq;
+  const hr = sq.headline_range;
+  const option = siteOption(quote, sq);
+  const letter = option ? optionLetter(quote, option.id) : null;
+  // C4b 3c: the referral notice sits at the top of a specialist option, never in the notice list of a receipt
+  const referral = !!option?.specialist && quote.notices.includes("hmo_referral_for_specialist");
+  const notices = quote.notices.filter((n) => n !== "hmo_referral_for_specialist");
   const labels = stepLabels({ ...quote, sites: [sq, ...quote.sites] });
   if (!receipt) {
     // C3 item 9: past the first full_receipts sites the receipt is fetched by site_ids (ResultsPane)
@@ -147,12 +172,15 @@ export function Receipt({
       otherPayers={op.get(line.line_id)}
       location={location}
       site={site}
+      sq={sq}
     />
   );
   return (
     <article className="rounded-2xl border border-border bg-card shadow-card p-4 sm:p-5" data-testid="receipt">
       <header className="space-y-0.5">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">Receipt estimate</p>
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Price breakdown{option ? ` · ${t("option.label", { letter: letter ?? "", label: option.label.en })}` : ""}
+        </p>
         <h2 className="text-lg font-bold leading-tight">{site.name}</h2>
         <p className="text-xs text-muted-foreground">
           {site.address_line}
@@ -185,9 +213,14 @@ export function Receipt({
         )}
       </header>
 
-      {quote.notices.length > 0 && (
+      {referral && (
+        <p className="mt-2 rounded-md border border-sky-300 bg-sky-50 px-2 py-1.5 text-xs font-medium text-sky-950" data-testid="hmo-referral-notice">
+          {t(NOTICE_KEY.hmo_referral_for_specialist)}
+        </p>
+      )}
+      {notices.length > 0 && (
         <ul className="mt-2 space-y-1">
-          {quote.notices.map((n) => (
+          {notices.map((n) => (
             <li key={n} className="rounded-md bg-muted px-2 py-1 text-[11px] text-muted-foreground">
               {t(NOTICE_KEY[n])}
             </li>
@@ -195,7 +228,18 @@ export function Receipt({
         </ul>
       )}
 
-      <Total totals={receipt.totals} where="top" labels={labels} />
+      {hr ? (
+        // C4b (Austin 2026-10-25): the headline is the certain + likely range; possible steps are listed on their
+        // own; the three subtotals show how the range was built (D-UI-2)
+        <div className="py-3" data-testid="receipt-headline">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("receipt.total")}</p>
+          <HeadlineFigure hr={hr} size="big" />
+          <MayAlsoOrderList hr={hr} />
+          <RangeBuild hr={hr} steps={sq.steps} />
+        </div>
+      ) : (
+        <Total totals={receipt.totals} where="top" labels={labels} />
+      )}
 
       <div className="space-y-4">
         {sections(ownLines).map((s) => (
@@ -234,7 +278,7 @@ export function Receipt({
       </div>
 
       <div className="mt-5">
-        <Total totals={receipt.totals} where="bottom" labels={labels} />
+        <Total totals={receipt.totals} where="bottom" labels={labels} label={hr ? "breakdown.own_total" : "receipt.total"} />
       </div>
 
       <div className="mt-3 rounded-lg bg-muted/60 p-3 text-xs space-y-1.5" data-testid="you-pay">
@@ -248,6 +292,8 @@ export function Receipt({
           </a>
         )}
       </div>
+
+      <CallQuestions payment={quote.payment} />
 
       {quote.copy_keys.length > 0 && (
         // D33: a quote reached from a care path carries both fixed lines; a manual pick carries none

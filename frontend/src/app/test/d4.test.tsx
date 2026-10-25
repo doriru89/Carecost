@@ -138,7 +138,8 @@ describe("R15 · the previous payment's receipt is never shown as current", () =
     fireEvent.change(screen.getByTestId("email"), { target: { value: "a@b.co" } });
     fireEvent.change(screen.getByTestId("start-chat"), { target: { value: "my shoulder clicks" } });
     fireEvent.click(screen.getByRole("button", { name: "Send" }));
-    await waitFor(() => expect(screen.getByTestId("receipt")).toBeTruthy());
+    // D6 (D-UI-1): a care path's quote opens on the first screen (options, cheapest, alternates)
+    await waitFor(() => expect(screen.getByTestId("overview")).toBeTruthy());
     expect(screen.queryByTestId("quote-updating")).toBeNull();
 
     const results = screen.getByTestId("results-pane");
@@ -151,6 +152,7 @@ describe("R15 · the previous payment's receipt is never shown as current", () =
       vi.advanceTimersByTime(QUOTE_TIMEOUT_MS + 10);
     });
     await waitFor(() => expect(screen.getByTestId("quote-unavailable").textContent).toContain(t("quote.timeout")));
+    expect(screen.queryByTestId("overview")).toBeNull();
     expect(screen.queryByTestId("receipt")).toBeNull();
     expect(spy.mock.calls[1][1]?.signal?.aborted).toBe(true);
   });

@@ -6,6 +6,8 @@ import { Receipt } from "../components/Receipt";
 import CareApp from "../pages/CareApp";
 import { ScopeNote, SiteCard } from "../components/SiteList";
 import { BCBS, CASH, MASSHEALTH, MEDICARE } from "./fixtures";
+import { t } from "@/contracts/copy";
+import type { Money, ReceiptLine } from "@/generated/contracts/quote_api";
 
 const closed = { known: true, openNow: false, openToday: false, text: "Closed" };
 
@@ -16,7 +18,9 @@ describe("gradient receipt (D8, §4.2)", () => {
   const MTA = BCBS.sites.find((s) => s.site.site_id === "mount_auburn_hospital")!;
 
   it("shows the total at the top and repeats it at the bottom, from totals.likely", () => {
-    const sq = MTA;
+    // D6: a site with a C4b headline range shows that on top (next test); without one (an older response or a
+    // manual pick) the receipt total is on top and repeated at the bottom, as before
+    const sq = { ...MTA, headline_range: null };
     render(<TooltipProvider><Receipt quote={BCBS} sq={sq} distance={null} open={closed} location={null} /></TooltipProvider>);
     const top = screen.getByTestId("total-top").textContent;
     expect(top).toBe(screen.getByTestId("total-bottom").textContent);
@@ -24,6 +28,36 @@ describe("gradient receipt (D8, §4.2)", () => {
     expect(top).toContain("669.03");
     expect(top).toContain("723.38");
     expect(top?.startsWith("≥")).toBe(!sq.receipt.totals.complete);
+  });
+
+  it("C4b: the headline range is on top (certain + likely), the receipt total at the bottom is this place's own bills", () => {
+    const sq = MTA;
+    const hr = sq.headline_range!;
+    render(<TooltipProvider><Receipt quote={BCBS} sq={sq} distance={null} open={closed} location={null} /></TooltipProvider>);
+    expect(screen.queryByTestId("total-top")).toBeNull();
+    // Mount Auburn BCBS HMO: headline 669.03-723.38 partial (the referral has no figure), covers the X-ray and PT
+    expect(hr).toMatchObject({ low: 669.03, high: 723.38, basis: "partial", from_only: false });
+    const head = screen.getByTestId("receipt-headline");
+    expect(within(head).getByTestId("headline-figure").textContent).toBe("$669–$723");
+    expect(within(head).getByTestId("headline-includes").textContent).toBe(
+      "Includes the visit, plus: quick picture of the shoulder bones and guided exercise program for the shoulder",
+    );
+    expect(within(head).getByTestId("headline-basis").textContent).toBe(t("headline.basis.partial"));
+    const bottom = screen.getByTestId("total-bottom");
+    expect(bottom.textContent).toBe("≥ $669.03–$723.38");
+    expect(bottom.parentElement?.textContent).toContain(t("breakdown.own_total"));
+    // the three subtotals: visit_only, with_likely (= the headline), with_possible
+    const subs = within(screen.getByTestId("range-build")).getAllByTestId("subtotal-amount").map((e) => e.textContent);
+    expect(subs).toEqual(["$295–$349", "$669–$723", "$4,847–$4,948"]);
+    // the referral (at your own primary care office) has no figure: said, not counted
+    expect(within(screen.getByTestId("range-build")).getAllByTestId("subtotal-not-priced")[0].textContent).toBe(
+      t("breakdown.not_priced", { items: "Visit with your main doctor first" }),
+    );
+    // possible steps are listed on their own, with their purpose and own price, never in the headline
+    const may = within(head).getAllByTestId("may-also-step").map((e) => e.getAttribute("data-step"));
+    expect(may).toEqual(["steroid_injection", "tendon_scan_ultrasound", "tendon_scan_mri", "mr_arthrogram"]);
+    expect(within(head).getByTestId("may-also-order").textContent).toContain("It can calm the pain for a while");
+    expect(screen.getByTestId("call-questions").textContent).toContain("Do you take my plan (Blue Cross Blue Shield of MA · HMO)?");
   });
 
   it("every gap row says what to ask; AI lines sit in a dashed box; possible extras are labelled out of total", () => {
@@ -75,15 +109,32 @@ describe("gradient receipt (D8, §4.2)", () => {
     expect(est).toBeGreaterThan(0);
     const { unmount } = render(<TooltipProvider><Receipt quote={BCBS} sq={afc} distance={null} open={closed} location={null} /></TooltipProvider>);
     expect(screen.getAllByTestId("estimate-tag").length).toBe(est);
-    expect(screen.getByTestId("total-top").parentElement?.textContent).toMatch(/Includes an estimate/);
+    expect(screen.getByTestId("total-bottom").parentElement?.parentElement?.textContent).toMatch(/Includes an estimate/);
+    // every estimated line's plain footnote says it is an estimate from nearby places
+    const notes = screen.getAllByTestId("line-footnote").filter((n) => n.getAttribute("data-kind") === "estimate");
+    expect(notes.length).toBe(est);
     unmount();
-    // Data change (C3, ee409cf): at Cambridge Health Alliance's hospital only visit_doctor ($75.54) is
-    // rung 7 now (steroid_injection_doctor became a rung-6 peer estimate), and visit_facility ($30.92)
-    // is set aside as unusual (P8), so it left the total too.
-    const cha = BCBS.sites.find((s) => s.site.site_id === "cha_cambridge_hospital")!;
-    const ref = cha.receipt.lines.filter((l) => l.doctor_fee?.rung === 7);
-    expect(ref.length).toBe(1);
-    expect(ref.every((l) => !l.in_total)).toBe(true);
+    // C4b 3d (1a7d986): no rung-7 Medicare figure is sent for a non-Medicare payment at all, in any fixture
+    for (const q of [BCBS, CASH, MASSHEALTH])
+      for (const s of q.sites) expect(s.receipt.lines.filter((l) => l.doctor_fee?.rung === 7)).toEqual([]);
+    // The rung-7 guard stays (an older response, or a future rung-7 row): CHA's hospital visit_doctor line
+    // (not published under BCBS today) turned into a synthetic rung-7 Medicare figure of $75.54, out of the total.
+    const base = BCBS.sites.find((s) => s.site.site_id === "cha_cambridge_hospital")!;
+    const money = base.receipt.lines.find((l) => l.cell?.kind === "money")!.cell as Money;
+    const r7: ReceiptLine = {
+      ...base.receipt.lines.find((l) => l.line_id === "visit_doctor")!,
+      cell: { ...money, low: 75.54, high: 75.54, basis: "fee_schedule", prov_high: null },
+      doctor_fee: { rung: 7, explanation_key: "fee.rung_7_medicare_reference", group_name: null, group_tin: null, npi_count: null, chia_badge: null, by_npi: null },
+      in_total: false,
+    };
+    const cha = {
+      ...base,
+      headline_range: null,
+      receipt: {
+        lines: base.receipt.lines.map((l) => (l.line_id === "visit_doctor" ? r7 : l)),
+        totals: { ...base.receipt.totals, excluded: [...base.receipt.totals.excluded.filter((e) => e.line_id !== "visit_doctor"), { line_id: "visit_doctor", reason: "reference_only" as const }] },
+      },
+    };
     render(<TooltipProvider><Receipt quote={BCBS} sq={cha} distance={null} open={closed} location={null} /></TooltipProvider>);
     expect(screen.getAllByTestId("reference-tag").length).toBe(1);
     // P2 (D5): a BCBS person never sees the Medicare figure as the price: it is folded away, labelled
@@ -91,11 +142,11 @@ describe("gradient receipt (D8, §4.2)", () => {
     expect(hidden.length).toBe(1);
     expect(hidden[0].textContent).toMatch(/^No price for your plan/);
     expect(hidden[0].querySelector("details")?.open).toBe(false);
-    // the total is the three in-total lines only: 71.24 + (12.04-17.33) + 294.35, no rung-7 amount
-    // (was 408.55-413.84 with the visit facility fee)
+    // the total is the in-total lines only (totals.likely 456.09-561.90), no rung-7 amount
     const top = screen.getByTestId("total-top").textContent;
-    expect(top).toContain("377.63");
-    expect(top).toContain("382.92");
+    expect(top).toContain("456.09");
+    expect(top).toContain("561.90");
+    expect(top).not.toContain("75.54");
   });
 
   it("a site whose own price source we do not read says so (price_source_id null, P1 problem 9)", () => {

@@ -15,7 +15,8 @@ import type { SiteScope } from "../lib/sites";
 import { SplitView, type SplitState } from "../components/SplitView";
 import type { UserLocation } from "../lib/geo";
 import { serviceCodes } from "../lib/mapPrice";
-import { paymentId } from "../lib/payments";
+import { paymentId, quoteAnswers } from "../lib/payments";
+import type { OrderBy } from "../components/Overview";
 import { RedFlagPage } from "./StopPages";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -25,8 +26,8 @@ const MAX_HISTORY = 6;
 
 type Query = Pick<QuoteRequest, "care_path_id" | "service_codes" | "picked_by">;
 
-function requestKey(payment: Payment, q: Query, where = ""): string {
-  return `${paymentId(payment)}|${q.care_path_id ?? q.service_codes.join(",")}|${q.picked_by}|${where}`;
+function requestKey(payment: Payment, q: Query, where = "", orderBy: OrderBy = "distance"): string {
+  return `${paymentId(payment)}|${q.care_path_id ?? q.service_codes.join(",")}|${q.picked_by}|${where}|${orderBy}`;
 }
 
 /** The part of the request key that depends on location: the `near` point quoteBody() will send. */
@@ -70,7 +71,8 @@ export default function CareApp() {
   const cache = useRef(new Map<string, QuoteState>());
   const switchStart = useRef<{ t: number; key: string } | null>(null);
 
-  const [view, setView] = useState<ResultsView>("receipt");
+  const [view, setView] = useState<ResultsView>("pick");
+  const [orderBy, setOrderBy] = useState<OrderBy>("distance");
   const [location, setLocation] = useState<UserLocation | null>(null);
   const [pick, setPick] = useState<SitePick>({ sort: "price", selected: null });
   const [split, setSplit] = useState<SplitState>({ orientation: "side", swapped: false });
@@ -87,7 +89,7 @@ export default function CareApp() {
   // ---- quotes: one request per (payment, query); cached so switching back is instant
   useEffect(() => {
     if (!payment || !query) return;
-    const key = requestKey(payment, query, whereKey(api.mode, location));
+    const key = requestKey(payment, query, whereKey(api.mode, location), orderBy);
     const hit = cache.current.get(key);
     if (hit) {
       setQuoteState(hit);
@@ -105,7 +107,10 @@ export default function CareApp() {
     // key is this request's key.
     setQuoteState((s) => ({ status: "loading", key, prev: s.status === "ok" ? s : s.status === "loading" ? s.prev : undefined }));
     api
-      .quote({ payment, ...query, answers, site_ids: null }, { location, signal: ctl.signal })
+      .quote(
+        { payment, ...query, answers: quoteAnswers(payment, answers), site_ids: null, ...(orderBy === "price" ? { order_by: "price" as const } : {}) },
+        { location, signal: ctl.signal },
+      )
       .then((quote) => {
         const st: QuoteState = { status: "ok", key, quote, scope: siteScope(api.mode, location) };
         cache.current.set(key, st);
@@ -125,7 +130,7 @@ export default function CareApp() {
       clearTimeout(timer);
       ctl.abort();
     };
-  }, [api, payment, query, location]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [api, payment, query, location, orderBy]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---- the <300 ms check: time from the payment change to the new receipt being committed
   useEffect(() => {
@@ -149,7 +154,7 @@ export default function CareApp() {
       const key = `${requestKey(payment, query)}|${siteId}`;
       let p = siteCache.current.get(key);
       if (!p) {
-        p = api.quote({ payment, ...query, answers, site_ids: [siteId] });
+        p = api.quote({ payment, ...query, answers: quoteAnswers(payment, answers), site_ids: [siteId] });
         p.catch(() => siteCache.current.delete(key));
         siteCache.current.set(key, p);
       }
@@ -159,7 +164,7 @@ export default function CareApp() {
   );
 
   const changePayment = (p: Payment) => {
-    if (query) switchStart.current = { t: performance.now(), key: requestKey(p, query, whereKey(api.mode, location)) };
+    if (query) switchStart.current = { t: performance.now(), key: requestKey(p, query, whereKey(api.mode, location), orderBy) };
     setPayment(p);
   };
 
@@ -201,7 +206,7 @@ export default function CareApp() {
           // contract never sums (picked_by: assistant).
           const top = r.candidates[0];
           setQuery({ care_path_id: top.path_id, service_codes: [], picked_by: top.match === "entry_matched" ? "person" : "assistant" });
-          setView("receipt");
+          setView("pick");
         }
       } catch (e) {
         // The server could not answer at all (no reply to render): say so plainly, keep browsing open.
@@ -222,7 +227,7 @@ export default function CareApp() {
     },
     pickPath: (c: CandidatePath) => {
       setQuery({ care_path_id: c.path_id, service_codes: [], picked_by: "person" });
-      setView("receipt");
+      setView("pick");
       setPhoneTab("prices");
     },
     pickService: (s: ServiceRef) => {
@@ -237,7 +242,7 @@ export default function CareApp() {
 
   const pickPath = (id: string) => {
     setQuery({ care_path_id: id, service_codes: [], picked_by: "person" });
-    setView("receipt");
+    setView("pick");
     setPhoneTab("prices");
   };
   const pickService = (s: CatalogService, by: "person" | "assistant" = "person") => {
@@ -398,6 +403,8 @@ export default function CareApp() {
             pick={pick}
             onPick={setPick}
             loadSite={loadSite}
+            orderBy={orderBy}
+            onOrderBy={api.mode === "api" ? setOrderBy : undefined}
           />
         }
       />

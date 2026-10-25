@@ -1,17 +1,18 @@
 import { t } from "@/contracts/copy";
-import { KIND_LABEL_KEY } from "@/contracts/exhaustive";
-import type { QuoteResponse } from "@/generated/contracts/quote_api";
+import { KIND_LABEL_KEY, ORDERING_BY_OPTION } from "@/contracts/exhaustive";
+import type { QuoteOption, QuoteResponse } from "@/generated/contracts/quote_api";
 import { cn } from "@/lib/utils";
 import { range } from "../lib/format";
 import { milesText } from "../lib/geo";
 import { dataNoticeKey, totalText } from "../lib/receipt";
-import { kindGroups, type SiteScope, type SiteView, type SortMode } from "../lib/sites";
+import { kindGroups, optionRuns, type SiteScope, type SiteView, type SortMode } from "../lib/sites";
+import { HeadlineFigure } from "./Headline";
 import { elsewhereSteps, isExpected } from "../lib/steps";
 import { Booking } from "./Booking";
 
 const BILLING_TAG: Record<string, string> = {
   office_visit: "Office visit billing",
-  hospital_outpatient: "Hospital billing + facility fee",
+  hospital_outpatient: "Hospital billing: a hospital bill + the doctor's",
   asc: "Surgery center",
   unknown: "Billing not confirmed",
 };
@@ -53,6 +54,7 @@ export function SiteCard({
   labels?: Record<string, string>;
 }) {
   const { site, headline } = v.sq;
+  const hr = v.sq.headline_range;
   const total = totalText(v.sq);
   // P4: expected steps this place does not do, each with the range at places that do (never summed here)
   const away = elsewhereSteps(v.sq).filter((st) => isExpected(st) && st.elsewhere);
@@ -76,6 +78,12 @@ export function SiteCard({
               <span className={v.open.openNow ? "text-emerald-700 font-medium" : ""}>{v.open.text}</span>
             </p>
           </div>
+          {hr ? (
+            // C4b: the same headline as the first screen (certain + likely; possible steps are in the breakdown)
+            <div className="ml-auto max-w-[16rem] shrink-0 text-right">
+              <HeadlineFigure hr={hr} />
+            </div>
+          ) : (
           <div className="text-right shrink-0">
             <p className="text-lg font-bold tabular-nums text-ink" data-testid="card-total">
               {total ? `${headline.complete ? "" : "≥ "}${total}` : "—"}
@@ -94,8 +102,9 @@ export function SiteCard({
               <p className="text-[11px] text-warn">{headline.missing} likely {headline.missing === 1 ? "step" : "steps"} without a price</p>
             )}
           </div>
+          )}
         </div>
-        {(away.length > 0 || headline.might_add) && (
+        {!hr && (away.length > 0 || headline.might_add) && (
           <div className="mt-1 space-y-0.5 text-[11px] text-muted-foreground">
             {away.map((st) => (
               <p key={st.key} data-testid="card-elsewhere">
@@ -138,6 +147,7 @@ export function SiteList({
   scope,
   ordering = "rank",
   labels,
+  options = [],
 }: {
   views: SiteView[];
   sort: SortMode;
@@ -146,14 +156,16 @@ export function SiteList({
   onOpen: (siteId: string) => void;
   hasLocation: boolean;
   scope?: SiteScope | null;
-  /** P7: kind_then_distance = grouped by kind under headers */
+  /** P7: kind_then_distance = grouped by kind under headers; C4b option_then_* = grouped by entry option */
   ordering?: QuoteResponse["ordering"];
   labels?: Record<string, string>;
+  options?: QuoteOption[];
 }) {
   const byKind = ordering === "kind_then_distance";
+  const byOption = ORDERING_BY_OPTION[ordering];
   const opts: { id: SortMode; label: string }[] = [
     // with no location the server's order is kind then distance from City Hall, never a price ranking
-    { id: "price", label: byKind ? "By distance" : "Price" },
+    { id: "price", label: byKind || ordering === "option_then_distance" ? "By distance" : ordering === "option_then_price" ? "Cheapest first" : "Price" },
     { id: "nearest", label: "Nearest" },
     { id: "open_today", label: "Open today" },
   ];
@@ -184,7 +196,21 @@ export function SiteList({
       {sort === "nearest" && !hasLocation && (
         <p className="text-[11px] text-muted-foreground">Add a ZIP or use your location to sort by distance.</p>
       )}
-      {byKind
+      {byOption
+        ? optionRuns(views).map((g, i) => {
+            const o = options.find((x) => x.id === g.optionId);
+            const letter = o ? String.fromCharCode(65 + options.indexOf(o)) : null;
+            return (
+              <section key={`${g.optionId}-${i}`} className="space-y-2" data-testid="option-group" data-option={g.optionId ?? ""}>
+                <h3 className="pt-2 text-xs font-semibold uppercase tracking-wider text-ink">
+                  {o ? t("option.label", { letter: letter ?? "", label: o.label.en }) : ""}{" "}
+                  <span className="font-normal text-muted-foreground">· {g.views.length}</span>
+                </h3>
+                {g.views.map(card)}
+              </section>
+            );
+          })
+        : byKind
         ? kindGroups(views).map((g) => (
             <section key={g.kind} className="space-y-2" data-testid="kind-group" data-kind={g.kind}>
               <h3 className="pt-2 text-xs font-semibold uppercase tracking-wider text-ink">
