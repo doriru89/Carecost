@@ -81,6 +81,8 @@ export function hoursSourceKey(label: SiteSummary["hours_label"]): string {
       return "hours.from_live";
     case "posted_hours":
       return "hours.from_posted";
+    case "site_page_hours":
+      return "hours.from_site_page";
     case "may_close_early":
       return "hours.may_close_early";
     case "unknown":

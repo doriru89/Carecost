@@ -13,18 +13,19 @@ import { Overview } from "../components/Overview";
 import { Receipt } from "../components/Receipt";
 import { SiteList } from "../components/SiteList";
 import { headlineMapChoices, headlinePin, includesText, mayAlsoGroups, optionGroups } from "../lib/headline";
-import { quoteAnswers } from "../lib/payments";
 import { availabilityKey } from "../lib/receipt";
 import { optionRuns, siteViews } from "../lib/sites";
 import { elsewhereSteps } from "../lib/steps";
 import zhouJson from "./data/d6_zhou_cash_stomach.json";
 import lingJson from "./data/d6_ling_bcbs_rash.json";
 import colonJson from "./data/d6_bcbs_colon.json";
+import aetnaColonJson from "./data/d6_aetna_colon.json";
 import { BCBS, CASH } from "./fixtures";
 
 const ZHOU = zhouJson as unknown as QuoteResponse; // self-pay, stomach ache, near ZIP 02139
 const LING = lingJson as unknown as QuoteResponse; // BCBS HMO + Q14 hmo_referral_required, rash, near 02138
-const COLON = colonJson as unknown as QuoteResponse; // BCBS HMO, colon screening, near 02139
+const COLON = colonJson as unknown as QuoteResponse; // BCBS HMO, colon screening, near 02138
+const AETNA_COLON = aetnaColonJson as unknown as QuoteResponse; // Aetna PPO, colon screening, near 02138
 const now = { day: "sat" as const, minutes: 600 };
 const closed = { known: true, openNow: false, openToday: false, text: "Closed" };
 const site = (q: QuoteResponse, id: string) => q.sites.find((s) => s.site.site_id === id)!;
@@ -85,7 +86,10 @@ describe("小周 · self-pay, weeknight, stomach ache, near 02139 (real pack)", 
     expect(within(cheapest).getByTestId("cheapest-badge").textContent).toBe("Cheapest place for this");
     expect(within(cheapest).getByTestId("cheapest-basis").textContent).toBe("Cheapest; part of this is an estimate");
     expect(within(cheapest).getByTestId("headline-figure").textContent).toBe("$193–$207");
-    expect(within(cheapest).getByTestId("headline-includes").textContent).toBe("Includes the visit, plus: urine test");
+    expect(within(cheapest).getByTestId("headline-includes").textContent).toBe("Includes the first visit about the belly pain, plus: urine test");
+    // C4c: the option's range comes from its best basis (3 sites with an estimate); CHA's partial "from" is counted apart
+    expect(within(blocks[0]).getByTestId("option-range").textContent).toBe("$193–$207 across 3 places");
+    expect(within(blocks[0]).getByTestId("option-partial-more").textContent).toBe("plus 1 place with only partial prices");
     expect(within(cheapest).getByTestId("headline-basis").textContent).toBe("Includes an estimate");
     // 2-3 alternates, never the cheapest again
     const alts = within(blocks[0]).getAllByTestId("pick-alternate");
@@ -102,6 +106,14 @@ describe("小周 · self-pay, weeknight, stomach ache, near 02139 (real pack)", 
     expect(un.textContent).toContain("We don't have prices for this yet.");
     expect(un.textContent).toContain(b.missing_reason!);
     expect(within(blocks[1]).queryByTestId("pick-cheapest")).toBeNull();
+  });
+
+  it("CHA's possible imaging reads 'from $550' / 'from $3,825' (C4c from_only on any step)", () => {
+    receipt(ZHOU, site(ZHOU, CHA_SOMERVILLE));
+    const rows = within(screen.getByTestId("receipt-headline")).getAllByTestId("may-also-step");
+    const fig = (k: string) => rows.find((r) => r.getAttribute("data-step") === k)!.querySelector("span.ml-auto")!.textContent;
+    expect(fig("belly_ultrasound")).toBe("from $550 — the doctor bills separately");
+    expect(fig("belly_ct")).toBe("from $3,825 — the doctor bills separately");
   });
 
   it("CHA's card and receipt say 'from $149 — the doctor bills separately', never a full price", () => {
@@ -171,15 +183,20 @@ describe("阿玲 · BCBS HMO, Saturday, rash, near 02138 (real pack)", () => {
     for (const blk of [a, b]) expect(within(blk).getByTestId("cheapest-basis").textContent).toBe("Cheapest, from their own published prices");
     expect(within(a).queryByTestId("hmo-referral-notice")).toBeNull();
     expect(within(b).getByTestId("hmo-referral-notice").textContent).toBe(t("notice.hmo_referral_for_specialist"));
-    // each option's own range
-    expect(within(a).getByTestId("option-range").textContent).toBe("$136–$413 across 12 places with a price");
-    expect(within(b).getByTestId("option-range").textContent).toBe("$131–$413 across 11 places with a price");
+    // each option's own range, from its best basis (C4c): A 6 complete sites, B 9 complete + 1 partial apart
+    expect(within(a).getByTestId("option-range").textContent).toBe("$136–$413 across 6 places");
+    expect(within(a).queryByTestId("option-partial-more")).toBeNull();
+    expect(within(b).getByTestId("option-range").textContent).toBe("$131–$413 across 9 places");
+    expect(within(b).getByTestId("option-partial-more").textContent).toBe("plus 1 place with only partial prices");
+    // C4c: hours read from the sites' own pages reach the cards (11 of these 24 sites; AFC Watertown has posted hours)
+    expect(LING.sites.filter((s) => s.site.hours_label === "site_page_hours").length).toBe(11);
   });
 
   it("a non-derm site has no skin-doctor line any more (C4b item 2); with no includes the headline is the doctor visit", () => {
     const afc = site(LING, "afc_urgent_care_cambridge_cambridge");
     expect(afc.steps.map((s) => s.key)).not.toContain("skin_doctor_visit");
-    expect(includesText(afc.headline_range!)).toBe("The doctor visit");
+    expect(includesText(afc.headline_range!, afc.steps)).toBe("Includes the first visit about the rash");
+    expect(includesText(afc.headline_range!)).toBe("Includes the doctor visit");
   });
 
   it("the switch to price re-asks the server; the list groups by option", () => {
@@ -202,11 +219,8 @@ describe("阿玲 · BCBS HMO, Saturday, rash, near 02138 (real pack)", () => {
     expect(screen.getByTestId("receipt").textContent?.split(t("notice.hmo_referral_for_specialist")).length).toBe(2);
   });
 
-  it("an HMO payment sends Q14 hmo_referral_required unless the person answered Q14 themselves", () => {
-    expect(quoteAnswers(BCBS.payment, {})).toEqual({ Q14: ["hmo_referral_required"] });
-    expect(quoteAnswers(BCBS.payment, { Q14: ["ppo"] })).toEqual({ Q14: ["ppo"] });
-    expect(quoteAnswers(CASH.payment, {})).toEqual({});
-    expect(quoteAnswers({ kind: "insurance", payer_id: "BCBS_MA", product: "PPO", network: null }, {})).toEqual({});
+  it("the HMO referral notice comes from the server (C4c): this response was asked with no answers at all", () => {
+    expect(LING.notices).toContain("hmo_referral_for_specialist");
   });
 
   it("the ER reference for BCBS HMO is shown; not_loaded is not shown at all", () => {
@@ -233,18 +247,63 @@ describe("map · one item at a time (P3, D-UI-3)", () => {
   });
 });
 
-describe("BCBS HMO colon screening (real pack)", () => {
-  it("the polyp removal and pathology are listed on their own; the likely anesthesia with no price is said, not hidden", () => {
+describe("BCBS HMO colon screening near 02138 (real pack)", () => {
+  it("12 hospitals, every one partial; one implicit option with no 'Option A' label and a cheapest mark", () => {
+    expect(COLON.sites.length).toBe(12);
+    expect(COLON.sites.every((s) => s.site.kind === "hospital_outpatient" && s.headline_range?.basis === "partial")).toBe(true);
+    expect(COLON.options).toHaveLength(1);
+    expect(COLON.options[0]).toMatchObject({ implicit: true, cheapest_site_id: "bmc_brighton_formerly_st_elizabeths", cheapest_basis: "partial", partial_site_count: 12 });
+    overview(COLON);
+    expect(screen.queryByTestId("option-label")).toBeNull();
+    const ch = screen.getByTestId("pick-cheapest");
+    expect(within(ch).getByTestId("cheapest-basis").textContent).toBe("Only partial prices found here");
+    // BMC Brighton: the hospital's bill $851.82, the doctor's bill not in BCBS's file
+    expect(within(ch).getByTestId("headline-figure").textContent).toBe("from $852 — the doctor's bill isn't published");
+    expect(screen.queryByTestId("option-partial-more")).toBeNull();
+  });
+
+  it("anesthesia has no price (BCBS publishes none) and says so; possible steps are listed on their own", () => {
     const dfci = site(COLON, "dana_farber_cancer_institute");
     const hr = dfci.headline_range!;
-    expect(hr.may_also_order.map((m) => m.step_key)).toEqual(["polyp_removal", "polyp_pathology"]);
+    expect(hr.may_also_order.map((m) => m.step_key)).toEqual(["pre_procedure_consult", "polyp_removal", "polyp_pathology"]);
     receipt(COLON, dfci);
     const head = screen.getByTestId("receipt-headline");
-    expect(within(head).getAllByTestId("may-also-step").map((e) => e.getAttribute("data-step"))).toEqual(["polyp_removal", "polyp_pathology"]);
-    // C4b data today: anesthesia (likely) has no figure under BCBS HMO at any of the 12 sites, so it is in
-    // with_likely.not_priced, and the headline says so
-    expect(hr.with_likely.not_priced).toEqual(["Medicine so you sleep through it"]);
+    expect(within(head).getByTestId("headline-includes").textContent).toBe("Includes the camera check of the whole colon");
     expect(within(head).getByTestId("headline-not-priced").textContent).toBe("Not in this figure, no price found: medicine so you sleep through it");
+    // BMC Brighton's polyp removal is a from step: its figure stays "own", the text says "from"
+    const bmc = site(COLON, "bmc_brighton_formerly_st_elizabeths").headline_range!.may_also_order.find((m) => m.step_key === "polyp_removal")!;
+    expect(bmc).toMatchObject({ figure: "own", from_only: true, low: 1120.45 });
+  });
+});
+
+describe("Aetna PPO colon screening near 02138 (real pack)", () => {
+  it("anesthesia is inside the range as a typical-time estimate; cheapest Cambridge Health Alliance from $1,005", () => {
+    const o = AETNA_COLON.options[0];
+    expect(o).toMatchObject({ implicit: true, cheapest_site_id: "cambridge_public_health_commission_cambridge", cheapest_basis: "includes_estimate", low: 1005.31 });
+    const cphc = site(AETNA_COLON, "cambridge_public_health_commission_cambridge");
+    expect(cphc.headline_range!.with_likely.includes).toEqual(["Medicine so you sleep through it"]);
+    receipt(AETNA_COLON, cphc);
+    const head = screen.getByTestId("receipt-headline");
+    expect(within(head).getByTestId("headline-figure").textContent).toBe("$1,005–$3,888");
+    expect(within(head).getByTestId("headline-includes").textContent).toBe("Includes the camera check of the whole colon, plus: medicine so you sleep through it");
+    const note = screen.getAllByTestId("price-note").find((n) => n.getAttribute("data-note") === "price.anesthesia_typical_time")!;
+    expect(note.textContent).toBe(t("price.anesthesia_typical_time"));
+    expect(screen.getAllByTestId("estimate-basis").map((e) => e.textContent)).toContain(
+      t("receipt.estimate_basis_network", { n: cphc.receipt!.lines.find((l) => l.step_id === "anesthesia")!.estimate!.n_groups }),
+    );
+  });
+});
+
+describe("plain words on the surface (C4c engine wording)", () => {
+  it("no 'facility' / 'professional' in any real receipt with the technical toggles closed", () => {
+    for (const q of [ZHOU, LING, COLON, AETNA_COLON])
+      for (const sq of q.sites.filter((s) => s.receipt)) {
+        const { unmount } = receipt(q, sq);
+        const surface = screen.getByTestId("receipt").cloneNode(true) as HTMLElement;
+        surface.querySelectorAll("details").forEach((d) => d.remove());
+        expect([sq.site.site_id, surface.textContent?.match(/\b(facility|professional)\b/i)?.[0] ?? null]).toEqual([sq.site.site_id, null]);
+        unmount();
+      }
   });
 });
 

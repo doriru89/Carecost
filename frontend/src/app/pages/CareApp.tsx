@@ -15,7 +15,7 @@ import type { SiteScope } from "../lib/sites";
 import { SplitView, type SplitState } from "../components/SplitView";
 import type { UserLocation } from "../lib/geo";
 import { serviceCodes } from "../lib/mapPrice";
-import { paymentId, quoteAnswers } from "../lib/payments";
+import { paymentId } from "../lib/payments";
 import type { OrderBy } from "../components/Overview";
 import { RedFlagPage } from "./StopPages";
 
@@ -108,7 +108,7 @@ export default function CareApp() {
     setQuoteState((s) => ({ status: "loading", key, prev: s.status === "ok" ? s : s.status === "loading" ? s.prev : undefined }));
     api
       .quote(
-        { payment, ...query, answers: quoteAnswers(payment, answers), site_ids: null, ...(orderBy === "price" ? { order_by: "price" as const } : {}) },
+        { payment, ...query, answers, site_ids: null, ...(orderBy === "price" ? { order_by: "price" as const } : {}) },
         { location, signal: ctl.signal },
       )
       .then((quote) => {
@@ -154,7 +154,7 @@ export default function CareApp() {
       const key = `${requestKey(payment, query)}|${siteId}`;
       let p = siteCache.current.get(key);
       if (!p) {
-        p = api.quote({ payment, ...query, answers: quoteAnswers(payment, answers), site_ids: [siteId] });
+        p = api.quote({ payment, ...query, answers, site_ids: [siteId] });
         p.catch(() => siteCache.current.delete(key));
         siteCache.current.set(key, p);
       }

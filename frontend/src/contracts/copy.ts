@@ -92,6 +92,11 @@ export const CONTRACT_COPY = {
     en: "This insurer pays this place one amount per visit. The test may be included in the visit, so it adds $0 here.",
     review: true,
   },
+  // C4c: anesthesia estimated from the plan's own anesthesia rates at a typical case time
+  "price.anesthesia_typical_time": {
+    en: "Estimate: what your plan pays for sleep medicine elsewhere, for a typical length of this procedure. The real bill depends on how long it takes.",
+    review: true,
+  },
   // C4b item 4 (A6 flag same_npi_pos_multi_rate): the insurer's file lists several rates for the same doctors here
   "price.several_rates_same_doctors": {
     en: "Your insurer's file lists more than one rate for the same doctors here, so we show the range.",
@@ -101,6 +106,8 @@ export const CONTRACT_COPY = {
   // ---- C4b headline (HeadlineRange): from_only, basis
   // shown as "from $X — the doctor bills separately"; never as the full price
   "headline.doctor_bills_separately": { en: "the doctor bills separately", review: true },
+  // C4c: insured, the insurer's file has no rate for the doctor's bill
+  "headline.doctor_bill_not_published": { en: "the doctor's bill isn't published", review: true },
   "headline.basis.includes_estimate": { en: "Includes an estimate", review: true },
   "headline.basis.partial": { en: "Only partial prices found here", review: true },
 
@@ -389,6 +396,11 @@ export const APP_COPY = {
     en: "Estimate: the middle half of prices at {n} similar {kind} for the same item, with the same way of paying.",
     review: true,
   },
+  // C4c payer_network: the plan's own rates in its network for the same item
+  "receipt.estimate_basis_network": {
+    en: "Estimate: the middle half of what your plan pays {n} groups in its network for the same item.",
+    review: true,
+  },
   "receipt.estimate_basis_system": {
     en: "Estimate: the middle half of prices at {n} groups in this health system for the same item, with the same way of paying.",
     review: true,
@@ -466,8 +478,9 @@ export const APP_COPY = {
 
   // ---- C4b / D6: the first screen (D-UI-1, D-UI-3). Plain words; every distinction is one tap away.
   "headline.from": { en: "from {low} — {note}", review: true },
-  "headline.includes": { en: "Includes the visit, plus: {items}", review: true },
-  "headline.visit_only": { en: "The doctor visit", review: true },
+  "headline.includes": { en: "Includes the {base}, plus: {items}", review: true },
+  "headline.includes_base": { en: "Includes the {base}", review: true },
+  "headline.visit_only": { en: "doctor visit", review: true },
   "headline.not_priced": { en: "Not in this figure, no price found: {items}", review: true },
   "overview.title": { en: "Where to go, and roughly what it costs" },
   "overview.lead": {
@@ -476,7 +489,8 @@ export const APP_COPY = {
   },
   "overview.no_options": { en: "Places for this" },
   "option.label": { en: "Option {letter}: {label}" },
-  "option.range": { en: "{range} across {n} places with a price" },
+  "option.range": { en: "{range} across {n} places" },
+  "option.partial_more": { en: "plus {n} {places} with only partial prices", review: true },
   "option.no_range": { en: "No place in this option has a price yet" },
   "option.unpriced": { en: "We don't have prices for this yet.", review: true },
   "option.cheapest": { en: "Cheapest place for this" },
@@ -501,7 +515,6 @@ export const APP_COPY = {
   "breakdown.counts": { en: "Counts: {items}" },
   "breakdown.not_priced": { en: "No price found, not counted: {items}", review: true },
   "breakdown.alternatives": { en: "Not counted, a dearer alternative is: {items}", review: true },
-  "breakdown.own_total": { en: "This place's own bills, added up" },
   // plain source footnote per number (Fact / Inferred / Assumed in plain words)
   "footnote.own_published": { en: "Fact: their own published price" },
   "footnote.insurer_file": { en: "Fact: from your insurer's price file" },
@@ -510,6 +523,7 @@ export const APP_COPY = {
   "footnote.estimate": { en: "Estimate: from similar places nearby", review: true },
   "footnote.nearby": { en: "Typical price nearby, not this place's own price", review: true },
   "footnote.not_published": { en: "Not published" },
+  "footnote.from_only": { en: "The hospital's own bill only; the doctor's bill has no number", review: true },
   "doctor.bills_separately": { en: "The doctor bills separately", review: true },
   // cheap win (06-coherent-story-v6.md:35): fixed copy, the same for every place
   "call.heading": { en: "3 questions to ask when you call", review: true },
@@ -531,6 +545,7 @@ export const APP_COPY = {
   "er.doctor_part": { en: "doctor" },
   // item 8: open now, and which field it comes from
   "hours.from_posted": { en: "Hours: the place's posted hours" },
+  "hours.from_site_page": { en: "Hours: the place's own web page" },
   "hours.from_live": { en: "Hours: live from the place's own check-in page" },
   "hours.may_close_early": { en: "Hours: posted, but the place says it may close early" },
   "hours.unknown": { en: "Hours not listed. Call before you go." },

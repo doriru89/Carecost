@@ -151,14 +151,15 @@ describe("C3 item 9 · a list row needs no receipt; an opened site's receipt is 
 
   it("C4b: the card reads headline_range (certain + likely, with the step done elsewhere at its nearby range)", () => {
     const sq = { ...site(BCBS, AFC_INMAN), receipt: null, other_payers: [] };
-    // visit 135.61 (estimate) + X-ray 43.15 (estimate) + PT elsewhere 196.43-257.00 = 375.19-461.50, partial
-    expect(sq.headline_range).toMatchObject({ low: 375.19, high: 461.5, basis: "partial", from_only: false });
+    // visit 135.61 (estimate) + X-ray 43.15 (estimate) + PT elsewhere 196.43-257.00 = 375.19-461.50.
+    // Data change (C4c, d863c59): basis partial -> includes_estimate
+    expect(sq.headline_range).toMatchObject({ low: 375.19, high: 461.5, basis: "includes_estimate", from_only: false });
     render(<SiteCard v={{ sq, rank: 0, distance: null, open: closed }} onOpen={() => {}} labels={stepLabels(BCBS)} />);
     expect(screen.getByTestId("headline-figure").textContent).toBe("$375–$462");
     expect(screen.getByTestId("headline-includes").textContent).toBe(
-      "Includes the visit, plus: quick picture of the shoulder bones and guided exercise program for the shoulder",
+      "Includes the visit with a bone & joint doctor, plus: quick picture of the shoulder bones and guided exercise program for the shoulder",
     );
-    expect(screen.getByTestId("headline-basis").textContent).toBe("Only partial prices found here");
+    expect(screen.getByTestId("headline-basis").textContent).toBe("Includes an estimate");
     // the old "≥ total" and the separate "elsewhere" lines are not repeated next to the range
     expect(screen.queryByTestId("card-total")).toBeNull();
     expect(screen.queryByTestId("card-elsewhere")).toBeNull();
@@ -182,7 +183,10 @@ describe("C3 item 9 · a list row needs no receipt; an opened site's receipt is 
     await waitFor(() => expect(screen.getByTestId("receipt")).toBeTruthy());
     expect(loadSite).toHaveBeenCalledTimes(1);
     expect(loadSite).toHaveBeenCalledWith(target.site.site_id);
-    expect(screen.getByTestId("total-bottom").textContent).toContain(String(full.receipt!.totals.likely!.low.toFixed(2)));
+    // the fetched site's own headline is shown (D6b: no separate bottom total)
+    expect(within(screen.getByTestId("receipt-headline")).getByTestId("headline-figure").textContent).toBe(
+      `$${Math.round(full.headline_range!.low)}–$${Math.round(full.headline_range!.high)}`,
+    );
   });
 
   it("a failed fetch says so; it never shows another site's receipt", async () => {
@@ -204,11 +208,11 @@ describe("P3 · the map prices one selected step, from SiteQuote.steps", () => {
     expect(pt("mount_auburn_hospital")).toEqual({ kind: "price", text: "$246", estimated: false });
     // an estimated step is marked as one (AFC Inman's visit: estimate 135.61-161.35)
     expect(stepPin(stepOf(site(BCBS, AFC_INMAN), "visit"))).toEqual({ kind: "price", text: "$136–$161", estimated: true });
-    // offered with no dollar figure (CHA's visit: the doctor's fee is not published, so the step has no
-    // figure, C4b data): a pin with no price
-    expect(stepPin(stepOf(site(BCBS, "cha_cambridge_hospital"), "visit"))).toEqual({ kind: "no_price", unusual: false });
+    // Data change (C4c, d863c59): CHA's visit is now a from step (hospital bill 78.46-178.98 estimate, doctor's
+    // bill not published): the pin reads "from $78", never a full price
+    expect(stepPin(stepOf(site(BCBS, "cha_cambridge_hospital"), "visit"))).toEqual({ kind: "price", text: "from $78", estimated: true });
     // synthetic: the same step with a line set aside as unusual says so (never a cheap-looking pin)
-    const st = { ...stepOf(site(BCBS, "cha_cambridge_hospital"), "visit")!, unusual: true };
+    const st = { ...stepOf(site(BCBS, "cha_cambridge_hospital"), "visit")!, figure: "none" as const, low: null, high: null, from_only: false, unusual: true };
     expect(stepPin(st)).toEqual({ kind: "no_price", unusual: true });
   });
 
@@ -235,8 +239,12 @@ describe("P4 / P5 / P6 · own steps make the total; the rest are 'elsewhere' lin
     const pt = steps.find((s) => s.getAttribute("data-step") === "physical_therapy")!;
     expect(within(pt).getByTestId("elsewhere-about").textContent).toBe("About $196.43–$257.00 (typical price nearby)");
     expect(pt.textContent).toContain("14 places that do it");
-    // this place's own bills are the own steps only: visit 135.61 + X-ray 43.15-70.72
-    expect(screen.getByTestId("total-bottom").textContent).toBe("≥ $178.76–$206.33");
+    // this place's own bills are the own steps only (totals.likely: visit 135.61 + X-ray 43.15-70.72); D6b: that
+    // sum is not shown as a second total, the subtotals show the steps instead
+    expect(sq.receipt!.totals.likely).toMatchObject({ low: 178.76, high: 206.33 });
+    expect(screen.queryByTestId("total-bottom")).toBeNull();
+    const pt2 = within(screen.getByTestId("range-build")).getAllByTestId("subtotal-step").find((e) => e.getAttribute("data-step") === "physical_therapy")!;
+    expect(pt2.textContent).toContain("$196–$257 · Typical price nearby, not this place's own price");
     // the headline counts PT at its nearby range (C4b P4): 375.19-463.33
     expect(within(screen.getByTestId("receipt-headline")).getByTestId("headline-figure").textContent).toBe("$375–$463");
   });
@@ -299,7 +307,7 @@ describe("P4 / P5 / P6 · own steps make the total; the rest are 'elsewhere' lin
     const basis = screen.getAllByTestId("estimate-basis").map((b) => b.textContent);
     expect(basis.length).toBe(2);
     expect(basis[0]).toMatch(new RegExp(`^Estimate: the middle half of prices at ${est[0].estimate!.n_groups} `));
-    expect(screen.getByTestId("total-bottom").parentElement?.parentElement?.textContent).toMatch(/Includes an estimate/);
+    expect(screen.getByTestId("headline-basis").textContent).toBe("Includes an estimate");
     // each estimated line's plain footnote says so
     expect(screen.getAllByTestId("line-footnote").filter((f) => f.getAttribute("data-kind") === "estimate").length).toBe(2);
   });

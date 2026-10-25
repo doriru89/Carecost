@@ -135,10 +135,14 @@ describe("site sorting (I7 respected)", () => {
     const views = siteViews(BCBS.sites, loc, now);
     expect(sortSites(views, "price").map((v) => v.sq.site.site_id)).toEqual(BCBS.sites.map((s) => s.site.site_id));
     expect(sortSites(views, "nearest")[0].sq.site.site_id).toBe("mount_auburn_hospital");
-    // Data change (C2): no site in the 12-site fixture carries hours (all null), so open-today keeps the
-    // I7 order; give the I7-last site Saturday hours and it moves to the front, the rest in I7 order.
-    expect(BCBS.sites.every((s) => s.site.hours == null)).toBe(true);
-    expect(sortSites(views, "open_today").map((v) => v.rank)).toEqual(views.map((v) => v.rank));
+    // Data change (C4c, d863c59): 4 fixture sites now carry site-page hours (AFC Inman, AFC Cambridge, Atrius
+    // Somerville open Sat 8/9am; CHA Somerville Sat 10am). At Sat 10:00 all four are open today and move to the
+    // front in I7 order (ranks 0, 1, 2, 5), the rest keep I7 order.
+    expect(BCBS.sites.filter((s) => s.site.hours != null).map((_, i) => i).length).toBe(4);
+    expect(sortSites(views, "open_today").map((v) => v.rank)).toEqual([0, 1, 2, 5, 3, 4, 6, 7, 8, 9, 10, 11]);
+    // the original case on hours-free data: give only the I7-last site Saturday hours and it moves to the front
+    const noHours = BCBS.sites.map((s) => ({ ...s, site: { ...s.site, hours: null } }));
+    expect(sortSites(siteViews(noHours, loc, now), "open_today").map((v) => v.rank)).toEqual(views.map((v) => v.rank));
     const satHours: Hours = {
       source: "manual",
       source_url: null,
@@ -146,8 +150,8 @@ describe("site sorting (I7 respected)", () => {
       weekly: [{ days: ["sat"], opens: "09:00", closes: "17:00" }],
       may_close_early: false,
     };
-    const last = BCBS.sites[BCBS.sites.length - 1];
-    const withHours = [...BCBS.sites.slice(0, -1), { ...last, site: { ...last.site, hours: satHours } }];
+    const last = noHours[noHours.length - 1];
+    const withHours = [...noHours.slice(0, -1), { ...last, site: { ...last.site, hours: satHours } }];
     const open = sortSites(siteViews(withHours, loc, now), "open_today");
     expect(open[0].open.openToday).toBe(true);
     expect(open[0].sq.site.site_id).toBe(last.site.site_id);

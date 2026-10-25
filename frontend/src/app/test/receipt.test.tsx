@@ -35,24 +35,25 @@ describe("gradient receipt (D8, §4.2)", () => {
     const hr = sq.headline_range!;
     render(<TooltipProvider><Receipt quote={BCBS} sq={sq} distance={null} open={closed} location={null} /></TooltipProvider>);
     expect(screen.queryByTestId("total-top")).toBeNull();
-    // Mount Auburn BCBS HMO: headline 669.03-723.38 partial (the referral has no figure), covers the X-ray and PT
-    expect(hr).toMatchObject({ low: 669.03, high: 723.38, basis: "partial", from_only: false });
+    // Mount Auburn BCBS HMO: headline 669.03-723.38, covers the X-ray and PT. Data change (C4c, d863c59): basis
+    // partial -> complete (the referral at your own primary care office no longer makes the figure partial)
+    expect(hr).toMatchObject({ low: 669.03, high: 723.38, basis: "complete", from_only: false });
     const head = screen.getByTestId("receipt-headline");
     expect(within(head).getByTestId("headline-figure").textContent).toBe("$669–$723");
     expect(within(head).getByTestId("headline-includes").textContent).toBe(
-      "Includes the visit, plus: quick picture of the shoulder bones and guided exercise program for the shoulder",
+      "Includes the visit with a bone & joint doctor, plus: quick picture of the shoulder bones and guided exercise program for the shoulder",
     );
-    expect(within(head).getByTestId("headline-basis").textContent).toBe(t("headline.basis.partial"));
-    const bottom = screen.getByTestId("total-bottom");
-    expect(bottom.textContent).toBe("≥ $669.03–$723.38");
-    expect(bottom.parentElement?.textContent).toContain(t("breakdown.own_total"));
+    // complete: no basis line under the figure
+    expect(within(head).queryByTestId("headline-basis")).toBeNull();
+    // D6b (main): one number story per site: the C3 sum of own lines (≥ $669.03–$723.38) is not repeated below
+    expect(sq.receipt.totals.likely).toMatchObject({ low: 669.03, high: 723.38 });
+    expect(screen.queryByTestId("total-bottom")).toBeNull();
     // the three subtotals: visit_only, with_likely (= the headline), with_possible
     const subs = within(screen.getByTestId("range-build")).getAllByTestId("subtotal-amount").map((e) => e.textContent);
     expect(subs).toEqual(["$295–$349", "$669–$723", "$4,847–$4,948"]);
-    // the referral (at your own primary care office) has no figure: said, not counted
-    expect(within(screen.getByTestId("range-build")).getAllByTestId("subtotal-not-priced")[0].textContent).toBe(
-      t("breakdown.not_priced", { items: "Visit with your main doctor first" }),
-    );
+    // Data change (C4c, d863c59): the referral (at your own primary care office) is no longer listed as not priced
+    expect(hr.with_likely.not_priced).toEqual([]);
+    expect(within(screen.getByTestId("range-build")).queryAllByTestId("subtotal-not-priced")).toEqual([]);
     // possible steps are listed on their own, with their purpose and own price, never in the headline
     const may = within(head).getAllByTestId("may-also-step").map((e) => e.getAttribute("data-step"));
     expect(may).toEqual(["steroid_injection", "tendon_scan_ultrasound", "tendon_scan_mri", "mr_arthrogram"]);
@@ -109,7 +110,9 @@ describe("gradient receipt (D8, §4.2)", () => {
     expect(est).toBeGreaterThan(0);
     const { unmount } = render(<TooltipProvider><Receipt quote={BCBS} sq={afc} distance={null} open={closed} location={null} /></TooltipProvider>);
     expect(screen.getAllByTestId("estimate-tag").length).toBe(est);
-    expect(screen.getByTestId("total-bottom").parentElement?.parentElement?.textContent).toMatch(/Includes an estimate/);
+    // the headline says it includes an estimate (C4c: basis includes_estimate); no separate bottom total (D6b)
+    expect(screen.getByTestId("headline-basis").textContent).toBe("Includes an estimate");
+    expect(screen.queryByTestId("total-bottom")).toBeNull();
     // every estimated line's plain footnote says it is an estimate from nearby places
     const notes = screen.getAllByTestId("line-footnote").filter((n) => n.getAttribute("data-kind") === "estimate");
     expect(notes.length).toBe(est);

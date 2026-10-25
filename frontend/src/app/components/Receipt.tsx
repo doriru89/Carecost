@@ -19,13 +19,10 @@ function Total({
   totals,
   where,
   labels,
-  label = "receipt.total",
 }: {
   totals: Totals;
   where: "top" | "bottom";
   labels: Record<string, string>;
-  /** C4b: with a headline range on top, the bottom line is this place's own bills, added up */
-  label?: "receipt.total" | "breakdown.own_total";
 }) {
   const l = totals.likely;
   const might = totals.might_add;
@@ -33,7 +30,7 @@ function Total({
     <div className={cn("py-3", where === "bottom" && "pt-3 pb-0 border-t-2 border-foreground/80")}>
       <div className="flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
         <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t(label)}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("receipt.total")}</p>
           {!totals.complete && <p className="text-[11px] text-warn">{t("receipt.total_floor")}</p>}
           <div className="flex flex-wrap gap-1 mt-0.5">
             {l?.includes_estimate && <Flag>{t("receipt.includes_estimate")}</Flag>}
@@ -233,9 +230,21 @@ export function Receipt({
         // own; the three subtotals show how the range was built (D-UI-2)
         <div className="py-3" data-testid="receipt-headline">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("receipt.total")}</p>
-          <HeadlineFigure hr={hr} size="big" />
-          <MayAlsoOrderList hr={hr} />
-          <RangeBuild hr={hr} steps={sq.steps} />
+          <HeadlineFigure hr={hr} steps={sq.steps} size="big" />
+          <MayAlsoOrderList hr={hr} payment={quote.payment} />
+          <RangeBuild
+            hr={hr}
+            steps={sq.steps}
+            payment={quote.payment}
+            flags={
+              (receipt.totals.likely?.includes_late_source || receipt.totals.likely?.includes_stale_source) && (
+                <div className="mt-1.5 flex flex-wrap gap-1" data-testid="range-flags">
+                  {receipt.totals.likely?.includes_late_source && <Flag>{t("receipt.includes_late")}</Flag>}
+                  {receipt.totals.likely?.includes_stale_source && <Flag>{t("receipt.includes_stale")}</Flag>}
+                </div>
+              )
+            }
+          />
         </div>
       ) : (
         <Total totals={receipt.totals} where="top" labels={labels} />
@@ -277,9 +286,13 @@ export function Receipt({
         )}
       </div>
 
-      <div className="mt-5">
-        <Total totals={receipt.totals} where="bottom" labels={labels} label={hr ? "breakdown.own_total" : "receipt.total"} />
-      </div>
+      {/* D6b (main's finding): with a headline range there is one number story per site, the range and how it
+          was built; the C3 sum of this place's own lines is not repeated at the bottom */}
+      {!hr && (
+        <div className="mt-5">
+          <Total totals={receipt.totals} where="bottom" labels={labels} />
+        </div>
+      )}
 
       <div className="mt-3 rounded-lg bg-muted/60 p-3 text-xs space-y-1.5" data-testid="you-pay">
         <p>

@@ -8,14 +8,14 @@ import { ER_SHOWN } from "@/contracts/exhaustive";
 import type { ErReference, HeadlineRange, Payment, QuoteResponse, StepSummary, Subtotal } from "@/generated/contracts/quote_api";
 import { cn } from "@/lib/utils";
 import { range } from "../lib/format";
-import { basisText, headlineText, includesText, mayAlsoFigure, mayAlsoGroups, plainList, stepFootnote } from "../lib/headline";
+import { basisText, fromNoteFor, fromText, headlineText, includesText, mayAlsoFigure, mayAlsoGroups, plainList, stepFootnote } from "../lib/headline";
 import { paymentLabel } from "../lib/payments";
 
 /**
  * The headline: `low–high` of the certain + likely steps, one plain line saying what it covers, its basis
  * ("includes an estimate" / "only partial prices found here"), and the likely steps with no price at all.
  */
-export function HeadlineFigure({ hr, size = "card" }: { hr: HeadlineRange; size?: "card" | "big" }) {
+export function HeadlineFigure({ hr, steps, size = "card" }: { hr: HeadlineRange; steps?: StepSummary[]; size?: "card" | "big" }) {
   const basis = basisText(hr);
   const notPriced = hr.with_likely.not_priced;
   return (
@@ -27,7 +27,7 @@ export function HeadlineFigure({ hr, size = "card" }: { hr: HeadlineRange; size?
         {headlineText(hr)}
       </p>
       <p className="text-xs text-foreground/80" data-testid="headline-includes">
-        {includesText(hr)}
+        {includesText(hr, steps)}
       </p>
       {basis && (
         <p className={cn("text-[11px] font-medium", hr.basis === "partial" ? "text-warn" : "text-amber-900")} data-testid="headline-basis">
@@ -44,7 +44,7 @@ export function HeadlineFigure({ hr, size = "card" }: { hr: HeadlineRange; size?
 }
 
 /** Possible steps, listed on their own with their purpose and figure. Never in the headline. */
-export function MayAlsoOrderList({ hr, compact = false }: { hr: HeadlineRange; compact?: boolean }) {
+export function MayAlsoOrderList({ hr, payment, compact = false }: { hr: HeadlineRange; payment: Payment; compact?: boolean }) {
   const groups = mayAlsoGroups(hr.may_also_order);
   if (groups.length === 0) return null;
   return (
@@ -61,7 +61,7 @@ export function MayAlsoOrderList({ hr, compact = false }: { hr: HeadlineRange; c
                     <span className="font-medium text-foreground/90">{m.plain_name}</span>
                     {!compact && m.why && <span className="block text-[11px] text-muted-foreground">{m.why}</span>}
                   </span>
-                  <span className="ml-auto tabular-nums text-foreground/80">{mayAlsoFigure(m)}</span>
+                  <span className="ml-auto tabular-nums text-foreground/80">{mayAlsoFigure(m, payment)}</span>
                 </li>
               ))}
             </ul>
@@ -72,7 +72,19 @@ export function MayAlsoOrderList({ hr, compact = false }: { hr: HeadlineRange; c
   );
 }
 
-function SubtotalRow({ label, sub, steps, strong }: { label: string; sub: Subtotal; steps: Map<string, StepSummary>; strong?: boolean }) {
+function SubtotalRow({
+  label,
+  sub,
+  steps,
+  strong,
+  payment,
+}: {
+  label: string;
+  sub: Subtotal;
+  steps: Map<string, StepSummary>;
+  strong?: boolean;
+  payment: Payment;
+}) {
   return (
     <li className={cn("rounded-md px-2 py-1.5", strong ? "bg-muted" : "")} data-testid="subtotal">
       <div className="flex flex-wrap items-baseline justify-between gap-x-2">
@@ -89,8 +101,13 @@ function SubtotalRow({ label, sub, steps, strong }: { label: string; sub: Subtot
               <li key={k} className="flex flex-wrap justify-between gap-x-2" data-testid="subtotal-step" data-step={k}>
                 <span>+ {sub.includes[i] ?? st?.plain_name ?? k}</span>
                 <span className="ml-auto">
-                  {st && st.low != null && st.high != null ? `${range(st.low, st.high, false)} · ` : ""}
-                  {st ? stepFootnote(st).text : ""}
+                  {st && st.low != null && st.high != null
+                    ? st.from_only
+                      ? fromText(st.low, fromNoteFor(payment))
+                      : `${range(st.low, st.high, false)} · ${stepFootnote(st).text}`
+                    : st
+                      ? stepFootnote(st).text
+                      : ""}
                 </span>
               </li>
             );
@@ -112,16 +129,17 @@ function SubtotalRow({ label, sub, steps, strong }: { label: string; sub: Subtot
 }
 
 /** D-UI-2: the three subtotals, so a person sees how the range was built. with_likely = the headline. */
-export function RangeBuild({ hr, steps }: { hr: HeadlineRange; steps: StepSummary[] }) {
+export function RangeBuild({ hr, steps, payment, flags }: { hr: HeadlineRange; steps: StepSummary[]; payment: Payment; flags?: React.ReactNode }) {
   const byKey = new Map(steps.map((s) => [s.key, s]));
   return (
     <section className="mt-3 rounded-lg border border-border p-3" data-testid="range-build">
       <h3 className="text-xs font-semibold">{t("breakdown.heading")}</h3>
       <ul className="mt-1.5 space-y-1">
-        <SubtotalRow label={t("breakdown.visit_only")} sub={hr.visit_only} steps={byKey} />
-        <SubtotalRow label={t("breakdown.with_likely")} sub={hr.with_likely} steps={byKey} strong />
-        <SubtotalRow label={t("breakdown.with_possible")} sub={hr.with_possible} steps={byKey} />
+        <SubtotalRow label={t("breakdown.visit_only")} sub={hr.visit_only} steps={byKey} payment={payment} />
+        <SubtotalRow label={t("breakdown.with_likely")} sub={hr.with_likely} steps={byKey} strong payment={payment} />
+        <SubtotalRow label={t("breakdown.with_possible")} sub={hr.with_possible} steps={byKey} payment={payment} />
       </ul>
+      {flags}
     </section>
   );
 }
