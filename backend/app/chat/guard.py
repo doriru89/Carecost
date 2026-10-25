@@ -17,6 +17,9 @@
    paths' reviewed text ("most likely the rotator cuff" passes for the shoulder path; "might be a
    pinched nerve" does not). A turn that shows no path has no such text, so every cue is
    rejected there: explaining what it may be belongs to turns that show paths.
+5. No digits at all (review round 2, Austin option A): any ASCII or full-width digit in model text
+   is rejected ("roughly 150", "６ weeks"). The UI shows every number; the model spells nothing
+   numeric. Chinese number words stay allowed unless a currency unit follows (LlmText).
 """
 
 from __future__ import annotations
@@ -38,7 +41,7 @@ _ZH_SHAPES = re.compile(r"[一-鿿]{0,4}(?:癌|炎|瘤|综合征|综合症)")
 
 
 class GuardError(ValueError):
-    pass
+    rule: str = "guard"  # set by the caller: which check rejected the text
 
 
 def check_voice(text: str | None) -> None:
@@ -122,3 +125,14 @@ def check_diagnostic_cues(text: str | None, allowed_text: str) -> None:
             tail[i : i + 2] in allowed_text for i in range(len(tail) - 1)
         ):
             raise GuardError(f"diagnostic cue {m.group(0)!r} not followed by a shown path's words")
+
+
+_DIGIT = re.compile(r"[0-9\uff10-\uff19]")
+
+
+def check_digits(text: str | None) -> None:
+    if not text:
+        return
+    m = _DIGIT.search(text)
+    if m:
+        raise GuardError(f"LLM text may not contain digits ({m.group(0)!r}): the UI shows numbers")

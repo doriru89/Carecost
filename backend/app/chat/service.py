@@ -671,7 +671,16 @@ class ChatService:
         if required and not text:
             raise ValueError("message is empty")
         allowed = self._allowed_text(shown)
-        guard.check_voice(text)
-        guard.check_money(text)
-        guard.check_condition_shapes(text, allowed)
-        guard.check_diagnostic_cues(text, allowed)
+        checks: list[tuple[str, Callable[[], None]]] = [
+            ("voice", lambda: guard.check_voice(text)),
+            ("digits", lambda: guard.check_digits(text)),
+            ("money", lambda: guard.check_money(text)),
+            ("condition_shapes", lambda: guard.check_condition_shapes(text, allowed)),
+            ("diagnostic_cues", lambda: guard.check_diagnostic_cues(text, allowed)),
+        ]
+        for rule, check in checks:
+            try:
+                check()
+            except guard.GuardError as e:
+                e.rule = rule
+                raise
