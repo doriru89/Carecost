@@ -1143,7 +1143,10 @@ class Engine:
 
     @cached_property
     def visit_codes(self) -> tuple[str, ...]:
-        return tuple(sorted(c for c in self.store.codes if code_class(c) == "visit"))
+        ref = set(getattr(self.reg.codes, "reference", {}) or {})  # not the ED levels
+        return tuple(
+            sorted(c for c in self.store.codes if code_class(c) == "visit" and c not in ref)
+        )
 
     def _flat_and_flags(self, ln: Json, q: Req) -> None:
         """C4b items 4-5 on one priced line: A6's TiC flags and the flat visit rate.
@@ -1585,7 +1588,7 @@ class Engine:
         code at every site): python -m app.quote.contract_levels writes the table."""
         net = group.split("@", 1)[1] if "@" in group else "hospital_file"
         ratios: dict[str, float] = {}
-        for c in sorted(self.store.codes):
+        for c in self.contract_level_codes():
             per = self._line_stats(c, q).get(site.id, {})
             for (comp, pmod), ents in per.items():
                 vals = sorted(v for v, g, _ in ents if g == group)
@@ -1598,6 +1601,13 @@ class Engine:
                 if med > 0:
                     ratios[f"{c}-{pmod}-{comp}"] = round(vals[(len(vals) - 1) // 2] / med, 4)
         return ratios
+
+    def contract_level_codes(self) -> list[str]:
+        """The codes contract levels are measured on: every loaded code except the response-level
+        reference codes (codes.yaml ``reference:``, the ED visit levels): an ER fee is no sign of
+        a group's contract level at a clinic (A7 note, C4b)."""
+        ref = set(getattr(self.reg.codes, "reference", {}) or {})
+        return sorted(c for c in self.store.codes if c not in ref)
 
     def _contract_level(self, site: Site, group: str, code: str, q: Req, side: str) -> bool:
         """Austin 2026-10-25: the same group sits at >= high x (<= low x) its peer median on
@@ -2387,17 +2397,26 @@ class Engine:
                 "high": None, "includes_doctor": False, "hospitals": []}  # fmt: skip
         if not any(c in self.store.codes for c in codes):
             return {**base, "status": "not_loaded"}
-        near: dict[str, tuple[float, Site]] = {}
+        # one site per hospital price file, and only files that list an ED visit code (a hospital
+        # with an emergency room); the site named like the hospital itself, else the nearest
+        near: dict[str, tuple[int, float, Site]] = {}
         for s in self.reg.sites.values():
-            if s.listing_status == "registry_only" or s.children_only:
+            src = self._site_hospital_source(s)
+            if s.listing_status == "registry_only" or s.children_only or src is None:
                 continue
-            if self._site_hospital_source(s) is None or s.site_type != "hospital_outpatient":
+            if s.site_type != "hospital_outpatient" or not any(
+                    self.store.by_code.get((src, c)) for c in codes):  # fmt: skip
                 continue
             d = round(_km(origin, s), 2)
-            ent = s.hospital_entity_id or s.id
-            if ent not in near or (d, s.id) < (near[ent][0], near[ent][1].id):
-                near[ent] = (d, s)
-        hosp = sorted(near.values(), key=lambda t: (t[0], t[1].id))[: int(cfg["hospitals"])]
+            hosp_like = (0 if s.name == self.reg.hospital_names.get(s.hospital_entity_id or "")
+                         else 1 if re.match(r"[^,]*(hospital|medical center)$", s.name, re.I)
+                         else 2)  # fmt: skip
+            if src not in near or (hosp_like, d, s.id) < (near[src][0], near[src][1],
+                                                         near[src][2].id):  # fmt: skip
+                near[src] = (hosp_like, d, s)
+        hosp = [(d, s) for _, d, s in sorted(near.values(), key=lambda t: (t[1], t[2].id))][
+            : int(cfg["hospitals"])
+        ]
         it = Item(stem="er", code=codes[0], unit="once", plain="ER visit", tech="ED visit",
                   why=None, likelihood="certain", tier_basis="picked", step_id=None, gloss=[],
                   learn=[])  # fmt: skip

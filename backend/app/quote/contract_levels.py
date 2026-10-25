@@ -57,7 +57,7 @@ def main() -> None:  # pragma: no cover - needs a real pack
             "payment": pay, "care_path_id": None, "answers": {}, "service_codes": ["99203"],
             "picked_by": "person", "site_ids": None}), date.today())  # fmt: skip
         seen: set[tuple[str, str]] = set()
-        for c in sorted(store.codes):
+        for c in eng.contract_level_codes():  # C4b: no ED reference codes
             for sid, per in eng._line_stats(c, q).items():
                 for ents in per.values():
                     seen |= {(sid, g) for _, g, _ in ents if not g.startswith(("fs:", "posted:"))}

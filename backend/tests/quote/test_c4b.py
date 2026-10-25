@@ -360,10 +360,55 @@ def test_a_lab_code_pick_admits_urgent_care(engine):
 # --------------------------------------------------------------------------- 7: ER reference
 
 
-def test_er_reference_is_not_loaded_until_the_ed_codes_are_in_the_pack(engine):
-    er = _q(engine, near=NEAR).er_reference
+ED = ("99281", "99282", "99283", "99284", "99285")
+
+
+def test_er_reference_is_not_loaded_without_the_ed_codes(engine, store, registry):
+    st = _store(store, drop=lambda r: r.code in ED)
+    st.codes = frozenset(c for c in store.codes if c not in ED)
+    er = _q(Engine(st, registry), near=NEAR).er_reference
     assert er.status == "not_loaded" and er.low is None and not er.hospitals
     assert er.note_key == "er.visit_alone_costs_more"
+
+
+def test_er_reference_on_the_a7_ed_rows(engine):
+    """A7 merged: ED levels 3-5 from the hospitals' own files (facility) and TiC (doctor). One
+    site per hospital file, only files that list an ED code; never a site's price."""
+    r = _q(engine, near=NEAR)
+    er = r.er_reference
+    assert er.status == "priced" and len(er.hospitals) == 3
+    srcs = [engine._site_hospital_source(engine.reg.sites[h.site_id]) for h in er.hospitals]
+    assert len(set(srcs)) == 3 and [h.distance_km for h in er.hospitals] == sorted(
+        h.distance_km for h in er.hospitals)  # fmt: skip
+    lv3 = [lv for h in er.hospitals for lv in h.levels if lv.code == "99283"]
+    lv5 = [lv for h in er.hospitals for lv in h.levels if lv.code == "99285"]
+
+    def tot(lv, k):
+        return getattr(lv.facility, k) + (getattr(lv.doctor, k) if lv.doctor.kind == "money" else 0)
+
+    assert er.low == round(min(tot(lv, "low") for lv in lv3 if lv.facility.kind == "money"), 2)
+    assert er.high == round(max(tot(lv, "high") for lv in lv5 if lv.facility.kind == "money"), 2)
+    for sq in r.sites:  # never a site's price, never ranked
+        assert all(c not in ED for ln in sq.receipt.lines for c in ln.codes)
+    cash = _q(engine, CASH, near=NEAR).er_reference  # self-pay: no public ER doctor fee
+    assert cash.status == "priced" and not cash.includes_doctor
+    assert all(lv.doctor.kind == "no_source" for h in cash.hospitals for lv in h.levels)
+
+
+def test_contract_levels_never_use_the_ed_reference_codes(engine):
+    """A7 note: ED codes (codes.yaml reference:) must not feed the '>= 5 other codes' rule."""
+    assert set(ED) <= set(engine.store.codes)
+    assert not set(ED) & set(engine.contract_level_codes())
+    for ratios in engine.contract_levels.values():
+        assert not any(k.split("-")[0] in ED for k in ratios)
+    q = engine._context(QuoteRequest.model_validate({
+        "payment": BCBS_HMO, "care_path_id": STOMACH, "answers": {}, "service_codes": [],
+        "picked_by": "person", "site_ids": None}), AS_OF)  # fmt: skip
+    site = engine.reg.sites["mount_auburn_hospital"]
+    stats = engine._line_stats("99283", q).get(site.id, {})
+    group = next((g for ents in stats.values() for _, g, _ in ents), None)
+    assert group is not None  # Mount Auburn prices its ED visit (A7 rows)
+    assert not any(k.startswith("9928") for k in engine.contract_ratios(site, group, q))
 
 
 def test_er_reference_on_synthetic_ed_rows(engine, store, registry):
