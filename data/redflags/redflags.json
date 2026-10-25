@@ -1,6 +1,6 @@
 {
-  "version": "0.1.0",
-  "doc": "Q0 red flags. Any match stops the price flow. Dispositions are a 4-step ladder borrowed in shape (not content) from nurse-triage protocols. NHS pages are UK; their 'call 999 / go to A&E / urgent GP / 111' advice is mapped to US settings by us (mapping_note) and needs a US clinician's confirmation. Free-text patterns are a backstop for the chat; the checklist is the primary screen.",
+  "version": "0.3.0",
+  "doc": "Q0 red flags. Any match stops the price flow. Dispositions are a 4-step ladder borrowed in shape (not content) from nurse-triage protocols. NHS pages are UK; their 'call 999 / go to A&E / urgent GP / 111' advice is mapped to US settings by us (mapping_note) and needs a US clinician's confirmation. Free-text patterns are a backstop for the chat; the checklist is the primary screen. v0.2.0: adversarial phrase set (data/redflags/adversarial.json) drives the free-text patterns; term syntax ('~N' proximity, '*' prefix, '|' alternatives, '!' never negated) is documented in backend/app/care_paths/redflags.py. crisis_988 has the same rank as call_911; on a tie call_911 wins because it is listed first (see crisis_988 rank_note).",
   "review": {
     "status": "pending_austin",
     "drafted_by": "ai:claude-opus-5.5",
@@ -61,6 +61,18 @@
       "text": {
         "en": "This could be an emergency. Call 911 or ask someone to call for you, and don't drive yourself. We've stopped the price estimate here.",
         "zh": "这可能是急症。请立即拨打 911 或请身边的人帮你打，不要自己开车。价格估算到此停止。"
+      }
+    },
+    {
+      "id": "crisis_988",
+      "rank": 4,
+      "headline": {
+        "en": "Call or text 988 now",
+        "zh": "现在就拨打或发短信到 988"
+      },
+      "text": {
+        "en": "You don't have to face this alone. Call or text 988 (Suicide & Crisis Lifeline), any time, free. If you are in immediate danger or have already hurt yourself, call 911. We've stopped the price estimate here.",
+        "zh": "你不必一个人面对。随时拨打或发短信到 988（自杀与危机生命线），免费。如果你有立即的危险，或已经伤害了自己，请拨打 911。价格估算到此停止。"
       }
     },
     {
@@ -229,6 +241,87 @@
             "出冷汗",
             "冒冷汗"
           ]
+        ],
+        [
+          [
+            "left arm",
+            "both arms",
+            "both my arms",
+            "左臂",
+            "左手臂",
+            "左胳膊",
+            "两条胳膊",
+            "双臂"
+          ],
+          [
+            "jaw",
+            "neck",
+            "back",
+            "下巴",
+            "下颌",
+            "脖子",
+            "后背",
+            "背部",
+            "背疼",
+            "背痛"
+          ]
+        ],
+        [
+          [
+            "arm ~3 numb|numbness|tingl*|heavy|heaviness",
+            "numb|heavy ~3 arm",
+            "胳膊 ~3 麻",
+            "手臂 ~3 麻",
+            "左臂 ~3 麻"
+          ],
+          [
+            "sweat*",
+            "clammy",
+            "nause*",
+            "cold sweat",
+            "sick to my stomach",
+            "throw* up",
+            "出汗",
+            "冷汗",
+            "恶心",
+            "想吐"
+          ]
+        ],
+        [
+          [
+            "burn* ~4 chest",
+            "chest ~3 burn*|on fire",
+            "烧心",
+            "胸口 ~3 烧|灼"
+          ],
+          [
+            "left arm",
+            "both arms",
+            "jaw",
+            "neck",
+            "sweat*",
+            "clammy",
+            "cold sweat",
+            "short of breath",
+            "shortness of breath",
+            "cant breathe",
+            "hard to breathe",
+            "lightheaded",
+            "light headed",
+            "dizzy",
+            "faint*",
+            "左臂",
+            "左胳膊",
+            "左手臂",
+            "下巴",
+            "出冷汗",
+            "冒冷汗",
+            "出汗",
+            "气短",
+            "喘不上气",
+            "喘不过气",
+            "头晕"
+          ]
         ]
       ],
       "sources": [
@@ -236,7 +329,7 @@
         "medlineplus_heart_attack",
         "medlineplus_gerd"
       ],
-      "mapping_note": "NHS 'call 999' -> US 911. MedlinePlus says call 911 even when unsure it is a heart attack."
+      "mapping_note": "NHS 'call 999' -> US 911. MedlinePlus says call 911 even when unsure it is a heart attack. v0.3.0: left/both arm + jaw/neck/back, or numb/heavy arm + sweating/nausea, also fire without the word chest (MedlinePlus heart attack: pain in one or both arms, the back, neck, jaw). D31 (Austin): burning in the chest alone stays on the GI path; burning + arm/jaw/neck, sweating, breathlessness or dizziness escalates here. Nausea is not a companion, so 'heartburn and nausea' stays on GI."
     },
     {
       "id": "rf_chest_pain_alone",
@@ -252,29 +345,494 @@
       "patterns": [
         [
           [
-            "chest pain",
-            "chest pressure",
-            "chest tightness",
-            "tight chest",
-            "chest feels tight",
-            "pain in my chest",
-            "pressure in my chest",
-            "squeezing in my chest",
-            "胸口痛",
-            "胸口很痛",
-            "胸痛",
-            "胸口疼",
-            "胸闷",
-            "胸口闷",
-            "胸口发紧",
-            "胸部疼痛"
+            "chest ~4 hurt*|hurst|pain*|pian|ache|aches|aching|achy|tight*|pressure|heavy|heaviness|squeez*|crush*|killing|sore|discomfort|weight|pounding",
+            "clutch*|grabbing|holding|hurt*|hurst|pain*|pian|ache|aching|tight|tightness|pressure|heaviness|heavy feeling|squeez*|crush*|discomfort|weight|sitting ~4 chest",
+            "heart ~3 hurt*|pain*|ache*|aching",
+            "pain* ~3 heart",
+            "heart attack",
+            "cardiac arrest",
+            "胸 ~4 痛|疼|闷|紧|压|难受|憋|hurt*|pain*|tight*",
+            "心口 ~3 痛|疼|闷|难受",
+            "心脏 ~3 痛|疼|难受",
+            "心绞痛",
+            "心梗",
+            "心肌梗",
+            "心脏病发作",
+            "胸口 ~6 痛|疼|闷|紧|压|难受|憋|攥|揪",
+            "心口 ~6 痛|疼|闷|难受|攥|揪"
           ]
         ]
       ],
       "sources": [
         "nhs_chest_pain"
       ],
-      "mapping_note": "Free-text backstop only. NHS lists sudden chest pain that does not go away as call 999. Deliberate over-triage: a price tool should not decide whether chest pain is heartburn."
+      "mapping_note": "Free-text backstop only. NHS lists sudden chest pain that does not go away as call 999. Deliberate over-triage: a price tool should not decide whether chest pain is heartburn. v0.2.0: body word + symptom word within a few words in either order ('chest ~4 hurt*'); gym compounds (chest press / day / x ray, 胸推 / 胸片) are masked in code. 'burning' is deliberately NOT a chest symptom word, so heartburn stays on the GI path: Austin to confirm."
+    },
+    {
+      "id": "rf_suicide_self_harm",
+      "areas": [
+        "global"
+      ],
+      "disposition": "crisis_988",
+      "checklist": {
+        "en": "Thoughts of suicide, of ending your life, or of hurting yourself",
+        "zh": "有自杀、结束生命或伤害自己的念头"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "!kill myself|killing myself|kil myself|kill my self|kill himself|kill herself|kill themselves|kill themself",
+            "!end my life|ending my life|end his life|end her life|end their life|end it all|ending it all|going to end it",
+            "!take my own life|take my life|take his own life|take her own life",
+            "!want to die|wanna die|wants to die|want to be dead|wish i was dead|wish i were dead|better off dead|better off without me",
+            "!suicid*|suicde|sucide|sucidal|suicdal|suicidle",
+            "!self harm|selfharm|hurt myself|hurting myself|harm myself|harming myself|cut myself|cutting myself",
+            "!no reason to live|nothing to live for|not worth living|isnt worth living|no point in living|no point living",
+            "!dont want to live|dont wanna live|dont want to be alive|dont want to be here anymore|dont want to exist|no longer want to live",
+            "!cant go on|cant do this anymore|cant take it anymore|cant take this anymore",
+            "!go to sleep and never wake up|never wake up again",
+            "!kms|unalive",
+            "!jump off ~2 bridge|roof|building",
+            "!自杀|想死|不想活|活不下去|轻生|寻死|自残|割腕|跳楼",
+            "!活着 ~2 没意思|没有意思|没意义|没有意义",
+            "!结束 ~3 生命|自己",
+            "!伤害自己|伤害我自己|死了算了|一了百了|不如死了",
+            "!see the point ~3 living|life|going on",
+            "!wish ~5 not wake up|never wake up|wasnt here|wasnt alive|was gone",
+            "!take all my pills|take all of my pills|take all these pills|swallow all my pills|done with life|done living"
+          ]
+        ]
+      ],
+      "sources": [
+        "medlineplus_suicide",
+        "nimh_suicide_prevention"
+      ],
+      "mapping_note": "MedlinePlus lists talking about wanting to die as a warning sign and points to 988; NIMH: in life-threatening situations call 911. Crisis terms are never negated ('I don't want to kill myself but...' still screens positive). [断言] 988 page copy needs Austin + a clinician."
+    },
+    {
+      "id": "rf_overdose",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Took too much of a medicine or drug, or swallowed something poisonous",
+        "zh": "吃了过量的药或毒品，或误服了有毒的东西"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "overdos*",
+            "took too many|taken too many|swallowed too many|too many pills|too many sleeping pills",
+            "took ~3 whole bottle|bottle of|all my pills|all of my pills|handful of",
+            "swallowed ~5 pill*|bottle|bleach|batter*|detergent|pod*|poison|medicine",
+            "drank ~2 bleach|antifreeze|poison|detergent",
+            "poison*",
+            "吃了一整瓶|吞了一整瓶|药物过量|服药过量|吃药过量|过量服药|中毒",
+            "吃了 ~4 一瓶|很多药|好多药|一把药|安眠药",
+            "喝了 ~2 农药|消毒水|漂白剂|洗洁精",
+            "got into ~3 pods|pills|medicine|meds|bleach|detergent",
+            "took double|took a double dose",
+            "handful of ~2 pill*|ambien|xanax|tylenol|sleeping pills|meds|tablets|oxy*",
+            "误喝|误服|误吞|误食药",
+            "喝了 ~2 漂白水"
+          ]
+        ]
+      ],
+      "sources": [
+        "medlineplus_poisoning",
+        "nimh_suicide_prevention"
+      ],
+      "mapping_note": "MedlinePlus: suspected poisoning -> poison control 1-800-222-1222 right away. We route to 911 because an intentional overdose is also a medical emergency (our mapping)."
+    },
+    {
+      "id": "rf_breathing",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Struggling to breathe, choking, or lips turning blue",
+        "zh": "喘不上气、窒息，或嘴唇发紫"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "cant breathe|cant breath|cant breth|can barely breathe|can barely breath|barely breathing",
+            "struggling to breathe|struggling to breath|struggling for breath|struggling for air|gasping",
+            "not breathing|stopped breathing|isnt breathing",
+            "dont think ~3 breathing",
+            "cant catch ~1 breath",
+            "cant get air|cant get enough air",
+            "choking|trouble breathing|difficulty breathing|hard to breathe|hard to breath",
+            "lips ~3 blue|purple|grey|gray",
+            "face ~3 blue",
+            "喘不上气|喘不过气|透不过气|上不来气|喘不了气|呼吸困难|呼吸不了|无法呼吸|不能呼吸|没法呼吸",
+            "没有呼吸了|没呼吸了|不喘气了|窒息|噎住|嘴唇发紫|嘴唇发青",
+            "blue ~4 lips|mouth|face"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_shortness_of_breath",
+        "nhs_anaphylaxis"
+      ],
+      "mapping_note": "NHS: severe difficulty breathing (gasping, choking, can't get words out) -> call 999. Mapped to US 911."
+    },
+    {
+      "id": "rf_breathing_mild",
+      "areas": [
+        "global"
+      ],
+      "disposition": "seen_today",
+      "checklist": {
+        "en": "More short of breath than usual",
+        "zh": "比平时更气短"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "short of breath|shortness of breath|breathless|out of breath for no reason",
+            "气短|气促|气喘|喘不匀"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_shortness_of_breath"
+      ],
+      "mapping_note": "NHS: more short of breath than usual -> contact NHS 111. Mapped to US 'get seen today'. Severe forms are rf_breathing (911)."
+    },
+    {
+      "id": "rf_stroke",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Face drooping, arm or leg weakness on one side, or slurred speech (stroke signs)",
+        "zh": "脸歪、一侧手脚无力或发麻、说话不清（中风征兆）"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "face ~3 droop*|numb|numbness|crooked|lopsided",
+            "droop* ~3 face|mouth|smile|eyelid",
+            "slurr*",
+            "speech ~2 slurred|garbled|strange",
+            "cant get ~2 words out",
+            "trouble speaking|trouble talking|cant speak properly|cant talk properly|cant talk right",
+            "sudden* ~3 numb|numbness|weak|weakness|paraly*|confus*|blind",
+            "one side ~4 numb|numbness|weak|weakness|paraly*|droop*|limp",
+            "numb|numbness|weak|weakness|paraly* ~4 one side|half of my body|half my body",
+            "left side|right side ~5 numb|numbness|weak|weakness|paraly*|droop*",
+            "stroke",
+            "lost vision in one eye|cant see out of one eye|suddenly cant see",
+            "嘴歪|口歪|脸歪|口角歪|口齿不清|说话不清|说话含糊|说不出话|讲不出话|中风|脑梗|脑卒中|脑溢血|脑出血|突然看不见",
+            "半边 ~3 麻|没力|无力|动不了|不能动|不听使唤",
+            "一侧 ~3 麻|无力|动不了",
+            "突然 ~3 说不出话|麻|无力",
+            "mouth|smile ~3 crooked|droop*|lopsided",
+            "words ~3 jumbled|garbled|wrong|slurred|mixed up",
+            "numb and weak|weak and numb"
+          ]
+        ],
+        [
+          [
+            "left|right ~2 arm|leg|hand|foot|side|face",
+            "左边|右边|左手|右手|左腿|右腿|左胳膊|右胳膊|左侧|右侧|半边|左脸|右脸"
+          ],
+          [
+            "cant move|cant lift|cant feel|no strength|numb|numbness|weak|weakness|paraly*|went dead",
+            "没力气|没力|无力|动不了|不能动|麻|没知觉|没感觉|抬不起来"
+          ],
+          [
+            "sudden*",
+            "all of a sudden",
+            "out of nowhere",
+            "突然"
+          ]
+        ]
+      ],
+      "sources": [
+        "medlineplus_stroke",
+        "nhs_stroke_symptoms"
+      ],
+      "mapping_note": "MedlinePlus: if you think someone is having a stroke, call 911 right away. NHS FAST (face, arms, speech, time to call 999). v0.3.0: one side (left/right arm, leg, hand, face) + weakness/numbness + sudden -> 911; without 'sudden' a one-sided limb stays off this flag so post-surgery or rotator-cuff weakness is not routed to 911."
+    },
+    {
+      "id": "rf_thunderclap_headache",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Sudden, extremely painful headache (the worst ever), or headache with a stiff neck, seizure, numbness or weakness",
+        "zh": "突然的剧烈头痛（这辈子最痛），或头痛伴脖子僵硬、抽搐、麻木或无力"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "worst ~3 headach*|head pain|migraine*",
+            "thunderclap",
+            "sudden* ~4 headach*",
+            "headach* ~4 sudden*|out of nowhere",
+            "head ~3 explod*|split* open",
+            "最 ~4 头痛|头疼",
+            "突然 ~3 头痛|头疼",
+            "雷击样头痛"
+          ]
+        ],
+        [
+          [
+            "头"
+          ],
+          [
+            "从来没这么痛|从没这么痛|从来没有这么痛|从来没这么疼|从来没有这么疼"
+          ]
+        ],
+        [
+          [
+            "headach*",
+            "head hurts",
+            "head pain",
+            "migraine*",
+            "头痛",
+            "头疼"
+          ],
+          [
+            "stiff neck",
+            "neck ~2 stiff",
+            "seizure*",
+            "numb",
+            "numbness",
+            "went numb",
+            "weak",
+            "weakness",
+            "confus*",
+            "slurr*",
+            "passed out",
+            "faint*",
+            "脖子僵|颈部僵|脖子硬|抽搐|发麻|无力|意识不清|说话不清|晕倒"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_subarachnoid_haemorrhage",
+        "nhs_headaches"
+      ],
+      "mapping_note": "NHS: a sudden headache that is extremely painful and does not go away -> call 999; headache with seizure, numbness or weakness -> 999 or A&E. Mapped to US 911."
+    },
+    {
+      "id": "rf_unresponsive_seizure",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Someone has passed out and cannot be woken, or is having a seizure",
+        "zh": "有人昏迷叫不醒，或正在抽搐"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "unconscious|unresponsive|not responding|isnt responding|wont respond",
+            "wont wake up|wont wake|not waking up|cant wake him|cant wake her|cant wake them",
+            "cant wake ~3 up",
+            "seizure*|convuls*|having a fit|collapsed",
+            "叫不醒|昏迷|没反应|没有反应|不省人事|失去意识|抽搐|抽风|癫痫发作",
+            "hasnt come to|not come to|hasnt woken up|hasnt woke up|still not awake",
+            "foaming"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_fainting",
+        "medlineplus_seizures"
+      ],
+      "mapping_note": "NHS fainting: call 999 if someone is not breathing or cannot be woken within 1 minute. MedlinePlus: a seizure over 5 minutes is an emergency; we do not ask how long."
+    },
+    {
+      "id": "rf_head_injury_serious",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Hit their head and now confused, hard to keep awake, passed out, or having a seizure",
+        "zh": "头部受伤后意识模糊、昏昏欲睡、晕倒或抽搐"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "head ~3 hit|hits|banged|bumped|struck|smacked|injury|injured|trauma",
+            "hit|banged|bumped|struck|smacked ~3 head",
+            "fell ~4 head",
+            "concussion",
+            "头 ~3 撞|磕|摔|碰|受伤",
+            "撞|磕|摔|碰 ~2 头",
+            "头部受伤",
+            "脑震荡"
+          ],
+          [
+            "confus*",
+            "not making sense",
+            "passed out",
+            "pass out",
+            "knocked out",
+            "blacked out",
+            "black out",
+            "cant stay awake",
+            "drowsy",
+            "wont wake",
+            "unconscious",
+            "seizure*",
+            "slurr*",
+            "numb",
+            "weak",
+            "迷糊",
+            "糊涂",
+            "意识不清",
+            "晕倒",
+            "晕过去",
+            "昏过去",
+            "昏迷",
+            "犯困",
+            "叫不醒",
+            "抽搐",
+            "说话不清"
+          ]
+        ],
+        [
+          [
+            "knocked out"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_head_injury"
+      ],
+      "mapping_note": "NHS head injury: call 999 if knocked out and not woken, cannot stay awake, a fit, or problems with understanding or speaking. Mapped to US 911."
+    },
+    {
+      "id": "rf_head_injury_vomiting",
+      "areas": [
+        "global"
+      ],
+      "disposition": "er_today",
+      "checklist": {
+        "en": "Hit their head and keep vomiting",
+        "zh": "头部受伤后反复呕吐"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "head ~3 hit|hits|banged|bumped|struck|smacked|injury|injured|trauma",
+            "hit|banged|bumped|struck|smacked ~3 head",
+            "fell ~4 head",
+            "concussion",
+            "头 ~3 撞|磕|摔|碰|受伤",
+            "撞|磕|摔|碰 ~2 头",
+            "头部受伤",
+            "脑震荡"
+          ],
+          [
+            "vomit*",
+            "throw* up",
+            "threw up",
+            "being sick",
+            "吐"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_head_injury"
+      ],
+      "mapping_note": "[断言] NHS says 111 (urgent advice) for vomiting after a head injury, which our ladder would map to 'seen today'. We escalate to 'ER now' on purpose (fail toward escalation: vomiting after a head injury can mean bleeding). Austin + clinician to confirm."
+    },
+    {
+      "id": "rf_palpitations_faint",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Racing or pounding heart with feeling faint, dizzy, or passing out",
+        "zh": "心跳很快或心慌，同时头晕、快晕倒或晕倒"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "heart ~3 racing|races|pounding|fluttering|beating fast|irregular|skipping",
+            "racing heart|pounding heart|palpitation*",
+            "心慌",
+            "心悸",
+            "心跳 ~3 很快|好快|加速|乱|不规律|特别快"
+          ],
+          [
+            "faint*",
+            "dizzy",
+            "lightheaded",
+            "light headed",
+            "passed out",
+            "pass out",
+            "passing out",
+            "black out",
+            "blacked out",
+            "头晕",
+            "晕",
+            "发黑"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_fainting",
+        "medlineplus_heart_attack"
+      ],
+      "mapping_note": "NHS fainting: call 999 if someone has a pounding, fluttering or irregular heartbeat. MedlinePlus lists palpitations and lightheadedness with heart attack. Mapped to US 911."
+    },
+    {
+      "id": "rf_child_limp",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "A baby or child who is limp, floppy, or very hard to wake",
+        "zh": "宝宝或孩子软绵绵、没反应或很难叫醒"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "baby|babys|infant|newborn|toddler|child|childs|kid|kids|son|daughter",
+            "宝宝|婴儿|孩子|小孩|儿子|女儿|新生儿"
+          ],
+          [
+            "is limp|went limp|gone limp|limp and|is floppy|floppy",
+            "hard to wake|difficult to wake|wont wake|cant wake|not waking",
+            "not responding|unresponsive",
+            "软绵绵",
+            "很难叫醒",
+            "叫不醒",
+            "没反应"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_sepsis",
+        "nhs_fainting"
+      ],
+      "mapping_note": "NHS sepsis: call 999 or go to A&E if a baby or child is not responding like they normally do or is difficult to wake. 'Limp / floppy' is our reading of 'not responding like they normally do' [断言]. With or without fever."
     },
     {
       "id": "rf_allergic_airway",
@@ -323,14 +881,11 @@
         ],
         [
           [
-            "struggling to breathe",
-            "can't breathe",
-            "cannot breathe",
-            "trouble breathing",
-            "gasping for air",
-            "喘不上气",
-            "无法呼吸",
-            "透不过气"
+            "throat ~3 tight*|closing|close up|closing up|swell*|swollen",
+            "tongue ~3 swell*|swollen|thick",
+            "face ~3 swell*|swollen|puff*",
+            "喉咙 ~3 发紧|肿|堵|紧",
+            "脸 ~3 肿"
           ]
         ]
       ],
@@ -607,24 +1162,52 @@
         ],
         [
           [
+            "legs",
+            "两条腿",
+            "双腿",
+            "两腿"
+          ],
+          [
+            "numb",
+            "numbness",
+            "went numb",
+            "cant feel",
+            "没感觉",
+            "没知觉"
+          ]
+        ],
+        [
+          [
             "groin",
             "genitals",
             "anus",
             "saddle",
             "between my legs",
+            "privates",
+            "private parts",
+            "bottom",
+            "butt",
+            "buttocks",
+            "inner thighs",
             "肛门",
             "会阴",
             "私处",
-            "裆部"
+            "裆部",
+            "屁股"
           ],
           [
             "numb",
             "numbness",
+            "went numb",
             "no feeling",
-            "can't feel",
+            "cant feel",
+            "lost feeling",
+            "no sensation",
             "麻",
             "没感觉",
-            "没知觉"
+            "没知觉",
+            "没有感觉",
+            "没有知觉"
           ]
         ],
         [
@@ -642,7 +1225,11 @@
             "尿失禁",
             "憋不住尿",
             "控制不住大小便",
-            "排尿困难"
+            "排尿困难",
+            "peed myself",
+            "pooped myself",
+            "pooed myself",
+            "lost control ~3 bowel*|bladder"
           ]
         ]
       ],

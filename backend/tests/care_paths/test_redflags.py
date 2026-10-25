@@ -1,4 +1,8 @@
-"""Red flags: 4 dispositions, table-driven English + Chinese cases, checklist size, path coverage."""
+"""Red flags: 5 dispositions, table-driven English + Chinese cases, checklist size, path coverage.
+
+The adversarial phrase set, the blind holdout, one-way escalation and the mutation-killing rule
+tests live in test_redflags_adversarial.py.
+"""
 
 from __future__ import annotations
 
@@ -12,9 +16,10 @@ from app.care_paths.loader import DATA_ROOT
 CASES = json.loads((DATA_ROOT / "redflags" / "cases.json").read_text())["cases"]
 
 
-def test_exactly_four_dispositions(bundle):
+def test_exactly_five_dispositions(bundle):
     assert [d.id for d in bundle.redflags.dispositions] == [
         "call_911",
+        "crisis_988",
         "er_today",
         "seen_today",
         "routine",
@@ -49,12 +54,21 @@ def test_checklist_screen(bundle):
     assert redflags.screen_checklist([], bundle.redflags).disposition is None
 
 
+# Flags whose citation could not be fetched (403 / blocked) ship anyway: a missing flag is worse
+# than a missing citation. This set must be edited by hand, so the pending list cannot grow silently.
+SOURCE_PENDING: set[str] = set()
+
+
 def test_every_flag_has_bilingual_copy_and_a_source(bundle):
     src_ids = set(bundle.sources)
+    pending = set()
     for f in bundle.redflags.flags:
         assert f.checklist.en and f.checklist.zh, f.id
-        assert f.sources and set(f.sources) <= src_ids, f.id
         assert f.patterns, f"{f.id} has no free-text patterns"
+        assert set(f.sources) <= src_ids, f.id
+        if not f.sources:
+            pending.add(f.id)
+    assert pending == SOURCE_PENDING
 
 
 def test_q0_checklist_is_short_per_area(bundle):

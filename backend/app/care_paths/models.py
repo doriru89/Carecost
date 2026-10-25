@@ -369,7 +369,7 @@ class QuestionSet(_Strict):
 
 
 class Disposition(_Strict):
-    id: Literal["call_911", "er_today", "seen_today", "routine"]
+    id: Literal["call_911", "crisis_988", "er_today", "seen_today", "routine"]
     rank: int
     headline: Title
     text: Title
@@ -383,7 +383,7 @@ class BiText(_Strict):
 class RedFlag(_Strict):
     id: str = Field(pattern=r"^rf_[a-z0-9_]+$")
     areas: list[str]
-    disposition: Literal["call_911", "er_today", "seen_today", "routine"]
+    disposition: Literal["call_911", "crisis_988", "er_today", "seen_today", "routine"]
     checklist: BiText
     in_checklist: bool = True
     patterns: list[list[list[str]]] = Field(

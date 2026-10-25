@@ -156,7 +156,7 @@ export interface ClarifyReply {
 /**
  * redflags.json dispositions
  */
-export type Disposition = "call_911" | "er_today" | "seen_today" | "routine";
+export type Disposition = "call_911" | "crisis_988" | "er_today" | "seen_today" | "routine";
 
 export interface Focus {
   care_path_id: string | null;
@@ -223,7 +223,7 @@ export type Payment = InsurancePayment | MedicarePayment | MassHealthPayment | C
  */
 export interface RedFlagReply {
   kind: "red_flag";
-  disposition: "call_911" | "er_today" | "seen_today" | "routine";
+  disposition: "call_911" | "crisis_988" | "er_today" | "seen_today" | "routine";
   /**
    * redflags.json flag ids (rf_*)
    */

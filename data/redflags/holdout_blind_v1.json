@@ -1,0 +1,977 @@
+{
+ "doc": "Blind holdout for the free-text red-flag gate. Written by an independent agent from a brief only (it never saw redflags.json or adversarial.json). expect = the minimum disposition (a higher rank also passes), null = must not fire. Score on first run, before any pattern was tuned on it: recall 92/108, false positives 3/54 (2026-10-24). After tuning: 108/108, 2/54 (both known: negated crisis language fires by design).",
+ "cases": [
+  {
+   "text": "theres a crushing weight on my chest and my left arm is going numb",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "en"
+  },
+  {
+   "text": "not sure if its serious but my chest has been squeezing for like 20 min",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "en"
+  },
+  {
+   "text": "i dont think its serious but i have this tightness across my chest when i walk upstairs and it spreads to my jaw",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "en"
+  },
+  {
+   "text": "no fever but my chest is killing me and im sweating a lot",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "en"
+  },
+  {
+   "text": "my husband is clutching his chest and looks gray",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "en"
+  },
+  {
+   "text": "mom says it feels like an elephant is sitting on her chest",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "en"
+  },
+  {
+   "text": "sharp pain in my chest when i breathe in, started an hour ago, cant take a deep breath",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "en"
+  },
+  {
+   "text": "chest pains since this morning, how much is an ekg",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "en"
+  },
+  {
+   "text": "我爸突然胸口剧痛，满头大汗",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "zh"
+  },
+  {
+   "text": "心口像被人攥住一样疼，左胳膊也麻",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "zh"
+  },
+  {
+   "text": "不知道严不严重，就是胸口一阵阵压着疼",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "zh"
+  },
+  {
+   "text": "胸前压得慌，还往下巴放射",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "zh"
+  },
+  {
+   "text": "我 chest 好痛，感觉喘不过气",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "mixed"
+  },
+  {
+   "text": "my mom 突然胸痛，脸色发白",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "mixed"
+  },
+  {
+   "text": "最近走路就胸口 tight，有点怕，想问 cardiologist 多少钱",
+   "expect": "call_911",
+   "category": "chest",
+   "lang": "mixed"
+  },
+  {
+   "text": "my 3 yr old is choking on a grape and cant cough",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "en"
+  },
+  {
+   "text": "he is turning blue around the lips",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "en"
+  },
+  {
+   "text": "cant catch my breath at all, wheezing and inhaler not helping",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "en"
+  },
+  {
+   "text": "i think my wife stopped breathing",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "en"
+  },
+  {
+   "text": "shes gasping for air and her lips are purple",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "en"
+  },
+  {
+   "text": "struggling to breathe since the bee sting, throat feels tight",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "en"
+  },
+  {
+   "text": "not sure if its asthma but i cant breathe properly rn",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "en"
+  },
+  {
+   "text": "我妈喘不上来气，嘴唇发紫",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "zh"
+  },
+  {
+   "text": "孩子被东西噎住了，脸都紫了",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "zh"
+  },
+  {
+   "text": "呼吸困难，感觉快窒息了",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "zh"
+  },
+  {
+   "text": "老公突然没呼吸了怎么办",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "zh"
+  },
+  {
+   "text": "我 baby 呼吸好急，嘴唇发青",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "mixed"
+  },
+  {
+   "text": "突然 can't breathe，胸口像堵住了",
+   "expect": "call_911",
+   "category": "breathing",
+   "lang": "mixed"
+  },
+  {
+   "text": "my grandma's face is drooping on one side and her speech is slurred",
+   "expect": "call_911",
+   "category": "stroke",
+   "lang": "en"
+  },
+  {
+   "text": "woke up and my right arm is totally numb and weak, words coming out wrong",
+   "expect": "call_911",
+   "category": "stroke",
+   "lang": "en"
+  },
+  {
+   "text": "dad suddenly cant talk right and his smile is lopsided",
+   "expect": "call_911",
+   "category": "stroke",
+   "lang": "en"
+  },
+  {
+   "text": "i dont think its serious but half my face went numb and i cant lift my left arm",
+   "expect": "call_911",
+   "category": "stroke",
+   "lang": "en"
+  },
+  {
+   "text": "sudden weakness on one side, cant hold my coffee cup",
+   "expect": "call_911",
+   "category": "stroke",
+   "lang": "en"
+  },
+  {
+   "text": "my words are all jumbled and my mouth feels crooked",
+   "expect": "call_911",
+   "category": "stroke",
+   "lang": "en"
+  },
+  {
+   "text": "我爸突然说话含糊，嘴角歪了",
+   "expect": "call_911",
+   "category": "stroke",
+   "lang": "zh"
+  },
+  {
+   "text": "妈妈半边身子动不了，右手没力气",
+   "expect": "call_911",
+   "category": "stroke",
+   "lang": "zh"
+  },
+  {
+   "text": "突然半边脸麻了，说话大舌头",
+   "expect": "call_911",
+   "category": "stroke",
+   "lang": "zh"
+  },
+  {
+   "text": "我奶奶 face 一边垮下来了，说话不清楚",
+   "expect": "call_911",
+   "category": "stroke",
+   "lang": "mixed"
+  },
+  {
+   "text": "突然左边 arm 没力，是不是 stroke",
+   "expect": "call_911",
+   "category": "stroke",
+   "lang": "mixed"
+  },
+  {
+   "text": "sudden thunderclap headache like someone hit me with a bat",
+   "expect": "call_911",
+   "category": "headache",
+   "lang": "en"
+  },
+  {
+   "text": "worst headache ever and my neck is stiff, light hurts my eyes",
+   "expect": "call_911",
+   "category": "headache",
+   "lang": "en"
+  },
+  {
+   "text": "no fever but terrible headache with a stiff neck",
+   "expect": "call_911",
+   "category": "headache",
+   "lang": "en"
+  },
+  {
+   "text": "headache plus my left side feels weak and vision is blurry",
+   "expect": "call_911",
+   "category": "headache",
+   "lang": "en"
+  },
+  {
+   "text": "my son has a severe headache and keeps vomiting and is confused",
+   "expect": "call_911",
+   "category": "headache",
+   "lang": "en"
+  },
+  {
+   "text": "突然头疼得像要炸开，这辈子没这么疼过",
+   "expect": "call_911",
+   "category": "headache",
+   "lang": "zh"
+  },
+  {
+   "text": "头痛得厉害，脖子僵硬，还发烧",
+   "expect": "call_911",
+   "category": "headache",
+   "lang": "zh"
+  },
+  {
+   "text": "突然 worst headache，still 脖子很硬",
+   "expect": "call_911",
+   "category": "headache",
+   "lang": "mixed"
+  },
+  {
+   "text": "my roommate passed out and wont wake up",
+   "expect": "call_911",
+   "category": "unconscious",
+   "lang": "en"
+  },
+  {
+   "text": "dad collapsed in the kitchen and isnt responding",
+   "expect": "call_911",
+   "category": "unconscious",
+   "lang": "en"
+  },
+  {
+   "text": "my daughter is having a seizure right now shaking and eyes rolled back",
+   "expect": "call_911",
+   "category": "unconscious",
+   "lang": "en"
+  },
+  {
+   "text": "found grandpa unresponsive on the floor",
+   "expect": "call_911",
+   "category": "unconscious",
+   "lang": "en"
+  },
+  {
+   "text": "he fainted and hasnt come to for several minutes",
+   "expect": "call_911",
+   "category": "unconscious",
+   "lang": "en"
+  },
+  {
+   "text": "我老公晕倒了叫不醒",
+   "expect": "call_911",
+   "category": "unconscious",
+   "lang": "zh"
+  },
+  {
+   "text": "孩子抽搐了，眼睛上翻",
+   "expect": "call_911",
+   "category": "unconscious",
+   "lang": "zh"
+  },
+  {
+   "text": "奶奶昏过去了，没反应",
+   "expect": "call_911",
+   "category": "unconscious",
+   "lang": "zh"
+  },
+  {
+   "text": "我朋友 seizure 了，一直抽",
+   "expect": "call_911",
+   "category": "unconscious",
+   "lang": "mixed"
+  },
+  {
+   "text": "老公突然 unconscious，叫不醒",
+   "expect": "call_911",
+   "category": "unconscious",
+   "lang": "mixed"
+  },
+  {
+   "text": "i took a whole bottle of tylenol by accident",
+   "expect": "call_911",
+   "category": "overdose",
+   "lang": "en"
+  },
+  {
+   "text": "my toddler swallowed a bunch of my pills",
+   "expect": "call_911",
+   "category": "overdose",
+   "lang": "en"
+  },
+  {
+   "text": "he drank bleach i think",
+   "expect": "call_911",
+   "category": "overdose",
+   "lang": "en"
+  },
+  {
+   "text": "roommate overdosed on fentanyl and is barely breathing",
+   "expect": "call_911",
+   "category": "overdose",
+   "lang": "en"
+  },
+  {
+   "text": "kid got into the dishwasher pods and is foaming",
+   "expect": "call_911",
+   "category": "overdose",
+   "lang": "en"
+  },
+  {
+   "text": "accidentally took double my blood thinner and a handful of ambien, not sure if i need to worry",
+   "expect": "call_911",
+   "category": "overdose",
+   "lang": "en"
+  },
+  {
+   "text": "孩子误吃了一把药",
+   "expect": "call_911",
+   "category": "overdose",
+   "lang": "zh"
+  },
+  {
+   "text": "我吞了一整瓶安眠药",
+   "expect": "call_911",
+   "category": "overdose",
+   "lang": "zh"
+  },
+  {
+   "text": "他喝了洗洁精，嘴里冒泡",
+   "expect": "call_911",
+   "category": "overdose",
+   "lang": "zh"
+  },
+  {
+   "text": "my son 误喝了漂白水",
+   "expect": "call_911",
+   "category": "overdose",
+   "lang": "mixed"
+  },
+  {
+   "text": "朋友 overdose 了，不太清醒",
+   "expect": "call_911",
+   "category": "overdose",
+   "lang": "mixed"
+  },
+  {
+   "text": "my lips and tongue are swelling up after eating shrimp",
+   "expect": "call_911",
+   "category": "swelling",
+   "lang": "en"
+  },
+  {
+   "text": "throat is closing up after the peanut, hives everywhere",
+   "expect": "call_911",
+   "category": "swelling",
+   "lang": "en"
+  },
+  {
+   "text": "face is puffing up and i feel my throat getting tight, allergic reaction maybe",
+   "expect": "call_911",
+   "category": "swelling",
+   "lang": "en"
+  },
+  {
+   "text": "his tongue is swollen and he sounds hoarse",
+   "expect": "call_911",
+   "category": "swelling",
+   "lang": "en"
+  },
+  {
+   "text": "吃了虾以后嘴唇和舌头肿起来了",
+   "expect": "call_911",
+   "category": "swelling",
+   "lang": "zh"
+  },
+  {
+   "text": "过敏了，喉咙发紧，脸肿得厉害",
+   "expect": "call_911",
+   "category": "swelling",
+   "lang": "zh"
+  },
+  {
+   "text": "吃了 peanut 后 throat 肿了，呼吸有点难",
+   "expect": "call_911",
+   "category": "swelling",
+   "lang": "mixed"
+  },
+  {
+   "text": "i been thinking about killing myself lately",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "i dont see the point of living anymore",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "everyone would be better off without me",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "i have a plan to end my life tonight",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "my brother said he wants to die",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "not sure if i can keep going, i keep thinking about suicide",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "i dont think its serious but i keep wanting to hurt myself",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "been cutting myself again and i cant stop",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "i wish i would just not wake up tomorrow",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "my daughter wrote a note saying goodbye, i think she wants to kill herself",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "going to take all my pills and be done with it",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "i dont want to be alive",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "en"
+  },
+  {
+   "text": "我真的活不下去了",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "zh"
+  },
+  {
+   "text": "活着太累了，想死",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "zh"
+  },
+  {
+   "text": "我妈说她想一了百了",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "zh"
+  },
+  {
+   "text": "最近老想伤害自己，割手腕",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "zh"
+  },
+  {
+   "text": "我想结束自己的生命",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "zh"
+  },
+  {
+   "text": "不想活了，没人会在乎",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "zh"
+  },
+  {
+   "text": "我 want to die，真的撑不住了",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "mixed"
+  },
+  {
+   "text": "最近总想 suicide，不知道找谁",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "mixed"
+  },
+  {
+   "text": "我弟说他想 kill himself",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "mixed"
+  },
+  {
+   "text": "我有点想 self harm，不知道严不严重",
+   "expect": "crisis_988",
+   "category": "suicide",
+   "lang": "mixed"
+  },
+  {
+   "text": "numb between my legs, like saddle area, since yesterday",
+   "expect": "er_today",
+   "category": "cauda",
+   "lang": "en"
+  },
+  {
+   "text": "cant feel when i wipe, my butt and inner thighs are numb",
+   "expect": "er_today",
+   "category": "cauda",
+   "lang": "en"
+  },
+  {
+   "text": "both my legs feel weak and numb and its getting worse",
+   "expect": "er_today",
+   "category": "cauda",
+   "lang": "en"
+  },
+  {
+   "text": "i just peed myself and didnt realize, never happened before",
+   "expect": "er_today",
+   "category": "cauda",
+   "lang": "en"
+  },
+  {
+   "text": "lost control of my bowels this morning with back pain",
+   "expect": "er_today",
+   "category": "cauda",
+   "lang": "en"
+  },
+  {
+   "text": "no fever but ive got numbness in my groin and low back pain",
+   "expect": "er_today",
+   "category": "cauda",
+   "lang": "en"
+  },
+  {
+   "text": "not sure if its related to my back but both legs have gone numb",
+   "expect": "er_today",
+   "category": "cauda",
+   "lang": "en"
+  },
+  {
+   "text": "两条腿突然发麻没力气",
+   "expect": "er_today",
+   "category": "cauda",
+   "lang": "zh"
+  },
+  {
+   "text": "会阴部麻木，尿不出来",
+   "expect": "er_today",
+   "category": "cauda",
+   "lang": "zh"
+  },
+  {
+   "text": "大小便失禁了，腰还特别疼",
+   "expect": "er_today",
+   "category": "cauda",
+   "lang": "zh"
+  },
+  {
+   "text": "下面 groin 那里没知觉，腰痛好几天",
+   "expect": "er_today",
+   "category": "cauda",
+   "lang": "mixed"
+  },
+  {
+   "text": "no chest pain, just want to price a stress test",
+   "expect": null,
+   "category": "negation",
+   "lang": "en"
+  },
+  {
+   "text": "denies shortness of breath, here for a physical",
+   "expect": null,
+   "category": "negation",
+   "lang": "en"
+  },
+  {
+   "text": "my chest doesnt hurt, just a cough",
+   "expect": null,
+   "category": "negation",
+   "lang": "en"
+  },
+  {
+   "text": "dont have any trouble breathing, wondering about allergy test cost",
+   "expect": null,
+   "category": "negation",
+   "lang": "en"
+  },
+  {
+   "text": "no numbness or weakness, only a sore wrist",
+   "expect": null,
+   "category": "negation",
+   "lang": "en"
+  },
+  {
+   "text": "never had suicidal thoughts, just need a therapist copay",
+   "expect": null,
+   "category": "negation",
+   "lang": "en"
+  },
+  {
+   "text": "no headache no fever, need flu shot price",
+   "expect": null,
+   "category": "negation",
+   "lang": "en"
+  },
+  {
+   "text": "i am not having chest pain anymore, ekg was normal last week, how much for a follow up",
+   "expect": null,
+   "category": "negation",
+   "lang": "en"
+  },
+  {
+   "text": "胸口不疼，就是想问体检多少钱",
+   "expect": null,
+   "category": "negation",
+   "lang": "zh"
+  },
+  {
+   "text": "没有呼吸困难，只是咳嗽",
+   "expect": null,
+   "category": "negation",
+   "lang": "zh"
+  },
+  {
+   "text": "没想过自杀，只是想找心理咨询价格",
+   "expect": null,
+   "category": "negation",
+   "lang": "zh"
+  },
+  {
+   "text": "头不痛，也不晕，就想做个MRI报价",
+   "expect": null,
+   "category": "negation",
+   "lang": "zh"
+  },
+  {
+   "text": "不喘，也不胸闷，想问心脏彩超价格",
+   "expect": null,
+   "category": "negation",
+   "lang": "zh"
+  },
+  {
+   "text": "没有 chest pain，just checking price of ekg",
+   "expect": null,
+   "category": "negation",
+   "lang": "mixed"
+  },
+  {
+   "text": "no 麻木，只是 knee 疼",
+   "expect": null,
+   "category": "negation",
+   "lang": "mixed"
+  },
+  {
+   "text": "my shoulder hurts when i lift overhead after bench press",
+   "expect": null,
+   "category": "msk",
+   "lang": "en"
+  },
+  {
+   "text": "pulled something in my chest muscle doing push ups, sore pec",
+   "expect": null,
+   "category": "msk",
+   "lang": "en"
+  },
+  {
+   "text": "lower back stiff after deadlifts, need PT price",
+   "expect": null,
+   "category": "msk",
+   "lang": "en"
+  },
+  {
+   "text": "rolled my ankle playing pickup basketball",
+   "expect": null,
+   "category": "msk",
+   "lang": "en"
+  },
+  {
+   "text": "knee swelling after a run, mri cost?",
+   "expect": null,
+   "category": "msk",
+   "lang": "en"
+  },
+  {
+   "text": "tennis elbow for months",
+   "expect": null,
+   "category": "msk",
+   "lang": "en"
+  },
+  {
+   "text": "sore pecs from chest day, should i see someone",
+   "expect": null,
+   "category": "msk",
+   "lang": "en"
+  },
+  {
+   "text": "neck is stiff from sleeping wrong",
+   "expect": null,
+   "category": "msk",
+   "lang": "en"
+  },
+  {
+   "text": "wrist pain from typing all day",
+   "expect": null,
+   "category": "msk",
+   "lang": "en"
+  },
+  {
+   "text": "hamstring strain from sprinting",
+   "expect": null,
+   "category": "msk",
+   "lang": "en"
+  },
+  {
+   "text": "打球扭到脚踝了，肿了",
+   "expect": null,
+   "category": "msk",
+   "lang": "zh"
+  },
+  {
+   "text": "肩膀酸痛，举手的时候咔咔响",
+   "expect": null,
+   "category": "msk",
+   "lang": "zh"
+  },
+  {
+   "text": "健身练胸后胸肌酸痛",
+   "expect": null,
+   "category": "msk",
+   "lang": "zh"
+  },
+  {
+   "text": "腰扛重物拉伤了，想做理疗",
+   "expect": null,
+   "category": "msk",
+   "lang": "zh"
+  },
+  {
+   "text": "膝盖爬楼梯有点疼",
+   "expect": null,
+   "category": "msk",
+   "lang": "zh"
+  },
+  {
+   "text": "gym 练 chest 之后肩膀有点 sore",
+   "expect": null,
+   "category": "msk",
+   "lang": "mixed"
+  },
+  {
+   "text": "脚踝 sprain 了，x-ray 多少钱",
+   "expect": null,
+   "category": "msk",
+   "lang": "mixed"
+  },
+  {
+   "text": "how much is an mri of the knee in boston",
+   "expect": null,
+   "category": "price",
+   "lang": "en"
+  },
+  {
+   "text": "cheapest place for a colonoscopy near me",
+   "expect": null,
+   "category": "price",
+   "lang": "en"
+  },
+  {
+   "text": "what does a dermatologist visit cost without insurance",
+   "expect": null,
+   "category": "price",
+   "lang": "en"
+  },
+  {
+   "text": "compare prices for blood work at mgh vs quest",
+   "expect": null,
+   "category": "price",
+   "lang": "en"
+  },
+  {
+   "text": "is urgent care cheaper than the er for a sinus infection",
+   "expect": null,
+   "category": "price",
+   "lang": "en"
+  },
+  {
+   "text": "how much does a chest x-ray cost",
+   "expect": null,
+   "category": "price",
+   "lang": "en"
+  },
+  {
+   "text": "price for echocardiogram in boston",
+   "expect": null,
+   "category": "price",
+   "lang": "en"
+  },
+  {
+   "text": "how much is a therapy session without insurance",
+   "expect": null,
+   "category": "price",
+   "lang": "en"
+  },
+  {
+   "text": "波士顿做核磁共振大概多少钱",
+   "expect": null,
+   "category": "price",
+   "lang": "zh"
+  },
+  {
+   "text": "没有保险看牙医要多少",
+   "expect": null,
+   "category": "price",
+   "lang": "zh"
+  },
+  {
+   "text": "验血哪里最便宜",
+   "expect": null,
+   "category": "price",
+   "lang": "zh"
+  },
+  {
+   "text": "dying to know what this surgery costs",
+   "expect": null,
+   "category": "figurative",
+   "lang": "en"
+  },
+  {
+   "text": "this copay is murder",
+   "expect": null,
+   "category": "figurative",
+   "lang": "en"
+  },
+  {
+   "text": "the wait gave me a headache",
+   "expect": null,
+   "category": "figurative",
+   "lang": "en"
+  },
+  {
+   "text": "that bill nearly gave me a heart attack lol",
+   "expect": null,
+   "category": "figurative",
+   "lang": "en"
+  },
+  {
+   "text": "im so dead after seeing this deductible",
+   "expect": null,
+   "category": "figurative",
+   "lang": "en"
+  },
+  {
+   "text": "my insurance is a pain in the neck",
+   "expect": null,
+   "category": "figurative",
+   "lang": "en"
+  },
+  {
+   "text": "this paperwork is suffocating me",
+   "expect": null,
+   "category": "figurative",
+   "lang": "en"
+  },
+  {
+   "text": "killing time in the waiting room, what does a checkup cost",
+   "expect": null,
+   "category": "figurative",
+   "lang": "en"
+  },
+  {
+   "text": "这账单看得我心梗",
+   "expect": null,
+   "category": "figurative",
+   "lang": "zh"
+  },
+  {
+   "text": "笑死我了，这价格真是要命",
+   "expect": null,
+   "category": "figurative",
+   "lang": "zh"
+  },
+  {
+   "text": "等了三个小时，头都大了",
+   "expect": null,
+   "category": "figurative",
+   "lang": "zh"
+  }
+ ]
+}

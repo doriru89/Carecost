@@ -609,6 +609,7 @@
       "description": "redflags.json dispositions",
       "enum": [
         "call_911",
+        "crisis_988",
         "er_today",
         "seen_today",
         "routine"
@@ -820,6 +821,7 @@
         "disposition": {
           "enum": [
             "call_911",
+            "crisis_988",
             "er_today",
             "seen_today",
             "routine"
