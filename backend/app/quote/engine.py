@@ -86,6 +86,7 @@ from app.quote.store import (
 from app.sites.contracts import Freshness, Site
 
 Json = dict[str, Any]
+ESTIMATED_FIGURES = ("estimate", "elsewhere", "elsewhere_estimate")
 NO_NUMBER = ("not_published", "not_loaded", "no_source")
 COPY_KEYS = ["copy.not_a_diagnosis", "copy.when_to_see_a_doctor"]
 GFE_ASK = (
@@ -1813,6 +1814,12 @@ class Engine:
                     low = round(sum(ln["cell"]["low"] for ln in paid), 2)
                     high = round(sum(ln["cell"]["high"] for ln in paid), 2)
                     rank = round(sum(self._central(ln) for ln in paid), 2)
+                elif pool["range"] is not None and not first["_item"].entry:
+                    # main 2026-10-25: offered here but no own price -> the step's range at the
+                    # sites that price it, as an estimate (never summed, never this site's price)
+                    rng = pool["range"]
+                    figure, low, high = "elsewhere_estimate", rng["low"], rng["high"]
+                    rank = rng["median"]
             elif pool["range"] is not None:
                 rng = pool["range"]
                 figure, low, high, rank = "elsewhere", rng["low"], rng["high"], rng["median"]
@@ -1821,7 +1828,7 @@ class Engine:
                 "key": key, "step_id": first["step_id"], "likelihood": first["likelihood"],
                 "availability": avail, "figure": figure, "low": low, "high": high,
                 "rank_value": rank if expected and figure != "none" else None,
-                "estimated": any(ln["estimate"] for ln in lns),
+                "estimated": any(ln["estimate"] for ln in lns) or figure == "elsewhere_estimate",
                 "unusual": any(ln["unusual"] for ln in lns),
                 "in_total": bool(priced) and all(ln["in_total"] for ln in priced),
                 "missing": missing, "line_ids": [ln["line_id"] for ln in lns],
@@ -2284,7 +2291,7 @@ class Engine:
                 if f is None:
                     return None
                 from_only = True
-            est = est or st["figure"] in ("estimate", "elsewhere")
+            est = est or st["figure"] in ESTIMATED_FIGURES
             vlo, vhi = vlo + f[0], vhi + f[1]
         rest = [st for st in real if st not in base]
 
@@ -2307,7 +2314,7 @@ class Engine:
                     lo, hi = lo + f[0], hi + f[1]
                     out["step_keys"].append(st["key"])
                     out["includes"].append(st["plain_name"])
-                    out["estimated"] = out["estimated"] or st["figure"] in ("estimate", "elsewhere")
+                    out["estimated"] = out["estimated"] or st["figure"] in ESTIMATED_FIGURES
             return {"low": round(lo, 2), "high": round(hi, 2), **out}
 
         likely = [st for st in rest if st["likelihood"] in ("certain", "likely")]

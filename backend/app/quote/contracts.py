@@ -837,10 +837,12 @@ class SiteSummary(_Strict):
     )
 
 
-StepFigure = Literal["own", "estimate", "elsewhere", "none"]
+StepFigure = Literal["own", "estimate", "elsewhere", "elsewhere_estimate", "none"]
 """C3: what a step's figure on this site rests on. own: every line is this site's real price;
 estimate: at least one line is a peer estimate; elsewhere: this site has no evidence it does the
-step, the figure is the p25-p75 at sites that do (P4); none: no figure."""
+step, the figure is the p25-p75 at sites that do (P4); elsewhere_estimate (main 2026-10-25): the
+site offers the step but has no own price for it, so the figure is that same range as an estimate
+(availability stays offered, ``estimated`` is true, never summed); none: no figure."""
 
 
 class StepSummary(_Strict):
@@ -883,6 +885,11 @@ class StepSummary(_Strict):
         if (self.figure == "elsewhere") != (self.elsewhere is not None and self.low is not None
                                             and self.availability != "offered"):  # fmt: skip
             raise ValueError(f"{self.key}: an elsewhere figure is a not-offered step's range")
+        if (self.figure == "elsewhere_estimate") != (
+            self.availability == "offered" and self.elsewhere is not None and self.low is not None
+            and not self.in_total
+        ) or (self.figure == "elsewhere_estimate" and not self.estimated):  # fmt: skip
+            raise ValueError(f"{self.key}: elsewhere_estimate is an offered step's peer range")
         if self.missing and self.figure != "none":
             raise ValueError(f"{self.key}: a step with a figure is not missing")
         if self.in_total and self.availability != "offered":
@@ -929,7 +936,7 @@ class MayAlsoOrder(_Strict):
     why: str | None = Field(description="its plain purpose, from the care path")
     low: float | None = Field(ge=0)
     high: float | None = Field(ge=0)
-    figure: Literal["own", "estimate", "elsewhere", "none"]
+    figure: Literal["own", "estimate", "elsewhere", "elsewhere_estimate", "none"]
     exclusive_group: str | None = None
 
 
@@ -944,6 +951,8 @@ BASIS_RANK: dict[str, int] = {"complete": 0, "includes_estimate": 1, "partial": 
 
 
 def headline_basis(from_only: bool, with_likely: dict) -> str:
+    # partial: the visit itself is incomplete, or a certain / likely step has no figure at all
+    # (an offered step with no own price uses the elsewhere range: includes_estimate)
     if from_only or with_likely["not_priced"]:
         return "partial"
     return "includes_estimate" if with_likely["estimated"] else "complete"

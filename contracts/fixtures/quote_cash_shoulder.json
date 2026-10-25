@@ -18750,6 +18750,800 @@
     },
     {
       "site": {
+        "site_id": "atrius_health_inc_somerville",
+        "name": "ATRIUS HEALTH INC",
+        "site_type": "specialist_office",
+        "system_id": null,
+        "coords": {
+          "lat": 42.39763,
+          "lon": -71.123529,
+          "geocoded_by": "census_batch",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "40 HOLLAND ST, Somerville, MA 02144",
+        "phone": null,
+        "billing_type": "office_visit",
+        "booking": [],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_on_request",
+        "price_source_id": null,
+        "listing_status": "multi_registry",
+        "service_areas": [
+          "skin",
+          "gi",
+          "ortho"
+        ],
+        "kind": "office",
+        "chain_id": null,
+        "chain_name": null,
+        "children_only": false,
+        "data_notices": []
+      },
+      "option_id": null,
+      "headline": {
+        "likely_low": null,
+        "likely_high": null,
+        "includes_estimate": false,
+        "complete": false,
+        "missing": 1,
+        "comparable": 365.0,
+        "real_steps": 0,
+        "might_add": null
+      },
+      "headline_range": null,
+      "steps": [
+        {
+          "key": "visit",
+          "step_id": "visit",
+          "plain_name": "Visit with a bone & joint doctor",
+          "likelihood": "certain",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "visit"
+          ],
+          "elsewhere": null,
+          "flat_visit_rate": false
+        },
+        {
+          "key": "xray",
+          "step_id": "xray",
+          "plain_name": "Quick picture of the shoulder bones",
+          "likelihood": "likely",
+          "availability": "unknown",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "xray"
+          ],
+          "elsewhere": null,
+          "flat_visit_rate": false
+        },
+        {
+          "key": "physical_therapy",
+          "step_id": "physical_therapy",
+          "plain_name": "Guided exercise program for the shoulder",
+          "likelihood": "likely",
+          "availability": "offered",
+          "figure": "elsewhere_estimate",
+          "low": 246.6,
+          "high": 426.0,
+          "rank_value": 365.0,
+          "estimated": true,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "physical_therapy",
+            "physical_therapy_sessions"
+          ],
+          "elsewhere": {
+            "low": 246.6,
+            "high": 426.0,
+            "median": 365.0,
+            "n_groups": 15,
+            "kind": null,
+            "scope": "same_kind",
+            "payer_id": null
+          },
+          "flat_visit_rate": false
+        },
+        {
+          "key": "steroid_injection",
+          "step_id": "steroid_injection",
+          "plain_name": "Shot of anti-inflammatory and numbing medicine",
+          "likelihood": "possible",
+          "availability": "unknown",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "steroid_injection",
+            "steroid_injection_drug_ai"
+          ],
+          "elsewhere": null,
+          "flat_visit_rate": false
+        },
+        {
+          "key": "tendon_scan_ultrasound",
+          "step_id": "tendon_scan_ultrasound",
+          "plain_name": "Live sound-wave picture of the tendons",
+          "likelihood": "possible",
+          "availability": "unknown",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "tendon_scan_ultrasound"
+          ],
+          "elsewhere": null,
+          "flat_visit_rate": false
+        },
+        {
+          "key": "tendon_scan_mri",
+          "step_id": "tendon_scan_mri",
+          "plain_name": "Detailed scan of tendons & cartilage",
+          "likelihood": "possible",
+          "availability": "unknown",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "tendon_scan_mri"
+          ],
+          "elsewhere": null,
+          "flat_visit_rate": false
+        },
+        {
+          "key": "mr_arthrogram",
+          "step_id": "mr_arthrogram",
+          "plain_name": "Detailed scan with dye in the joint",
+          "likelihood": "rare",
+          "availability": "unknown",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "mr_arthrogram",
+            "mr_arthrogram_23350",
+            "mr_arthrogram_77002"
+          ],
+          "elsewhere": null,
+          "flat_visit_rate": false
+        }
+      ],
+      "distance_km": 2.7,
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "visit",
+            "tier": "not_in_public_data",
+            "likelihood": "certain",
+            "step_id": "visit",
+            "codes": [
+              "99203"
+            ],
+            "modifier": null,
+            "plain_name": "Visit with a bone & joint doctor",
+            "technical_name": "New-patient orthopedic or sports-medicine visit",
+            "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "availability_reason": null,
+            "cell": {
+              "kind": "not_loaded",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "our_judgment",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "at": "this_site"
+          },
+          {
+            "line_id": "xray",
+            "tier": "not_in_public_data",
+            "likelihood": "likely",
+            "step_id": "xray",
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while. It shows arthritis, bone spurs and calcium in the tendons, which changes what comes next.",
+            "glossary_keys": [
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "unknown",
+            "availability_reason": "price_file_lists_rate",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [
+              {
+                "site_id": "afc_urgent_care_cambridge_cambridge",
+                "site_name": "AFC Urgent Care Cambridge",
+                "lat": 42.389456,
+                "lon": -71.119121,
+                "cell": {
+                  "kind": "money",
+                  "low": 150.0,
+                  "high": 150.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:5fb4bac81f1a:xray_2_views",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              },
+              {
+                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+                "site_name": "AFC Urgent Care Cambridge Inman Square",
+                "lat": 42.373615,
+                "lon": -71.101023,
+                "cell": {
+                  "kind": "money",
+                  "low": 150.0,
+                  "high": 150.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:5fb4bac81f1a:xray_2_views",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              }
+            ],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: X-Rays",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: bone X-ray",
+                "url": "https://www.radiologyinfo.org/en/info/bonerad"
+              }
+            ],
+            "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "at": "this_site"
+          },
+          {
+            "line_id": "physical_therapy",
+            "tier": "not_in_public_data",
+            "likelihood": "likely",
+            "step_id": "physical_therapy",
+            "codes": [
+              "97161"
+            ],
+            "modifier": null,
+            "plain_name": "Guided exercise program for the shoulder",
+            "technical_name": "Physical therapy evaluation and visits",
+            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
+            "glossary_keys": [
+              "pt_evaluation"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "availability_reason": null,
+            "cell": {
+              "kind": "not_loaded",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "at": "this_site"
+          },
+          {
+            "line_id": "physical_therapy_sessions",
+            "tier": "not_in_public_data",
+            "likelihood": "likely",
+            "step_id": "physical_therapy",
+            "codes": [
+              "97110"
+            ],
+            "modifier": null,
+            "plain_name": "Later exercise sessions (each 15 minutes)",
+            "technical_name": "Therapeutic exercise",
+            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
+            "glossary_keys": [
+              "pt_evaluation"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "per_15_minutes",
+            "availability": "offered",
+            "availability_reason": null,
+            "cell": {
+              "kind": "not_loaded",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "at": "this_site"
+          },
+          {
+            "line_id": "steroid_injection",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
+            "codes": [
+              "20610"
+            ],
+            "modifier": null,
+            "plain_name": "Shot of anti-inflammatory and numbing medicine",
+            "technical_name": "Corticosteroid shoulder injection",
+            "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
+            "glossary_keys": [
+              "steroid_injection",
+              "ultrasound"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "unknown",
+            "availability_reason": "price_file_lists_rate",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "at": "this_site"
+          },
+          {
+            "line_id": "steroid_injection_drug_ai",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
+            "codes": [
+              "J3301"
+            ],
+            "modifier": null,
+            "plain_name": "The medicine in the shot",
+            "technical_name": "Injected medicine (billed as a drug)",
+            "why": "The medicine in the shot may appear as its own line on the bill.",
+            "glossary_keys": [
+              "steroid_injection",
+              "ultrasound"
+            ],
+            "component": "drug",
+            "component_confirmed": false,
+            "unit": "once",
+            "availability": "unknown",
+            "availability_reason": "price_file_lists_rate",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": true,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "at": "this_site"
+          },
+          {
+            "line_id": "tendon_scan_ultrasound",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_ultrasound",
+            "codes": [
+              "76881"
+            ],
+            "modifier": null,
+            "plain_name": "Live sound-wave picture of the tendons",
+            "technical_name": "Shoulder ultrasound",
+            "why": "If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear is.",
+            "glossary_keys": [
+              "ultrasound",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "unknown",
+            "availability_reason": "price_file_lists_rate",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: Ultrasound",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=76881&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: musculoskeletal ultrasound",
+                "url": "https://www.radiologyinfo.org/en/info/genus"
+              }
+            ],
+            "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "at": "this_site"
+          },
+          {
+            "line_id": "tendon_scan_mri",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_mri",
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
+            "glossary_keys": [
+              "mri",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "unknown",
+            "availability_reason": "price_file_lists_rate",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73221&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: shoulder MRI",
+                "url": "https://www.radiologyinfo.org/en/info/shouldermr"
+              }
+            ],
+            "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "at": "this_site"
+          },
+          {
+            "line_id": "mr_arthrogram",
+            "tier": "not_in_public_data",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "73222"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan with dye in the joint",
+            "technical_name": "Shoulder MR arthrogram",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "unknown",
+            "availability_reason": "price_file_lists_rate",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ],
+            "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "at": "this_site"
+          },
+          {
+            "line_id": "mr_arthrogram_23350",
+            "tier": "not_in_public_data",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "23350"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan with dye in the joint: an extra part (Injection for shoulder arthrography)",
+            "technical_name": "Injection for shoulder arthrography",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "unknown",
+            "availability_reason": "price_file_lists_rate",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ],
+            "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "at": "this_site"
+          },
+          {
+            "line_id": "mr_arthrogram_77002",
+            "tier": "not_in_public_data",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "77002"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan with dye in the joint: an extra part (Fluoroscopic needle guidance)",
+            "technical_name": "Fluoroscopic needle guidance",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "unknown",
+            "availability_reason": "price_file_lists_rate",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ],
+            "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "at": "this_site"
+          }
+        ],
+        "totals": {
+          "likely": null,
+          "complete": false,
+          "missing": 1,
+          "excluded": [
+            {
+              "line_id": "visit",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "xray",
+              "reason": "availability_unknown"
+            },
+            {
+              "line_id": "physical_therapy",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "physical_therapy_sessions",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "steroid_injection",
+              "reason": "availability_unknown"
+            },
+            {
+              "line_id": "steroid_injection_drug_ai",
+              "reason": "ai_suggested"
+            },
+            {
+              "line_id": "tendon_scan_ultrasound",
+              "reason": "availability_unknown"
+            },
+            {
+              "line_id": "tendon_scan_mri",
+              "reason": "availability_unknown"
+            },
+            {
+              "line_id": "mr_arthrogram",
+              "reason": "availability_unknown"
+            },
+            {
+              "line_id": "mr_arthrogram_23350",
+              "reason": "availability_unknown"
+            },
+            {
+              "line_id": "mr_arthrogram_77002",
+              "reason": "availability_unknown"
+            }
+          ],
+          "you_pay": {
+            "kind": "cash_full_amount",
+            "note_key": "youpay.cash_full_amount",
+            "portal_label": null,
+            "portal_url": null
+          },
+          "comparable": 365.0,
+          "real_steps": 0,
+          "might_add": null
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
         "site_id": "massachusetts_general_physicians_organization_inc_cambri",
         "name": "MASSACHUSETTS GENERAL PHYSICIANS ORGANIZATION INC",
         "site_type": "specialist_office",
@@ -21168,792 +21962,6 @@
           "yours": "not_in_points"
         }
       ]
-    },
-    {
-      "site": {
-        "site_id": "atrius_health_inc_somerville",
-        "name": "ATRIUS HEALTH INC",
-        "site_type": "specialist_office",
-        "system_id": null,
-        "coords": {
-          "lat": 42.39763,
-          "lon": -71.123529,
-          "geocoded_by": "census_batch",
-          "geocoded_at": "2026-10-24"
-        },
-        "address_line": "40 HOLLAND ST, Somerville, MA 02144",
-        "phone": null,
-        "billing_type": "office_visit",
-        "booking": [],
-        "portal_links": [],
-        "hours": null,
-        "hours_label": "unknown",
-        "price_label": "price_on_request",
-        "price_source_id": null,
-        "listing_status": "multi_registry",
-        "service_areas": [
-          "skin",
-          "gi",
-          "ortho"
-        ],
-        "kind": "office",
-        "chain_id": null,
-        "chain_name": null,
-        "children_only": false,
-        "data_notices": []
-      },
-      "option_id": null,
-      "headline": {
-        "likely_low": null,
-        "likely_high": null,
-        "includes_estimate": false,
-        "complete": false,
-        "missing": 2,
-        "comparable": null,
-        "real_steps": 0,
-        "might_add": null
-      },
-      "headline_range": null,
-      "steps": [
-        {
-          "key": "visit",
-          "step_id": "visit",
-          "plain_name": "Visit with a bone & joint doctor",
-          "likelihood": "certain",
-          "availability": "offered",
-          "figure": "none",
-          "low": null,
-          "high": null,
-          "rank_value": null,
-          "estimated": false,
-          "unusual": false,
-          "in_total": false,
-          "missing": false,
-          "line_ids": [
-            "visit"
-          ],
-          "elsewhere": null,
-          "flat_visit_rate": false
-        },
-        {
-          "key": "xray",
-          "step_id": "xray",
-          "plain_name": "Quick picture of the shoulder bones",
-          "likelihood": "likely",
-          "availability": "unknown",
-          "figure": "none",
-          "low": null,
-          "high": null,
-          "rank_value": null,
-          "estimated": false,
-          "unusual": false,
-          "in_total": false,
-          "missing": true,
-          "line_ids": [
-            "xray"
-          ],
-          "elsewhere": null,
-          "flat_visit_rate": false
-        },
-        {
-          "key": "physical_therapy",
-          "step_id": "physical_therapy",
-          "plain_name": "Guided exercise program for the shoulder",
-          "likelihood": "likely",
-          "availability": "offered",
-          "figure": "none",
-          "low": null,
-          "high": null,
-          "rank_value": null,
-          "estimated": false,
-          "unusual": false,
-          "in_total": false,
-          "missing": true,
-          "line_ids": [
-            "physical_therapy",
-            "physical_therapy_sessions"
-          ],
-          "elsewhere": null,
-          "flat_visit_rate": false
-        },
-        {
-          "key": "steroid_injection",
-          "step_id": "steroid_injection",
-          "plain_name": "Shot of anti-inflammatory and numbing medicine",
-          "likelihood": "possible",
-          "availability": "unknown",
-          "figure": "none",
-          "low": null,
-          "high": null,
-          "rank_value": null,
-          "estimated": false,
-          "unusual": false,
-          "in_total": false,
-          "missing": false,
-          "line_ids": [
-            "steroid_injection",
-            "steroid_injection_drug_ai"
-          ],
-          "elsewhere": null,
-          "flat_visit_rate": false
-        },
-        {
-          "key": "tendon_scan_ultrasound",
-          "step_id": "tendon_scan_ultrasound",
-          "plain_name": "Live sound-wave picture of the tendons",
-          "likelihood": "possible",
-          "availability": "unknown",
-          "figure": "none",
-          "low": null,
-          "high": null,
-          "rank_value": null,
-          "estimated": false,
-          "unusual": false,
-          "in_total": false,
-          "missing": false,
-          "line_ids": [
-            "tendon_scan_ultrasound"
-          ],
-          "elsewhere": null,
-          "flat_visit_rate": false
-        },
-        {
-          "key": "tendon_scan_mri",
-          "step_id": "tendon_scan_mri",
-          "plain_name": "Detailed scan of tendons & cartilage",
-          "likelihood": "possible",
-          "availability": "unknown",
-          "figure": "none",
-          "low": null,
-          "high": null,
-          "rank_value": null,
-          "estimated": false,
-          "unusual": false,
-          "in_total": false,
-          "missing": false,
-          "line_ids": [
-            "tendon_scan_mri"
-          ],
-          "elsewhere": null,
-          "flat_visit_rate": false
-        },
-        {
-          "key": "mr_arthrogram",
-          "step_id": "mr_arthrogram",
-          "plain_name": "Detailed scan with dye in the joint",
-          "likelihood": "rare",
-          "availability": "unknown",
-          "figure": "none",
-          "low": null,
-          "high": null,
-          "rank_value": null,
-          "estimated": false,
-          "unusual": false,
-          "in_total": false,
-          "missing": false,
-          "line_ids": [
-            "mr_arthrogram",
-            "mr_arthrogram_23350",
-            "mr_arthrogram_77002"
-          ],
-          "elsewhere": null,
-          "flat_visit_rate": false
-        }
-      ],
-      "distance_km": 2.7,
-      "receipt": {
-        "lines": [
-          {
-            "line_id": "visit",
-            "tier": "not_in_public_data",
-            "likelihood": "certain",
-            "step_id": "visit",
-            "codes": [
-              "99203"
-            ],
-            "modifier": null,
-            "plain_name": "Visit with a bone & joint doctor",
-            "technical_name": "New-patient orthopedic or sports-medicine visit",
-            "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
-            "glossary_keys": [],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "availability_reason": null,
-            "cell": {
-              "kind": "not_loaded",
-              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "our_judgment",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "price_notes": [],
-            "estimate": null,
-            "unusual": null,
-            "anesthesia_time": null,
-            "chain_price_from": null,
-            "at": "this_site"
-          },
-          {
-            "line_id": "xray",
-            "tier": "not_in_public_data",
-            "likelihood": "likely",
-            "step_id": "xray",
-            "codes": [
-              "73030"
-            ],
-            "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones",
-            "technical_name": "Shoulder X-ray",
-            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while. It shows arthritis, bone spurs and calcium in the tendons, which changes what comes next.",
-            "glossary_keys": [
-              "xray"
-            ],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "unknown",
-            "availability_reason": "price_file_lists_rate",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "guideline",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [
-              {
-                "site_id": "afc_urgent_care_cambridge_cambridge",
-                "site_name": "AFC Urgent Care Cambridge",
-                "lat": 42.389456,
-                "lon": -71.119121,
-                "cell": {
-                  "kind": "money",
-                  "low": 150.0,
-                  "high": 150.0,
-                  "basis": "posted_self_pay",
-                  "prov": {
-                    "source_id": "posted_afc_watertown",
-                    "source_kind": "clinic_posted",
-                    "source_file": "self-pay",
-                    "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2",
-                    "source_date": null,
-                    "method": "stated",
-                    "row_ref": "posted_afc_watertown:5fb4bac81f1a:xray_2_views",
-                    "payer_id": null,
-                    "row_id": null
-                  },
-                  "prov_high": null
-                }
-              },
-              {
-                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
-                "site_name": "AFC Urgent Care Cambridge Inman Square",
-                "lat": 42.373615,
-                "lon": -71.101023,
-                "cell": {
-                  "kind": "money",
-                  "low": 150.0,
-                  "high": 150.0,
-                  "basis": "posted_self_pay",
-                  "prov": {
-                    "source_id": "posted_afc_watertown",
-                    "source_kind": "clinic_posted",
-                    "source_file": "self-pay",
-                    "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2",
-                    "source_date": null,
-                    "method": "stated",
-                    "row_ref": "posted_afc_watertown:5fb4bac81f1a:xray_2_views",
-                    "payer_id": null,
-                    "row_id": null
-                  },
-                  "prov_high": null
-                }
-              }
-            ],
-            "learn_more": [
-              {
-                "label": "MedlinePlus: X-Rays",
-                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en"
-              },
-              {
-                "label": "RadiologyInfo: bone X-ray",
-                "url": "https://www.radiologyinfo.org/en/info/bonerad"
-              }
-            ],
-            "price_notes": [],
-            "estimate": null,
-            "unusual": null,
-            "anesthesia_time": null,
-            "chain_price_from": null,
-            "at": "this_site"
-          },
-          {
-            "line_id": "physical_therapy",
-            "tier": "not_in_public_data",
-            "likelihood": "likely",
-            "step_id": "physical_therapy",
-            "codes": [
-              "97161"
-            ],
-            "modifier": null,
-            "plain_name": "Guided exercise program for the shoulder",
-            "technical_name": "Physical therapy evaluation and visits",
-            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
-            "glossary_keys": [
-              "pt_evaluation"
-            ],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "availability_reason": null,
-            "cell": {
-              "kind": "not_loaded",
-              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "guideline",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "price_notes": [],
-            "estimate": null,
-            "unusual": null,
-            "anesthesia_time": null,
-            "chain_price_from": null,
-            "at": "this_site"
-          },
-          {
-            "line_id": "physical_therapy_sessions",
-            "tier": "not_in_public_data",
-            "likelihood": "likely",
-            "step_id": "physical_therapy",
-            "codes": [
-              "97110"
-            ],
-            "modifier": null,
-            "plain_name": "Later exercise sessions (each 15 minutes)",
-            "technical_name": "Therapeutic exercise",
-            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
-            "glossary_keys": [
-              "pt_evaluation"
-            ],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "per_15_minutes",
-            "availability": "offered",
-            "availability_reason": null,
-            "cell": {
-              "kind": "not_loaded",
-              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "guideline",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "price_notes": [],
-            "estimate": null,
-            "unusual": null,
-            "anesthesia_time": null,
-            "chain_price_from": null,
-            "at": "this_site"
-          },
-          {
-            "line_id": "steroid_injection",
-            "tier": "not_in_public_data",
-            "likelihood": "possible",
-            "step_id": "steroid_injection",
-            "codes": [
-              "20610"
-            ],
-            "modifier": null,
-            "plain_name": "Shot of anti-inflammatory and numbing medicine",
-            "technical_name": "Corticosteroid shoulder injection",
-            "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
-            "glossary_keys": [
-              "steroid_injection",
-              "ultrasound"
-            ],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "unknown",
-            "availability_reason": "price_file_lists_rate",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "guideline",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "price_notes": [],
-            "estimate": null,
-            "unusual": null,
-            "anesthesia_time": null,
-            "chain_price_from": null,
-            "at": "this_site"
-          },
-          {
-            "line_id": "steroid_injection_drug_ai",
-            "tier": "not_in_public_data",
-            "likelihood": "possible",
-            "step_id": "steroid_injection",
-            "codes": [
-              "J3301"
-            ],
-            "modifier": null,
-            "plain_name": "The medicine in the shot",
-            "technical_name": "Injected medicine (billed as a drug)",
-            "why": "The medicine in the shot may appear as its own line on the bill.",
-            "glossary_keys": [
-              "steroid_injection",
-              "ultrasound"
-            ],
-            "component": "drug",
-            "component_confirmed": false,
-            "unit": "once",
-            "availability": "unknown",
-            "availability_reason": "price_file_lists_rate",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "guideline",
-            "doctor_fee": null,
-            "ai_suggested": true,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "price_notes": [],
-            "estimate": null,
-            "unusual": null,
-            "anesthesia_time": null,
-            "chain_price_from": null,
-            "at": "this_site"
-          },
-          {
-            "line_id": "tendon_scan_ultrasound",
-            "tier": "not_in_public_data",
-            "likelihood": "possible",
-            "step_id": "tendon_scan_ultrasound",
-            "codes": [
-              "76881"
-            ],
-            "modifier": null,
-            "plain_name": "Live sound-wave picture of the tendons",
-            "technical_name": "Shoulder ultrasound",
-            "why": "If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear is.",
-            "glossary_keys": [
-              "ultrasound",
-              "xray"
-            ],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "unknown",
-            "availability_reason": "price_file_lists_rate",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "guideline",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [
-              {
-                "label": "MedlinePlus: Ultrasound",
-                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=76881&informationRecipient.languageCode.c=en"
-              },
-              {
-                "label": "RadiologyInfo: musculoskeletal ultrasound",
-                "url": "https://www.radiologyinfo.org/en/info/genus"
-              }
-            ],
-            "price_notes": [],
-            "estimate": null,
-            "unusual": null,
-            "anesthesia_time": null,
-            "chain_price_from": null,
-            "at": "this_site"
-          },
-          {
-            "line_id": "tendon_scan_mri",
-            "tier": "not_in_public_data",
-            "likelihood": "possible",
-            "step_id": "tendon_scan_mri",
-            "codes": [
-              "73221"
-            ],
-            "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage",
-            "technical_name": "Shoulder MRI (no contrast)",
-            "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
-            "glossary_keys": [
-              "mri",
-              "xray"
-            ],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "unknown",
-            "availability_reason": "price_file_lists_rate",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "guideline",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [
-              {
-                "label": "MedlinePlus: MRI Scans",
-                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73221&informationRecipient.languageCode.c=en"
-              },
-              {
-                "label": "RadiologyInfo: shoulder MRI",
-                "url": "https://www.radiologyinfo.org/en/info/shouldermr"
-              }
-            ],
-            "price_notes": [],
-            "estimate": null,
-            "unusual": null,
-            "anesthesia_time": null,
-            "chain_price_from": null,
-            "at": "this_site"
-          },
-          {
-            "line_id": "mr_arthrogram",
-            "tier": "not_in_public_data",
-            "likelihood": "rare",
-            "step_id": "mr_arthrogram",
-            "codes": [
-              "73222"
-            ],
-            "modifier": null,
-            "plain_name": "Detailed scan with dye in the joint",
-            "technical_name": "Shoulder MR arthrogram",
-            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
-            "glossary_keys": [
-              "mr_arthrogram",
-              "labrum",
-              "xray"
-            ],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "unknown",
-            "availability_reason": "price_file_lists_rate",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "guideline",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [
-              {
-                "label": "MedlinePlus: MRI Scans",
-                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
-              }
-            ],
-            "price_notes": [],
-            "estimate": null,
-            "unusual": null,
-            "anesthesia_time": null,
-            "chain_price_from": null,
-            "at": "this_site"
-          },
-          {
-            "line_id": "mr_arthrogram_23350",
-            "tier": "not_in_public_data",
-            "likelihood": "rare",
-            "step_id": "mr_arthrogram",
-            "codes": [
-              "23350"
-            ],
-            "modifier": null,
-            "plain_name": "Detailed scan with dye in the joint: an extra part (Injection for shoulder arthrography)",
-            "technical_name": "Injection for shoulder arthrography",
-            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
-            "glossary_keys": [
-              "mr_arthrogram",
-              "labrum",
-              "xray"
-            ],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "unknown",
-            "availability_reason": "price_file_lists_rate",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "guideline",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [
-              {
-                "label": "MedlinePlus: MRI Scans",
-                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
-              }
-            ],
-            "price_notes": [],
-            "estimate": null,
-            "unusual": null,
-            "anesthesia_time": null,
-            "chain_price_from": null,
-            "at": "this_site"
-          },
-          {
-            "line_id": "mr_arthrogram_77002",
-            "tier": "not_in_public_data",
-            "likelihood": "rare",
-            "step_id": "mr_arthrogram",
-            "codes": [
-              "77002"
-            ],
-            "modifier": null,
-            "plain_name": "Detailed scan with dye in the joint: an extra part (Fluoroscopic needle guidance)",
-            "technical_name": "Fluoroscopic needle guidance",
-            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
-            "glossary_keys": [
-              "mr_arthrogram",
-              "labrum",
-              "xray"
-            ],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "unknown",
-            "availability_reason": "price_file_lists_rate",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "guideline",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [
-              {
-                "label": "MedlinePlus: MRI Scans",
-                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
-              }
-            ],
-            "price_notes": [],
-            "estimate": null,
-            "unusual": null,
-            "anesthesia_time": null,
-            "chain_price_from": null,
-            "at": "this_site"
-          }
-        ],
-        "totals": {
-          "likely": null,
-          "complete": false,
-          "missing": 2,
-          "excluded": [
-            {
-              "line_id": "visit",
-              "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "xray",
-              "reason": "availability_unknown"
-            },
-            {
-              "line_id": "physical_therapy",
-              "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "physical_therapy_sessions",
-              "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "steroid_injection",
-              "reason": "availability_unknown"
-            },
-            {
-              "line_id": "steroid_injection_drug_ai",
-              "reason": "ai_suggested"
-            },
-            {
-              "line_id": "tendon_scan_ultrasound",
-              "reason": "availability_unknown"
-            },
-            {
-              "line_id": "tendon_scan_mri",
-              "reason": "availability_unknown"
-            },
-            {
-              "line_id": "mr_arthrogram",
-              "reason": "availability_unknown"
-            },
-            {
-              "line_id": "mr_arthrogram_23350",
-              "reason": "availability_unknown"
-            },
-            {
-              "line_id": "mr_arthrogram_77002",
-              "reason": "availability_unknown"
-            }
-          ],
-          "you_pay": {
-            "kind": "cash_full_amount",
-            "note_key": "youpay.cash_full_amount",
-            "portal_label": null,
-            "portal_url": null
-          },
-          "comparable": null,
-          "real_steps": 0,
-          "might_add": null
-        }
-      },
-      "other_payers": []
     }
   ],
   "ordering": "rank",

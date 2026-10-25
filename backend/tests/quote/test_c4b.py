@@ -459,3 +459,34 @@ def test_price_ordering_never_puts_a_partial_figure_above_a_complete_one(engine)
     doc["sites"][first], doc["sites"][last] = doc["sites"][last], doc["sites"][first]
     with pytest.raises(ValidationError, match="option_then_price"):
         QuoteResponse.model_validate(doc)
+
+
+def test_offered_unpriced_step_is_an_estimate_not_partial(engine, store, registry):
+    """main 2026-10-25: AFC Watertown's posted self-pay visit ($179, provider fee included; the
+    codes A7 adds to its curated cash_prices, patched here) with an urine test it offers but
+    prices nowhere on its page, vs CHA Somerville's 'from $149' (doctor bills separately) with a
+    priced urine test. AFC's test takes the elsewhere range as an estimate: includes_estimate,
+    not partial, so AFC is the cheapest even though CHA's low is lower."""
+    reg = copy.copy(registry)
+    reg.sites = dict(registry.sites)
+    w = registry.sites["afc_watertown"]
+    cp = [p.model_copy(update={"codes": ["99203", "99213"]}) if p.item_id ==
+          "evaluation_consultation" else p for p in w.cash_prices]  # fmt: skip
+    reg.sites["afc_watertown"] = w.model_copy(update={"cash_prices": cp})
+    eng = Engine(store, reg)
+    cha = "cha_somerville_urgent_care_center_somerville"
+    r = _q(eng, CASH, site_ids=["afc_watertown", cha])
+    afc_hr, cha_hr = _site(r, "afc_watertown").headline_range, _site(r, cha).headline_range
+    urine = next(st for st in _site(r, "afc_watertown").steps if st.key == "urine_test")
+    assert (urine.availability, urine.figure, urine.estimated) == (
+        "offered",
+        "elsewhere_estimate",
+        True,
+    )
+    assert not urine.in_total and not urine.missing
+    assert afc_hr.visit_only.low == 179.0 and afc_hr.basis == "includes_estimate"
+    assert cha_hr.from_only and cha_hr.basis == "partial" and cha_hr.low < afc_hr.low
+    assert (r.options[0].cheapest_site_id, r.options[0].cheapest_basis) == (
+        "afc_watertown",
+        "includes_estimate",
+    )

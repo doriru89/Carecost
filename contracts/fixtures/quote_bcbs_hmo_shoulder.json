@@ -5593,36 +5593,38 @@
           "estimated": false
         },
         "with_possible": {
-          "low": 1152.67,
-          "high": 1412.93,
+          "low": 3922.55,
+          "high": 4575.73,
           "step_keys": [
             "xray",
             "physical_therapy",
+            "steroid_injection",
             "tendon_scan_ultrasound",
-            "tendon_scan_mri"
+            "tendon_scan_mri",
+            "mr_arthrogram"
           ],
           "includes": [
             "Quick picture of the shoulder bones",
             "Guided exercise program for the shoulder",
-            "Live sound-wave picture of the tendons",
-            "Detailed scan of tendons & cartilage"
-          ],
-          "not_priced": [
-            "Visit with your main doctor first",
             "Shot of anti-inflammatory and numbing medicine",
+            "Live sound-wave picture of the tendons",
+            "Detailed scan of tendons & cartilage",
             "Detailed scan with dye in the joint"
           ],
+          "not_priced": [
+            "Visit with your main doctor first"
+          ],
           "alternatives": [],
-          "estimated": false
+          "estimated": true
         },
         "may_also_order": [
           {
             "step_key": "steroid_injection",
             "plain_name": "Shot of anti-inflammatory and numbing medicine",
             "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
-            "low": null,
-            "high": null,
-            "figure": "none",
+            "low": 228.78,
+            "high": 345.34,
+            "figure": "elsewhere_estimate",
             "exclusive_group": null
           },
           {
@@ -5647,9 +5649,9 @@
             "step_key": "mr_arthrogram",
             "plain_name": "Detailed scan with dye in the joint",
             "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
-            "low": null,
-            "high": null,
-            "figure": "none",
+            "low": 2541.1,
+            "high": 2817.46,
+            "figure": "elsewhere_estimate",
             "exclusive_group": null
           }
         ]
@@ -5744,11 +5746,11 @@
           "plain_name": "Shot of anti-inflammatory and numbing medicine",
           "likelihood": "possible",
           "availability": "offered",
-          "figure": "none",
-          "low": null,
-          "high": null,
+          "figure": "elsewhere_estimate",
+          "low": 228.78,
+          "high": 345.34,
           "rank_value": null,
-          "estimated": false,
+          "estimated": true,
           "unusual": true,
           "in_total": false,
           "missing": false,
@@ -5757,7 +5759,15 @@
             "steroid_injection_doctor",
             "steroid_injection_drug_ai"
           ],
-          "elsewhere": null,
+          "elsewhere": {
+            "low": 228.78,
+            "high": 345.34,
+            "median": 228.78,
+            "n_groups": 10,
+            "kind": null,
+            "scope": "same_kind",
+            "payer_id": "BCBS_MA"
+          },
           "flat_visit_rate": false
         },
         {
@@ -5808,11 +5818,11 @@
           "plain_name": "Detailed scan with dye in the joint",
           "likelihood": "rare",
           "availability": "offered",
-          "figure": "none",
-          "low": null,
-          "high": null,
+          "figure": "elsewhere_estimate",
+          "low": 2541.1,
+          "high": 2817.46,
           "rank_value": null,
-          "estimated": false,
+          "estimated": true,
           "unusual": false,
           "in_total": false,
           "missing": false,
@@ -5824,7 +5834,15 @@
             "mr_arthrogram_77002_facility",
             "mr_arthrogram_77002_reading"
           ],
-          "elsewhere": null,
+          "elsewhere": {
+            "low": 2541.1,
+            "high": 2817.46,
+            "median": 2580.84,
+            "n_groups": 9,
+            "kind": null,
+            "scope": "same_kind",
+            "payer_id": "BCBS_MA"
+          },
           "flat_visit_rate": false
         }
       ],
@@ -8415,36 +8433,38 @@
           "estimated": false
         },
         "with_possible": {
-          "low": 1152.67,
-          "high": 1412.93,
+          "low": 3922.55,
+          "high": 4575.73,
           "step_keys": [
             "xray",
             "physical_therapy",
+            "steroid_injection",
             "tendon_scan_ultrasound",
-            "tendon_scan_mri"
+            "tendon_scan_mri",
+            "mr_arthrogram"
           ],
           "includes": [
             "Quick picture of the shoulder bones",
             "Guided exercise program for the shoulder",
-            "Live sound-wave picture of the tendons",
-            "Detailed scan of tendons & cartilage"
-          ],
-          "not_priced": [
-            "Visit with your main doctor first",
             "Shot of anti-inflammatory and numbing medicine",
+            "Live sound-wave picture of the tendons",
+            "Detailed scan of tendons & cartilage",
             "Detailed scan with dye in the joint"
           ],
+          "not_priced": [
+            "Visit with your main doctor first"
+          ],
           "alternatives": [],
-          "estimated": false
+          "estimated": true
         },
         "may_also_order": [
           {
             "step_key": "steroid_injection",
             "plain_name": "Shot of anti-inflammatory and numbing medicine",
             "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
-            "low": null,
-            "high": null,
-            "figure": "none",
+            "low": 228.78,
+            "high": 345.34,
+            "figure": "elsewhere_estimate",
             "exclusive_group": null
           },
           {
@@ -8469,9 +8489,9 @@
             "step_key": "mr_arthrogram",
             "plain_name": "Detailed scan with dye in the joint",
             "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
-            "low": null,
-            "high": null,
-            "figure": "none",
+            "low": 2541.1,
+            "high": 2817.46,
+            "figure": "elsewhere_estimate",
             "exclusive_group": null
           }
         ]
@@ -8566,11 +8586,11 @@
           "plain_name": "Shot of anti-inflammatory and numbing medicine",
           "likelihood": "possible",
           "availability": "offered",
-          "figure": "none",
-          "low": null,
-          "high": null,
+          "figure": "elsewhere_estimate",
+          "low": 228.78,
+          "high": 345.34,
           "rank_value": null,
-          "estimated": false,
+          "estimated": true,
           "unusual": false,
           "in_total": false,
           "missing": false,
@@ -8579,7 +8599,15 @@
             "steroid_injection_doctor",
             "steroid_injection_drug_ai"
           ],
-          "elsewhere": null,
+          "elsewhere": {
+            "low": 228.78,
+            "high": 345.34,
+            "median": 228.78,
+            "n_groups": 10,
+            "kind": null,
+            "scope": "same_kind",
+            "payer_id": "BCBS_MA"
+          },
           "flat_visit_rate": false
         },
         {
@@ -8630,11 +8658,11 @@
           "plain_name": "Detailed scan with dye in the joint",
           "likelihood": "rare",
           "availability": "offered",
-          "figure": "none",
-          "low": null,
-          "high": null,
+          "figure": "elsewhere_estimate",
+          "low": 2541.1,
+          "high": 2817.46,
           "rank_value": null,
-          "estimated": false,
+          "estimated": true,
           "unusual": false,
           "in_total": false,
           "missing": false,
@@ -8646,7 +8674,15 @@
             "mr_arthrogram_77002_facility",
             "mr_arthrogram_77002_reading"
           ],
-          "elsewhere": null,
+          "elsewhere": {
+            "low": 2541.1,
+            "high": 2817.46,
+            "median": 2580.84,
+            "n_groups": 9,
+            "kind": null,
+            "scope": "same_kind",
+            "payer_id": "BCBS_MA"
+          },
           "flat_visit_rate": false
         }
       ],
@@ -11215,36 +11251,38 @@
           "estimated": false
         },
         "with_possible": {
-          "low": 1152.67,
-          "high": 1412.93,
+          "low": 3922.55,
+          "high": 4575.73,
           "step_keys": [
             "xray",
             "physical_therapy",
+            "steroid_injection",
             "tendon_scan_ultrasound",
-            "tendon_scan_mri"
+            "tendon_scan_mri",
+            "mr_arthrogram"
           ],
           "includes": [
             "Quick picture of the shoulder bones",
             "Guided exercise program for the shoulder",
-            "Live sound-wave picture of the tendons",
-            "Detailed scan of tendons & cartilage"
-          ],
-          "not_priced": [
-            "Visit with your main doctor first",
             "Shot of anti-inflammatory and numbing medicine",
+            "Live sound-wave picture of the tendons",
+            "Detailed scan of tendons & cartilage",
             "Detailed scan with dye in the joint"
           ],
+          "not_priced": [
+            "Visit with your main doctor first"
+          ],
           "alternatives": [],
-          "estimated": false
+          "estimated": true
         },
         "may_also_order": [
           {
             "step_key": "steroid_injection",
             "plain_name": "Shot of anti-inflammatory and numbing medicine",
             "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
-            "low": null,
-            "high": null,
-            "figure": "none",
+            "low": 228.78,
+            "high": 345.34,
+            "figure": "elsewhere_estimate",
             "exclusive_group": null
           },
           {
@@ -11269,9 +11307,9 @@
             "step_key": "mr_arthrogram",
             "plain_name": "Detailed scan with dye in the joint",
             "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
-            "low": null,
-            "high": null,
-            "figure": "none",
+            "low": 2541.1,
+            "high": 2817.46,
+            "figure": "elsewhere_estimate",
             "exclusive_group": null
           }
         ]
@@ -11366,11 +11404,11 @@
           "plain_name": "Shot of anti-inflammatory and numbing medicine",
           "likelihood": "possible",
           "availability": "offered",
-          "figure": "none",
-          "low": null,
-          "high": null,
+          "figure": "elsewhere_estimate",
+          "low": 228.78,
+          "high": 345.34,
           "rank_value": null,
-          "estimated": false,
+          "estimated": true,
           "unusual": true,
           "in_total": false,
           "missing": false,
@@ -11379,7 +11417,15 @@
             "steroid_injection_doctor",
             "steroid_injection_drug_ai"
           ],
-          "elsewhere": null,
+          "elsewhere": {
+            "low": 228.78,
+            "high": 345.34,
+            "median": 228.78,
+            "n_groups": 10,
+            "kind": null,
+            "scope": "same_kind",
+            "payer_id": "BCBS_MA"
+          },
           "flat_visit_rate": false
         },
         {
@@ -11430,11 +11476,11 @@
           "plain_name": "Detailed scan with dye in the joint",
           "likelihood": "rare",
           "availability": "offered",
-          "figure": "none",
-          "low": null,
-          "high": null,
+          "figure": "elsewhere_estimate",
+          "low": 2541.1,
+          "high": 2817.46,
           "rank_value": null,
-          "estimated": false,
+          "estimated": true,
           "unusual": false,
           "in_total": false,
           "missing": false,
@@ -11446,7 +11492,15 @@
             "mr_arthrogram_77002_facility",
             "mr_arthrogram_77002_reading"
           ],
-          "elsewhere": null,
+          "elsewhere": {
+            "low": 2541.1,
+            "high": 2817.46,
+            "median": 2580.84,
+            "n_groups": 9,
+            "kind": null,
+            "scope": "same_kind",
+            "payer_id": "BCBS_MA"
+          },
           "flat_visit_rate": false
         }
       ],

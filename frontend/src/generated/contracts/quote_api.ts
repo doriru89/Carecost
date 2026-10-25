@@ -376,7 +376,7 @@ export interface MayAlsoOrder {
   why: string | null;
   low: number | null;
   high: number | null;
-  figure: "own" | "estimate" | "elsewhere" | "none";
+  figure: "own" | "estimate" | "elsewhere" | "elsewhere_estimate" | "none";
   exclusive_group: string | null;
 }
 
@@ -944,7 +944,7 @@ export interface StepSummary {
   plain_name: string;
   likelihood: "certain" | "likely" | "possible" | "rare";
   availability: "offered" | "not_offered" | "unknown";
-  figure: "own" | "estimate" | "elsewhere" | "none";
+  figure: "own" | "estimate" | "elsewhere" | "elsewhere_estimate" | "none";
   low: number | null;
   high: number | null;
   /**

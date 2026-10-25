@@ -1396,6 +1396,7 @@
             "own",
             "estimate",
             "elsewhere",
+            "elsewhere_estimate",
             "none"
           ],
           "title": "Figure",
@@ -3482,6 +3483,7 @@
             "own",
             "estimate",
             "elsewhere",
+            "elsewhere_estimate",
             "none"
           ],
           "title": "Figure",
