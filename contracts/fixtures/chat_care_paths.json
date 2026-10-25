@@ -47,7 +47,8 @@
       "copy.not_a_diagnosis",
       "copy.when_to_see_a_doctor"
     ],
-    "card_ids": []
+    "card_ids": [],
+    "fixed_text_key": null
   },
   "conversation_turn": 2
 }

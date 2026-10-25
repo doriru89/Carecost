@@ -8,7 +8,7 @@ import pytest
 from app.chat import guard
 from app.chat.contracts import CARE_PATH_COPY_KEYS
 
-from .util import SHOULDER_DONE, llm, req, run, service
+from .util import SHOULDER_DONE, blocked, llm, req, run, service
 
 DONE = dict(answers=SHOULDER_DONE, history=["my shoulder hurts"], text="It came on slowly.")
 
@@ -53,7 +53,7 @@ REJECT = [
 def test_condition_outside_the_path_is_rejected_twice_then_llm_invalid(tmp_path, msg):
     svc, fake = service(tmp_path, script=[_care(msg), _care(msg)])
     r = run(svc, req(**DONE))
-    assert r["reply"]["kind"] == "llm_invalid"
+    assert blocked(r)
     assert r["llm_called"] is True and len(fake.calls) == 2
     # the retry prompt tells the model what was wrong
     assert "rejected" in fake.calls[1][1]
@@ -71,7 +71,7 @@ def test_one_bad_attempt_then_a_good_one(tmp_path):
 def test_condition_named_by_the_path_is_allowed_only_while_that_path_shows(tmp_path):
     # "sprain" is in the ankle path's intro; the shoulder path does not name it
     svc, _ = service(tmp_path, script=[_care("Most of these are a sprain."), _care("A sprain.")])
-    assert run(svc, req(**DONE))["reply"]["kind"] == "llm_invalid"
+    assert blocked(run(svc, req(**DONE)))
     ankle = dict(
         answers={"Q1": ["ankle"], "Q2": ["injury"]}, history=["I twisted my ankle"], text="yes"
     )
@@ -82,7 +82,7 @@ def test_condition_named_by_the_path_is_allowed_only_while_that_path_shows(tmp_p
 def test_clarify_lead_in_with_no_path_shown_may_name_no_condition(tmp_path):
     bad = llm(message="Rotator cuff problems are common. Did it start with an injury?")
     svc, _ = service(tmp_path, script=[bad, bad])
-    assert run(svc, req())["reply"]["kind"] == "llm_invalid"
+    assert blocked(run(svc, req()))
 
 
 @pytest.mark.parametrize(
@@ -98,7 +98,7 @@ def test_clarify_lead_in_with_no_path_shown_may_name_no_condition(tmp_path):
 )
 def test_stock_acknowledgement_openers_are_rejected(tmp_path, msg):
     svc, fake = service(tmp_path, script=[llm(message=msg), llm(message=msg)])
-    assert run(svc, req())["reply"]["kind"] == "llm_invalid" and len(fake.calls) == 2
+    assert blocked(run(svc, req())) and len(fake.calls) == 2
 
 
 def test_one_question_per_turn_and_chips_verbatim(tmp_path):

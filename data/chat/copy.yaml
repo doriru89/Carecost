@@ -29,3 +29,13 @@ copy:
   ai.paused_conversation_cap:
     en: "This conversation is long enough. Start a new one, or browse prices directly."
     zh: "这段对话已经够长了。请开始新的对话，或直接浏览价格。"
+  # R18 / P13 (2026-10-25): fixed copy shown instead of model text. Not clinical wording.
+  ai.paused_provider_chips:
+    en: "The assistant can't read typed messages right now. Answer the questions below to find a care path, or browse prices."
+    zh: "助手现在无法读取你输入的文字。回答下面的问题来找到就医路径，或直接浏览价格。"
+  chat.fixed_clarify:
+    en: "One more question helps narrow this down."
+    zh: "再回答一个问题，可以缩小范围。"
+  chat.fixed_paths:
+    en: "These care paths match your answers so far."
+    zh: "这些就医路径符合你目前的回答。"

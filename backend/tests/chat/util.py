@@ -81,5 +81,23 @@ def run(svc: ChatService, r: ChatRequest, ip: str = "203.0.113.7") -> dict:
     return json.loads(svc.handle(r, ip))
 
 
-__all__ = ["FakeClient", "NOW", "FIRST", "SHOULDER_DONE", "content", "llm", "req", "run",
-           "service", "settings"]  # fmt: skip
+def blocked(r: dict) -> bool:
+    """The model's text did not reach the screen: llm_invalid, or (P13) the code-only reply with
+    fixed copy after two rejected outputs. Either way the model ran (llm_called)."""
+    reply = r["reply"]
+    fixed = reply.get("fixed_text_key") or ""
+    return r["llm_called"] and (reply["kind"] == "llm_invalid" or fixed.startswith("chat.fixed"))
+
+
+def chips_without_llm(r: dict) -> bool:
+    """R18: no model this turn, but the code-only chip flow answered."""
+    reply = r["reply"]
+    return (
+        r["llm_called"] is False
+        and reply["kind"] in ("clarify", "care_paths")
+        and reply["fixed_text_key"] == "ai.paused_provider_chips"
+    )
+
+
+__all__ = ["FakeClient", "NOW", "FIRST", "SHOULDER_DONE", "blocked", "chips_without_llm",
+           "content", "llm", "req", "run", "service", "settings"]  # fmt: skip

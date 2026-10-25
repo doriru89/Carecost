@@ -7,6 +7,9 @@ other's file, so the two branches merge without touching the same lines.
 The route does not declare ``response_model=ChatResponse``: the service validates the response
 once with a ``ChatContext`` and returns its JSON (FastAPI would re-validate it without one).
 
+Startup (R11): with ``CARECOST_ENV=production`` and no ``CARECOST_CHAT_LEDGER_PATH``, the app
+refuses to start (``ChatConfigError`` from the router's lifespan).
+
 Service wiring: ``request.app.state.chat_service`` when the app factory (or a test) set one;
 otherwise one ``ChatService`` built from env vars on first use. If the factory sets
 ``app.state.catalog`` (stream C's ``Catalog``), the chat uses it; else a care-path-only catalog.
@@ -16,18 +19,29 @@ from __future__ import annotations
 
 import logging
 import threading
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, FastAPI, HTTPException, Request
 from fastapi.responses import Response
 
-from app.chat.config import ChatSettings
+from app.chat.config import ChatSettings, check_production_paths
 from app.chat.contracts import ChatRequest
 from app.chat.netid import ClientAddressError, client_ip
 from app.chat.service import ChatService, Content, RequestRejected
 
 log = logging.getLogger(__name__)
 
-router = APIRouter()
+
+@asynccontextmanager
+async def _startup(app: FastAPI) -> AsyncIterator[None]:
+    """R11: refuse to start in production without persistent ledger / review-log paths. The
+    router's lifespan joins the app's when the factory includes it (FastAPI merges them)."""
+    check_production_paths()
+    yield
+
+
+router = APIRouter(lifespan=_startup)
 
 _lock = threading.Lock()
 

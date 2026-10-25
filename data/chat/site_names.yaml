@@ -1,0 +1,225 @@
+# P13 / R14: names the chat model may not use in free text on any turn. Sites belong to the list.
+#
+# The guard DERIVES most names: every word of 3+ letters in data/sites/sites.yaml names, operators,
+# ownership detail and towns ("Saugus" catches "the Saugus one"), minus `generic_words` below.
+# This file only holds what derivation cannot know:
+#   aliases          short forms and multi-word names people and models use
+#   generic_words    ordinary words that appear in site names but must stay usable in a sentence
+#   capitalized_only words that are a place name only when capitalized (matched case-sensitively)
+# Not clinical content. A false positive costs one retry, then fixed copy with the same chips.
+version: 1
+aliases:
+- afc
+- afc urgent care
+- american family care
+- mass general
+- mass general brigham
+- massachusetts general
+- mgh
+- mgb
+- brigham
+- brigham and women's
+- bwh
+- beth israel
+- beth israel deaconess
+- bidmc
+- bilh
+- lahey
+- tufts
+- tufts medical center
+- tufts medicine
+- boston medical center
+- boston medical
+- bmc
+- boston children's
+- children's hospital
+- franciscan children's
+- dana-farber
+- dana farber
+- cambridge health alliance
+- cha
+- mount auburn
+- new england baptist
+- south shore health
+- south shore hospital
+- hallmark health
+- mystic valley
+- jamaica plain
+- chestnut hill
+- east boston
+- west roxbury
+- atrius
+- atrius health
+- optum
+- cvs
+- minuteclinic
+- minute clinic
+- carbon health
+- convenientmd
+- convenient md
+- parity urgent care
+- mytownhealth
+- pm pediatrics
+- pm pediatric care
+- melrosewakefield
+- newton-wellesley
+- winchester hospital
+- faulkner
+- dothouse
+generic_words:
+# English and medical words that happen to be in site names
+- adult
+- aesthetics
+- affiliated
+- allergy
+- alliance
+- ambulatory
+- and
+- assoc
+- associates
+- back
+- bay
+- boston
+- business
+- cancer
+- care
+- cente
+- center
+- centre
+- chain
+- children
+- children's
+- clinic
+- clinicians
+- commission
+- common
+- community
+- corner
+- corporation
+- crossing
+- ctr
+- dba
+- dermatology
+- downtown
+- ear
+- east
+- emergency
+- end
+- endoscopy
+- excel
+- express
+- eye
+- facility
+- faculty
+- fka
+- food
+- for
+- formerly
+- foundation
+- fqhc
+- franchise
+- franchisee-owned
+- franchisor
+- gastroenterology
+- general
+- group
+- hallmark
+- health
+- hill
+- hills
+- hospital
+- hospital-licensed
+- hwy
+- inc
+- incl
+- institute
+- integrated
+- internal
+- investor-backed
+- landing
+- laser
+- llc
+- main
+- maintenance
+- mass
+- massachusetts
+- med
+- medical
+- medicine
+- mid
+- mohs
+- mount
+- name
+- network
+- new
+- north
+- northeast
+- northern
+- not
+- nutrition
+- organization
+- orthopaedic
+- orthopedic
+- orthopedics
+- outpatient
+- parkway
+- partners
+- pcs
+- pe-backed
+- pediatic
+- pediatric
+- pediatrics
+- phys
+- physicians
+- plain
+- plaza
+- pllc
+- premier
+- primary
+- professional
+- public
+- retail
+- river
+- satellite
+- services
+- shore
+- skin
+- skincare
+- south
+- specialists
+- spine
+- sports
+- spring
+- square
+- ste
+- street
+- surg
+- surgeons
+- surgery
+- surgical
+- system
+- the
+- tic
+- university
+- unverified
+- urgent
+- valley
+- venture-backed
+- walk-in
+- west
+- women's
+- womens
+# street names in "Clinicians at <address>" rows (an address, not a brand)
+- beacon
+- boylston
+- charles
+- milk
+- providence
+- warren
+- washington
+capitalized_only:
+# town or brand only when capitalized; lowercase is an ordinary English word
+- revere
+- canton
+- concord
+- reading

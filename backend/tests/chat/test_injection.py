@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import pytest
 
-from .util import SHOULDER_DONE, llm, req, run, service
+from .util import SHOULDER_DONE, blocked, llm, req, run, service
 
 VIGNETTES = [
     (
@@ -73,9 +73,10 @@ VIGNETTES = [
 def test_injection_output_is_rejected(tmp_path, text, obeying):
     svc, fake = service(tmp_path, script=[obeying, obeying])
     r = run(svc, req(text=text, history=["my shoulder hurts"]))
-    assert r["reply"]["kind"] == "llm_invalid", r["reply"]
+    assert blocked(r), r["reply"]
     assert r["llm_called"] is True and len(fake.calls) == 2
-    assert r["reply"]["browse_prices_available"] is True
+    # P13: the code-only reply (chips from the person's own chip answers, fixed copy) shows
+    assert r["reply"]["kind"] in ("clarify", "care_paths", "llm_invalid")
 
 
 def test_skip_the_red_flag_never_reaches_the_model(tmp_path):

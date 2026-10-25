@@ -233,14 +233,40 @@
           "title": "Copy Keys",
           "type": "array"
         },
+        "fixed_text_key": {
+          "anyOf": [
+            {
+              "enum": [
+                "ai.paused_provider_chips",
+                "chat.fixed_clarify",
+                "chat.fixed_paths"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fixed copy instead of text (R18 / P13); exactly one is set",
+          "title": "Fixed Text Key"
+        },
         "kind": {
           "const": "care_paths",
           "title": "Kind",
           "type": "string"
         },
         "text": {
-          "title": "Text",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Model sentence; None when fixed_text_key is shown",
+          "title": "Text"
         },
         "understood": {
           "items": {
@@ -256,7 +282,8 @@
         "understood",
         "candidates",
         "copy_keys",
-        "card_ids"
+        "card_ids",
+        "fixed_text_key"
       ],
       "title": "CarePathsReply",
       "type": "object"
@@ -559,6 +586,24 @@
           "title": "Copy Keys",
           "type": "array"
         },
+        "fixed_text_key": {
+          "anyOf": [
+            {
+              "enum": [
+                "ai.paused_provider_chips",
+                "chat.fixed_clarify",
+                "chat.fixed_paths"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fixed copy shown instead of a lead_in: the model is off (R18) or its text was blocked (P13). Never set together with lead_in.",
+          "title": "Fixed Text Key"
+        },
         "kind": {
           "const": "clarify",
           "title": "Kind",
@@ -600,7 +645,8 @@
         "questions",
         "candidates",
         "copy_keys",
-        "card_ids"
+        "card_ids",
+        "fixed_text_key"
       ],
       "title": "ClarifyReply",
       "type": "object"

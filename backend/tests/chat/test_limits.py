@@ -14,7 +14,7 @@ from app.chat.ledger import Caps, Ledger, Refused, provider_day, resets_at
 from app.chat.llm import ProviderError
 from app.chat.netid import ClientAddressError, client_ip, hash_email, hash_ip, ip_key
 
-from .util import NOW, llm, req, run, service
+from .util import NOW, blocked, chips_without_llm, llm, req, run, service
 
 CAPS = Caps(ip_soft_usd=1.0, ip_hard_usd=2.0, global_usd=5.0, ip_turn_cap=40)
 
@@ -271,25 +271,35 @@ def test_email_is_required_before_ai_use():
 def test_provider_down_pauses_without_charge(tmp_path):
     svc, fake = service(tmp_path, script=[ProviderError("gemini HTTP 503")])
     r = run(svc, req())
-    assert r["reply"]["reason"] == "provider_unavailable" and r["llm_called"] is False
+    assert chips_without_llm(r)  # R18: the chips still work when the provider is down
     assert r["budget"]["spent_today_usd"] == 0
 
 
 def test_provider_timeout_is_charged_conservatively(tmp_path):
     svc, fake = service(tmp_path, script=[ProviderError("timeout", maybe_billed=True)])
     r = run(svc, req())
-    assert r["reply"]["reason"] == "provider_unavailable" and r["budget"]["spent_today_usd"] > 0
+    assert chips_without_llm(r) and r["budget"]["spent_today_usd"] > 0
 
 
-def test_invalid_then_provider_down_is_llm_invalid(tmp_path):
+def test_invalid_then_provider_down_falls_back_to_fixed_copy(tmp_path):
     svc, fake = service(tmp_path, script=["not json", ProviderError("HTTP 500")])
     r = run(svc, req())
-    assert r["reply"]["kind"] == "llm_invalid" and r["llm_called"] is True
+    assert blocked(r) and r["reply"]["fixed_text_key"] == "chat.fixed_clarify"
+    assert r["reply"]["questions"][0]["question_id"] == "Q1"
 
 
-def test_llm_invalid_after_two_bad_outputs(tmp_path):
+def test_two_bad_outputs_fall_back_to_the_code_only_chips(tmp_path):
     svc, fake = service(tmp_path, script=["{", "[]"])
     r = run(svc, req())
+    assert r["reply"]["kind"] == "clarify" and r["reply"]["lead_in"] is None
+    assert r["reply"]["fixed_text_key"] == "chat.fixed_clarify" and r["llm_called"] is True
+    assert len(fake.calls) == 2
+
+
+def test_llm_invalid_when_the_code_has_nothing_to_show(tmp_path):
+    # Q1=other is out of scope: no chip, no path, so the old llm_invalid reply stays
+    svc, fake = service(tmp_path, script=["{", "[]"])
+    r = run(svc, req(answers={"Q1": ["other"]}))
     assert r["reply"] == {
         "kind": "llm_invalid", "message_key": "ai.output_invalid", "browse_prices_available": True
     }  # fmt: skip
@@ -302,4 +312,4 @@ def test_no_key_means_paused_not_crash(tmp_path):
     from .util import content, settings
 
     svc = ChatService(settings(tmp_path), content(), client=None, clock=lambda: NOW)
-    assert run(svc, req())["reply"]["reason"] == "provider_unavailable"
+    assert chips_without_llm(run(svc, req()))
