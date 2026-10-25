@@ -7,13 +7,13 @@ import pytest
 
 from app.chat import guard
 
-from .util import SHOULDER_DONE, llm, req, run, service
+from .util import SHOULDER_DONE, blocked, llm, req, run, service
 
 
 def _rejected(tmp_path, msg, **rq):
     svc, fake = service(tmp_path, script=[llm(message=msg), llm(message=msg)])
     r = run(svc, req(**rq))
-    return r["reply"]["kind"] == "llm_invalid" and len(fake.calls) == 2
+    return blocked(r) and len(fake.calls) == 2
 
 
 # --------------------------------------------------------------------------- 1. money in words
@@ -78,7 +78,7 @@ def test_cue_on_a_path_turn_must_point_at_the_paths_own_words(tmp_path):
     bad = llm(message="It might be a pinched nerve in your neck.", understood=[],
               next_question_id=None)  # fmt: skip
     svc, _ = service(tmp_path, script=[bad, bad])
-    assert run(svc, req(**DONE))["reply"]["kind"] == "llm_invalid"
+    assert blocked(run(svc, req(**DONE)))
     good = llm(message="It is most likely the rotator cuff tendons.", understood=[],
                next_question_id=None)  # fmt: skip
     svc2, _ = service(tmp_path / "b", script=[good])

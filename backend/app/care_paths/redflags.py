@@ -431,7 +431,11 @@ def screen_checklist(checked: list[str], flagset: RedFlagSet) -> ScreenResult:
 
 def checklist_for_area(path_area: str, flagset: RedFlagSet) -> list[RedFlag]:
     areas = set(flagset.path_areas.get(path_area, [path_area])) | {"global"}
-    return [f for f in flagset.flags if f.in_checklist and areas & set(f.areas)]
+    return [
+        f
+        for f in flagset.flags
+        if (f.in_checklist and areas & set(f.areas)) or areas & set(f.checklist_areas)
+    ]
 
 
 # --------------------------------------------------------------------------- one-way escalation

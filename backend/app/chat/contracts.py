@@ -238,6 +238,13 @@ CARE_PATH_COPY_KEYS: tuple[str, ...] = ("copy.not_a_diagnosis", "copy.when_to_se
 """D33: fixed copy shown with every reply that shows care paths (not LLM text)."""
 
 
+FixedTextKey = Literal["ai.paused_provider_chips", "chat.fixed_clarify", "chat.fixed_paths"]
+"""Fixed copy (data/chat/copy.yaml) shown in place of model text. R18: ``ai.paused_provider_chips``
+when no model is configured (the chips still work, llm_called is false). R14 / P13:
+``chat.fixed_*`` when the model's output failed the checks twice (llm_called is true)."""
+FIXED_TEXT_NO_LLM = "ai.paused_provider_chips"
+
+
 def _check_copy_keys(candidates: list[CandidatePath], keys: list[str]) -> None:
     want = list(CARE_PATH_COPY_KEYS) if candidates else []
     if keys != want:
@@ -277,26 +284,38 @@ class ClarifyReply(_Strict):
         description="D33: not-a-diagnosis + when-to-see-a-doctor, whenever candidates show"
     )
     card_ids: list[str] = Field(default_factory=list, description="questions.yaml card ids")
+    fixed_text_key: FixedTextKey | None = Field(
+        default=None,
+        description="Fixed copy shown instead of a lead_in: the model is off (R18) or its text "
+        "was blocked (P13). Never set together with lead_in.",
+    )
 
     @model_validator(mode="after")
     def _copy(self) -> ClarifyReply:
         _check_copy_keys(self.candidates, list(self.copy_keys))
+        if self.fixed_text_key is not None and self.lead_in is not None:
+            raise ValueError("a clarify reply carries lead_in or fixed_text_key, not both")
         return self
 
 
 class CarePathsReply(_Strict):
     kind: Literal["care_paths"]
-    text: LlmText
+    text: LlmText | None = Field(description="Model sentence; None when fixed_text_key is shown")
     understood: list[InferredAnswer] = Field(default_factory=list)
     candidates: list[CandidatePath] = Field(min_length=1)
     copy_keys: list[CarePathCopyKey] = Field(
         description="D33: not-a-diagnosis + when-to-see-a-doctor (fixed copy, not LLM text)"
     )
     card_ids: list[str] = Field(default_factory=list)
+    fixed_text_key: FixedTextKey | None = Field(
+        default=None, description="Fixed copy instead of text (R18 / P13); exactly one is set"
+    )
 
     @model_validator(mode="after")
     def _copy(self) -> CarePathsReply:
         _check_copy_keys(self.candidates, list(self.copy_keys))
+        if (self.text is None) == (self.fixed_text_key is None):
+            raise ValueError("a care_paths reply carries exactly one of text and fixed_text_key")
         return self
 
 
@@ -551,7 +570,7 @@ def _check_reply(reply: Any, ctx: ChatContext) -> None:
             llm = [reply.text]
         else:
             shown = [c.path_id for c in reply.candidates]
-            llm = [reply.lead_in or ""] if kind == "clarify" else [reply.text]
+            llm = [reply.lead_in or ""] if kind == "clarify" else [reply.text or ""]
         extra = set().union(*(reg.conditions_in(t) for t in llm)) - reg.allowed_conditions(shown)
         if extra:
             raise ValueError(f"LLM text names conditions outside the care path: {sorted(extra)}")
@@ -600,6 +619,11 @@ class ChatResponse(_Strict):
             raise ValueError(f"at most {MAX_LLM_ATTEMPTS} LLM attempts per turn (one retry)")
         if self.reply.kind == "llm_invalid" and calls == 0:
             raise ValueError("llm_invalid needs an LLM call")
+        fixed = getattr(self.reply, "fixed_text_key", None)
+        if fixed == FIXED_TEXT_NO_LLM and calls:
+            raise ValueError(f"{FIXED_TEXT_NO_LLM} means no model ran this turn")
+        if fixed is not None and fixed != FIXED_TEXT_NO_LLM and calls == 0:
+            raise ValueError(f"{fixed} replaces blocked model text: it needs an LLM call")
         if self.conversation_turn != ctx.conversation_turn:
             raise ValueError("conversation_turn is the server's count")
         # A code red flag outranks the cap: the gate runs before it (a person in crisis at turn

@@ -216,7 +216,8 @@ def test_route_builds_service_from_env_when_none_is_set(monkeypatch, tmp_path):
     app = FastAPI()
     app.include_router(chat_api.router, prefix="/api")
     r = TestClient(app, client=("198.51.100.6", 1)).post("/api/chat", json=_body())
-    assert r.status_code == 200 and r.json()["reply"]["reason"] == "provider_unavailable"
+    assert r.status_code == 200
+    assert r.json()["reply"]["fixed_text_key"] == "ai.paused_provider_chips"
 
 
 # --------------------------------------------------------------------------- live smoke script

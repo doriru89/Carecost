@@ -62,6 +62,18 @@
       "title": "A mole or spot that is new or changing",
       "area": "skin",
       "review_status": "pending_austin"
+    },
+    {
+      "id": "rash_v1",
+      "title": "A rash without warning signs",
+      "area": "skin_rash",
+      "review_status": "pending_austin"
+    },
+    {
+      "id": "stomach_ache_v1",
+      "title": "Stomach ache or belly pain without warning signs",
+      "area": "gi_abdomen",
+      "review_status": "pending_austin"
     }
   ],
   "services": [
@@ -588,7 +600,8 @@
       "kind": "lab",
       "areas": [
         "gi",
-        "skin"
+        "skin",
+        "urgent_care"
       ],
       "codes": [
         {
@@ -601,7 +614,8 @@
         "colon_diagnostic_v1",
         "colon_screening_v1",
         "gerd_heartburn_v1",
-        "skin_changing_mole_v1"
+        "skin_changing_mole_v1",
+        "rash_v1"
       ],
       "glossary_keys": [
         "pathology"
@@ -688,7 +702,9 @@
         "knee_chronic_v1",
         "shoulder_acute_injury_v1",
         "shoulder_chronic_clicking_v1",
-        "skin_changing_mole_v1"
+        "skin_changing_mole_v1",
+        "rash_v1",
+        "stomach_ache_v1"
       ],
       "glossary_keys": []
     },
@@ -726,6 +742,172 @@
         "referral",
         "hmo"
       ]
+    },
+    {
+      "service_id": "svc_11104",
+      "plain_name": "Small skin sample",
+      "technical_name": "Skin biopsy (punch)",
+      "kind": "procedure",
+      "areas": [
+        "skin",
+        "urgent_care"
+      ],
+      "codes": [
+        {
+          "code": "11104",
+          "role": "primary",
+          "description": "Punch skin biopsy, single lesion"
+        },
+        {
+          "code": "11102",
+          "role": "alternative",
+          "description": "Tangential (shave) skin biopsy, single lesion"
+        }
+      ],
+      "care_paths": [
+        "rash_v1"
+      ],
+      "glossary_keys": [
+        "biopsy"
+      ]
+    },
+    {
+      "service_id": "svc_74177",
+      "plain_name": "Detailed scan of the belly",
+      "technical_name": "CT of the abdomen and pelvis with contrast",
+      "kind": "imaging",
+      "areas": [
+        "gi",
+        "urgent_care"
+      ],
+      "codes": [
+        {
+          "code": "74177",
+          "role": "primary",
+          "description": "CT abdomen and pelvis with contrast"
+        }
+      ],
+      "care_paths": [
+        "stomach_ache_v1"
+      ],
+      "glossary_keys": []
+    },
+    {
+      "service_id": "svc_76700",
+      "plain_name": "Sound-wave picture of the belly",
+      "technical_name": "Abdominal ultrasound",
+      "kind": "imaging",
+      "areas": [
+        "gi",
+        "urgent_care"
+      ],
+      "codes": [
+        {
+          "code": "76700",
+          "role": "primary",
+          "description": "Complete abdominal study"
+        },
+        {
+          "code": "76705",
+          "role": "alternative",
+          "description": "Limited study (one organ or area)"
+        }
+      ],
+      "care_paths": [
+        "stomach_ache_v1"
+      ],
+      "glossary_keys": [
+        "ultrasound"
+      ]
+    },
+    {
+      "service_id": "svc_81003",
+      "plain_name": "Urine test",
+      "technical_name": "Urinalysis (dipstick, automated)",
+      "kind": "lab",
+      "areas": [
+        "gi",
+        "urgent_care"
+      ],
+      "codes": [
+        {
+          "code": "81003",
+          "role": "primary",
+          "description": "Clinical lab fee schedule code (PFS status X)."
+        }
+      ],
+      "care_paths": [
+        "stomach_ache_v1"
+      ],
+      "glossary_keys": []
+    },
+    {
+      "service_id": "svc_81025",
+      "plain_name": "Pregnancy test",
+      "technical_name": "Urine pregnancy test",
+      "kind": "lab",
+      "areas": [
+        "gi",
+        "urgent_care"
+      ],
+      "codes": [
+        {
+          "code": "81025",
+          "role": "primary",
+          "description": "Clinical lab fee schedule code (PFS status X)."
+        }
+      ],
+      "care_paths": [
+        "stomach_ache_v1"
+      ],
+      "glossary_keys": []
+    },
+    {
+      "service_id": "svc_85025",
+      "plain_name": "Blood tests",
+      "technical_name": "Complete blood count and metabolic panel",
+      "kind": "lab",
+      "areas": [
+        "gi",
+        "urgent_care"
+      ],
+      "codes": [
+        {
+          "code": "85025",
+          "role": "primary",
+          "description": "Complete blood count. Clinical lab fee schedule (PFS status X)."
+        },
+        {
+          "code": "80053",
+          "role": "add_on",
+          "description": "Comprehensive metabolic panel. Clinical lab fee schedule (PFS status X)."
+        }
+      ],
+      "care_paths": [
+        "stomach_ache_v1"
+      ],
+      "glossary_keys": []
+    },
+    {
+      "service_id": "svc_87220",
+      "plain_name": "Skin scraping check",
+      "technical_name": "Skin scraping for fungus (KOH prep)",
+      "kind": "lab",
+      "areas": [
+        "skin",
+        "urgent_care"
+      ],
+      "codes": [
+        {
+          "code": "87220",
+          "role": "primary",
+          "description": "Clinical lab fee schedule code (PFS status X)."
+        }
+      ],
+      "care_paths": [
+        "rash_v1"
+      ],
+      "glossary_keys": []
     }
   ]
 }

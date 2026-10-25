@@ -6,13 +6,18 @@
    LLM call, no prices. It runs before the budget and the conversation cap on purpose: a person
    over their cap who writes "I want to kill myself" still gets the 988 page.
 4. Conversation cap -> ai_paused(conversation_cap).
-5. Provider / secret not configured -> ai_paused(provider_unavailable).
+5. Provider / secret not configured (R18): the code-only chip flow still runs from questions.yaml
+   (clarify with chips, or care_paths), with fixed copy instead of model text and llm_called
+   false. Only when there is nothing to show (out of scope, a receipt-line question) ->
+   ai_paused(provider_unavailable).
 6. Budget: reserve the worst-case cost in the SQLite ledger (atomic), else ai_paused.
 7. LLM (at most 2 attempts, both charged). Its JSON only fills: understood answers, which allowed
    question to ask, ai_ranked paths, catalog services, glossary keys, one short message, and a
    one-way escalation through ``redflags.combine``. Chips, candidates, "because", copy keys and
    the reply kind are built here from content files. The reply is validated once with a
-   ``ChatContext``; a failure retries once, then ``llm_invalid``.
+   ``ChatContext``; a failure retries once. After two failures (a guard, the contract, or a
+   provider error after a call) the same code-only reply is shown with fixed copy (P13: blocked
+   turns fall back to fixed copy); ``llm_invalid`` only when that reply has nothing to show.
 """
 
 from __future__ import annotations
@@ -37,6 +42,7 @@ from app.chat import guard
 from app.chat.config import ChatSettings
 from app.chat.contracts import (
     CARE_PATH_COPY_KEYS,
+    FIXED_TEXT_NO_LLM,
     MAX_LLM_ATTEMPTS,
     MAX_TURNS_PER_CONVERSATION,
     PAUSE_KEY,
@@ -144,6 +150,7 @@ class Content:
     registries: ChatRegistries
     questions: QuestionSet
     redflags: RedFlagSet
+    site_names: guard.SiteNames | None = None  # P13: names free text may not use
 
     @classmethod
     def load(cls, catalog: Catalog | None = None, repo: Path = REPO_ROOT) -> Content:
@@ -154,7 +161,7 @@ class Content:
         rf = RedFlagSet.model_validate(
             json.loads((repo / "data" / "redflags" / "redflags.json").read_text())
         )
-        return cls(ChatRegistries.load(cat, repo), qs, rf)
+        return cls(ChatRegistries.load(cat, repo), qs, rf, guard.load_site_names(repo))
 
 
 def _holds(cond: dict[str, list[str]], answers: dict[str, list[str]]) -> bool:
@@ -371,12 +378,12 @@ class ChatService:
         # 5. configured?
         client = self.client
         if secret is None or client is None or self.s.provider == "off":
-            return out(self._paused("provider_unavailable", None), self.budget(usage))
+            return out(self._no_llm(req), self.budget(usage))
         try:
             price = self.price()
         except KeyError:
             log.error("chat: no price for the configured model; AI paused")
-            return out(self._paused("provider_unavailable", None), self.budget(usage))
+            return out(self._no_llm(req), self.budget(usage))
         if usage.ip_turns >= self.caps.ip_turn_cap:
             return out(
                 self._paused("ip_daily_cap", resets_at(self.clock())),
@@ -427,7 +434,7 @@ class ChatService:
                 )  # fmt: skip
             except Refused as r:
                 if meter.calls:
-                    return out(self._invalid(), self.budget(self.ledger.usage(ip_hash)))
+                    return out(self._fallback(req), self.budget(self.ledger.usage(ip_hash)))
                 wallet = r.reason == "wallet_exhausted"
                 return out(
                     self._paused(r.reason, resets_at(self.clock())),
@@ -441,8 +448,8 @@ class ChatService:
                 log.warning("chat: provider error: %s", e)
                 usage = self.ledger.usage(ip_hash)
                 if meter.calls:
-                    return out(self._invalid(), self.budget(usage))
-                return out(self._paused("provider_unavailable", None), self.budget(usage))
+                    return out(self._fallback(req), self.budget(usage))
+                return out(self._no_llm(req), self.budget(usage))  # R18: chips still work
             self.ledger.settle(res, price.cost(result.input_tokens, result.output_tokens))
             try:
                 llm = parse_llm_json(result.text)
@@ -471,7 +478,7 @@ class ChatService:
                 trail.append(self._row(attempt, llm.message, "rejected", rule, safe_reason(e)))
                 error = str(e)
                 log.info("chat: LLM output rejected (attempt %d): %s", attempt + 1, error[:300])
-        return out(self._invalid(), self.budget(self.ledger.usage(ip_hash)))
+        return out(self._fallback(req), self.budget(self.ledger.usage(ip_hash)))
 
     @staticmethod
     def _row(
@@ -580,6 +587,53 @@ class ChatService:
     def _invalid() -> dict:
         return {"kind": "llm_invalid", "message_key": "ai.output_invalid"}
 
+    def _code_only(self, req: ChatRequest, key: str) -> dict | None:
+        """The reply the code builds from chip answers alone (no model input at all): the
+        distinguishing question as a chip, or the matched paths. None when there is nothing to
+        show: a receipt-line question, an out-of-scope area, no question and no path."""
+        if req.focus is not None:
+            return None
+        answers = {k: list(v) for k, v in req.answers.items()}
+        entry = self.planner.matched(answers)
+        cands = [self._candidate(p, "entry_matched", answers) for p in entry][:MAX_CANDIDATES]
+        dist = self.planner.distinguishing(answers)
+        if "other" in answers.get("Q1", []) or (not dist and not cands):
+            return None
+        copy = list(CARE_PATH_COPY_KEYS) if cands else []
+        cards = self.planner.cards(answers)
+        if dist and not entry:
+            return {
+                "kind": "clarify",
+                "lead_in": None,
+                "fixed_text_key": key,
+                "understood": [],
+                "questions": [self._chip(dist[0])],
+                "candidates": cands,
+                "copy_keys": copy,
+                "card_ids": cards,
+            }
+        return {
+            "kind": "care_paths",
+            "text": None,
+            "fixed_text_key": key,
+            "understood": [],
+            "candidates": cands,
+            "copy_keys": copy,
+            "card_ids": cards,
+        }
+
+    def _no_llm(self, req: ChatRequest) -> dict:
+        """R18: no key (or provider off) pauses free text only; the chips keep working."""
+        reply = self._code_only(req, FIXED_TEXT_NO_LLM)
+        return reply if reply is not None else self._paused("provider_unavailable", None)
+
+    def _fallback(self, req: ChatRequest) -> dict:
+        """P13: the model ran but its output was blocked twice. Same chips, fixed copy."""
+        reply = self._code_only(req, "chat.fixed_clarify")
+        if reply is not None and reply["kind"] == "care_paths":
+            reply["fixed_text_key"] = "chat.fixed_paths"
+        return reply if reply is not None else self._invalid()
+
     def _chip(self, qid: str) -> dict:
         q = self.content.registries.questions[qid]
         return {
@@ -652,7 +706,7 @@ class ChatService:
 
         if req.focus is not None:
             shown_text = [req.focus.care_path_id] if req.focus.care_path_id else []
-            self._check_text(msg, shown_text, required=True)
+            self._check_text(msg, shown_text, required=True, price_turn=False)
             return {
                 "kind": "text",
                 "text": msg,
@@ -666,7 +720,7 @@ class ChatService:
         refine = self.planner.refining(entry + via_understood, merged)
         out_of_scope = "other" in merged.get("Q1", []) or (not dist and not cands)
         if out_of_scope:
-            self._check_text(msg, [], required=True)
+            self._check_text(msg, [], required=True, price_turn=False)
             return {
                 "kind": "text",
                 "text": msg,
@@ -691,7 +745,7 @@ class ChatService:
         if ask is not None:
             # the model's sentence is checked even when it is not shown: an output that names a
             # diagnosis or a price is a bad output, retried, never quietly trimmed
-            self._check_text(msg, shown, required=False)
+            self._check_text(msg, shown, required=False, price_turn=bool(cands))
             return {
                 "kind": "clarify",
                 "lead_in": lead_in or None,
@@ -700,11 +754,13 @@ class ChatService:
                 "candidates": cands,
                 "copy_keys": copy,
                 "card_ids": cards,
+                "fixed_text_key": None,
             }
-        self._check_text(msg, shown, required=True)
+        self._check_text(msg, shown, required=True, price_turn=True)
         return {
             "kind": "care_paths",
             "text": msg,
+            "fixed_text_key": None,
             "understood": understood,
             "candidates": cands,
             "copy_keys": copy,
@@ -721,14 +777,22 @@ class ChatService:
             out.append({"service_id": sid, "plain_name": s.plain_name})
         return out[:3]
 
-    def _check_text(self, text: str | None, shown: list[str], required: bool) -> None:
+    def _check_text(
+        self, text: str | None, shown: list[str], required: bool, price_turn: bool
+    ) -> None:
+        """``price_turn``: the reply shows care paths, so prices sit next to this text (P13)."""
         if required and not text:
             raise ValueError("message is empty")
         allowed = self._allowed_text(shown)
+        names = self.content.site_names
         checks: list[tuple[str, Callable[[], None]]] = [
             ("voice", lambda: guard.check_voice(text)),
             ("digits", lambda: guard.check_digits(text)),
             ("money", lambda: guard.check_money(text)),
+            ("site_names", lambda: guard.check_site_names(text, names)),
+            ("value", lambda: guard.check_value(text, price_turn)),
+            ("urgency", lambda: guard.check_urgency(text)),
+            ("links", lambda: guard.check_spelled_links(text)),
             ("condition_shapes", lambda: guard.check_condition_shapes(text, allowed)),
             ("diagnostic_cues", lambda: guard.check_diagnostic_cues(text, allowed)),
         ]

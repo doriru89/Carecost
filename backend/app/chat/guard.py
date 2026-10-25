@@ -20,11 +20,32 @@
 5. No digits at all (review round 2, Austin option A): any ASCII or full-width digit in model text
    is rejected ("roughly 150", "６ weeks"). The UI shows every number; the model spells nothing
    numeric. Chinese number words stay allowed unless a currency unit follows (LlmText).
+6. P13 / R14 (wave-2 review, security-gate F6): structural rejects, because a prompt is not a
+   boundary. Sites belong to the list, money and value to the receipt, urgency to red-flag copy.
+   a. Site, operator or chain names: tokens and phrases derived from data/sites/sites.yaml (names,
+      operators, ownership detail, towns) minus generic words, plus curated short forms
+      (data/chat/site_names.yaml: "AFC", "Mass General", "the Saugus one" via the town token).
+   b. Value and money talk: cheap*, afford*, save, best value, worth it, costs less, out of pocket,
+      magnitudes (hundred, thousand, grand), Chinese 便宜 / 划算 / 省钱 / 两百 ... On turns that show
+      care paths (prices sit beside them) the neutral nouns price, cost, fee, pay, bill, charge and
+      every English number word (two ... ninety) are rejected too. A question turn with no path may
+      still say "more than six weeks ago" (the review-round-2 ruling on number words), and a focus
+      turn that explains one receipt line may say "fee".
+   c. Urgency judgements: emergency, ER, urgent (except "urgent care", a kind of place), serious,
+      worry, wait, skip, soon, right away, no need, fine to ..., 急诊, 严重, 不用担心, 马上 ...
+   d. Spelled-out links: "dot com", "www".
+   False positives cost one retry, then fixed copy with the same chips (never a blank turn).
 """
 
 from __future__ import annotations
 
+import os
 import re
+from collections.abc import Iterable
+from dataclasses import dataclass
+from pathlib import Path
+
+import yaml
 
 from app.chat.prompt import STOCK_OPENERS_EN, STOCK_OPENERS_ZH
 
@@ -101,7 +122,16 @@ ZH_WINDOW = 8  # characters after a Chinese cue
 _STOP = {
     "a", "an", "the", "it", "is", "be", "of", "in", "on", "to", "and", "or", "your", "you",
     "that", "this", "with", "from", "some", "kind", "sort", "type", "problem", "issue",
-    "something", "related", "caused", "due", "by", "more", "most", "often", "usually",
+    "something", "related", "caused", "due", "by", "more", "most", "often", "usually", "main",
+    "really", "very", "quite",
+}  # fmt: skip
+# A cue whose next content word is one of these talks about the conversation or a trigger, not a
+# diagnosis (wave-2 false positives: "It could be helpful to know whether...", "Lifting overhead
+# might be the main trigger...", "That likely narrows things down..."). A condition word later in
+# the sentence is still caught by the D33 deny-list and the condition shapes.
+_CUE_NOT_DIAGNOSIS = {
+    "helpful", "useful", "good", "worth", "easier", "harder", "important", "narrows", "narrow",
+    "narrowing", "trigger", "triggers", "triggered", "worse", "better", "enough", "clearer",
 }  # fmt: skip
 
 
@@ -117,6 +147,8 @@ def check_diagnostic_cues(text: str | None, allowed_text: str) -> None:
     allowed_words = set(_words(allowed_text)) - _STOP
     for m in _EN_CUES.finditer(text):
         after = [w for w in _words(text[m.end() :])[:CUE_WINDOW] if w not in _STOP]
+        if after and after[0] in _CUE_NOT_DIAGNOSIS:
+            continue  # "could be helpful to know", "likely narrows things down"
         if not any(w in allowed_words for w in after):
             raise GuardError(f"diagnostic cue {m.group(0)!r} not followed by a shown path's words")
     for m in _ZH_CUES.finditer(text):
@@ -136,3 +168,146 @@ def check_digits(text: str | None) -> None:
     m = _DIGIT.search(text)
     if m:
         raise GuardError(f"LLM text may not contain digits ({m.group(0)!r}): the UI shows numbers")
+
+
+# --------------------------------------------------------------------------- 6. P13 price turns
+
+_MAGNITUDES = "hundreds?|thousands?|millions?|dozens?|grand"
+_CARDINALS = re.compile(
+    r"\b(?:two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|"
+    r"sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)"
+    r"\b",
+    re.I,
+)
+_VALUE_EN = re.compile(
+    r"\b(?:cheap\w*|inexpensive|expensive|pricey|overpriced|afford\w*|budget\w*|bargains?|deals?|"
+    r"discount\w*|save|saves|saving|savings|money|spend\w*|free of charge|for free|"
+    r"(?:best|good|great|better|low|lower|high|higher)[\s-](?:value|cost|price)s?|value for|"
+    r"worth (?:it|the|paying|going)|low-cost|out[\s-]of[\s-]pocket|"
+    r"(?:costs?|pay|paying|charges?) (?:less|more|little|a lot)|"
+    rf"(?:{_MAGNITUDES}))\b",
+    re.I,
+)
+_VALUE_ZH = re.compile(
+    r"便宜|划算|实惠|省钱|省点钱|性价比|贵|花钱|多少钱|免费|优惠|值得|值不值|"
+    r"[零一二两三四五六七八九十几]+\s*[百千万]"
+)
+_PRICE_NOUNS = re.compile(
+    r"\b(?:prices?|priced|pricing|costs?|costly|fees?|pay|paying|paid|payment|bills?|billed|"
+    r"billing|charges?|charged)\b|价格|价钱|费用|收费|付钱|账单",
+    re.I,
+)
+_URGENCY_EN = re.compile(
+    r"\bemergenc(?:y|ies)\b|\bA&E\b|\bambulance\b|\burgent(?!\s*[- ]?\s*care)\b|\burgently\b|"
+    r"\burgency\b|\bserious(?:ly)?\b|\bworr(?:y|ied|ying)\b|\bwait(?:s|ed|ing)?\b|\bskip\w*\b|"
+    r"\bright away\b|\bimmediately\b|\basap\b|\bsoon\b|\bno need\b|\bneedn't\b|"
+    r"\b(?:don't|do not|doesn't|does not|won't|will not|wouldn't|shouldn't)\s+(?:need|have to)\b|"
+    r"\b(?:fine|safe|okay|ok)\s+to\b|\bnothing to\b|\bharmless\b|\bdanger\w*\b|"
+    r"\blife[\s-]threatening\b|\bnot (?:a|an) (?:big deal|problem|concern)\b",
+    re.I,
+)
+_ER = re.compile(r"\bE\.?R\.?(?![A-Za-z])")  # case-sensitive: "ER", "E.R.", never "er" / "her"
+_URGENCY_ZH = re.compile(
+    r"急诊|急症|紧急|不急|着急|别急|严重|担心|可以等|再等|等等看|马上|立即|立刻|尽快|赶紧|赶快|"
+    r"不需要|不用去|没关系|没事|没什么大不了|危险|救护车"
+)
+_SPELLED_LINK = re.compile(r"\bdot\s+(?:com|org|net|io|gov|edu|co|us)\b|\bwww\b", re.I)
+
+
+@dataclass(frozen=True)
+class SiteNames:
+    """Every name a reply could use to point at a place (P13). Built from the site registry, so a
+    new site is covered the day it is added; data/chat/site_names.yaml holds what derivation
+    cannot know (short forms, generic words that must stay usable)."""
+
+    pattern: re.Pattern[str] | None
+    case_sensitive: re.Pattern[str] | None
+    size: int
+
+    @classmethod
+    def build(
+        cls,
+        texts: Iterable[str],
+        aliases: Iterable[str],
+        generic: Iterable[str],
+        capitalized_only: Iterable[str] = (),
+    ) -> SiteNames:
+        gen = {g.lower() for g in generic}
+        caps = {c.lower() for c in capitalized_only}
+        terms: set[str] = {a.lower() for a in aliases}
+        for t in texts:
+            for w in re.findall(r"[A-Za-z][A-Za-z'&-]*[A-Za-z]", t or ""):
+                w = w.lower()
+                if len(w) >= 3 and w not in gen and w not in caps:
+                    terms.add(w)
+        terms -= gen
+        alts = "|".join(sorted((re.escape(t) for t in terms), key=len, reverse=True))
+        rx = re.compile(rf"(?<![A-Za-z])(?:{alts})(?![A-Za-z])", re.I) if terms else None
+        cs = "|".join(sorted((re.escape(c.capitalize()) for c in caps), key=len, reverse=True))
+        rx_cs = re.compile(rf"(?<![A-Za-z])(?:{cs})(?![A-Za-z])") if caps else None
+        return cls(rx, rx_cs, len(terms) + len(caps))
+
+    def find(self, text: str) -> str | None:
+        for rx in (self.pattern, self.case_sensitive):
+            m = rx.search(text) if rx is not None else None
+            if m:
+                return m.group(0)
+        return None
+
+
+SITE_NAMES_FILE = Path(__file__).resolve().parents[3] / "data" / "chat" / "site_names.yaml"
+
+
+def load_site_names(repo: Path, sites_path: Path | None = None) -> SiteNames:
+    env = os.environ.get("CARECOST_SITES_PATH")
+    path = sites_path or (Path(env) if env else repo / "data" / "sites" / "sites.yaml")
+    cfg = yaml.safe_load((repo / "data" / "chat" / "site_names.yaml").read_text())
+    sites = yaml.safe_load(path.read_text())["sites"] if path.exists() else []
+    texts: list[str] = []
+    for site in sites:
+        texts += [site.get("name") or "", site.get("operator") or ""]
+        texts += [site.get("ownership_detail") or "", (site.get("address") or {}).get("city") or ""]
+    return SiteNames.build(
+        texts, cfg.get("aliases", []), cfg.get("generic_words", []),
+        cfg.get("capitalized_only", []),
+    )  # fmt: skip
+
+
+def check_site_names(text: str | None, names: SiteNames | None) -> None:
+    if not text or names is None:
+        return
+    hit = names.find(text)
+    if hit:
+        raise GuardError(
+            f"LLM text may not name a site, operator or chain ({hit!r}): the list does"
+        )
+
+
+def check_value(text: str | None, price_turn: bool) -> None:
+    if not text:
+        return
+    m = _VALUE_EN.search(text) or _VALUE_ZH.search(text)
+    if m is None and price_turn:
+        m = _PRICE_NOUNS.search(text) or _CARDINALS.search(text)
+    if m:
+        raise GuardError(
+            f"LLM text may not talk about money or value ({m.group(0)!r}): the receipt does"
+        )
+
+
+def check_urgency(text: str | None) -> None:
+    if not text:
+        return
+    m = _URGENCY_EN.search(text) or _ER.search(text) or _URGENCY_ZH.search(text)
+    if m:
+        raise GuardError(
+            f"LLM text may not judge urgency ({m.group(0)!r}): only red-flag copy does"
+        )
+
+
+def check_spelled_links(text: str | None) -> None:
+    if not text:
+        return
+    m = _SPELLED_LINK.search(text)
+    if m:
+        raise GuardError(f"LLM text may not contain a link ({m.group(0)!r})")

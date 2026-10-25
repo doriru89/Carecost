@@ -63,7 +63,10 @@ export interface CandidatePath {
 
 export interface CarePathsReply {
   kind: "care_paths";
-  text: string;
+  /**
+   * Model sentence; None when fixed_text_key is shown
+   */
+  text: string | null;
   understood: InferredAnswer[];
   candidates: CandidatePath[];
   /**
@@ -71,6 +74,10 @@ export interface CarePathsReply {
    */
   copy_keys: ("copy.not_a_diagnosis" | "copy.when_to_see_a_doctor")[];
   card_ids: string[];
+  /**
+   * Fixed copy instead of text (R18 / P13); exactly one is set
+   */
+  fixed_text_key: "ai.paused_provider_chips" | "chat.fixed_clarify" | "chat.fixed_paths" | null;
 }
 
 export interface CashPayment {
@@ -151,6 +158,10 @@ export interface ClarifyReply {
    * questions.yaml card ids
    */
   card_ids: string[];
+  /**
+   * Fixed copy shown instead of a lead_in: the model is off (R18) or its text was blocked (P13). Never set together with lead_in.
+   */
+  fixed_text_key: "ai.paused_provider_chips" | "chat.fixed_clarify" | "chat.fixed_paths" | null;
 }
 
 /**

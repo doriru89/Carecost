@@ -10,7 +10,8 @@
 | ``CARECOST_LAVA_BASE_URL`` | ``https://api.lava.so/v1`` | Lava gateway |
 | ``CARECOST_LAVA_MODEL`` | ``gemini-3.8-flash`` | model name Lava routes to |
 | ``CARECOST_CHAT_HMAC_SECRET`` | — | HMAC key for IP and email hashes. Without it the AI pauses |
-| ``CARECOST_CHAT_LEDGER_PATH`` | ``<tmp>/carecost_chat_ledger.sqlite`` | SQLite ledger; on Railway a volume path, e.g. ``/data/chat_ledger.sqlite`` |
+| ``CARECOST_ENV`` | — | ``production`` makes the two paths below required: the app refuses to start without them (R11) |
+| ``CARECOST_CHAT_LEDGER_PATH`` | dev: ``<tmp>/carecost_chat_ledger.sqlite``; production: required | SQLite ledger; on Railway a volume path, e.g. ``/data/chat_ledger.sqlite`` |
 | ``CARECOST_TRUSTED_PROXY_HEADER`` | — (use the socket peer) | e.g. ``X-Forwarded-For`` behind Railway's proxy |
 | ``CARECOST_TRUSTED_PROXY_HOPS`` | ``1`` | for X-Forwarded-For: how many proxies we trust (take the Nth address from the right) |
 | ``CARECOST_CHAT_IP_SOFT_USD`` / ``_IP_HARD_USD`` | ``1.0`` / ``2.0`` | per hashed IP per provider day (D2) |
@@ -18,7 +19,10 @@
 | ``CARECOST_CHAT_IP_TURN_CAP`` | ``40`` | LLM turns per hashed IP per provider day |
 | ``CARECOST_CHAT_PRICE_IN_PER_MTOK`` / ``_OUT_PER_MTOK`` | the model's list price | override the price table |
 | ``CARECOST_CHAT_REVIEW_LOG`` | off | ``1`` / ``true`` writes one JSON line per model attempt (local review only) |
-| ``CARECOST_CHAT_REVIEW_LOG_PATH`` | ``<tmp>/carecost_chat_review.jsonl`` | where those lines go |
+| ``CARECOST_CHAT_REVIEW_LOG_PATH`` | dev: ``<tmp>/carecost_chat_review.jsonl``; production with the log on: required | where those lines go |
+
+R11 (wave-2 review): a ledger under the temp dir is wiped on every container restart, which
+silently resets every budget cap. Dev keeps the temp default; production refuses to start.
 """
 
 from __future__ import annotations
@@ -42,6 +46,31 @@ def _i(name: str, default: int) -> int:
 def _s(name: str, default: str | None = None) -> str | None:
     v = os.environ.get(name)
     return v if v not in (None, "") else default
+
+
+class ChatConfigError(RuntimeError):
+    """A setting that production must not run without (raised at startup, never at a turn)."""
+
+
+def is_production() -> bool:
+    return (os.environ.get("CARECOST_ENV") or "").strip().lower() == "production"
+
+
+def check_production_paths() -> None:
+    """R11: in production the ledger (and the review log, when on) needs an explicit path."""
+    if not is_production():
+        return
+    if not _s("CARECOST_CHAT_LEDGER_PATH"):
+        raise ChatConfigError(
+            "CARECOST_ENV=production needs CARECOST_CHAT_LEDGER_PATH (a persistent volume path); "
+            "the temp-dir default would reset every budget cap on restart"
+        )
+    review = (_s("CARECOST_CHAT_REVIEW_LOG", "") or "").lower() in ("1", "true", "yes")
+    if review and not _s("CARECOST_CHAT_REVIEW_LOG_PATH"):
+        raise ChatConfigError(
+            "CARECOST_ENV=production with CARECOST_CHAT_REVIEW_LOG on needs "
+            "CARECOST_CHAT_REVIEW_LOG_PATH"
+        )
 
 
 @dataclass(frozen=True)
@@ -70,6 +99,7 @@ class ChatSettings:
 
     @classmethod
     def from_env(cls) -> ChatSettings:
+        check_production_paths()
         secret = _s("CARECOST_CHAT_HMAC_SECRET")
         thinking = os.environ.get("CARECOST_GEMINI_THINKING_LEVEL")
         return cls(

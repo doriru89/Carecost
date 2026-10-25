@@ -11,7 +11,7 @@ from app.care_paths.redflags import screen_text
 from app.chat.contracts import MAX_TURNS_PER_CONVERSATION
 from app.chat.netid import hash_ip
 
-from .util import REPO, content, llm, req, run, service
+from .util import REPO, blocked, chips_without_llm, content, llm, req, run, service
 
 CASES = [
     # (text, history, expected disposition)
@@ -108,7 +108,7 @@ def test_red_flag_runs_even_when_ai_is_unconfigured(tmp_path):
     svc, fake = service(tmp_path, hmac_secret=None)
     r = run(svc, req(text="my chest hurts"))
     assert r["reply"]["disposition"] == "call_911"
-    assert run(svc, req())["reply"]["reason"] == "provider_unavailable"
+    assert chips_without_llm(run(svc, req()))  # R18: no secret pauses free text only
     assert fake.calls == []
 
 
@@ -126,4 +126,4 @@ def test_llm_may_escalate(tmp_path):
 def test_llm_cannot_invent_a_disposition(tmp_path):
     svc, fake = service(tmp_path, script=[llm(escalate="all_clear"), llm(escalate="lowest")])
     r = run(svc, req())
-    assert r["reply"]["kind"] == "llm_invalid" and len(fake.calls) == 2
+    assert blocked(r) and len(fake.calls) == 2

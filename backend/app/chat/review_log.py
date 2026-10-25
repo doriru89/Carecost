@@ -9,7 +9,8 @@ Off by default. ``CARECOST_CHAT_REVIEW_LOG=1`` turns it on; lines go to
 ``outcome``: ``shown`` | ``accepted_not_shown`` (valid, but the service did not display it, e.g.
 a lead_in for another question) | ``rejected`` | ``provider_error``. ``rule`` names the check that
 rejected it: ``parse``, ``voice``, ``digits``, ``money``, ``condition_shapes``,
-``diagnostic_cues``, ``contract`` or ``build``.
+``diagnostic_cues``, ``site_names``, ``value``, ``urgency``, ``links`` (P13), ``contract`` or
+``build``.
 
 Never logged: the person's text, history, email, IP, chip answers or the prompt. The conversation
 id is HMAC'd. ``reason`` for contract failures keeps only pydantic's location + message, never the

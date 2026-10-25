@@ -396,6 +396,96 @@
    "areas": [
     "skin"
    ]
+  },
+  {
+   "lang": "en",
+   "text": "My stomach hurts and I might be pregnant",
+   "expect": "er_today"
+  },
+  {
+   "lang": "en",
+   "text": "my belly is hard and rigid and it hurts",
+   "expect": "er_today"
+  },
+  {
+   "lang": "en",
+   "text": "stomach ache that started in the middle and moved to the lower right",
+   "expect": "seen_today"
+  },
+  {
+   "lang": "en",
+   "text": "my belly pain is getting worse every hour",
+   "expect": "seen_today"
+  },
+  {
+   "lang": "en",
+   "text": "I have a rash with blisters and my skin is peeling",
+   "expect": "er_today"
+  },
+  {
+   "lang": "en",
+   "text": "rash with sores in my mouth",
+   "expect": "er_today"
+  },
+  {
+   "lang": "en",
+   "text": "itchy rash and now a fever",
+   "expect": "seen_today"
+  },
+  {
+   "lang": "en",
+   "text": "rash and my face is swollen",
+   "expect": "call_911"
+  },
+  {
+   "lang": "en",
+   "text": "I have a stomach ache since yesterday",
+   "expect": null
+  },
+  {
+   "lang": "en",
+   "text": "I have an itchy rash on my arm, no fever",
+   "expect": null
+  },
+  {
+   "lang": "en",
+   "text": "red rash near my eyes from a new soap",
+   "expect": null
+  },
+  {
+   "lang": "zh",
+   "text": "我肚子疼，可能怀孕了",
+   "expect": "er_today"
+  },
+  {
+   "lang": "zh",
+   "text": "肚子疼，疼痛转移到右下腹",
+   "expect": "seen_today"
+  },
+  {
+   "lang": "zh",
+   "text": "肚子越来越疼",
+   "expect": "seen_today"
+  },
+  {
+   "lang": "zh",
+   "text": "起疹子还发烧",
+   "expect": "seen_today"
+  },
+  {
+   "lang": "zh",
+   "text": "起了疹子，还起水泡",
+   "expect": "er_today"
+  },
+  {
+   "lang": "zh",
+   "text": "肚子疼",
+   "expect": null
+  },
+  {
+   "lang": "zh",
+   "text": "手臂上起疹子，很痒",
+   "expect": null
   }
  ]
 }

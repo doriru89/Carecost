@@ -572,8 +572,10 @@
             "msk_back",
             "msk_ankle",
             "skin",
+            "skin_rash",
             "gi_upper",
-            "gi_lower"
+            "gi_lower",
+            "gi_abdomen"
           ],
           "title": "Area",
           "type": "string"

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import pytest
 
-from .util import llm, req, run, service
+from .util import blocked, llm, req, run, service
 
 DIGITS = [
     "The visit runs roughly 150.",
@@ -19,7 +19,7 @@ DIGITS = [
 def test_any_digit_in_model_text_is_rejected(tmp_path, msg):
     svc, fake = service(tmp_path, script=[llm(message=msg), llm(message=msg)])
     r = run(svc, req())
-    assert r["reply"]["kind"] == "llm_invalid" and len(fake.calls) == 2
+    assert blocked(r) and len(fake.calls) == 2
 
 
 def test_number_words_without_currency_are_still_allowed(tmp_path):
