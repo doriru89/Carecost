@@ -99,6 +99,34 @@ def test_frontend_exhaustiveness_locks_cover_every_member():
     assert 'satisfies { [K in Gap["kind"]]' in locks
 
 
+def test_ci_runs_the_typescript_contract_locks():
+    """Theater F3: the satisfies-maps only bind if CI compiles them."""
+    ci = yaml.safe_load((REPO / ".github" / "workflows" / "ci.yml").read_text())
+    steps = ci["jobs"]["test-frontend"]["steps"]
+    assert any(st.get("run") == "npm run typecheck:contracts" for st in steps)
+    pkg = json.loads((REPO / "frontend" / "package.json").read_text())
+    assert pkg["scripts"]["typecheck:contracts"] == "tsc -p tsconfig.contracts.json"
+    tsconfig = json.loads((REPO / "frontend" / "tsconfig.contracts.json").read_text())
+    assert {"src/generated/contracts", "src/contracts"} <= set(tsconfig["include"])
+    test = (REPO / "frontend" / "src" / "contracts" / "exhaustive.test.ts").read_text()
+    assert 'from "./exhaustive"' in test  # vitest (CI) imports the locks
+
+
+def test_no_switch_on_contract_kinds_outside_src_contracts():
+    """UI code narrows contract unions through src/contracts/exhaustive.ts, never its own switch
+    with a default branch that silently swallows a new Gap kind / tier / reply kind."""
+    import re
+
+    rx = re.compile(r"switch\s*\([^)]*\.(kind|tier|disposition|reason)\s*\)")
+    src = REPO / "frontend" / "src"
+    bad = [
+        str(p.relative_to(src))
+        for p in src.rglob("*.ts*")
+        if "contracts" not in p.relative_to(src).parts[:2] and rx.search(p.read_text())
+    ]
+    assert not bad, f"switch on a contract kind outside src/contracts: {bad}"
+
+
 # --------------------------------------------------------------------------- registries
 
 

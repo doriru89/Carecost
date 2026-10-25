@@ -10,51 +10,99 @@ Change the pydantic model, regenerate, and commit both. Drift tests fail CI when
 | `source_kind`, `provenance`, `money`, `gap`, `cell`, `rate_row` | `backend/app/etl/contracts.py` | Where a number came from; Money or a typed Gap; one negotiated-rate fact | ETL (A0/A1, A2 TiC, A3 gov) | quote engine (C), every API schema below |
 | `care_path` | `backend/app/care_paths/models.py` | Clinical content: steps, tiers, citations, codes | care paths (B) | quote engine (C), chat (E), catalog |
 | `quote_api` | `backend/app/quote/contracts.py` | `QuoteRequest` (payment + care path id *or* manual codes + optional site filter) and `QuoteResponse` (per site: summary + gradient receipt + totals + other-payer range) | quote engine (C) | frontend (D) |
-| `chat_api` | `backend/app/chat/contracts.py` | `ChatRequest` (text, payment, unverified email, opaque conversation id, chip answers) and `ChatResponse` (reply union: `red_flag` / `clarify` / `care_paths` / `text` / `ai_paused`, plus budget status) | chat backend (E) | frontend (D) |
+| `chat_api` | `backend/app/chat/contracts.py` | `ChatRequest` (text, the person's own earlier turns, payment, unverified email, opaque conversation id, chip answers, optional receipt-line focus) and `ChatResponse` (reply union: `red_flag` / `clarify` / `care_paths` / `text` / `llm_invalid` / `ai_paused`, plus budget status and the server's turn count) | chat backend (E) | frontend (D) |
 | `catalog` | `backend/app/quote/contracts.py` (`Catalog`) | Skip-AI manual picker (D3): services with plain + technical name, codes, care paths | quote engine (C), built from care paths | frontend (D) |
 | `site` | `backend/app/sites/contracts.py` | `data/sites/sites.yaml`: coordinates, billing type, booking links (On My Way / Solv / Clockwise / MyChart / Patient Gateway, links only), hours + source, posted cash prices with checked date + URL | gov data + sites (A3) | quote engine (C) |
 
 `quote_api` and `chat_api` hold two roots each (request and response) under `$defs`. The file's top-level
 `anyOf` accepts either.
 
-## Rules the contracts enforce (model validators, so the engine cannot break them)
+## Rules the contracts enforce
 
+Every rule below is a model validator with a negative test that fails when the rule is deleted
+(`backend/tests/contracts/test_quote_rules.py`, `test_chat_rules.py`, `test_api_contracts.py`,
+`backend/tests/etl/test_contracts.py`). Rules checked only against the committed fixtures are listed
+separately at the end.
+
+- **AI never produces dollars.** There is no AI `SourceKind` and no AI `Method`, so no `Money` can say an
+  AI wrote it. AI-suggested lines (`ai_suggested`, or a whole quote with `picked_by: assistant`) may show
+  a deterministic price but are never in a total.
+- **A number's chip is its provenance.** `Provenance.source_id` names the registered source;
+  `row_ref` must start with `<source_id>:<sha256[:12]>:`. `QuoteResponse.sources` holds each source
+  once (kind, publisher, freshness, P2), and must list exactly the sources the response uses (every
+  Money, both sides of a conflict, elsewhere cells, list prices, other-payer points, every
+  `searched` file, every site's price source). A Money's `source_kind` must equal its source's kind.
+- **Payment ↔ price type** (`PRICE_MATRIX`): insurance → hospital-MRF / TiC negotiated rates of the
+  same payer (`prov.payer_id`), or a rung-6 estimate; Medicare → fee schedules or the hospital's own
+  Medicare row; MassHealth → its fee schedule or the hospital's MassHealth row; cash → discounted cash or
+  a posted self-pay price. Doctor-fee rungs per payment (`RUNGS_BY_PAYMENT`); rung 7 is the Medicare
+  reference (shown, never summed); a rung-6 multiple is the same payer's. A gross charge is never a
+  line price: it can only be `list_price`, which no total reads. `you_pay.kind` fits the payment
+  (commercial: `deductible_then_coinsurance` or `copay_or_deductible`, P11).
 - A price cell is a `Cell` (Money or one of five Gap kinds). Tier `not_in_public_data` holds exactly the
-  "no number" Gaps (`not_published`, `not_loaded`, `no_source`). `percent_only` and `conflict` stay in their
-  likelihood tier.
-- Display tiers (D8 gradient): `certain`, `likely`, `possible`, `not_in_public_data`. A care-path `rare` step
-  displays as `possible`.
+  "no number" Gaps (`not_published`, `not_loaded`, `no_source`). `not_published` and `percent_only` say
+  which file was searched (`searched`). Display tier = care-path likelihood (`rare` → `possible`).
+  Each line carries `tier_basis` (guideline / plan_rule / our_judgment, derived from the step's
+  rating; `picked` exactly when there is no step).
 - `in_total` only for certain/likely, offered, one-off Money lines that are not AI-suggested. Doctor-fee
-  rungs 7–8 are reference only. `totals.likely` is exactly the sum of those lines. Every other line is listed
-  in `totals.excluded` with a reason. `totals.complete` is false when a certain/likely line is missing.
+  rungs 7–8 are reference only. `totals.likely` is exactly the sum of those lines, and its
+  `includes_estimate` / `includes_late_source` / `includes_stale_source` are derived from them. Every
+  other line is in `totals.excluded` with a reason. `totals.complete` is false when a certain/likely
+  line is missing.
+- **I7, ranking never rewards missing data.** `totals.missing` = certain/likely non-AI lines not in the
+  total + certain/likely steps another site in the quote lists and this one does not. Sites are ordered
+  by `(missing, total low)`, so losing a price always moves a site down.
 - Doctor fee: rung 1–8 plus a fixed `fee.*` copy key. Rung 6 carries its multiple, and its Money is
-  `estimate_medicare_multiple`. Self-pay has no rung (`fee.self_pay_no_source`). `by_npi` (D6) needs ≥ 2
-  different prices; otherwise the line shows a range.
-- Freshness has two sides that are never merged (`Freshness` in `backend/app/sites/contracts.py`):
-  - (a) Publisher side, `late_to_refresh`: the hospital, insurer, agency or clinic is past its own deadline
-    (`last_updated`, `expected_by`, `source_rule`). A hospital MRF is late after 365 days, TiC after 45 days,
-    fee schedules at their next annual or quarterly release, and a clinic page 365 days after the date printed
-    on it (never, if the page has no date). The data is still shown, labelled "late to refresh".
-  - (b) Our side, `stale_on_our_side`: our last successful fetch or check (`fetched_at`) is past our own
-    schedule (`our_refresh_due`, `our_rule`): hospitals, TiC and NPPES monthly, sites weekly, fee schedules
-    per release. This is our fault and is never worded as the publisher's.
-  - We never call a publisher late while we are stale ourselves (validator). Build values with
-    `Freshness.compute(...)`, the one implementation of the cadences. `gates.yaml` `warn_after_days` stays an
-    internal ETL warning only.
-  - Both sides sit on every `SourceChip` (per data point, with `source_id`) and on each site
-    (`price_freshness` of the site's own price source, plus the `any_source_late` /
-    `any_source_stale_on_our_side` rollups). `DataVersion.sources_behind` lists every flagged source, and the
-    notices `late_to_refresh_sources` / `stale_on_our_side_sources` appear exactly when one applies.
-    `OurDataResponse` is the contract for a future `/our-data` page that lists every source with both sides.
-- No personal data. The quote request has no location: distance is computed in the browser, and
-  `ElsewhereOption` carries coordinates so the browser can pick the nearest. The only personal field anywhere
-  is the unverified `email` in `ChatRequest` (D2).
-- Payer, site and hospital ids are strings, validated against the registries in tests
-  (`data/etl/payer_aliases.yaml`, `data/registries/hospitals.yaml`, `data/sites/sites.yaml`). They are never
-  closed enums, so adding an insurer or a clinic needs no contract change.
-- Chat: `red_flag` and `ai_paused` replies have `llm_called: false`. At most 2 chip questions per turn. Question
-  ids come from `questions.yaml`, path ids from the care-path catalog, and dispositions are the 4 in
-  `redflags.json`.
+  basis `estimate` + method `estimate_medicare_multiple`. Rung 8 needs its CHIA badge. Self-pay has no
+  rung. `by_npi` (D6) needs ≥ 2 different prices.
+- **Freshness is computed per request** (`QuoteResponse.as_of`, `OurDataResponse.as_of`): each source's
+  stored `Freshness` must equal `Freshness.at(as_of)` on its own inputs, so a shipped image that nobody
+  rebuilt still turns "stale on our side". The two sides are never merged (`Freshness` in
+  `backend/app/sites/contracts.py`):
+  - (a) Publisher side, `late_to_refresh`: the publisher is past its own deadline (`last_updated`,
+    `expected_by`, `source_rule`). Hospital MRF 365 days, TiC 45 days, fee schedules at their next release,
+    a clinic page 365 days after its printed date (never, if undated). Shown, labelled "late to refresh".
+  - (b) Our side, `stale_on_our_side`: our last successful fetch (`fetched_at`) is past our own schedule
+    (`our_refresh_due`, `our_rule`). Our fault, never worded as the publisher's.
+  - We never call a publisher late while we are stale ourselves. The notices `late_to_refresh_sources` /
+    `stale_on_our_side_sources` appear exactly when one applies.
+- TiC: an `insurer_tic` source needs `data_version.tic_release`; `tic_not_loaded` ⇔ no release.
+- Sites: `hospital_outpatient` never bills as `office_visit`; `billing_type: asc` ⇔ an ambulatory surgery
+  center; `tins` are 9 digits and need `tins_source`; a `registry_only` listing may sit in sites.yaml but
+  is never quoted (`SiteSummary.listing_status`).
+- No personal data. The quote request has no location: distance is computed in the browser. The only
+  personal field anywhere is the unverified `email` in `ChatRequest` (D2). Request `answers` are bounded
+  (20 ids × 8 values × 40 chars), as are codes, site ids and chat history.
+- Placeholders: an all-zero sha256 or an NPI not starting with 1/2 is refused unless the caller validates
+  with `context={"allow_placeholders": True}` (fixtures only).
+- **Chat** (`ChatResponse` validates only with a `ChatContext`: the registries, the request it answers
+  and the LLM call meter; without one validation fails, so the endpoint cannot skip these):
+  - path ids, titles and review status come from the catalog; chip questions, answers and `multi` are
+    verbatim from `questions.yaml`; red-flag dispositions, copy and flag ids are read from whatever
+    `redflags.json` holds; card ids, glossary keys and suggested services (P5) are members, with catalog
+    names; `focus_line_id` must be the line the request focused on;
+  - `understood` (P5): question/value members, `evidence` quotes the person's own words (current or
+    earlier turn), never a `none` value;
+  - `llm_called` equals the meter (`LlmMeter.record()` in the LLM client wrapper), never a handler bool;
+    `red_flag` / `ai_paused` have no LLM call; at most 2 attempts; `llm_invalid` needs a call;
+  - every LLM-written string is `LlmText`: ≤ 300 chars, no currency symbol, no number next to a money word
+    (en / zh), no CPT/HCPCS-like code, link, email, phone number or markup;
+  - at most 2 chip questions; `ChatRequest.history` holds only the person's own turns (P5b, ≤ 6,
+    ≤ 4000 chars); answers are checked against `questions.yaml` by `ChatContext.for_request`;
+  - budget: hard cap, turn cap or an empty wallet ⇒ `paused`; `turns_today ≤ turn_cap`; times are
+    timezone-aware; `conversation_turn` is the server's count and past 12 turns the reply is
+    `ai_paused(conversation_cap)`.
+  - For stream E: do not declare `response_model=ChatResponse` on the route (FastAPI re-validates without
+    the context); validate once with the context and return its JSON.
+
+Checked against the committed fixtures and registries only (tests, not validators):
+- every hospital-MRF number in a quote fixture is the cited row's number for the line's code, modifier
+  and the payment's payer, and every `not_published` / `percent_only` claim survives re-running the
+  lookup (`rate_row_extract.csv`, written by `backend/tests/contracts/make_rate_row_extract.py` from build
+  `20261024-1cb8089d`);
+- payer, product, site, hospital, source, care-path, question, card and glossary ids resolve against
+  their registries; three unregistered placeholder sources are listed in `test_fixtures.py`;
+- quote lines match their care-path step (codes, likelihood, `tier_basis`).
 
 ## Why plain JSON for chat, not streaming
 
@@ -72,20 +120,23 @@ Each file has `"_fixture": true` and `"_schema": "<root model>"`. `_fixture` is 
 fixture fed to a validator is rejected and can never ship as data. `backend/tests/contracts/test_fixtures.py`
 validates each one and checks every id against the registries. It also checks that together they cover every
 tier, every Gap kind, a Money range, a per-NPI breakdown, an AI-suggested line, a not-offered line with
-"cheapest elsewhere", and a late-to-refresh source both per line and per site.
+"cheapest elsewhere", a per-15-minute line, a list price, a copay plan, and a source late to refresh
+(publisher) and one stale on our side.
 
 | Fixture | Shows |
 |---|---|
-| `quote_request_*` / `quote_*_shoulder` | BCBS HMO, cash and Medicare quotes for chronic shoulder pain with clicking. Mount Auburn, Brigham, Franciscan and AFC Watertown use real rate_row numbers from build `20261024-1cb8089d`. |
+| `quote_request_*` / `quote_*_shoulder` | BCBS HMO, cash and Medicare quotes for chronic shoulder pain with clicking. Every hospital-MRF number (Mount Auburn, Brigham, Franciscan) is a real row of build `20261024-1cb8089d`, checked by `rate_row_extract.csv`. |
 | `quote_request_masshealth_manual` | Skip-AI manual pick (D3) with MassHealth |
-| `chat_request_first_message`, `chat_red_flag`, `chat_clarify`, `chat_care_paths`, `chat_ai_paused` | Chat request and four reply kinds |
+| `chat_request_first_message`, `chat_red_flag`, `chat_clarify`, `chat_care_paths`, `chat_text`, `chat_llm_invalid`, `chat_ai_paused` | Chat request and every reply kind |
 | `catalog` | Built from the 10 care paths in `data/care_paths/paths/` |
-| `sites` | Three example `sites.yaml` entries (urgent care with posted prices, On My Way link, hospital outpatient) |
+| `sites` | `sites.yaml` entries for every site the quotes use (urgent care with posted prices, On My Way link, hospital outpatient) |
 
-Values that do not exist in loaded data yet are placeholders: BCBS TiC (sha `000…`, group rates from
-research-v3/pro-fees.md), posted-page shas, NPIs `0000000001`/`0000000002` (an NPI never starts with 0), and
-hand-entered coordinates for the two Watertown clinics, and two freshness examples: the BCBS TiC check on 2026-10-20
-(publisher late, we are current) and the AFC page check on 2026-10-10 (we are stale, the page states no date).
+Values that do not exist in loaded data yet are placeholders, validated only with `allow_placeholders`:
+the BCBS TiC group rate at Brigham (source `bcbs_ma_tic_hmo`, sha `000…`, numbers from
+research-v3/pro-fees.md, dated so that it shows a publisher late to refresh), the AFC posted page (sha `000…`,
+checked 2026-10-10 so that it shows us stale), Medicare PFS RVU26A (not registered until A3 adds its reader),
+NPIs `0000000001`/`0000000002`, and hand-entered coordinates for the two Watertown clinics. The thin real
+slice (P1) regenerates these fixtures from engine output.
 
 ## Regenerate / check
 
@@ -112,30 +163,15 @@ stream owns its own file (A2 → `tic.yaml`, A3 → `government.yaml`). A fragme
 `{version, allowed_domains, sources}`. Its domains are added to the fetch allowlist. A duplicate `source_id`
 anywhere fails the load.
 
-`SourceSpec` (`backend/app/etl/config.py`) already covers every format wave 2 registers, so streams add YAML,
-not code. `format` names the reader. `_FORMAT_RULES` fixes, per format, the allowed `kind`, `media`,
-`container` and `access`:
+`SourceSpec` (`backend/app/etl/config.py`) registers only formats that have a reader (P3). A stream adds its
+format row in the same commit as its reader, with rules taken from the real file:
 
 | format | kind | media | container | access |
 |---|---|---|---|---|
 | `cms_v3_csv_tall` / `cms_v3_csv_wide` / `cms_v3_json` | `hospital_mrf` (needs `entity_id` + `npis`) | csv / json | zip, plain | download |
 | `tic_table_of_contents` | `insurer_tic` (needs `payer_id`) | json | plain, gzip | download |
-| `tic_in_network` | `insurer_tic` (needs `payer_id`) | json | gzip, plain | http_range, download |
-| `nppes_monthly` | `provider_registry` | csv | zip (`members`: main, pl_pfile, othername_pfile, endpoint_pfile) | download |
-| `dph_xlsx` | `facility_registry` | xlsx | plain | download |
-| `fhir_provider_directory` | `provider_directory` (needs `payer_id`) | json | plain | paged_api (`filters`) |
-| `cms_dataset_csv` / `cms_dataset_api` | `clinician_directory`, `billing_relationship`, `facility_registry`, `utilization`, `plan_benefits` | csv / json | plain, zip / plain | download / paged_api |
-| `cms_pfs_rvu`, `cms_pfs_anes` | `medicare_pfs` | csv, xlsx | zip, plain | download |
-| `cms_opps_addendum` | `medicare_opps` | csv, xlsx | zip, plain | download |
-| `cms_asc_addendum` | `medicare_asc` | csv, xlsx | zip, plain | download |
-| `masshealth_fee_schedule` | `masshealth_fs` | pdf, xlsx | plain | download |
-| `html_price_page` | `clinic_posted` (needs `entity_id` = sites.yaml id) | html | plain | download |
+| `tic_in_network` | `insurer_tic` (needs `payer_id`) | json | gzip, plain, zip (D30) | http_range, download |
 
-There are two kind enums. `SourceKind` is price provenance, the kind a `Money` can carry. `ReferenceKind` is
-for sources with no consumer price: registries, directories, billing relationships, utilization and plan
-benefits. A reference row never becomes a `Money`.
-
-The hospital rate_row pipeline (stage, normalize, build, report) reads only `SourcesFile.rate_row_sources`,
-the MRF formats. It skips other formats with a `SKIP` line rather than failing, so a new TiC or government
-source never breaks the hospital build. `fetch` also skips `http_range` / `paged_api` sources, because those
-are read by their own stream's pipeline.
+`RateRow` carries the insurer-TiC `tic_*` fields (D30): required on `insurer_tic` rows, absent on hospital
+rows. The hospital rate_row pipeline reads only `SourcesFile.rate_row_sources` (the MRF formats) and skips
+other formats with a `SKIP` line; `fetch` also skips `http_range` sources, which the TiC pipeline reads.
