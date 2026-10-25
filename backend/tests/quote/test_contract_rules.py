@@ -101,3 +101,52 @@ def test_site_without_a_loaded_price_source_is_allowed():
     nulls = [s for s in doc["sites"] if s["site"]["price_source_id"] is None]
     assert nulls
     _ok(doc)
+
+
+def _payer_row(**kw):
+    from app.etl.contracts import RateRow
+
+    base = dict(
+        row_id="0123456789abcdef:0", nk_hash="0123456789abcdef", nk_ordinal=0,
+        source_id="tufts_mrf", source_kind="hospital_mrf", entity_id="tufts", row_kind="payer_rate",
+        billing_npis="", code_type="CPT", code="73030", modifiers="", rev_code="0320", cdm_code="",
+        description="X-ray shoulder", setting="outpatient", billing_class="facility",
+        component="facility", component_rule="rev_code", payer_raw="BCBS", plan_raw="HMO",
+        payer_id="BCBS_MA", line_of_business="commercial", product="HMO",
+        methodology="fee_schedule", methodology_raw="fee schedule", dollar_basis="dollar",
+        negotiated_dollar=110.42, negotiated_pct=None, negotiated_algorithm="", amount=110.42,
+        amount_method="stated", gross=333.0, gross_rule="same_row", discounted_cash=233.1,
+        min_negotiated=None, max_negotiated=None, median_amount=None, p10_amount=None,
+        p90_amount=None, allowed_count="", above_gross=False, ambiguous_multi_rate=False,
+        payer_plan_mismatch=False, excluded=False, exclude_reason="", additional_generic_notes="",
+        additional_payer_notes="", source_file="f.zip", source_sha256="d" * 64, source_date=None,
+        stage_row=7, row_ref=f"tufts_mrf:{'d' * 12}:7",
+    )  # fmt: skip
+    return RateRow(**{**base, **kw})
+
+
+def test_cash_and_gross_on_a_payer_row_carry_no_payer():
+    """P1 #8 at the source: RateRow.provenance(basis) on a payer_rate row."""
+    from app.etl.contracts import PriceBasis
+
+    row = _payer_row()
+    assert row.provenance(PriceBasis.negotiated).payer_id == "BCBS_MA"
+    assert row.provenance().payer_id == "BCBS_MA"  # default basis is negotiated
+    assert row.provenance(PriceBasis.discounted_cash).payer_id is None
+    assert row.provenance(PriceBasis.gross).payer_id is None
+    assert row.provenance(PriceBasis.fee_schedule).payer_id is None
+    assert _payer_row(row_kind="chargemaster").provenance().payer_id is None
+
+
+def test_engine_store_uses_the_same_payer_rule(store):
+    """The engine prices with RateStore.prov, not RateRow.provenance: both call number_payer,
+    so the rule cannot drift between them."""
+    from app.etl.contracts import PriceBasis
+
+    payer_rows = [r for r in store.rows.values() if r.row_kind == "payer_rate" and r.payer_id
+                  and r.discounted_cash is not None and r.gross is not None]  # fmt: skip
+    assert payer_rows
+    r = payer_rows[0]
+    assert store.prov(r, PriceBasis.negotiated).payer_id == r.payer_id
+    assert store.prov(r, PriceBasis.discounted_cash).payer_id is None
+    assert store.prov(r, PriceBasis.gross).payer_id is None

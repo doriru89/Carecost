@@ -194,11 +194,19 @@ def test_tic_facility_rows_fill_a_hospital_file_gap(engine):
     assert (ln.cell.low, ln.cell.high) == (107.41, 315.61)
 
 
-def test_cash_price_carries_no_payer(engine):
-    """P1 #8."""
+def test_cash_price_carries_no_payer(engine, store):
+    """P1 #8: Tufts' tall CSV repeats its cash price on payer rows. The visit facility line's cash
+    price and list price are read from an Aetna payer row, and still carry no payer."""
     r = _quote(engine, {"kind": "cash"})
-    ln = _line(r, TUFTS, "xray_facility")
-    assert ln.cell.basis.value == "discounted_cash" and ln.cell.prov.payer_id is None
+    ln = _line(r, TUFTS, "visit_facility")
+    for m in (ln.cell, ln.list_price):
+        assert m.basis.value in ("discounted_cash", "gross") and m.prov.payer_id is None
+        cited = [
+            x
+            for x in store.rows.values()
+            if store.sources[x.source_id].row_ref(x) == m.prov.row_ref
+        ]
+        assert cited and all(x.row_kind == "payer_rate" and x.payer_id == "AETNA" for x in cited)
 
 
 def test_network_registry_reads_both_hmo_blue_files(engine, registry):

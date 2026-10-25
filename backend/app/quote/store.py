@@ -51,7 +51,7 @@ from typing import Any
 
 import yaml
 
-from app.etl.contracts import Method, PriceBasis, Provenance, SourceKind
+from app.etl.contracts import Method, PriceBasis, Provenance, SourceKind, number_payer
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 EXTRACT_CSV = REPO_ROOT / "contracts" / "fixtures" / "rate_row_extract.csv"
@@ -240,8 +240,7 @@ class RateStore:
             source_date=date.fromisoformat(m.source_date) if m.source_date else None,
             method=method,
             row_ref=m.row_ref(r),
-            # a negotiated rate is a payer's; a cash price, gross charge or fee schedule is not
-            payer_id=r.payer_id if basis == PriceBasis.negotiated else None,
+            payer_id=number_payer(r.row_kind, r.payer_id, basis),
             row_id=r.row_id if r.source_kind == "insurer_tic" else None,
         )
 

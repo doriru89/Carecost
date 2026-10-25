@@ -163,6 +163,14 @@ def _check_basename(v: str) -> str:
     return v
 
 
+def number_payer(row_kind: str, payer_id: str | None, basis: PriceBasis) -> str | None:
+    """Whose number this is (P1 problem 8). Only a negotiated rate on a payer row belongs to the
+    row's payer; a cash price, gross charge or fee schedule read from the same row belongs to no
+    payer (tall CSVs repeat the hospital-wide cash price on every payer row). The one rule both
+    ``RateRow.provenance`` and the quote engine's store use."""
+    return payer_id if row_kind == "payer_rate" and basis == PriceBasis.negotiated else None
+
+
 class Provenance(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -474,11 +482,7 @@ class RateRow(BaseModel):
             source_date=self.source_date,
             method=method,
             row_ref=self.row_ref,
-            payer_id=(
-                self.payer_id
-                if self.row_kind == "payer_rate" and basis == PriceBasis.negotiated
-                else None
-            ),
+            payer_id=number_payer(self.row_kind, self.payer_id, basis),
             row_id=self.row_id if self.source_kind == SourceKind.insurer_tic else None,
         )
 
