@@ -1,0 +1,130 @@
+# Contract X1 (S0 writes, C3 reads). One capability = one kind of service a site may or may not
+# do, as a person would read it on the site's own page. Every step of every care path in
+# data/care_paths/paths/ is covered by exactly one capability (tests/site_facts enforce it).
+# Visits are split by who you see, because "does this place do it" differs by specialty; a step
+# named "primary-care or urgent-care visit" is assigned to the setting its path is written for.
+version: 1
+capabilities:
+  primary_care_visit:
+    label: {en: Primary care visit, zh: 家庭医生/初级保健门诊}
+    covers:
+    - {path: ankle_sprain_urgent_care_v1, step: referral}
+    - {path: back_new_pain_v1, step: referral}
+    - {path: back_persistent_pain_v1, step: referral}
+    - {path: colon_diagnostic_v1, step: referral}
+    - {path: colon_screening_v1, step: referral}
+    - {path: gerd_heartburn_v1, step: referral}
+    - {path: knee_chronic_v1, step: referral}
+    - {path: shoulder_acute_injury_v1, step: referral}
+    - {path: shoulder_chronic_clicking_v1, step: referral}
+    - {path: skin_changing_mole_v1, step: referral}
+    - {path: back_persistent_pain_v1, step: visit}
+    - {path: gerd_heartburn_v1, step: visit}
+  walk_in_visit:
+    label: {en: Same-day / walk-in visit, zh: 当天/免预约门诊}
+    covers:
+    - {path: ankle_sprain_urgent_care_v1, step: visit}
+    - {path: back_new_pain_v1, step: visit}
+    - {path: shoulder_acute_injury_v1, step: visit}
+  gi_visit:
+    label: {en: Gastroenterology (digestive) visit, zh: 消化科门诊}
+    covers:
+    - {path: colon_diagnostic_v1, step: office_visit}
+    - {path: colon_screening_v1, step: pre_procedure_consult}
+  orthopedic_visit:
+    label: {en: Orthopedic / sports medicine visit, zh: 骨科/运动医学门诊}
+    covers:
+    - {path: knee_chronic_v1, step: visit}
+    - {path: shoulder_chronic_clicking_v1, step: visit}
+  dermatology_visit:
+    label: {en: Dermatology (skin) visit, zh: 皮肤科门诊}
+    covers:
+    - {path: skin_changing_mole_v1, step: derm_visit}
+  xray:
+    label: {en: X-ray, zh: X光}
+    covers:
+    - {path: ankle_sprain_urgent_care_v1, step: xray}
+    - {path: back_new_pain_v1, step: spine_xray}
+    - {path: back_persistent_pain_v1, step: spine_xray}
+    - {path: knee_chronic_v1, step: xray}
+    - {path: shoulder_acute_injury_v1, step: xray}
+    - {path: shoulder_chronic_clicking_v1, step: xray}
+  mri:
+    label: {en: MRI, zh: 核磁共振（MRI）}
+    covers:
+    - {path: ankle_sprain_urgent_care_v1, step: ankle_mri}
+    - {path: back_new_pain_v1, step: spine_mri}
+    - {path: back_persistent_pain_v1, step: spine_mri}
+    - {path: knee_chronic_v1, step: knee_mri}
+    - {path: shoulder_acute_injury_v1, step: shoulder_mri}
+    - {path: shoulder_chronic_clicking_v1, step: tendon_scan_mri}
+  mr_arthrogram:
+    label: {en: MR arthrogram (MRI with joint injection), zh: 关节造影核磁}
+    covers:
+    - {path: shoulder_chronic_clicking_v1, step: mr_arthrogram}
+  ct:
+    label: {en: CT scan, zh: CT}
+    covers: []
+  ultrasound:
+    label: {en: Ultrasound (joints and tendons), zh: 超声（关节和肌腱）}
+    covers:
+    - {path: shoulder_acute_injury_v1, step: tendon_ultrasound}
+    - {path: shoulder_chronic_clicking_v1, step: tendon_scan_ultrasound}
+  physical_therapy:
+    label: {en: Physical therapy, zh: 物理治疗}
+    covers:
+    - {path: ankle_sprain_urgent_care_v1, step: physical_therapy}
+    - {path: back_new_pain_v1, step: physical_therapy}
+    - {path: back_persistent_pain_v1, step: physical_therapy}
+    - {path: knee_chronic_v1, step: physical_therapy}
+    - {path: shoulder_acute_injury_v1, step: physical_therapy}
+    - {path: shoulder_chronic_clicking_v1, step: physical_therapy}
+  colonoscopy:
+    label: {en: Colonoscopy (incl. biopsy / polyp removal), zh: 结肠镜（含活检/息肉切除）}
+    covers:
+    - {path: colon_diagnostic_v1, step: colonoscopy}
+    - {path: colon_diagnostic_v1, step: biopsy_or_removal}
+    - {path: colon_screening_v1, step: colonoscopy}
+    - {path: colon_screening_v1, step: polyp_removal}
+  upper_endoscopy:
+    label: {en: Upper endoscopy (EGD), zh: 胃镜}
+    covers:
+    - {path: gerd_heartburn_v1, step: upper_endoscopy}
+  endoscopy_sedation:
+    label: {en: Sedation / anesthesia for endoscopy, zh: 内镜麻醉/镇静}
+    covers:
+    - {path: colon_diagnostic_v1, step: anesthesia}
+    - {path: colon_screening_v1, step: anesthesia}
+    - {path: gerd_heartburn_v1, step: anesthesia}
+  pathology:
+    label: {en: Pathology (lab check of tissue samples), zh: 病理（组织样本化验）}
+    covers:
+    - {path: colon_diagnostic_v1, step: pathology}
+    - {path: colon_screening_v1, step: polyp_pathology}
+    - {path: gerd_heartburn_v1, step: pathology}
+    - {path: skin_changing_mole_v1, step: pathology}
+  joint_injection:
+    label: {en: Joint injection, zh: 关节注射}
+    covers:
+    - {path: shoulder_chronic_clicking_v1, step: steroid_injection}
+  skin_biopsy:
+    label: {en: Skin biopsy, zh: 皮肤活检}
+    covers:
+    - {path: skin_changing_mole_v1, step: skin_biopsy}
+  skin_excision:
+    label: {en: Skin lesion removal (excision), zh: 皮肤病灶切除}
+    covers:
+    - {path: skin_changing_mole_v1, step: wider_removal}
+  blood_tests:
+    label: {en: Blood tests / lab draw, zh: 抽血化验}
+    covers: []
+  prescription_medicine:
+    label: {en: Prescription medicine (filled at a pharmacy), zh: 处方药（药房取药）}
+    covers:
+    - {path: colon_diagnostic_v1, step: bowel_prep}
+    - {path: colon_screening_v1, step: bowel_prep}
+    - {path: gerd_heartburn_v1, step: acid_reducer_trial}
+  medical_supplies:
+    label: {en: 'Braces, crutches and other supplies', zh: 护具、拐杖等医疗用品}
+    covers:
+    - {path: ankle_sprain_urgent_care_v1, step: brace_or_crutches}

@@ -1,0 +1,4 @@
+# Austin's decisions on disputed site facts (see docs/etl/site_facts.md "Review").
+# Each: {site_id, field (official_name | phone | hours | capabilities.<id>), value, note}.
+version: 1
+decisions: []
