@@ -25,7 +25,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
 
 from app.quote.contracts import ANSWER_RE, PATH_ID_RE, QUESTION_ID_RE, Payment
 
-Disposition = Literal["call_911", "er_today", "seen_today", "routine"]
+Disposition = Literal["call_911", "crisis_988", "er_today", "seen_today", "routine"]
 """Exactly the four dispositions in data/redflags/redflags.json (a test keeps them equal)."""
 
 MAX_QUESTIONS_PER_TURN = 2

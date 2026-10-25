@@ -25,6 +25,13 @@ entry:
 red_flags:
 - rf_cardiac
 - rf_chest_pain_alone
+- rf_suicide_self_harm
+- rf_overdose
+- rf_breathing
+- rf_breathing_mild
+- rf_stroke
+- rf_thunderclap_headache
+- rf_unresponsive_seizure
 - rf_allergic_airway
 - rf_non_blanching_rash
 - rf_cauda_equina

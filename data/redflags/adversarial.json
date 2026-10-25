@@ -1,0 +1,1412 @@
+{
+ "doc": "Adversarial phrase set for the free-text red-flag gate (chat, areas=None). expect = exact disposition, or null = must not fire. Written before the gate was expanded; categories feed the recall / false-positive report in test_redflags_adversarial.py.",
+ "cases": [
+  {
+   "category": "verified_miss",
+   "lang": "en",
+   "text": "my chest hurts",
+   "expect": "call_911"
+  },
+  {
+   "category": "verified_miss",
+   "lang": "en",
+   "text": "I want to kill myself",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "verified_miss",
+   "lang": "en",
+   "text": "worst headache of my life",
+   "expect": "call_911"
+  },
+  {
+   "category": "verified_miss",
+   "lang": "en",
+   "text": "I cant feel my groin",
+   "expect": "er_today"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "chest hurts",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "pain in my chest",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "my chest feels tight",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "pressure on my chest",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "theres a lot of pressure in my chest",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "my chest has been really hurting since this morning",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "tightness in my chest",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "heavy feeling in my chest",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "it feels like an elephant is sitting on my chest",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "crushing pain in my chest",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "my chest is killing me",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "chest is sore and tight",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "squeezing pain across my chest",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "my chest aches",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "sharp pain in chest when i breathe",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "i think im having a heart attack",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "my heart hurts",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "chest pain after bench press",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "胸口疼",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "胸闷",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "胸口很闷",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "胸口有点疼",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "胸口像被压住一样",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "胸口不舒服",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "心口疼",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "胸部疼痛",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "胸口发紧",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "胸口憋得慌",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "心脏疼",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "我觉得是心梗",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "zh",
+   "text": "胸口痛得厉害",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "I cant breathe",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "i can't breathe",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "can barely breathe",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "struggling to breathe",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "gasping for air",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "hard to breathe",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "having trouble breathing",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "difficulty breathing",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "i cant catch my breath",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "his lips are turning blue",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "she is choking",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "zh",
+   "text": "喘不上气",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "zh",
+   "text": "喘不过气来",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "zh",
+   "text": "透不过气",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "zh",
+   "text": "上不来气",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "zh",
+   "text": "呼吸困难",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "zh",
+   "text": "没法呼吸",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "zh",
+   "text": "他噎住了",
+   "expect": "call_911"
+  },
+  {
+   "category": "breathing",
+   "lang": "en",
+   "text": "I get short of breath walking up stairs",
+   "expect": "seen_today",
+   "note": "NHS: more short of breath than usual -> 111 (US: seen today)"
+  },
+  {
+   "category": "breathing",
+   "lang": "zh",
+   "text": "最近爬楼梯就气短",
+   "expect": "seen_today"
+  },
+  {
+   "category": "stroke",
+   "lang": "en",
+   "text": "my face is drooping on one side",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "en",
+   "text": "slurred speech",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "en",
+   "text": "im slurring my words",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "en",
+   "text": "sudden numbness in my arm and face",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "en",
+   "text": "sudden weakness on one side",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "en",
+   "text": "my left side is numb and weak",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "en",
+   "text": "i think im having a stroke",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "en",
+   "text": "cant get words out",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "zh",
+   "text": "嘴歪了",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "zh",
+   "text": "说话口齿不清",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "zh",
+   "text": "半边身体发麻",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "zh",
+   "text": "半边身子没力气",
+   "expect": "call_911"
+  },
+  {
+   "category": "stroke",
+   "lang": "zh",
+   "text": "我可能中风了",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "en",
+   "text": "worst headache ive ever had",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "en",
+   "text": "the worst headache of my life",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "en",
+   "text": "sudden severe headache",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "en",
+   "text": "thunderclap headache",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "en",
+   "text": "headache came on suddenly and its excruciating",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "en",
+   "text": "feels like my head is exploding",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "en",
+   "text": "bad headache and a stiff neck",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "en",
+   "text": "headache and my arm went numb",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "zh",
+   "text": "这辈子最严重的头痛",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "zh",
+   "text": "突然剧烈头痛",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "zh",
+   "text": "头从来没这么痛过",
+   "expect": "call_911"
+  },
+  {
+   "category": "headache",
+   "lang": "zh",
+   "text": "头痛，脖子僵硬",
+   "expect": "call_911"
+  },
+  {
+   "category": "unresponsive",
+   "lang": "en",
+   "text": "my dad passed out and wont wake up",
+   "expect": "call_911"
+  },
+  {
+   "category": "unresponsive",
+   "lang": "en",
+   "text": "she is unconscious",
+   "expect": "call_911"
+  },
+  {
+   "category": "unresponsive",
+   "lang": "en",
+   "text": "he is not responding",
+   "expect": "call_911"
+  },
+  {
+   "category": "unresponsive",
+   "lang": "en",
+   "text": "my son is having a seizure",
+   "expect": "call_911"
+  },
+  {
+   "category": "unresponsive",
+   "lang": "en",
+   "text": "he wont stop convulsing",
+   "expect": "call_911"
+  },
+  {
+   "category": "unresponsive",
+   "lang": "en",
+   "text": "i cant wake my mom up",
+   "expect": "call_911"
+  },
+  {
+   "category": "unresponsive",
+   "lang": "zh",
+   "text": "我爸叫不醒",
+   "expect": "call_911"
+  },
+  {
+   "category": "unresponsive",
+   "lang": "zh",
+   "text": "他昏迷了",
+   "expect": "call_911"
+  },
+  {
+   "category": "unresponsive",
+   "lang": "zh",
+   "text": "孩子在抽搐",
+   "expect": "call_911"
+  },
+  {
+   "category": "unresponsive",
+   "lang": "zh",
+   "text": "他晕过去了没反应",
+   "expect": "call_911"
+  },
+  {
+   "category": "overdose",
+   "lang": "en",
+   "text": "i took a whole bottle of pills",
+   "expect": "call_911"
+  },
+  {
+   "category": "overdose",
+   "lang": "en",
+   "text": "she overdosed",
+   "expect": "call_911"
+  },
+  {
+   "category": "overdose",
+   "lang": "en",
+   "text": "i took too many sleeping pills",
+   "expect": "call_911"
+  },
+  {
+   "category": "overdose",
+   "lang": "en",
+   "text": "my toddler swallowed some pills",
+   "expect": "call_911"
+  },
+  {
+   "category": "overdose",
+   "lang": "en",
+   "text": "he drank bleach",
+   "expect": "call_911"
+  },
+  {
+   "category": "overdose",
+   "lang": "zh",
+   "text": "我吃了一整瓶药",
+   "expect": "call_911"
+  },
+  {
+   "category": "overdose",
+   "lang": "zh",
+   "text": "他吃了很多安眠药",
+   "expect": "call_911"
+  },
+  {
+   "category": "overdose",
+   "lang": "zh",
+   "text": "药物过量",
+   "expect": "call_911"
+  },
+  {
+   "category": "overdose",
+   "lang": "zh",
+   "text": "孩子喝了农药",
+   "expect": "call_911"
+  },
+  {
+   "category": "cauda_equina",
+   "lang": "en",
+   "text": "i cant feel my groin",
+   "expect": "er_today"
+  },
+  {
+   "category": "cauda_equina",
+   "lang": "en",
+   "text": "numb between my legs",
+   "expect": "er_today"
+  },
+  {
+   "category": "cauda_equina",
+   "lang": "en",
+   "text": "no feeling around my bottom",
+   "expect": "er_today"
+  },
+  {
+   "category": "cauda_equina",
+   "lang": "en",
+   "text": "both legs are numb",
+   "expect": "er_today"
+  },
+  {
+   "category": "cauda_equina",
+   "lang": "en",
+   "text": "my legs went numb and i cant control my bladder",
+   "expect": "er_today"
+  },
+  {
+   "category": "cauda_equina",
+   "lang": "zh",
+   "text": "会阴部没感觉",
+   "expect": "er_today"
+  },
+  {
+   "category": "cauda_equina",
+   "lang": "zh",
+   "text": "两条腿都麻了",
+   "expect": "er_today"
+  },
+  {
+   "category": "cauda_equina",
+   "lang": "zh",
+   "text": "憋不住尿，腰疼",
+   "expect": "er_today"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "en",
+   "text": "i want to die",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "en",
+   "text": "i wanna die",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "en",
+   "text": "im going to kill myself",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "en",
+   "text": "im suicidal",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "en",
+   "text": "thinking about suicide",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "en",
+   "text": "i want to end my life",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "en",
+   "text": "i keep thinking about hurting myself",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "en",
+   "text": "i have been cutting myself",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "en",
+   "text": "i want to take my own life",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "en",
+   "text": "kms",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "en",
+   "text": "self-harm",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "zh",
+   "text": "想自杀",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "zh",
+   "text": "我想死",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "zh",
+   "text": "不想活了",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "zh",
+   "text": "我想结束自己的生命",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "zh",
+   "text": "我在自残",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_direct",
+   "lang": "zh",
+   "text": "我想割腕",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "I don't want to be here anymore",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "i dont want to be here anymore",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "i just want to end it all",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "everyone would be better off without me",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "theres no reason to live",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "i have nothing to live for",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "i dont want to live anymore",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "i cant go on like this",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "i cant do this anymore",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "i wish i was dead",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "i want to go to sleep and never wake up",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "en",
+   "text": "life isnt worth living",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "zh",
+   "text": "活着没意思",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "zh",
+   "text": "我活不下去了",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "zh",
+   "text": "死了算了",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "zh",
+   "text": "一了百了",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_indirect",
+   "lang": "zh",
+   "text": "活着没有意义",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "crisis_negated_by_design",
+   "lang": "en",
+   "text": "I'm not suicidal but I don't want to be alive",
+   "expect": "crisis_988",
+   "note": "crisis terms ignore negation on purpose: ambivalent statements are screened positive"
+  },
+  {
+   "category": "crisis_negated_by_design",
+   "lang": "en",
+   "text": "i dont want to kill myself but i keep thinking about it",
+   "expect": "crisis_988",
+   "note": "crisis terms ignore negation on purpose: ambivalent statements are screened positive"
+  },
+  {
+   "category": "third_person",
+   "lang": "en",
+   "text": "my dad can't breathe",
+   "expect": "call_911"
+  },
+  {
+   "category": "third_person",
+   "lang": "en",
+   "text": "my dad cant breathe",
+   "expect": "call_911"
+  },
+  {
+   "category": "third_person",
+   "lang": "en",
+   "text": "my mom says her chest hurts",
+   "expect": "call_911"
+  },
+  {
+   "category": "third_person",
+   "lang": "en",
+   "text": "hes not breathing",
+   "expect": "call_911"
+  },
+  {
+   "category": "third_person",
+   "lang": "en",
+   "text": "my wifes face is drooping",
+   "expect": "call_911"
+  },
+  {
+   "category": "third_person",
+   "lang": "en",
+   "text": "my husband has chest pain",
+   "expect": "call_911"
+  },
+  {
+   "category": "third_person",
+   "lang": "en",
+   "text": "my son said he wants to kill himself",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "third_person",
+   "lang": "en",
+   "text": "my friend wants to end her life",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "third_person",
+   "lang": "en",
+   "text": "she says she wants to die",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "third_person",
+   "lang": "zh",
+   "text": "我爸胸口疼",
+   "expect": "call_911"
+  },
+  {
+   "category": "third_person",
+   "lang": "zh",
+   "text": "我妈喘不上气",
+   "expect": "call_911"
+  },
+  {
+   "category": "third_person",
+   "lang": "zh",
+   "text": "我儿子说他想自杀",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "typo",
+   "lang": "en",
+   "text": "my chest hurst",
+   "expect": "call_911"
+  },
+  {
+   "category": "typo",
+   "lang": "en",
+   "text": "chest pian",
+   "expect": "call_911"
+  },
+  {
+   "category": "typo",
+   "lang": "en",
+   "text": "CHEST PAIN",
+   "expect": "call_911"
+  },
+  {
+   "category": "typo",
+   "lang": "en",
+   "text": "i cant breath",
+   "expect": "call_911"
+  },
+  {
+   "category": "typo",
+   "lang": "en",
+   "text": "my chest hurts i dont know what to do",
+   "expect": "call_911"
+  },
+  {
+   "category": "typo",
+   "lang": "en",
+   "text": "worst headach of my life",
+   "expect": "call_911"
+  },
+  {
+   "category": "typo",
+   "lang": "en",
+   "text": "cant breathe pls help",
+   "expect": "call_911"
+  },
+  {
+   "category": "typo",
+   "lang": "en",
+   "text": "i want to kil myself",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "typo",
+   "lang": "en",
+   "text": "thinking about sucide",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "typo",
+   "lang": "en",
+   "text": "i dont want to live",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "mixed",
+   "lang": "mixed",
+   "text": "我chest pain很厉害",
+   "expect": "call_911"
+  },
+  {
+   "category": "mixed",
+   "lang": "mixed",
+   "text": "my 胸口 hurts",
+   "expect": "call_911"
+  },
+  {
+   "category": "mixed",
+   "lang": "mixed",
+   "text": "我爸can't breathe",
+   "expect": "call_911"
+  },
+  {
+   "category": "mixed",
+   "lang": "mixed",
+   "text": "胸闷 and sweating",
+   "expect": "call_911"
+  },
+  {
+   "category": "mixed",
+   "lang": "mixed",
+   "text": "worst headache 我从来没有过",
+   "expect": "call_911"
+  },
+  {
+   "category": "mixed",
+   "lang": "mixed",
+   "text": "我想kill myself",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "mixed",
+   "lang": "mixed",
+   "text": "I want to 自杀",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "en",
+   "text": "not sure if it's chest pain",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "en",
+   "text": "no idea why but my chest hurts",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "en",
+   "text": "I don't know if this is chest pain or heartburn",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "en",
+   "text": "i dont think its serious but my chest feels tight",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "en",
+   "text": "no fever, but chest pain",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "en",
+   "text": "no chest pain but i cant breathe",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "en",
+   "text": "ive never had chest pain this bad",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "en",
+   "text": "not sure if this matters but my chest hurts",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "zh",
+   "text": "不知道是不是胸痛",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "zh",
+   "text": "也说不清，胸口有点闷",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "zh",
+   "text": "不确定是不是胸闷",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "zh",
+   "text": "没有发烧，但是胸口疼",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_trap",
+   "lang": "zh",
+   "text": "没有胸痛，但是喘不上气",
+   "expect": "call_911"
+  },
+  {
+   "category": "negation_true",
+   "lang": "en",
+   "text": "no chest pain",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "en",
+   "text": "I have no chest pain",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "en",
+   "text": "denies chest pain",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "en",
+   "text": "no chest pain, just a sore knee",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "en",
+   "text": "my chest doesn't hurt, my shoulder does",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "en",
+   "text": "no trouble breathing, my ankle is swollen",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "en",
+   "text": "not short of breath",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "en",
+   "text": "never had a seizure, my wrist hurts",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "en",
+   "text": "without any chest pain",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "zh",
+   "text": "没有胸痛",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "zh",
+   "text": "没有胸闷，只是膝盖疼",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "zh",
+   "text": "胸口不痛",
+   "expect": null
+  },
+  {
+   "category": "negation_true",
+   "lang": "zh",
+   "text": "我没有呼吸困难，就是肩膀疼",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "my shoulder clicks when I rotate my arm",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "chest press at the gym tweaked my shoulder",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "knee pain for 3 weeks",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "my shoulder hurts when i do chest press",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "pulled something on chest day and now my shoulder aches",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "lower back pain after lifting boxes",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "my left arm is sore from a flu shot",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "sprained my ankle, its swollen but i can walk",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "how much is a chest x-ray",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "i cant lift my arm above my head",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "my wrist goes numb when i type",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "tension headache for a week",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "heartburn after spicy food",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "shooting pain down my leg",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "my knee is killing me",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "i cant breathe through my nose, stuffy",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "pins and needles in my fingers",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "zh",
+   "text": "肩膀转的时候咔哒响",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "zh",
+   "text": "膝盖疼了三个星期",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "zh",
+   "text": "练胸的时候肩膀拉伤了",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "zh",
+   "text": "搬东西闪了腰",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "zh",
+   "text": "头疼，鼻塞",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "zh",
+   "text": "拍胸片多少钱",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "zh",
+   "text": "做胸推的时候肩膀疼",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "en",
+   "text": "this bill is killing me",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "en",
+   "text": "headache of a paperwork",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "en",
+   "text": "the insurance paperwork is a total headache",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "en",
+   "text": "these prices are giving me a heart attack",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "en",
+   "text": "im dying to know the price",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "en",
+   "text": "i could kill for a cheaper mri",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "en",
+   "text": "my back is killing me",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "en",
+   "text": "this deductible is the worst",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "en",
+   "text": "my heart is broken over this bill",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "zh",
+   "text": "账单贵得要死",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "zh",
+   "text": "价格把我气死了",
+   "expect": null
+  },
+  {
+   "category": "figurative",
+   "lang": "zh",
+   "text": "这些表格让我头大",
+   "expect": null
+  }
+ ]
+}
