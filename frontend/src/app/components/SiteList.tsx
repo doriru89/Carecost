@@ -1,8 +1,12 @@
 import { t } from "@/contracts/copy";
+import { KIND_LABEL_KEY } from "@/contracts/exhaustive";
+import type { QuoteResponse } from "@/generated/contracts/quote_api";
 import { cn } from "@/lib/utils";
+import { range } from "../lib/format";
 import { milesText } from "../lib/geo";
 import { dataNoticeKey, totalText } from "../lib/receipt";
-import type { SiteScope, SiteView, SortMode } from "../lib/sites";
+import { kindGroups, type SiteScope, type SiteView, type SortMode } from "../lib/sites";
+import { elsewhereSteps, isExpected } from "../lib/steps";
 import { Booking } from "./Booking";
 
 const BILLING_TAG: Record<string, string> = {
@@ -12,13 +16,13 @@ const BILLING_TAG: Record<string, string> = {
   unknown: "Billing not confirmed",
 };
 
-/** Says which sites the response holds: nearest to the person's point, or the best value overall (C2). */
+/** Says which sites the response holds: nearest to the person's point, or every place by kind (P7). */
 export function ScopeNote({ scope, count }: { scope: SiteScope; count: number }) {
   const text =
     scope.kind === "near"
       ? t("list.scope_near", { n: count, label: scope.label })
-      : scope.kind === "overall"
-        ? t("list.scope_overall", { n: count })
+      : scope.kind === "all"
+        ? t("list.scope_all", { n: count })
         : t("list.scope_fixture", { n: count });
   return (
     <p className="text-[11px] text-muted-foreground" data-testid="site-scope" data-scope={scope.kind}>
@@ -36,9 +40,24 @@ export function ChildrenOnlyBadge() {
   );
 }
 
-export function SiteCard({ v, selected, onOpen }: { v: SiteView; selected?: boolean; onOpen: () => void }) {
-  const { site, receipt } = v.sq;
+export function SiteCard({
+  v,
+  selected,
+  onOpen,
+  labels = {},
+}: {
+  v: SiteView;
+  selected?: boolean;
+  onOpen: () => void;
+  /** step key -> readable name (lib/steps.ts stepLabels) */
+  labels?: Record<string, string>;
+}) {
+  const { site, headline } = v.sq;
   const total = totalText(v.sq);
+  // P4: expected steps this place does not do, each with the range at places that do (never summed here)
+  const away = elsewhereSteps(v.sq).filter((st) => isExpected(st) && st.elsewhere);
+  const where =
+    v.distance != null ? `${milesText(v.distance)} · ` : v.cityHallMiles != null ? `${t("list.from_city_hall", { distance: milesText(v.cityHallMiles) })} · ` : "";
   return (
     <div
       className={cn(
@@ -46,25 +65,43 @@ export function SiteCard({ v, selected, onOpen }: { v: SiteView; selected?: bool
         selected ? "border-ink ring-1 ring-ink/30" : "border-border",
       )}
       data-testid="site-card"
+      data-site-id={site.site_id}
     >
       <button type="button" onClick={onOpen} className="w-full text-left">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className="font-semibold leading-tight">{site.name}</p>
             <p className="text-xs text-muted-foreground">
-              {v.distance != null ? `${milesText(v.distance)} · ` : ""}
+              {where}
               <span className={v.open.openNow ? "text-emerald-700 font-medium" : ""}>{v.open.text}</span>
             </p>
           </div>
           <div className="text-right shrink-0">
-            <p className="text-lg font-bold tabular-nums text-ink">
-              {total ? `${receipt.totals.complete ? "" : "≥ "}${total}` : "—"}
+            <p className="text-lg font-bold tabular-nums text-ink" data-testid="card-total">
+              {total ? `${headline.complete ? "" : "≥ "}${total}` : "—"}
             </p>
-            {receipt.totals.missing > 0 && (
-              <p className="text-[11px] text-warn">{receipt.totals.missing} likely {receipt.totals.missing === 1 ? "item" : "items"} without a price</p>
+            {headline.includes_estimate && (
+              <p className="text-[11px] font-medium text-amber-900" data-testid="card-estimate">
+                {t("receipt.includes_estimate")}
+              </p>
+            )}
+            {headline.missing > 0 && (
+              <p className="text-[11px] text-warn">{headline.missing} likely {headline.missing === 1 ? "step" : "steps"} without a price</p>
             )}
           </div>
         </div>
+        {(away.length > 0 || headline.might_add) && (
+          <div className="mt-1 space-y-0.5 text-[11px] text-muted-foreground">
+            {away.map((st) => (
+              <p key={st.key} data-testid="card-elsewhere">
+                + {t("list.done_elsewhere", { step: labels[st.key] ?? st.key, range: range(st.elsewhere!.low, st.elsewhere!.high, false) })}
+              </p>
+            ))}
+            {headline.might_add && (
+              <p data-testid="card-might-add">{t("receipt.might_add", { range: range(headline.might_add.low, headline.might_add.high, false) })}</p>
+            )}
+          </div>
+        )}
         <div className="mt-1.5 flex flex-wrap gap-1 text-[11px]">
           <span className="rounded-full bg-muted px-2 py-0.5">{BILLING_TAG[site.billing_type]}</span>
           {site.booking.some((b) => b.kind === "walk_in") && (
@@ -94,6 +131,8 @@ export function SiteList({
   onOpen,
   hasLocation,
   scope,
+  ordering = "rank",
+  labels,
 }: {
   views: SiteView[];
   sort: SortMode;
@@ -102,12 +141,20 @@ export function SiteList({
   onOpen: (siteId: string) => void;
   hasLocation: boolean;
   scope?: SiteScope | null;
+  /** P7: kind_then_distance = grouped by kind under headers */
+  ordering?: QuoteResponse["ordering"];
+  labels?: Record<string, string>;
 }) {
+  const byKind = ordering === "kind_then_distance";
   const opts: { id: SortMode; label: string }[] = [
-    { id: "price", label: "Price" },
+    // with no location the server's order is kind then distance from City Hall, never a price ranking
+    { id: "price", label: byKind ? "By distance" : "Price" },
     { id: "nearest", label: "Nearest" },
     { id: "open_today", label: "Open today" },
   ];
+  const card = (v: SiteView) => (
+    <SiteCard key={v.sq.site.site_id} v={v} labels={labels} selected={v.sq.site.site_id === selectedId} onOpen={() => onOpen(v.sq.site.site_id)} />
+  );
   return (
     <div className="space-y-2" data-testid="site-list">
       {scope && <ScopeNote scope={scope} count={views.length} />}
@@ -132,9 +179,16 @@ export function SiteList({
       {sort === "nearest" && !hasLocation && (
         <p className="text-[11px] text-muted-foreground">Add a ZIP or use your location to sort by distance.</p>
       )}
-      {views.map((v) => (
-        <SiteCard key={v.sq.site.site_id} v={v} selected={v.sq.site.site_id === selectedId} onOpen={() => onOpen(v.sq.site.site_id)} />
-      ))}
+      {byKind
+        ? kindGroups(views).map((g) => (
+            <section key={g.kind} className="space-y-2" data-testid="kind-group" data-kind={g.kind}>
+              <h3 className="pt-2 text-xs font-semibold uppercase tracking-wider text-ink">
+                {t(KIND_LABEL_KEY[g.kind])} <span className="font-normal text-muted-foreground">· {g.views.length}</span>
+              </h3>
+              {g.views.map(card)}
+            </section>
+          ))
+        : views.map(card)}
       <p className="text-[11px] text-muted-foreground">{t("start.privacy")}</p>
     </div>
   );

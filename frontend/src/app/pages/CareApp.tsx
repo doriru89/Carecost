@@ -6,7 +6,7 @@ import { t } from "@/contracts/copy";
 import { CHAT_REPLY_FULL_PAGE } from "@/contracts/exhaustive";
 import type { Catalog, CatalogPath, CatalogService } from "@/generated/contracts/catalog";
 import type { CandidatePath, ChatRequest, RedFlagReply, ServiceRef } from "@/generated/contracts/chat_api";
-import type { Payment, QuoteRequest } from "@/generated/contracts/quote_api";
+import type { Payment, QuoteRequest, QuoteResponse } from "@/generated/contracts/quote_api";
 import { ApiError, getApi, nearFor, NoMockData } from "../api/client";
 import { ChatPane, type ChatTurn } from "../components/ChatPane";
 import { PaymentSelect } from "../components/PaymentSelect";
@@ -33,12 +33,12 @@ function requestKey(payment: Payment, q: Query, where = ""): string {
 function whereKey(mode: "mock" | "api", location: UserLocation | null): string {
   if (mode === "mock") return "";
   const n = nearFor(location);
-  return n ? `${n.lat},${n.lon}` : "overall";
+  return n ? `${n.lat},${n.lon}` : "all";
 }
 
 function siteScope(mode: "mock" | "api", location: UserLocation | null): SiteScope {
   if (mode === "mock") return { kind: "fixture" };
-  if (!location || !nearFor(location)) return { kind: "overall" };
+  if (!location || !nearFor(location)) return { kind: "all" };
   return { kind: "near", label: location.kind === "device" ? "you" : location.label };
 }
 
@@ -138,6 +138,25 @@ export default function CareApp() {
       (window.__carecostSwitch ??= []).push({ ms: performance.now() - s.t, key: s.key });
     });
   }, [quoteState]);
+
+  // C3 item 9: one site's full receipt, for a no-location list that carries only its summary.
+  // Same payment, query and answers as the list; `site_ids` names the site (no `near`, so the ordering
+  // and the distances stay the list's). Cached per request key + site.
+  const siteCache = useRef(new Map<string, Promise<QuoteResponse>>());
+  const loadSite = useCallback(
+    (siteId: string) => {
+      if (!payment || !query) return Promise.reject(new Error("no quote"));
+      const key = `${requestKey(payment, query)}|${siteId}`;
+      let p = siteCache.current.get(key);
+      if (!p) {
+        p = api.quote({ payment, ...query, answers, site_ids: [siteId] });
+        p.catch(() => siteCache.current.delete(key));
+        siteCache.current.set(key, p);
+      }
+      return p;
+    },
+    [api, payment, query, answers],
+  );
 
   const changePayment = (p: Payment) => {
     if (query) switchStart.current = { t: performance.now(), key: requestKey(p, query, whereKey(api.mode, location)) };
@@ -378,6 +397,7 @@ export default function CareApp() {
             onLocation={setLocation}
             pick={pick}
             onPick={setPick}
+            loadSite={loadSite}
           />
         }
       />

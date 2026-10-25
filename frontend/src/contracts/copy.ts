@@ -9,12 +9,13 @@
  * `review: true` marks the lines Austin MUST read before launch (safety, clinical framing, what a
  * person owes). The UI never shows the review flag; `copy.test.ts` lists them.
  */
-import type { AiPausedReply, CarePathsReply, LlmInvalidReply } from "@/generated/contracts/chat_api";
+import type { AiPausedReply, CarePathsReply, ClarifyReply, LlmInvalidReply } from "@/generated/contracts/chat_api";
 import type { ReceiptLine, SourceKind } from "@/generated/contracts/quote_api";
 import {
   COMPONENT_LABEL_KEY,
   EXCLUDED_REASON_KEY,
   GAP_COPY_KEY,
+  KIND_LABEL_KEY,
   LADDER_COPY_KEYS,
   NOTICE_KEY,
   OUR_CADENCE_KEY,
@@ -54,6 +55,8 @@ export type ContractCopyKey =
   | AiPausedReply["message_key"]
   | LlmInvalidReply["message_key"]
   | CarePathsReply["copy_keys"][number]
+  | NonNullable<ClarifyReply["fixed_text_key"] | CarePathsReply["fixed_text_key"]>
+  | ValueOf<typeof KIND_LABEL_KEY>
   | ReceiptLine["price_notes"][number];
 
 export const CONTRACT_COPY = {
@@ -64,6 +67,15 @@ export const CONTRACT_COPY = {
   },
   "price.anesthesia_base_units_only": {
     en: "Anesthesia base units only. The time units depend on how long the case takes and are not in this number.",
+    review: true,
+  },
+  // P8a (Austin, 2026-10-25): a contract-level outlier is shown and summed, with this note
+  "price.group_consistently_higher": {
+    en: "This group's prices are consistently higher than similar places here.",
+    review: true,
+  },
+  "price.group_consistently_lower": {
+    en: "This group's prices are consistently lower than similar places here.",
     review: true,
   },
 
@@ -87,11 +99,15 @@ export const CONTRACT_COPY = {
   "fee.rung_3_hospital_file": { en: "The doctor's fee as listed in the hospital's own price file." },
   "fee.rung_4_masshealth": { en: "MassHealth's state-set fee for this doctor's service." },
   "fee.rung_5_medicare": { en: "Medicare's government-set fee for this doctor's service in the Boston area." },
+  // C3 (P5): rung 6 is now the peer estimate (the Medicare multiple is gone)
   "fee.rung_6_estimate": {
-    en: "Estimate: Medicare's fee times this group's own typical markup with your plan. No file lists this exact price, so the total says it includes an estimate.",
+    en: "Estimate: no file lists this doctor group's rate with your plan, so this is the middle range of what the same plan pays similar places for the same service. The total says it includes an estimate.",
     review: true,
   },
-  "fee.rung_7_medicare_reference": { en: "For reference only: what Medicare pays. Not added to the total." },
+  "fee.rung_7_medicare_reference": {
+    en: "For reference only: what Medicare pays. Not your plan's price, and not added to the total.",
+    review: true,
+  },
   "fee.rung_8_chia_badge": { en: "No price, only a ranking: the state's report says this group is relatively expensive or cheap for your plan." },
   "fee.self_pay_no_source": {
     en: "No public file lists the doctor's fee for self-pay (no insurance). Ask the office before your visit.",
@@ -106,6 +122,11 @@ export const CONTRACT_COPY = {
   "total.excluded.not_offered_here": { en: "Not offered here" },
   "total.excluded.repeats": { en: "Repeats per session, so not in the one-visit total" },
   "total.excluded.reference_only": { en: "Reference price only" },
+  "total.excluded.availability_unknown": {
+    en: "Not known whether this place offers it, so not in the total",
+    review: true,
+  },
+  "total.excluded.unusual": { en: "Price looks unusual, being checked, so not in the total", review: true },
 
   // ---- Freshness (a) publisher side: "late to refresh"
   "fresh.source.hospital_mrf_365_days": { en: "Hospitals must update their price file at least once a year." },
@@ -183,6 +204,16 @@ export const CONTRACT_COPY = {
   "notice.medicare_advantage_is_insurance": {
     en: "Medicare Advantage plans are private insurance: pick your insurer above instead of Medicare.",
   },
+  "notice.chain_price_spread": {
+    en: "Some locations of the same chain list the same item at prices more than 1.5× apart. Each location shows its own price; we are checking why.",
+    review: true,
+  },
+
+  // ---- X2 / P7: the kind of site, the group headers of a list with no location
+  "kind.urgent_care": { en: "Urgent care" },
+  "kind.office": { en: "Doctors' offices" },
+  "kind.hospital_outpatient": { en: "Hospital outpatient clinics" },
+  "kind.ambulatory_surgery_center": { en: "Surgery centers" },
 
   // ---- AI states. Wording from the Chat stream (git show wave2/chat:data/chat/copy.yaml, review pending_austin)
   "ai.paused_ip_cap": {
@@ -199,6 +230,22 @@ export const CONTRACT_COPY = {
   },
   "ai.paused_conversation_cap": {
     en: "This conversation is long enough. Start a new one, or browse prices directly.",
+    review: true,
+  },
+  // R18 / P13 (Chat2): fixed copy shown instead of model text. Wording from data/chat/copy.yaml.
+  "ai.paused_provider_chips": {
+    en: "The assistant can't read typed messages right now. Answer the questions below to find a care path, or browse prices.",
+    zh: "助手现在无法读取你输入的文字。回答下面的问题来找到就医路径，或直接浏览价格。",
+    review: true,
+  },
+  "chat.fixed_clarify": {
+    en: "One more question helps narrow this down.",
+    zh: "再回答一个问题，可以缩小范围。",
+    review: true,
+  },
+  "chat.fixed_paths": {
+    en: "These care paths match your answers so far.",
+    zh: "这些就医路径符合你目前的回答。",
     review: true,
   },
   "ai.output_invalid": {
@@ -262,11 +309,71 @@ export const APP_COPY = {
   "receipt.per_visit": { en: "per session; repeats are not in the total" },
   "receipt.not_offered": { en: "Not offered here" },
   "receipt.availability_unknown": { en: "Not known whether this place offers it" },
+  // P6 (Austin, 2026-10-25): an insurer's file is never evidence that a place offers a service
+  "receipt.availability.insurer_lists_rate": {
+    en: "Your insurer lists a rate for this group, but this place doesn't say it offers this. Call to check.",
+    review: true,
+  },
+  "receipt.availability.no_evidence": {
+    en: "This place doesn't say whether it offers this. Call to check.",
+    review: true,
+  },
+  "receipt.availability.site_says_not_offered": { en: "This place says it doesn't offer this.", review: true },
+  "receipt.listed_rate": { en: "The rate your insurer's file lists for this group (not counted)" },
+  "receipt.listed_price": { en: "The price in the file (not counted)" },
+  "receipt.medicare_reference": { en: "For reference: what Medicare pays (not your plan's price)" },
+  "receipt.no_plan_price": { en: "No price for your plan" },
+  // P4: a step this place doesn't do is its own line, priced at the places that do
+  "receipt.elsewhere_section": { en: "Not done here, or not confirmed" },
+  "receipt.elsewhere_about": { en: "Elsewhere, about {range}" },
+  "receipt.elsewhere_basis": {
+    en: "The middle half of prices at {n} places that do it, with the same way of paying. Not in this place's total.",
+    review: true,
+  },
+  "receipt.elsewhere_none": { en: "No place in our data has a price for this with your way of paying." },
+  // P5: an estimate is the same line at peer places of the same kind
+  "receipt.estimate_basis": {
+    en: "Estimate: the middle half of prices at {n} similar {kind} for the same item, with the same way of paying.",
+    review: true,
+  },
+  "receipt.estimate_basis_system": {
+    en: "Estimate: the middle half of prices at {n} groups in this health system for the same item, with the same way of paying.",
+    review: true,
+  },
+  // P8: outside 1/3x-3x of the peer median, not summed
+  "receipt.unusual": { en: "Price looks unusual, being checked", review: true },
+  "receipt.unusual_set_aside": {
+    en: "{n} listed {prices} outside the usual range left out of this range, being checked.",
+    review: true,
+  },
+  // P9: possible steps are never in the headline
+  "receipt.might_add": { en: "Might add {range}" },
+  "receipt.might_add_detail": { en: "if the doctor decides you need: {steps}", review: true },
+  "receipt.anesthesia_time": {
+    en: "With a typical time ({minutes} min), about {range}. Not in the total.",
+    review: true,
+  },
+  "receipt.chain_price": { en: "{chain}'s posted self-pay price for all its locations" },
+  "receipt.step_included": { en: "Done here" },
+  "receipt.loading": { en: "Loading this place's receipt…" },
+  "receipt.load_failed": { en: "Could not load this place's receipt. Try again in a moment." },
+  "list.done_elsewhere": { en: "{step}: elsewhere, about {range}" },
+  // P3: on the map, one step's price at a time
+  "map.pick_step": { en: "Show the price of one step on the map:" },
+  "map.no_step": { en: "Places only" },
+  "map.step_price_for": {
+    en: "Prices on the map: {step}. Places that don't say they offer it have no pin.",
+    review: true,
+  },
   "site.children_only": { en: "Children only" },
   "list.scope_near": { en: "The {n} places nearest {label}" },
-  "list.scope_overall": {
-    en: "The {n} best-value places overall. Add a ZIP or use your location to see the places nearest you.",
+  // P7 (Austin, 2026-10-25): with no location, every place that does this, grouped by kind, by distance
+  // from Boston City Hall. Never "best value overall".
+  "list.scope_all": {
+    en: "All {n} places that do this, grouped by kind of place, nearest to Boston City Hall first. Add a ZIP or use your location to see the places nearest you.",
+    review: true,
   },
+  "list.from_city_hall": { en: "{distance} from Boston City Hall" },
   "list.scope_fixture": { en: "Test data: a fixed sample of places, not the ones nearest you." },
   // C2 data-quality notices (data/etl/data_quality_notices.yaml, written by people): one sentence per kind
   "data_notice.content_changed_date_unchanged": {
@@ -293,7 +400,15 @@ export const APP_COPY = {
   "billing.office_visit": { en: "Billed as an office visit (no hospital facility fee)" },
   "billing.hospital_outpatient": { en: "Billed as a hospital outpatient department: expect a separate facility fee" },
   "billing.asc": { en: "Billed as a surgery center" },
-  "billing.unknown": { en: "Billing type not confirmed" },
+  // P9: unknown billing is priced as a hospital clinic, never as an office
+  "billing.unknown": {
+    en: "Billing type not confirmed: priced as a hospital clinic. This place may also charge a hospital facility fee.",
+    review: true,
+  },
+  "receipt.facility_fee_possible": {
+    en: "This place may also charge a hospital facility fee. We could not confirm how it bills.",
+    review: true,
+  },
 
   "chat.unreachable": { en: "The AI helper could not answer (server error {status}). You can still browse prices." },
   "chat.unreachable_network": { en: "The AI helper could not be reached. You can still browse prices." },
