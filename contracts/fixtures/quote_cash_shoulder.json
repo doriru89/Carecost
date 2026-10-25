@@ -122,13 +122,13 @@
         "data_notices": []
       },
       "headline": {
-        "likely_low": 150.0,
-        "likely_high": 150.0,
+        "likely_low": 329.0,
+        "likely_high": 329.0,
         "includes_estimate": false,
         "complete": false,
         "missing": 0,
-        "comparable": 515.0,
-        "real_steps": 1,
+        "comparable": 694.0,
+        "real_steps": 2,
         "might_add": null
       },
       "steps": [
@@ -137,13 +137,13 @@
           "step_id": "visit",
           "likelihood": "certain",
           "availability": "offered",
-          "figure": "none",
-          "low": null,
-          "high": null,
-          "rank_value": null,
+          "figure": "own",
+          "low": 179.0,
+          "high": 179.0,
+          "rank_value": 179.0,
           "estimated": false,
           "unusual": false,
-          "in_total": false,
+          "in_total": true,
           "missing": false,
           "line_ids": [
             "visit"
@@ -276,7 +276,7 @@
         "lines": [
           {
             "line_id": "visit",
-            "tier": "not_in_public_data",
+            "tier": "certain",
             "likelihood": "certain",
             "step_id": "visit",
             "codes": [
@@ -293,26 +293,35 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_published",
-              "what": "a posted self-pay price for this item at this clinic",
-              "ask": "Call the clinic and ask for its self-pay price.",
-              "searched": {
+              "kind": "money",
+              "low": 179.0,
+              "high": 179.0,
+              "basis": "posted_self_pay",
+              "prov": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
-              }
+                "source_kind": "clinic_posted",
+                "source_file": "self-pay",
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                "source_date": null,
+                "method": "stated",
+                "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "our_judgment",
             "doctor_fee": null,
             "ai_suggested": false,
-            "in_total": false,
+            "in_total": true,
             "elsewhere": [],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
             "unusual": null,
             "anesthesia_time": null,
-            "chain_price_from": null,
+            "chain_price_from": "afc_watertown",
             "at": "this_site"
           },
           {
@@ -344,10 +353,10 @@
                 "source_id": "posted_afc_watertown",
                 "source_kind": "clinic_posted",
                 "source_file": "self-pay",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2",
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
                 "source_date": null,
                 "method": "stated",
-                "row_ref": "posted_afc_watertown:5fb4bac81f1a:xray_2_views",
+                "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
                 "payer_id": null,
                 "row_id": null
               },
@@ -402,7 +411,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -445,7 +454,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -489,7 +498,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -533,7 +542,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -577,7 +586,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -630,7 +639,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -684,7 +693,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -734,7 +743,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -784,7 +793,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -809,9 +818,10 @@
         ],
         "totals": {
           "likely": {
-            "low": 150.0,
-            "high": 150.0,
+            "low": 329.0,
+            "high": 329.0,
             "line_ids": [
+              "visit",
               "xray"
             ],
             "includes_estimate": false,
@@ -821,10 +831,6 @@
           "complete": false,
           "missing": 0,
           "excluded": [
-            {
-              "line_id": "visit",
-              "reason": "no_dollar_amount"
-            },
             {
               "line_id": "physical_therapy",
               "reason": "availability_unknown"
@@ -868,8 +874,8 @@
             "portal_label": null,
             "portal_url": null
           },
-          "comparable": 515.0,
-          "real_steps": 1,
+          "comparable": 694.0,
+          "real_steps": 2,
           "might_add": null
         }
       },
@@ -914,13 +920,13 @@
         "data_notices": []
       },
       "headline": {
-        "likely_low": 150.0,
-        "likely_high": 150.0,
+        "likely_low": 329.0,
+        "likely_high": 329.0,
         "includes_estimate": false,
         "complete": false,
         "missing": 0,
-        "comparable": 515.0,
-        "real_steps": 1,
+        "comparable": 694.0,
+        "real_steps": 2,
         "might_add": null
       },
       "steps": [
@@ -929,13 +935,13 @@
           "step_id": "visit",
           "likelihood": "certain",
           "availability": "offered",
-          "figure": "none",
-          "low": null,
-          "high": null,
-          "rank_value": null,
+          "figure": "own",
+          "low": 179.0,
+          "high": 179.0,
+          "rank_value": 179.0,
           "estimated": false,
           "unusual": false,
-          "in_total": false,
+          "in_total": true,
           "missing": false,
           "line_ids": [
             "visit"
@@ -1068,7 +1074,7 @@
         "lines": [
           {
             "line_id": "visit",
-            "tier": "not_in_public_data",
+            "tier": "certain",
             "likelihood": "certain",
             "step_id": "visit",
             "codes": [
@@ -1085,26 +1091,35 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_published",
-              "what": "a posted self-pay price for this item at this clinic",
-              "ask": "Call the clinic and ask for its self-pay price.",
-              "searched": {
+              "kind": "money",
+              "low": 179.0,
+              "high": 179.0,
+              "basis": "posted_self_pay",
+              "prov": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
-              }
+                "source_kind": "clinic_posted",
+                "source_file": "self-pay",
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                "source_date": null,
+                "method": "stated",
+                "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "our_judgment",
             "doctor_fee": null,
             "ai_suggested": false,
-            "in_total": false,
+            "in_total": true,
             "elsewhere": [],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
             "unusual": null,
             "anesthesia_time": null,
-            "chain_price_from": null,
+            "chain_price_from": "afc_watertown",
             "at": "this_site"
           },
           {
@@ -1136,10 +1151,10 @@
                 "source_id": "posted_afc_watertown",
                 "source_kind": "clinic_posted",
                 "source_file": "self-pay",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2",
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
                 "source_date": null,
                 "method": "stated",
-                "row_ref": "posted_afc_watertown:5fb4bac81f1a:xray_2_views",
+                "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
                 "payer_id": null,
                 "row_id": null
               },
@@ -1194,7 +1209,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -1237,7 +1252,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -1281,7 +1296,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -1325,7 +1340,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -1369,7 +1384,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -1422,7 +1437,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -1476,7 +1491,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -1526,7 +1541,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -1576,7 +1591,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
               }
             },
             "list_price": null,
@@ -1601,9 +1616,10 @@
         ],
         "totals": {
           "likely": {
-            "low": 150.0,
-            "high": 150.0,
+            "low": 329.0,
+            "high": 329.0,
             "line_ids": [
+              "visit",
               "xray"
             ],
             "includes_estimate": false,
@@ -1613,10 +1629,6 @@
           "complete": false,
           "missing": 0,
           "excluded": [
-            {
-              "line_id": "visit",
-              "reason": "no_dollar_amount"
-            },
             {
               "line_id": "physical_therapy",
               "reason": "availability_unknown"
@@ -1660,8 +1672,8 @@
             "portal_label": null,
             "portal_url": null
           },
-          "comparable": 515.0,
-          "real_steps": 1,
+          "comparable": 694.0,
+          "real_steps": 2,
           "might_add": null
         }
       },
@@ -1704,7 +1716,7 @@
         "likely_high": 1145.0,
         "includes_estimate": false,
         "complete": false,
-        "missing": 1,
+        "missing": 2,
         "comparable": 195.0,
         "real_steps": 1,
         "might_add": null
@@ -1722,7 +1734,7 @@
           "estimated": false,
           "unusual": false,
           "in_total": false,
-          "missing": false,
+          "missing": true,
           "line_ids": [
             "visit_facility",
             "visit_doctor"
@@ -1957,7 +1969,56 @@
             },
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [],
+            "elsewhere": [
+              {
+                "site_id": "afc_urgent_care_cambridge_cambridge",
+                "site_name": "AFC Urgent Care Cambridge",
+                "lat": 42.389456,
+                "lon": -71.119121,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              },
+              {
+                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+                "site_name": "AFC Urgent Care Cambridge Inman Square",
+                "lat": 42.373615,
+                "lon": -71.101023,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              }
+            ],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
@@ -3108,7 +3169,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 1,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit_doctor",
@@ -4140,7 +4201,7 @@
         "likely_high": 1145.0,
         "includes_estimate": false,
         "complete": false,
-        "missing": 1,
+        "missing": 2,
         "comparable": 195.0,
         "real_steps": 1,
         "might_add": null
@@ -4158,7 +4219,7 @@
           "estimated": false,
           "unusual": false,
           "in_total": false,
-          "missing": false,
+          "missing": true,
           "line_ids": [
             "visit_facility",
             "visit_doctor"
@@ -4393,7 +4454,56 @@
             },
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [],
+            "elsewhere": [
+              {
+                "site_id": "afc_urgent_care_cambridge_cambridge",
+                "site_name": "AFC Urgent Care Cambridge",
+                "lat": 42.389456,
+                "lon": -71.119121,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              },
+              {
+                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+                "site_name": "AFC Urgent Care Cambridge Inman Square",
+                "lat": 42.373615,
+                "lon": -71.101023,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              }
+            ],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
@@ -5544,7 +5654,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 1,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit_doctor",
@@ -6574,7 +6684,7 @@
         "likely_high": 1145.0,
         "includes_estimate": false,
         "complete": false,
-        "missing": 1,
+        "missing": 2,
         "comparable": 195.0,
         "real_steps": 1,
         "might_add": null
@@ -6592,7 +6702,7 @@
           "estimated": false,
           "unusual": false,
           "in_total": false,
-          "missing": false,
+          "missing": true,
           "line_ids": [
             "visit_facility",
             "visit_doctor"
@@ -6827,7 +6937,56 @@
             },
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [],
+            "elsewhere": [
+              {
+                "site_id": "afc_urgent_care_cambridge_cambridge",
+                "site_name": "AFC Urgent Care Cambridge",
+                "lat": 42.389456,
+                "lon": -71.119121,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              },
+              {
+                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+                "site_name": "AFC Urgent Care Cambridge Inman Square",
+                "lat": 42.373615,
+                "lon": -71.101023,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              }
+            ],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
@@ -7954,7 +8113,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 1,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit_doctor",
@@ -8986,7 +9145,7 @@
         "likely_high": 1145.0,
         "includes_estimate": false,
         "complete": false,
-        "missing": 1,
+        "missing": 2,
         "comparable": 195.0,
         "real_steps": 1,
         "might_add": null
@@ -9004,7 +9163,7 @@
           "estimated": false,
           "unusual": false,
           "in_total": false,
-          "missing": false,
+          "missing": true,
           "line_ids": [
             "visit_facility",
             "visit_doctor"
@@ -9239,7 +9398,56 @@
             },
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [],
+            "elsewhere": [
+              {
+                "site_id": "afc_urgent_care_cambridge_cambridge",
+                "site_name": "AFC Urgent Care Cambridge",
+                "lat": 42.389456,
+                "lon": -71.119121,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              },
+              {
+                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+                "site_name": "AFC Urgent Care Cambridge Inman Square",
+                "lat": 42.373615,
+                "lon": -71.101023,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              }
+            ],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
@@ -10390,7 +10598,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 1,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit_doctor",
@@ -11429,7 +11637,7 @@
         "likely_high": 1095.0,
         "includes_estimate": false,
         "complete": false,
-        "missing": 1,
+        "missing": 2,
         "comparable": 365.0,
         "real_steps": 1,
         "might_add": null
@@ -11447,7 +11655,7 @@
           "estimated": false,
           "unusual": false,
           "in_total": false,
-          "missing": false,
+          "missing": true,
           "line_ids": [
             "visit_facility",
             "visit_doctor"
@@ -11682,7 +11890,56 @@
             },
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [],
+            "elsewhere": [
+              {
+                "site_id": "afc_urgent_care_cambridge_cambridge",
+                "site_name": "AFC Urgent Care Cambridge",
+                "lat": 42.389456,
+                "lon": -71.119121,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              },
+              {
+                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+                "site_name": "AFC Urgent Care Cambridge Inman Square",
+                "lat": 42.373615,
+                "lon": -71.101023,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              }
+            ],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
@@ -12811,7 +13068,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 1,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit_doctor",
@@ -13344,7 +13601,7 @@
         "likely_high": 1095.0,
         "includes_estimate": false,
         "complete": false,
-        "missing": 1,
+        "missing": 2,
         "comparable": 365.0,
         "real_steps": 1,
         "might_add": null
@@ -13362,7 +13619,7 @@
           "estimated": false,
           "unusual": false,
           "in_total": false,
-          "missing": false,
+          "missing": true,
           "line_ids": [
             "visit_facility",
             "visit_doctor"
@@ -13597,7 +13854,56 @@
             },
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [],
+            "elsewhere": [
+              {
+                "site_id": "afc_urgent_care_cambridge_cambridge",
+                "site_name": "AFC Urgent Care Cambridge",
+                "lat": 42.389456,
+                "lon": -71.119121,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              },
+              {
+                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+                "site_name": "AFC Urgent Care Cambridge Inman Square",
+                "lat": 42.373615,
+                "lon": -71.101023,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              }
+            ],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
@@ -14726,7 +15032,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 1,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit_doctor",
@@ -15259,7 +15565,7 @@
         "likely_high": 1095.0,
         "includes_estimate": false,
         "complete": false,
-        "missing": 1,
+        "missing": 2,
         "comparable": 365.0,
         "real_steps": 1,
         "might_add": null
@@ -15277,7 +15583,7 @@
           "estimated": false,
           "unusual": false,
           "in_total": false,
-          "missing": false,
+          "missing": true,
           "line_ids": [
             "visit_facility",
             "visit_doctor"
@@ -15512,7 +15818,56 @@
             },
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [],
+            "elsewhere": [
+              {
+                "site_id": "afc_urgent_care_cambridge_cambridge",
+                "site_name": "AFC Urgent Care Cambridge",
+                "lat": 42.389456,
+                "lon": -71.119121,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              },
+              {
+                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+                "site_name": "AFC Urgent Care Cambridge Inman Square",
+                "lat": 42.373615,
+                "lon": -71.101023,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              }
+            ],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
@@ -16641,7 +16996,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 1,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit_doctor",
@@ -17173,7 +17528,7 @@
         "likely_high": null,
         "includes_estimate": false,
         "complete": false,
-        "missing": 1,
+        "missing": 2,
         "comparable": 365.0,
         "real_steps": 0,
         "might_add": null
@@ -17191,7 +17546,7 @@
           "estimated": false,
           "unusual": false,
           "in_total": false,
-          "missing": false,
+          "missing": true,
           "line_ids": [
             "visit"
           ],
@@ -17349,7 +17704,56 @@
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [],
+            "elsewhere": [
+              {
+                "site_id": "afc_urgent_care_cambridge_cambridge",
+                "site_name": "AFC Urgent Care Cambridge",
+                "lat": 42.389456,
+                "lon": -71.119121,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              },
+              {
+                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+                "site_name": "AFC Urgent Care Cambridge Inman Square",
+                "lat": 42.373615,
+                "lon": -71.101023,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              }
+            ],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
@@ -17403,10 +17807,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:5fb4bac81f1a:xray_2_views",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -17427,10 +17831,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:5fb4bac81f1a:xray_2_views",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -17853,7 +18257,7 @@
         "totals": {
           "likely": null,
           "complete": false,
-          "missing": 1,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit",
@@ -17948,7 +18352,7 @@
         "likely_high": 1179.0,
         "includes_estimate": false,
         "complete": false,
-        "missing": 1,
+        "missing": 2,
         "comparable": 468.75,
         "real_steps": 1,
         "might_add": null
@@ -17966,7 +18370,7 @@
           "estimated": false,
           "unusual": false,
           "in_total": false,
-          "missing": false,
+          "missing": true,
           "line_ids": [
             "visit_facility",
             "visit_doctor"
@@ -18201,7 +18605,56 @@
             },
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [],
+            "elsewhere": [
+              {
+                "site_id": "afc_urgent_care_cambridge_cambridge",
+                "site_name": "AFC Urgent Care Cambridge",
+                "lat": 42.389456,
+                "lon": -71.119121,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              },
+              {
+                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+                "site_name": "AFC Urgent Care Cambridge Inman Square",
+                "lat": 42.373615,
+                "lon": -71.101023,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              }
+            ],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
@@ -19339,7 +19792,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 1,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit_doctor",
@@ -20259,7 +20712,7 @@
         "likely_high": null,
         "includes_estimate": false,
         "complete": false,
-        "missing": 2,
+        "missing": 3,
         "comparable": null,
         "real_steps": 0,
         "might_add": null
@@ -20277,7 +20730,7 @@
           "estimated": false,
           "unusual": false,
           "in_total": false,
-          "missing": false,
+          "missing": true,
           "line_ids": [
             "visit"
           ],
@@ -20427,7 +20880,56 @@
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [],
+            "elsewhere": [
+              {
+                "site_id": "afc_urgent_care_cambridge_cambridge",
+                "site_name": "AFC Urgent Care Cambridge",
+                "lat": 42.389456,
+                "lon": -71.119121,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              },
+              {
+                "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+                "site_name": "AFC Urgent Care Cambridge Inman Square",
+                "lat": 42.373615,
+                "lon": -71.101023,
+                "cell": {
+                  "kind": "money",
+                  "low": 179.0,
+                  "high": 179.0,
+                  "basis": "posted_self_pay",
+                  "prov": {
+                    "source_id": "posted_afc_watertown",
+                    "source_kind": "clinic_posted",
+                    "source_file": "self-pay",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_date": null,
+                    "method": "stated",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": null
+                }
+              }
+            ],
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
@@ -20481,10 +20983,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:5fb4bac81f1a:xray_2_views",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -20505,10 +21007,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2",
+                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:5fb4bac81f1a:xray_2_views",
+                    "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -20931,7 +21433,7 @@
         "totals": {
           "likely": null,
           "complete": false,
-          "missing": 2,
+          "missing": 3,
           "excluded": [
             {
               "line_id": "visit",

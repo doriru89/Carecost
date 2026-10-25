@@ -203,6 +203,49 @@ ASCs never reach 5 peer groups, so an ASC estimate is always a Gap until more AS
   * Keep the raw `.json.gz`, or a byte-range excerpt per priced item, so a TiC quote can be
     re-checked against the raw file and not only A2's staged copy.
 
+## A7 re-run (wave 2 round C6, 2026-10-25)
+
+Three changes to `app/audit` (tests in `tests/audit/test_audit.py`):
+
+* **Distinct contracts.** A payer copies one contract into each of its network files (HPHC: up
+  to 15), and the audit's line is per network, so one contract was counted once per file. A
+  contract is now payer + billing group + code + the outlying amount (`contract_key`).
+  `summary.json` `distinct` (and `residual_after_fixes.distinct`) counts outliers and unexplained
+  as rows and as contracts; `outliers.csv` gets `contract_key`, `contract_lines`,
+  `first_of_contract` (filter on it to read each contract once).
+* **Cause `flat_visit_rate`**, tested before `facility_professional_mixup`: the group has the
+  outlying amount, for the same payer, network and kind, on a visit code (E/M 99202-99215 or
+  S9083) and on a non-visit code (visit add-ons 99051 / S9088 count as neither), >= 3 codes in
+  all, TiC rows only. Tufts Direct pays ConvenientMD $125 on 99203 / 99204 / 99213 / 99214 / 81003
+  / 81025 (`tic_tufts_direct_nonsub_group:04e60eab0640:7629`, 81003 at 34.7x its peers): one
+  amount per visit, not a $125 urinalysis. Hospital files are left out: a file is one group of
+  thousands of items, and equal amounts there were chance or a percent of one chargemaster price
+  (CHA Cigna, 58.3% of $195 on 99213 / 97161 / 97162).
+* **Citation.** The anesthesia base units (00811 = 4, 00812 = 3, 00813 = 5) are from the CMS
+  CY2022 base-units file (`cms_anes_base_units_cy2022`, rows 102-104), the newest CMS posts. RVU26D
+  `ANES2026.csv` holds the 2026 conversion factors, not base units.
+
+Runs (each with `--sites data/sites/sites.yaml` and its own data root):
+
+| | outliers: rows / contracts | unexplained: rows / contracts | flat_visit_rate: rows / contracts | after fixes F1-F5: outliers / unexplained (rows) |
+|---|---|---|---|---|
+| A6 pack, A6 rules (A6's run) | 23,726 / 4,947 | 727 / 354 | - | 5,693 / 901 |
+| A6 pack, A7 rules | 23,726 / 4,947 | 717 / 350 | 23 / 17 | 5,693 / 891 (2,018 / 305 contracts) |
+| A7 pack, A7 rules | 24,344 / 5,046 | 729 / 362 | 28 / 22 | 5,780 / 897 (2,070 / 311 contracts) |
+| A7 pack without 99281-99285 | 23,726 / 4,947 | 716 / 349 | 27 | |
+
+* The dedupe is the big change in what a person has to read: 23,726 outlier rows are 4,947
+  contracts, and 727 unexplained rows are 354.
+* `flat_visit_rate` moves 10 rows out of unexplained on the A6 pack (727 to 717); the other 13 of
+  its 23 rows were flat_rate (5), contract_level (5) or peers_flat_rate (3) before. All 28 on the A7 pack are in the three Tufts Direct files: ConvenientMD (6), Urgent Care
+  Med Assoc (2) and Health Express (2) on 81003 / 81025, Boston Medical Center's $431.24 on
+  visits, X-rays, ultrasound and PT (14), Winchester Hospital (4).
+* The ED reference codes add 618 outlier rows (99 contracts), 13 of them unexplained. 433 are
+  `rate_group_within_tin` and 100 `facility_professional_mixup`. The audit builds lines for every
+  packed code at every site, so it also measures ED professional fees at office and urgent-care
+  TINs (380 of the 618), which the app never shows: the ER reference is read per hospital.
+* The A7 rules on the A6 pack change no line or peer, only causes: the outlier counts are equal.
+
 ## Limits
 
 * **The TiC raw files are not on disk.** `a2-tic/data/raw/tic/*` holds only `*.fetch.json` and
