@@ -131,8 +131,13 @@ def test_i5_row_order_does_not_change_the_answer(store, registry, quotes):
     rows = list(store.rows)
     rng.shuffle(rows)
     shuffled = RateStore(
-        rows=rows, sources=store.sources, version=store.version, codes=store.codes,
-        npi_sets=store.npi_sets, census_tins=store.census_tins, flags=store.flags,
+        rows=rows,
+        sources=store.sources,
+        version=store.version,
+        codes=store.codes,
+        npi_sets=store.npi_sets,
+        census_tins=store.census_tins,
+        flags=store.flags,
     )  # fmt: skip  (C4b: the TiC row flags travel with the rows, keyed by row id)
     eng = Engine(shuffled, registry)
     for req, r in rng.sample(quotes, 30):

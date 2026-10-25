@@ -49,7 +49,7 @@ def read_rvu(zpath: Path) -> tuple[dict[str, str], str]:
     # the header spans several lines: "PCTC" on the line above "IND"
     col = next(i for i, v in enumerate(rows[head]) if v == "IND" and rows[head - 1][i] == "PCTC")
     out: dict[str, str] = {}
-    for r in rows[head + 1:]:
+    for r in rows[head + 1 :]:
         if len(r) > col and r[0] and not r[1]:
             out.setdefault(r[0].strip(), r[col].strip())
     return out, member

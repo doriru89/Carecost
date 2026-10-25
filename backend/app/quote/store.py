@@ -485,7 +485,11 @@ def write_pack(
     )
     db.executemany(
         "insert into row_flags values (?, ?, ?)",
-        [(*uid.split(":", 1), "|".join(sorted(f))) for uid, f in sorted((flags or {}).items()) if f],
+        [
+            (*uid.split(":", 1), "|".join(sorted(f)))
+            for uid, f in sorted((flags or {}).items())
+            if f
+        ],
     )
     db.execute("create index rows_tin on rows (tin)")
     db.commit()
@@ -538,7 +542,8 @@ def load_pack(
     npis: dict[int, list[str]] = defaultdict(list)
     flags: dict[str, frozenset[str]] = {}
     has_flags = db.execute(
-        "select 1 from sqlite_master where type = 'table' and name = 'row_flags'").fetchone()
+        "select 1 from sqlite_master where type = 'table' and name = 'row_flags'"
+    ).fetchone()
     if has_flags:  # packs built before C4b have no flags table
         for src, rid, fl in db.execute("select source_id, row_id, flags from row_flags"):
             flags[f"{src}:{rid}"] = frozenset(fl.split("|"))

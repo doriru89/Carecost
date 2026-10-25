@@ -1078,8 +1078,10 @@ class Engine:
                     f"{it.plain}: {who}", f"{it.tech} (facility fee)", "facility", confirmed, cell,
                     extra_gloss=["facility_fee"], list_price=lp,
                     price_notes=extra.get("price_notes", [])))  # fmt: skip
-            if two_part and (code in self.facility_only or (
-                    cls != "anesthesia" and self.pctc.get(code) in NO_PROFESSIONAL_FEE)):
+            if two_part and (
+                code in self.facility_only
+                or (cls != "anesthesia" and self.pctc.get(code) in NO_PROFESSIONAL_FEE)
+            ):
                 continue  # C4b 3a: CMS PC/TC 3/4/7/9 (e.g. clinical labs): no doctor's fee line
             if two_part:
                 reading = (self.pctc[code] in READING if code in self.pctc
@@ -1166,8 +1168,12 @@ class Engine:
         if len(keep) != len(rows):
             m = self._money([r for _, r in keep], value, basis, method) if keep else None
             ln["cell"] = m or _not_published(
-                self.store, rows[0][1].source_id, "a usable rate for this item here (the file's "
-                "rows for it are not this kind of fee)", "Ask the office what your plan pays.")
+                self.store,
+                rows[0][1].source_id,
+                "a usable rate for this item here (the file's "
+                "rows for it are not this kind of fee)",
+                "Ask the office what your plan pays.",
+            )
             cell = ln["cell"]
         if cell["kind"] == "money" and any(
                 "same_npi_pos_multi_rate" in flags(r) for _, r in cell["_m"][0]):  # fmt: skip
@@ -2051,8 +2057,13 @@ class Engine:
                     without.append(sid)
         else:
             cands = [(quotable[sid], o, its) for o, its, adm in groups if its for sid in adm]
-            unpriced = {sid for sid in pool if path is not None and options and (
-                (o := self.option_of(quotable[sid], path)) is not None and not o.priced)}
+            unpriced = {
+                sid
+                for sid in pool
+                if path is not None
+                and options
+                and ((o := self.option_of(quotable[sid], path)) is not None and not o.priced)
+            }
             without = sorted(sid for sid, s in quotable.items()
                              if sid not in member and sid not in unpriced
                              and not s.children_only)  # fmt: skip
@@ -2246,8 +2257,11 @@ class Engine:
         (+ possible and rare steps; within an exclusive_group only the dearest counts). Possible
         steps are listed one by one in may_also_order, never in the headline."""
         real = [st for st in steps if not st["_ai"]]
-        base = [st for st in real if st["_entry"]] if has_entry else [
-            st for st in real if st["likelihood"] == "certain"]  # manual picks: what was picked
+        base = (
+            [st for st in real if st["_entry"]]
+            if has_entry
+            else [st for st in real if st["likelihood"] == "certain"]
+        )  # manual picks: what was picked
         if not base:
             return None
         lns: dict[str, list[Json]] = defaultdict(list)

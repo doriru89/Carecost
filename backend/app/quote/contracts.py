@@ -826,7 +826,8 @@ class SiteSummary(_Strict):
         default=None, pattern=ID_RE, description="C3 R12: the chain whose posted prices apply here"
     )
     chain_name: str | None = Field(
-        default=None, description="C4b: the chain's name as a person reads it, e.g. 'AFC Urgent Care'"
+        default=None,
+        description="C4b: the chain's name as a person reads it, e.g. 'AFC Urgent Care'",
     )
     children_only: bool = Field(default=False, description="Pediatric-only site (D27)")
     data_notices: list[DataNotice] = Field(
