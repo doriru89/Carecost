@@ -1,0 +1,447 @@
+{
+ "pack": "/private/tmp/claude-501/-Users-austin-AIOS/5ffdb2f9-d2d3-4351-9ae8-e8f12cff6a23/scratchpad/packs/after.sqlite",
+ "build_id": "20261024-336340ed",
+ "tic_release": "tic-2026-10",
+ "sites": 208,
+ "rows_loaded": 1047791,
+ "rule": {
+  "min_peer_groups": 5,
+  "high": 3.0,
+  "low": 0.3333,
+  "peer": "same_kind (X2), network level"
+ },
+ "lines_built": 221735,
+ "lines_measured": 212544,
+ "outliers": 11125,
+ "outlier_share": 0.0523,
+ "distinct_source_rows_outlying": 13936,
+ "measured_by_kind": {
+  "office": 145307,
+  "hospital_outpatient": 45803,
+  "urgent_care": 21434
+ },
+ "outliers_by_kind_side": {
+  "hospital_outpatient/high": 1608,
+  "hospital_outpatient/low": 1464,
+  "office/high": 2342,
+  "office/low": 3800,
+  "urgent_care/high": 817,
+  "urgent_care/low": 1094
+ },
+ "product_level": {
+  "lines_measured": 101874,
+  "outliers": 8302
+ },
+ "causes": {
+  "placeholder": 0,
+  "not_dollars": 3,
+  "chargemaster_as_rate": 15,
+  "percent_as_dollars": 0,
+  "per_diem_or_case_rate": 184,
+  "wrong_plan": 0,
+  "facility_professional_mixup": 48,
+  "anesthesia_per_unit": 180,
+  "pos_facility_rate_at_office": 1191,
+  "pos_office_rate_at_hospital": 0,
+  "pos_office_rate_at_urgent_care": 233,
+  "flat_rate": 767,
+  "peers_flat_rate": 140,
+  "ambiguous_multi_rate": 436,
+  "rate_group_within_tin": 5574,
+  "children_only_contract": 1442,
+  "contract_level": 711,
+  "unexplained": 201
+ },
+ "trace_status": {
+  "raw_line": 325,
+  "raw_json": 218,
+  "staged_tic": 10582
+ },
+ "fixes": [
+  {
+   "fix": "base",
+   "rule": "as packed",
+   "measured_lines": 212544,
+   "outliers": 11125,
+   "removed": 0,
+   "backtest_same_kind": {
+    "n": 212544,
+    "share_over_2x_off": 0.0828,
+    "share_inside_p25_p75": 0.5407
+   }
+  },
+  {
+   "fix": "F1",
+   "rule": "drop placeholders and chargemaster-as-rate (A5/A2 normalize)",
+   "measured_lines": 212310,
+   "outliers": 11089,
+   "removed": 36,
+   "backtest_same_kind": {
+    "n": 212310,
+    "share_over_2x_off": 0.0824,
+    "share_inside_p25_p75": 0.5407
+   }
+  },
+  {
+   "fix": "F2",
+   "rule": "hospital plan hygiene: non-commercial / non-contracted / unknown-LOB rows (A5)",
+   "measured_lines": 212310,
+   "outliers": 11089,
+   "removed": 0,
+   "backtest_same_kind": {
+    "n": 212310,
+    "share_over_2x_off": 0.0824,
+    "share_inside_p25_p75": 0.5407
+   }
+  },
+  {
+   "fix": "F3a",
+   "rule": "office sites price at POS 11 only (C3 engine.yaml)",
+   "measured_lines": 212310,
+   "outliers": 9767,
+   "removed": 1322,
+   "backtest_same_kind": {
+    "n": 212310,
+    "share_over_2x_off": 0.0822,
+    "share_inside_p25_p75": 0.5414
+   }
+  },
+  {
+   "fix": "F3b",
+   "rule": "urgent care prices at POS 20 when the group lists it (C3 engine.yaml)",
+   "measured_lines": 211063,
+   "outliers": 8292,
+   "removed": 1475,
+   "backtest_same_kind": {
+    "n": 211063,
+    "share_over_2x_off": 0.0783,
+    "share_inside_p25_p75": 0.5443
+   }
+  },
+  {
+   "fix": "F4",
+   "rule": "children-only sites are their own peer kind (C3 X2 peers)",
+   "measured_lines": 203619,
+   "outliers": 6196,
+   "removed": 2096,
+   "backtest_same_kind": {
+    "n": 203619,
+    "share_over_2x_off": 0.0641,
+    "share_inside_p25_p75": 0.5494
+   }
+  },
+  {
+   "fix": "F5",
+   "rule": "one TIN, several rate groups: price at the largest NPI group (C3, D6)",
+   "measured_lines": 203619,
+   "outliers": 2954,
+   "removed": 3242,
+   "backtest_same_kind": {
+    "n": 203619,
+    "share_over_2x_off": 0.0893,
+    "share_inside_p25_p75": 0.5753
+   }
+  }
+ ],
+ "residual_after_fixes": {
+  "outliers": 2954,
+  "measured": 203619,
+  "causes": {
+   "contract_level": 1149,
+   "rate_group_within_tin": 676,
+   "ambiguous_multi_rate": 389,
+   "flat_rate": 287,
+   "unexplained": 172,
+   "anesthesia_per_unit": 159,
+   "peers_flat_rate": 106,
+   "facility_professional_mixup": 15,
+   "not_dollars": 1
+  }
+ },
+ "backtest": {
+  "asc": {
+   "lines": 1665,
+   "coverage": 0.0,
+   "same_kind": {
+    "n": 0
+   },
+   "same_system_then_kind": {
+    "n": 0
+   },
+   "where_system_peers_used": {
+    "n": 0,
+    "same_kind": {
+     "n": 0
+    },
+    "same_system": {
+     "n": 0
+    }
+   }
+  },
+  "hospital_outpatient": {
+   "lines": 49643,
+   "coverage": 0.9226,
+   "same_kind": {
+    "n": 45803,
+    "median_ape": 0.1816,
+    "share_over_2x_off": 0.0994,
+    "share_inside_p25_p75": 0.4841
+   },
+   "same_system_then_kind": {
+    "n": 45803,
+    "median_ape": 0.1608,
+    "share_over_2x_off": 0.0957,
+    "share_inside_p25_p75": 0.4668
+   },
+   "where_system_peers_used": {
+    "n": 20360,
+    "same_kind": {
+     "n": 20360,
+     "median_ape": 0.1914,
+     "share_over_2x_off": 0.0776,
+     "share_inside_p25_p75": 0.4759
+    },
+    "same_system": {
+     "n": 20360,
+     "median_ape": 0.1478,
+     "share_over_2x_off": 0.0692,
+     "share_inside_p25_p75": 0.4371
+    }
+   }
+  },
+  "office": {
+   "lines": 145369,
+   "coverage": 0.9996,
+   "same_kind": {
+    "n": 145307,
+    "median_ape": 0.1507,
+    "share_over_2x_off": 0.0745,
+    "share_inside_p25_p75": 0.5672
+   },
+   "same_system_then_kind": {
+    "n": 145307,
+    "median_ape": 0.1274,
+    "share_over_2x_off": 0.0581,
+    "share_inside_p25_p75": 0.5817
+   },
+   "where_system_peers_used": {
+    "n": 51867,
+    "same_kind": {
+     "n": 51867,
+     "median_ape": 0.1977,
+     "share_over_2x_off": 0.11,
+     "share_inside_p25_p75": 0.5121
+    },
+    "same_system": {
+     "n": 51867,
+     "median_ape": 0.1016,
+     "share_over_2x_off": 0.064,
+     "share_inside_p25_p75": 0.5527
+    }
+   }
+  },
+  "urgent_care": {
+   "lines": 25058,
+   "coverage": 0.8554,
+   "same_kind": {
+    "n": 21434,
+    "median_ape": 0.2223,
+    "share_over_2x_off": 0.1034,
+    "share_inside_p25_p75": 0.4816
+   },
+   "same_system_then_kind": {
+    "n": 21434,
+    "median_ape": 0.2223,
+    "share_over_2x_off": 0.1035,
+    "share_inside_p25_p75": 0.4821
+   },
+   "where_system_peers_used": {
+    "n": 152,
+    "same_kind": {
+     "n": 152,
+     "median_ape": 0.1361,
+     "share_over_2x_off": 0.0855,
+     "share_inside_p25_p75": 0.5658
+    },
+    "same_system": {
+     "n": 152,
+     "median_ape": 0.0,
+     "share_over_2x_off": 0.0921,
+     "share_inside_p25_p75": 0.6447
+    }
+   }
+  }
+ },
+ "backtest_after_fixes": {
+  "asc": {
+   "lines": 1665,
+   "coverage": 0.0,
+   "same_kind": {
+    "n": 0
+   },
+   "same_system_then_kind": {
+    "n": 0
+   },
+   "where_system_peers_used": {
+    "n": 0,
+    "same_kind": {
+     "n": 0
+    },
+    "same_system": {
+     "n": 0
+    }
+   }
+  },
+  "hospital_outpatient": {
+   "lines": 47239,
+   "coverage": 0.9116,
+   "same_kind": {
+    "n": 43063,
+    "median_ape": 0.155,
+    "share_over_2x_off": 0.0894,
+    "share_inside_p25_p75": 0.5149
+   },
+   "same_system_then_kind": {
+    "n": 43063,
+    "median_ape": 0.1488,
+    "share_over_2x_off": 0.0892,
+    "share_inside_p25_p75": 0.4904
+   },
+   "where_system_peers_used": {
+    "n": 20348,
+    "same_kind": {
+     "n": 20348,
+     "median_ape": 0.155,
+     "share_over_2x_off": 0.1039,
+     "share_inside_p25_p75": 0.4953
+    },
+    "same_system": {
+     "n": 20348,
+     "median_ape": 0.1421,
+     "share_over_2x_off": 0.1034,
+     "share_inside_p25_p75": 0.4433
+    }
+   }
+  },
+  "hospital_outpatient:children": {
+   "lines": 2131,
+   "coverage": 0.0,
+   "same_kind": {
+    "n": 0
+   },
+   "same_system_then_kind": {
+    "n": 0
+   },
+   "where_system_peers_used": {
+    "n": 0,
+    "same_kind": {
+     "n": 0
+    },
+    "same_system": {
+     "n": 0
+    }
+   }
+  },
+  "office": {
+   "lines": 140667,
+   "coverage": 0.9996,
+   "same_kind": {
+    "n": 140605,
+    "median_ape": 0.15,
+    "share_over_2x_off": 0.0755,
+    "share_inside_p25_p75": 0.5997
+   },
+   "same_system_then_kind": {
+    "n": 140605,
+    "median_ape": 0.1221,
+    "share_over_2x_off": 0.077,
+    "share_inside_p25_p75": 0.6211
+   },
+   "where_system_peers_used": {
+    "n": 47486,
+    "same_kind": {
+     "n": 47486,
+     "median_ape": 0.1639,
+     "share_over_2x_off": 0.0733,
+     "share_inside_p25_p75": 0.5701
+    },
+    "same_system": {
+     "n": 47486,
+     "median_ape": 0.0811,
+     "share_over_2x_off": 0.078,
+     "share_inside_p25_p75": 0.6334
+    }
+   }
+  },
+  "office:children": {
+   "lines": 4702,
+   "coverage": 0.0,
+   "same_kind": {
+    "n": 0
+   },
+   "same_system_then_kind": {
+    "n": 0
+   },
+   "where_system_peers_used": {
+    "n": 0,
+    "same_kind": {
+     "n": 0
+    },
+    "same_system": {
+     "n": 0
+    }
+   }
+  },
+  "urgent_care": {
+   "lines": 23506,
+   "coverage": 0.8488,
+   "same_kind": {
+    "n": 19951,
+    "median_ape": 0.1653,
+    "share_over_2x_off": 0.1867,
+    "share_inside_p25_p75": 0.5336
+   },
+   "same_system_then_kind": {
+    "n": 19951,
+    "median_ape": 0.1652,
+    "share_over_2x_off": 0.1868,
+    "share_inside_p25_p75": 0.5331
+   },
+   "where_system_peers_used": {
+    "n": 152,
+    "same_kind": {
+     "n": 152,
+     "median_ape": 0.1429,
+     "share_over_2x_off": 0.0789,
+     "share_inside_p25_p75": 0.6974
+    },
+    "same_system": {
+     "n": 152,
+     "median_ape": 0.0,
+     "share_over_2x_off": 0.0855,
+     "share_inside_p25_p75": 0.6382
+    }
+   }
+  },
+  "urgent_care:children": {
+   "lines": 236,
+   "coverage": 0.0,
+   "same_kind": {
+    "n": 0
+   },
+   "same_system_then_kind": {
+    "n": 0
+   },
+   "where_system_peers_used": {
+    "n": 0,
+    "same_kind": {
+     "n": 0
+    },
+    "same_system": {
+     "n": 0
+    }
+   }
+  }
+ },
+ "seconds": 58.0
+}
