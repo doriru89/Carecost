@@ -7,6 +7,9 @@ Per site and field:
 * anything else where at least one run makes a claim (values differ, only one run has it, or one
   side failed the verifier) -> ``disputed``, listed on the review page side by side;
 * neither run makes the claim (or both say ``unknown``) -> left out (C3 reads missing as unknown).
+* a claim whose evidence has ``scope: hospital_page`` (the site is a physician group whose only
+  pages are the hospital's at the same address) is never ``agreed``, even when both runs agree:
+  it is ``disputed`` with that reason, and Austin decides whether it counts (reviews.yaml).
 
 ``reviews.yaml`` holds Austin's decisions: ``{site_id, field, value, note}``. A decision whose value
 matches a verified claim from either run becomes ``austin_reviewed`` with that claim's evidence. A
@@ -71,7 +74,7 @@ def _dedupe(evs: list[Evidence]) -> list[dict[str, Any]]:
         k = (e.url, e.quote)
         if k not in seen:
             seen.add(k)
-            out.append(e.model_dump())
+            out.append(e.model_dump(exclude_none=True))
     return out
 
 
@@ -83,6 +86,13 @@ class Dispute:
     b: Any
     a_rejected: Rejection | None = None
     b_rejected: Rejection | None = None
+    reason: str = ""  # why it is on the review page when the runs agree (hospital_page)
+
+
+HOSPITAL_PAGE_REASON = (
+    "both runs agree, but the quotes are from a hospital page cited for a physician group at the "
+    "same address (scope: hospital_page): decide whether it counts for this site"
+)
 
 
 @dataclass
@@ -132,11 +142,21 @@ def merge(
                     res.reviewed += 1
                     _put(out_site, f, entry)
                     continue
-            if (
+            same = (
                 x is not None
                 and y is not None
                 and _key(_field_type(f), _value(x)) == _key(_field_type(f), _value(y))
-            ):
+            )
+            hosp = any(
+                e.scope == "hospital_page" for c in (x, y) if c is not None for e in c.evidence
+            )
+            if same and hosp:
+                assert x is not None and y is not None
+                entry = {"value": _value(x), "status": "disputed",
+                         "evidence": _dedupe(x.evidence + y.evidence)}  # fmt: skip
+                res.disputes.append(Dispute(sid, f, x, y, reason=HOSPITAL_PAGE_REASON))
+            elif same:
+                assert x is not None and y is not None
                 entry = {
                     "value": _value(x),
                     "status": "agreed",
@@ -204,7 +224,9 @@ def _side(claim: Any, rej: Rejection | None, run_id: str) -> str:
         return (f"<td class=rej><b>{run_id}</b>: rejected by verifier "
                 f"(<code>{html.escape(rej.reason)}</code>)<br><small>{html.escape(rej.detail)}</small></td>")  # type: ignore[union-attr]  # fmt: skip
     evs = "".join(
-        f'<li><q>{html.escape(e.quote)}</q><br><a href="{html.escape(e.url)}">{html.escape(e.url)}</a></li>'
+        f'<li><q>{html.escape(e.quote)}</q><br><a href="{html.escape(e.url)}">{html.escape(e.url)}</a>'
+        + (f" <small>({html.escape(e.scope)})</small>" if e.scope else "")
+        + "</li>"
         for e in claim.evidence
     )
     return (
@@ -223,7 +245,9 @@ def write_review(
                                  sort_keys=False, allow_unicode=True).strip()  # fmt: skip
         rows.append(
             f"<tr><td><b>{html.escape(names.get(d.site_id, d.site_id))}</b><br><code>{d.site_id}</code><br>"
-            f"<code>{html.escape(d.field)}</code></td>{_side(d.a, d.a_rejected, a_id)}{_side(d.b, d.b_rejected, b_id)}"
+            f"<code>{html.escape(d.field)}</code>"
+            + (f"<br><small>{html.escape(d.reason)}</small>" if d.reason else "")
+            + f"</td>{_side(d.a, d.a_rejected, a_id)}{_side(d.b, d.b_rejected, b_id)}"
             f"<td><pre>{html.escape(snippet)}</pre></td></tr>"
         )
     stale = "".join(f"<li><code>{html.escape(str(r))}</code></li>" for r in res.stale_reviews)

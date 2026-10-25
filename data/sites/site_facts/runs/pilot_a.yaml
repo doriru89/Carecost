@@ -92,6 +92,7 @@ sites:
         quote: BID Needham Contact Information Beth Israel Deaconess Hospital–Needham 148 Chestnut Street
         fetched_at: '2026-10-25T13:38:46+00:00'
         page_sha256: 5ba5407ed827d552afb388d5919aae51f10c528349cea82a784ed1b59c7be30b
+        scope: hospital_page
     phone:
       value: 781-453-3000
       evidence:
@@ -99,6 +100,7 @@ sites:
         quote: 'Main: 781-453-3000'
         fetched_at: '2026-10-25T13:38:46+00:00'
         page_sha256: 5ba5407ed827d552afb388d5919aae51f10c528349cea82a784ed1b59c7be30b
+        scope: hospital_page
     capabilities:
       orthopedic_visit:
         value: offered
@@ -107,6 +109,7 @@ sites:
           quote: At BID Needham, our world-class orthopedic specialists offer care to keep you moving
           fetched_at: '2026-10-25T13:38:45+00:00'
           page_sha256: c5bba136a44ece9fe3d113250d20c93cafdd5e74bad0f580d68bf51c47dd1a23
+          scope: hospital_page
       physical_therapy:
         value: offered
         evidence:
@@ -114,6 +117,7 @@ sites:
           quote: Our physical therapy, imaging and orthopedic specialists are located on the same floor.
           fetched_at: '2026-10-25T13:38:45+00:00'
           page_sha256: c5bba136a44ece9fe3d113250d20c93cafdd5e74bad0f580d68bf51c47dd1a23
+          scope: hospital_page
       gi_visit:
         value: offered
         evidence:
@@ -121,7 +125,9 @@ sites:
           quote: Digestive Care Also known as Gastroenterology
           fetched_at: '2026-10-25T13:38:48+00:00'
           page_sha256: 4ff95c343ea60dd0dfcaf4513e4537edf4f6eb5ba284873480c2ed5db630efe7
-    note: census record is the physician group (HMFP) at the hospital address; pages are the hospital own pages (found.yaml).
+          scope: hospital_page
+    note: 'census record is the physician group (HMFP) at the hospital address; pages are the hospital own pages (found.yaml).
+      [S0b 2026-10-25: evidence marked scope: hospital_page after the fact; quotes unchanged]'
   mass_general_brigham_endoscopy_clinic_braintree:
     pages_read:
     - https://www.massgeneralbrigham.org/en/locations/braintree-ma/mass-general-brigham-endoscopy-clinic-loc0000280988

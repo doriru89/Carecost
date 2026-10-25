@@ -41,6 +41,27 @@ def cmd_discover(a: argparse.Namespace) -> int:
     return 0
 
 
+def prune_site_ids(records: list[PageRecord], pages: dict[str, Any]) -> list[PageRecord]:
+    """Drop a site id from a cached page that is no longer one of that site's pages in pages.yaml
+    (neither listed nor followed from a listed page), e.g. a finder match rejected by hand, so
+    ``show`` never hands an extraction run a wrong place's page. Returns the changed records."""
+    by_url = {r.url: r for r in records}
+    own: dict[str, set[str]] = {}
+    for sid, e in pages.items():
+        urls = {p["url"] for p in e.get("pages", [])}
+        for u in list(urls):
+            rec = by_url.get(u)
+            urls |= set(rec.related) if rec else set()
+        own[sid] = urls
+    changed = []
+    for r in records:
+        keep = [s for s in r.site_ids if r.url in own.get(s, set())]
+        if keep != r.site_ids:
+            r.site_ids = keep
+            changed.append(r)
+    return changed
+
+
 def _all_records() -> list[PageRecord]:
     f = Fetcher()
     out = []
@@ -89,7 +110,11 @@ def cmd_fetch(a: argparse.Namespace) -> int:
             )
             for r in per_site.get(sid, []):
                 print(f"   {r.status:6} {r.method:10} {r.text_chars:6}ch {r.url} {r.reason or ''}")
-    write_manifest(_all_records())
+    recs = _all_records()
+    for r in prune_site_ids(recs, pages):
+        f._save(r)
+        print(f"   pruned site ids on {r.url} -> {r.site_ids}")
+    write_manifest(recs)
     print(f"{f.requests} requests in {time.monotonic() - t0:.1f}s; manifest {MANIFEST}")
     return 0
 
@@ -165,15 +190,49 @@ def cmd_show(a: argparse.Namespace) -> int:
     """Everything an extraction run may read for a site: each cached page with the exact
     ``url`` / ``fetched_at`` / ``page_sha256`` to copy into evidence, then its text."""
     man = load_manifest()
+    pages = disc.load_pages()
     for sid in a.sites.split(","):
         rows = [r for r in man.values() if sid in r.get("site_ids", [])]
         print(f"##### SITE {sid}: {len(rows)} pages")
+        if pages.get(sid, {}).get("scope") == "hospital_page":
+            print(
+                "    scope: hospital_page  (these pages are a hospital's, not this site's own: add\n"
+                "    `scope: hospital_page` to every EV for this site; see docs/etl/site_facts.md)"
+            )
         for r in rows:
             print(f"=== url: {r['url']}\n    status: {r['status']} {r.get('reason') or ''}")
             if r["status"] != "ok":
                 continue
             print(f"    fetched_at: '{r['fetched_at']}'\n    page_sha256: {r['page_sha256']}\n---")
             print(cached_text(r["url"]) or "(missing from cache)")
+    return 0
+
+
+def targets() -> list[dict[str, Any]]:
+    """The sites an extraction run covers: every site with at least one ``ok`` cached page."""
+    man = load_manifest()
+    pages = disc.load_pages()
+    out = []
+    for sid, e in pages.items():
+        ok = sorted(
+            u for u, r in man.items() if sid in r.get("site_ids", []) and r["status"] == "ok"
+        )
+        if ok:
+            out.append({"site_id": sid, "site_type": e.get("site_type"), "ok_pages": len(ok),
+                        **({"scope": e["scope"]} if e.get("scope") else {})})  # fmt: skip
+    return out
+
+
+def cmd_targets(a: argparse.Namespace) -> int:
+    rows = targets()
+    if a.ids:
+        print(",".join(r["site_id"] for r in rows))
+        return 0
+    for r in rows:
+        print(f"{r['site_id']}\t{r['site_type']}\t{r['ok_pages']} pages\t{r.get('scope', '')}")
+    print(
+        f"# {len(rows)} sites; {sum(1 for r in rows if r.get('scope'))} with scope: hospital_page"
+    )
     return 0
 
 
@@ -198,6 +257,9 @@ def main(argv: list[str] | None = None) -> int:
     m.add_argument("b")
     m.set_defaults(fn=cmd_merge)
     sub.add_parser("coverage").set_defaults(fn=cmd_coverage)
+    t = sub.add_parser("targets")
+    t.add_argument("--ids", action="store_true", help="comma-separated ids only")
+    t.set_defaults(fn=cmd_targets)
     sh = sub.add_parser("show")
     sh.add_argument("sites", help="comma-separated site ids")
     sh.set_defaults(fn=cmd_show)

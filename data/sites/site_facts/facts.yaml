@@ -87,26 +87,30 @@ sites:
           quote: Dermatology Also known as Skin, Hair & Nail Care
           fetched_at: '2026-10-25T13:38:48+00:00'
           page_sha256: 4ff95c343ea60dd0dfcaf4513e4537edf4f6eb5ba284873480c2ed5db630efe7
+          scope: hospital_page
       gi_visit:
         value: offered
-        status: agreed
+        status: disputed
         evidence:
         - url: https://bidneedham.org/services
           quote: Digestive Care Also known as Gastroenterology
           fetched_at: '2026-10-25T13:38:48+00:00'
           page_sha256: 4ff95c343ea60dd0dfcaf4513e4537edf4f6eb5ba284873480c2ed5db630efe7
+          scope: hospital_page
       orthopedic_visit:
         value: offered
-        status: agreed
+        status: disputed
         evidence:
         - url: https://bidneedham.org/services/orthopedics
           quote: At BID Needham, our world-class orthopedic specialists offer care to keep you moving
           fetched_at: '2026-10-25T13:38:45+00:00'
           page_sha256: c5bba136a44ece9fe3d113250d20c93cafdd5e74bad0f580d68bf51c47dd1a23
+          scope: hospital_page
         - url: https://bidneedham.org/services/orthopedics
           quote: At BID Needham, our world-class orthopedic specialists offer care
           fetched_at: '2026-10-25T13:38:45+00:00'
           page_sha256: c5bba136a44ece9fe3d113250d20c93cafdd5e74bad0f580d68bf51c47dd1a23
+          scope: hospital_page
       pathology:
         value: offered
         status: disputed
@@ -115,34 +119,39 @@ sites:
           quote: Laboratory Also known as Pathology
           fetched_at: '2026-10-25T13:38:48+00:00'
           page_sha256: 4ff95c343ea60dd0dfcaf4513e4537edf4f6eb5ba284873480c2ed5db630efe7
+          scope: hospital_page
       physical_therapy:
         value: offered
-        status: agreed
+        status: disputed
         evidence:
         - url: https://bidneedham.org/services/orthopedics
           quote: Our physical therapy, imaging and orthopedic specialists are located on the same floor.
           fetched_at: '2026-10-25T13:38:45+00:00'
           page_sha256: c5bba136a44ece9fe3d113250d20c93cafdd5e74bad0f580d68bf51c47dd1a23
+          scope: hospital_page
     official_name:
       value: Beth Israel Deaconess Hospital–Needham
-      status: agreed
+      status: disputed
       evidence:
       - url: https://bidneedham.org/contact
         quote: BID Needham Contact Information Beth Israel Deaconess Hospital–Needham 148 Chestnut Street
         fetched_at: '2026-10-25T13:38:46+00:00'
         page_sha256: 5ba5407ed827d552afb388d5919aae51f10c528349cea82a784ed1b59c7be30b
+        scope: hospital_page
       - url: https://bidneedham.org/contact
         quote: Contact Beth Israel Deaconess Hospital–Needham
         fetched_at: '2026-10-25T13:38:46+00:00'
         page_sha256: 5ba5407ed827d552afb388d5919aae51f10c528349cea82a784ed1b59c7be30b
+        scope: hospital_page
     phone:
       value: 781-453-3000
-      status: agreed
+      status: disputed
       evidence:
       - url: https://bidneedham.org/contact
         quote: 'Main: 781-453-3000'
         fetched_at: '2026-10-25T13:38:46+00:00'
         page_sha256: 5ba5407ed827d552afb388d5919aae51f10c528349cea82a784ed1b59c7be30b
+        scope: hospital_page
   krauss_dermatology_pc_wellesley:
     capabilities:
       dermatology_visit:

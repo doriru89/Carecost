@@ -62,6 +62,10 @@ class Evidence(_Strict):
     quote: str = Field(min_length=3)
     fetched_at: str
     page_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    # Set when the site's pages are another entity's (pages.yaml `scope`), e.g. a physician group
+    # whose only pages are the hospital's at the same address. Such a claim is never `agreed`:
+    # Austin decides whether it counts (merge marks it disputed). Optional, absent = own page.
+    scope: Literal["hospital_page"] | None = None
 
 
 class HoursSpan(_Strict):
