@@ -95,7 +95,10 @@ def health(request: Request) -> dict:
     stale = sorted(s for s, f in fresh.items() if f.stale_on_our_side)
     late = sorted(s for s, f in fresh.items() if f.late_to_refresh)
     return {
-        "ok": not stale,
+        "ok": not stale
+        and not any(
+            (v or {}).get("status") not in (None, "ok") for v in eng.store.refresh_status.values()
+        ),
         "rows": len(eng.store.rows),
         "rows_by_source": eng.store.counts(),
         "rows_by_kind": dict(sorted(by_kind.items())),
@@ -106,6 +109,12 @@ def health(request: Request) -> dict:
         "as_of": as_of.isoformat(),
         "stale_on_our_side": stale,
         "late_to_refresh": late,
+        # P11: what the last ETL refresh could not fetch (refresh_status.json, carried in the pack)
+        "refresh_failures": {
+            k: v
+            for k, v in sorted(eng.store.refresh_status.items())
+            if (v or {}).get("status") not in (None, "ok")
+        },
         "sites": len(eng.reg.sites),
         "sites_version": eng.reg.sites_version,
         "care_paths": len(eng.reg.paths),

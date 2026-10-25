@@ -2,15 +2,17 @@ version: 2
 note: Freshness inputs for the sources in rate_row_extract.csv. Written by python
   -m app.quote.fixtures_gen; do not edit by hand.
 data_version:
-  build_id: 20261024-336340ed
-  build_date: '2026-10-24'
+  build_id: 20261025-336340ed
+  build_date: '2026-10-25'
   tic_release: tic-2026-10
 codes:
+- '00731'
 - 00811
 - 00812
 - 00813
 - '11102'
 - '11104'
+- '11106'
 - '11300'
 - '11301'
 - '11302'
@@ -23,21 +25,36 @@ codes:
 - '11311'
 - '11312'
 - '11313'
+- '11401'
+- '11402'
+- '11601'
+- '11602'
 - '17000'
 - '17110'
 - '20610'
 - '20611'
+- '23350'
 - '29826'
 - '29827'
+- '43235'
 - '43239'
 - '45378'
 - '45380'
 - '45385'
+- '72100'
+- '72148'
 - '73030'
 - '73221'
 - '73222'
+- '73560'
+- '73562'
+- '73564'
+- '73600'
+- '73610'
+- '73721'
 - '76881'
 - '76882'
+- '77002'
 - '88305'
 - '97110'
 - '97161'
@@ -53,6 +70,8 @@ codes:
 - '99213'
 - '99214'
 - '99215'
+- G0121
+- J3301
 - S9083
 - S9088
 census_tins:
@@ -1181,6 +1200,22 @@ sources:
     payer_id: BCBS_MA
     product: HMO
     network_label: New England Managed Care (self insured)
+    line_of_business: commercial
+  tic_bcbs_ma_par:
+    source_kind: insurer_tic
+    publisher: Blue Cross Blue Shield of Massachusetts · PAR Providers (indemnity)
+    source_file: 2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_PAR-Providers_in-network-rates.json.gz
+    source_sha256: 4b9007240b1544036f57dc8ad692be4c94aaa9698ecaa505a41bf17e3090f1da
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: BCBS_MA
+    product: INDEMNITY
+    network_label: PAR Providers (indemnity)
     line_of_business: commercial
   tic_fallon_community_care:
     source_kind: insurer_tic

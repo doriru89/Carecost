@@ -269,8 +269,8 @@ wage adjustment we have not loaded. anesthesia_base_units_only: the anesthesia f
 only; the time units depend on the case and are not included."""
 
 SiteKind = Literal["urgent_care", "office", "hospital_outpatient", "ambulatory_surgery_center"]
-"""X2: the kind of site a peer set is drawn from (data/quote/engine.yaml site_kinds groups
-sites.yaml site_type). An urgent care is never estimated from hospitals and vice versa (P5)."""
+"""X2: the kind of site a peer set is drawn from (engine.yaml: urgent care by site_type, else by
+the effective billing type). An urgent care is never estimated from hospitals and vice versa (P5)."""
 
 KIND_ORDER: dict[str, int] = {
     "urgent_care": 0, "office": 1, "hospital_outpatient": 2, "ambulatory_surgery_center": 3,
@@ -397,7 +397,7 @@ class AnesthesiaTime(_Strict):
     """C3 item 12: 'with typical time, about $Y'. Anesthesia is paid (base units + minutes / 15)
     x a conversion factor; the summed line has the base units only. Never summed."""
 
-    minutes: int = Field(gt=0)
+    minutes: float = Field(gt=0)
     base_units: float = Field(gt=0)
     low: float = Field(ge=0)
     high: float = Field(ge=0)
@@ -788,7 +788,7 @@ class SiteSummary(_Strict):
         description="registry_only sites are never quoted (to-verify queue, D27)"
     )
     service_areas: list[ServiceArea]
-    kind: SiteKind = Field(description="X2 / P7: the kind of site (engine.yaml site_kinds)")
+    kind: SiteKind = Field(description="X2 / P7: the kind of site (engine.yaml kind_by_billing)")
     chain_id: str | None = Field(
         default=None, pattern=ID_RE, description="C3 R12: the chain whose posted prices apply here"
     )

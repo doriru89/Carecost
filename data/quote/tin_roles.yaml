@@ -1,5 +1,5 @@
 version: 1
-note: Written by python -m app.quote.tin_roles from pack 20261024-336340ed; do not edit by hand (fix the rule or the data).
+note: Written by python -m app.quote.tin_roles from pack 20261025-336340ed; do not edit by hand (fix the rule or the data).
 roles:
 - site_id: adams_street_dermatology_assoc_pc_quincy
   tin: '300309452'
@@ -3299,13 +3299,13 @@ roles:
 - site_id: newton_wellesley_outpatient_surgery_center_wellesley
   tin: '042103611'
   role: by_billing_class
-  source: tic_business_name:NEWTON WELLESLEY HOSPITAL
-  billing: asc
+  source: billing_type_rule:hospital_outpatient
+  billing: hospital_outpatient
 - site_id: newton_wellesley_outpatient_surgery_center_wellesley
   tin: '1992737761'
-  role: facility
-  source: billing_type_rule:asc
-  billing: asc
+  role: by_billing_class
+  source: billing_type_rule:hospital_outpatient
+  billing: hospital_outpatient
 - site_id: northeast_ambulatory_center_inc_stoneham
   tin: '043382778'
   role: facility

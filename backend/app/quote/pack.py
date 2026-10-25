@@ -288,6 +288,23 @@ def gov_root_rows(gov_root: Path, codes: set[str]) -> tuple[list[Row], dict[str,
     return rows, sources
 
 
+def refresh_status(roots: list[Path | None]) -> dict[str, dict]:
+    """P11 / R11: the ETL's ``intermediate/refresh_status.json`` next to each input root (A5's
+    app.etl.refresh), merged, so the server can say on /health which sources failed to refresh
+    (``stale_on_our_side`` / ``no_good_copy``) instead of reading them as "no public price"."""
+    out: dict[str, dict] = {}
+    seen: set[Path] = set()
+    for root in roots:
+        if root is None:
+            continue
+        for cand in (root.parent / "refresh_status.json",
+                     root.parent.parent / "intermediate" / "refresh_status.json"):  # fmt: skip
+            if cand.exists() and cand.resolve() not in seen:
+                seen.add(cand.resolve())
+                out.update(json.loads(cand.read_text()).get("sources") or {})
+    return dict(sorted(out.items()))
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--hospital-build", type=Path)
@@ -326,8 +343,9 @@ def main() -> None:
         yield from trows
 
     loaded = target_codes()
+    status = refresh_status([a.hospital_build, a.tic_root, a.gov_root])
     n = write_pack(a.out, rows=all_rows(), sources=sources, version=version, codes=loaded,
-                   npi_sets=npi_sets, census_tins=census)  # fmt: skip
+                   npi_sets=npi_sets, census_tins=census, refresh_status=status)  # fmt: skip
     # (npi_sets / census are filled while write_pack streams the TiC rows, before it writes them)
     mb = a.out.stat().st_size / 1e6
     by_kind: dict[str, int] = {}

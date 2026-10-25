@@ -1,5 +1,5 @@
 """The quote engine end to end on the committed extract (real rows; written by
-``python -m app.quote.fixtures_gen`` from hospital build 20261024-336340ed, the 2026-10 TiC files
+``python -m app.quote.fixtures_gen`` from hospital build 20261025-336340ed, the 2026-10 TiC files
 and A3's fee schedules: Medicare PFS RVU26D + anesthesia, OPPS and ASC October 2026, MassHealth
 101 CMR 316/317/318). Registry: data/sites/sites.yaml (208 sites); the tests quote the six P1
 sites by name (fixtures_gen.KEY_SITES). One end-to-end test per payment kind, plus the doctor-fee
@@ -48,7 +48,7 @@ def _line(resp: QuoteResponse, site: str, line_id: str):
 def test_runtime_pack_loads_into_in_memory_indexes(store):
     """P1 #11: one runtime format (SQLite pack, stdlib), loaded once into dicts."""
     assert len(store.rows) == sum(1 for _ in EXTRACT_CSV.open()) - 1
-    assert store.version.build_id == "20261024-336340ed"
+    assert store.version.build_id == "20261025-336340ed"
     assert store.version.tic_release == "tic-2026-10"
     kinds = {m.source_kind for m in store.sources.values()}
     assert kinds == {"hospital_mrf", "insurer_tic", "medicare_pfs", "medicare_opps",
@@ -100,17 +100,15 @@ def test_e2e_insurance_bcbs_hmo(engine):
     from app.quote.contracts import rank_key
 
     assert [rank_key(s) for s in r.sites] == sorted(rank_key(s) for s in r.sites)  # I7
-    # Austin 2026-10-24 (P1 #6): readings use the group's POS-11 TiC rate at the hospital. C2:
-    # Mount Auburn's radiology group (Schatzki Associates, TIN 042482067, radiology_groups.yaml)
-    # has no row in any loaded TiC file, so the site's own billing groups price the reading.
-    assert (_line(r, MA, "xray_reading").cell.low, _line(r, MA, "xray_reading").cell.high) == (
-        12.04,
-        17.33,
-    )
+    # Austin 2026-10-24 (P1 #6): readings use the group's POS-11 TiC rate at the hospital. With
+    # A5's radiology TINs (wave2/a5-etl) Mount Auburn's radiologists (Schatzki Associates,
+    # radiology_groups.yaml) now have rows, so their rate prices the reading first.
+    x = _line(r, MA, "xray_reading")
+    assert (x.cell.low, x.cell.high) == (17.33, 17.33)
+    assert x.doctor_fee.group_name == "SCHATZKI ASSOCIATES INC"
     assert _line(r, MA, "tendon_scan_ultrasound_reading").cell.low == 82.07
     mri = _line(r, MA, "tendon_scan_mri_reading")
     assert (mri.cell.low, mri.cell.high) == (120.81, 120.81)
-    assert mri.doctor_fee.group_name.startswith("HARVARD MEDICAL FACULTY")  # HMFP only
     assert r.copy_keys == ["copy.not_a_diagnosis", "copy.when_to_see_a_doctor"]  # P1 #13
     assert _line(r, MA, "referral").at == "your_primary_care"  # P1 #15
 
@@ -124,7 +122,7 @@ def test_hospital_reading_prefers_the_radiology_group(engine, registry):
     cited = {(p.source_id, p.row_id) for p in ln.cell.provs()}  # row_ref is shared (P1 #1)
     rows = [x for x in engine.store.rows if (x.source_id, x.row_id) in cited]
     assert rows and {x.tin for x in rows} <= rad
-    assert (ln.cell.low, ln.cell.high) == (9.88, 17.33)
+    assert (ln.cell.low, ln.cell.high) == (9.74, 18.79)
 
 
 def test_e2e_cash(engine):
@@ -284,9 +282,13 @@ def test_tier_modifier_changes_the_line(engine):
     assert lines and {ln.likelihood for ln in lines} == {mod.tier}
 
 
-def test_codes_outside_the_etl_list_are_not_loaded(engine):
-    r = _quote(engine, BCBS_HMO)
-    ln = _line(r, MA, "mr_arthrogram_23350_doctor")
+def test_codes_outside_the_etl_list_are_not_loaded(engine, store, registry):
+    """A code the ETL does not extract is not_loaded, never "not published". (A5 now derives the
+    ETL list from the care paths, R9, so every path code is loaded; drop one to check.)"""
+    from dataclasses import replace as dc_replace
+
+    bare = Engine(dc_replace(store, codes=store.codes - {"23350"}), registry)
+    ln = _line(_quote(bare, BCBS_HMO), MA, "mr_arthrogram_23350_doctor")
     assert ln.cell.kind == "not_loaded"
 
 

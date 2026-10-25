@@ -192,6 +192,7 @@ class RateStore:
     codes: frozenset[str] = frozenset()  # codes the hospital / TiC ETL loads (codes.yaml)
     npi_sets: dict[int, tuple[str, ...]] = field(default_factory=dict)
     census_tins: dict[str, frozenset[str]] = field(default_factory=dict)
+    refresh_status: dict[str, dict[str, Any]] = field(default_factory=dict)  # P11 (ETL side)
     by_code: dict[tuple[str, str], list[Row]] = field(default_factory=dict)
     hospital: dict[tuple[str, str, str], list[Row]] = field(default_factory=dict)
     cash: dict[tuple[str, str], list[Row]] = field(default_factory=dict)
@@ -420,6 +421,7 @@ def write_pack(
     codes: Iterable[str],
     npi_sets: dict[int, tuple[str, ...]] | None = None,
     census_tins: dict[str, Iterable[str]] | None = None,
+    refresh_status: dict[str, dict[str, Any]] | None = None,
 ) -> int:
     """``npi_sets`` / ``census_tins`` may be filled while ``rows`` streams (they are written after
     the rows)."""
@@ -435,6 +437,7 @@ def write_pack(
         "build_date": version.build_date,
         "tic_release": version.tic_release or "",
         "codes": json.dumps(sorted(set(codes))),
+        "refresh_status": json.dumps(refresh_status or {}, sort_keys=True),
     }
     db.executemany("insert into meta values (?, ?)", meta.items())
     db.executemany(
@@ -537,6 +540,7 @@ def load_pack(
         codes=frozenset(json.loads(meta["codes"])),
         npi_sets={k: tuple(v) for k, v in npis.items()},
         census_tins={c: frozenset(v) for c, v in census.items()},
+        refresh_status=json.loads(meta.get("refresh_status") or "{}"),
     )
 
 

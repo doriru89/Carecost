@@ -355,8 +355,8 @@ def test_anesthesia_shows_a_typical_time_note(engine):
     ln = _line(r, CHA, "anesthesia")
     assert "price.anesthesia_base_units_only" in ln.price_notes
     t = ln.anesthesia_time
-    assert t is not None and t.minutes == 57 and t.base_units == 4
-    assert t.low == round(ln.cell.low * (4 + 57 / 15) / 4, 2) and "CMS" in t.source
+    assert t is not None and t.minutes == 57.22 and t.base_units == 4  # CMS CY2026 work time
+    assert t.low == round(ln.cell.low * (4 + 57.22 / 15) / 4, 2) and "CMS" in t.source
 
 
 # --------------------------------------------------------------------------- 13: crashes, fallbacks

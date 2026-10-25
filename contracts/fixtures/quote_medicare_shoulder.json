@@ -18,8 +18,8 @@
   "picked_by": "person",
   "as_of": "2026-10-25",
   "data_version": {
-    "build_id": "20261024-336340ed",
-    "build_date": "2026-10-24",
+    "build_id": "20261025-336340ed",
+    "build_date": "2026-10-25",
     "tic_release": "tic-2026-10",
     "sites_version": 1,
     "care_paths_version": "1.0.0"
@@ -808,9 +808,13 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "not_published",
+              "what": "Medicare's rate for the facility's own fee for this item",
+              "ask": "Ask the billing office what Medicare pays here.",
+              "searched": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b"
+              }
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -1424,7 +1428,24 @@
                 "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b"
               }
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 1060.0,
+              "high": 1060.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "brigham_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "brigham_mrf:188337340e25:108904",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,

@@ -1,12 +1,11 @@
-# Item 12: typical anesthesia minutes for "with typical time, about $Y" (never summed).
-# minutes: CMS CY2026 Physician Work Time file (sha256 0e4e8507...), as A5 extracted it into
-# data/etl/physician_time.yaml on wave2/a5-etl (2026-10-25). When that file is merged, this one
-# should be derived from it (A5 owns the extraction).
-# base_units: CMS anesthesia base units. Checked against the pack: the PFS anesthesia row for
-# locality 01 divided by the base units gives one conversion factor (21.59) for all three codes
+# Item 12: anesthesia base units per code, for "with typical time, about $Y" (never summed):
+# $Y = the base-units fee x (base + typical minutes / 15) / base. Typical minutes: A5's
+# data/etl/physician_time.yaml (CMS CY2026 Physician Work Time, typical anesthesia time).
+# Base units: CMS anesthesia base units, checked against the pack: the PFS anesthesia row for
+# locality 01 divided by these base units gives one conversion factor (21.59) for all three
 # (00731 107.95 / 5, 00811 86.36 / 4, 00812 64.77 / 3).
 version: 1
-codes:
-  "00731": {minutes: 52, base_units: 5, source: "CMS CY2026 Physician Work Time (00731: 52.23 min)"}
-  "00811": {minutes: 57, base_units: 4, source: "CMS CY2026 Physician Work Time (00811: 57.22 min)"}
-  "00812": {minutes: 52, base_units: 3, source: "CMS CY2026 Physician Work Time (00812: 52.31 min)"}
+base_units:
+  "00731": 5
+  "00811": 4
+  "00812": 3

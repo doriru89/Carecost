@@ -235,14 +235,17 @@ class Engine:
                         self.posted_site[s.id] = src_site
         for s in self.reg.sites.values():
             self.posted_site.setdefault(s.id, s)
-        self.kinds: dict[str, str] = cfg["site_kinds"]
+        self.uc_types = frozenset(cfg["urgent_care_site_types"])
+        self.kind_by_billing: dict[str, str] = cfg["kind_by_billing"]
         self.unknown_as: str = cfg["unknown_billing_priced_as"]
         self.peer_cfg = cfg["peers"]
         self.out_cfg = cfg["outliers"]
         self.role_rule: dict[str, str] = cfg["tin_role_by_billing"]
         self.roles = load_roles(REPO_ROOT / cfg["tin_roles_file"])
         self.facts: SiteFacts = load_site_facts()
-        self.anes_time = self._load_anesthesia_time(REPO_ROOT / cfg["anesthesia_time_file"])
+        self.anes_time = self._load_anesthesia_time(
+            REPO_ROOT / cfg["physician_time_file"], REPO_ROOT / cfg["anesthesia_time_file"]
+        )
         o = cfg["no_location_origin"]
         self.origin = _P(float(o["lat"]), float(o["lon"]))
         # caches over data that never changes after startup (no request state, P1 #20)
@@ -348,7 +351,10 @@ class Engine:
         return effective_billing(site, self.unknown_as)
 
     def _kind(self, site: Site) -> str:
-        return self.kinds[site.site_type]
+        """X2: urgent care by site type, every other kind by the effective billing type."""
+        if site.site_type in self.uc_types:
+            return "urgent_care"
+        return self.kind_by_billing[self._billing(site)]
 
     def _role(self, site: Site, tin: str) -> str:
         """R3: tin_roles.yaml, else the site's billing-type rule."""
@@ -1554,18 +1560,24 @@ class Engine:
         }  # fmt: skip
 
     @staticmethod
-    def _load_anesthesia_time(path: Any) -> dict[str, Json]:
-        if not path.exists():
+    def _load_anesthesia_time(times: Any, bases: Any) -> dict[str, Json]:
+        """code -> {minutes, base_units, source}: A5's CMS physician time + our base units."""
+        if not (times.exists() and bases.exists()):
             return {}
         import yaml
 
-        doc = yaml.safe_load(path.read_text()) or {}
+        t = yaml.safe_load(times.read_text()) or {}
+        b = yaml.safe_load(bases.read_text()) or {}
+        src = t.get("source") or {}
+        label = f"CMS {src.get('release', 'physician time file')} ({src.get('member', '')})"
         out = {}
-        for code, t in (doc.get("codes") or {}).items():
-            if not (t.get("minutes") and t.get("base_units") and t.get("source")):
-                raise ValueError(f"{path.name} {code}: minutes, base_units and source are required")
-            out[str(code)] = {"minutes": int(t["minutes"]), "base_units": float(t["base_units"]),
-                              "source": str(t["source"])}  # fmt: skip
+        for code, units in (b.get("base_units") or {}).items():
+            code = str(code).zfill(5)
+            rec = (t.get("times") or {}).get(code) or (t.get("times") or {}).get(int(code))
+            if not rec or rec.get("kind") != "anesthesia" or not rec.get("typical_anesthesia_min"):
+                continue
+            out[code] = {"minutes": float(rec["typical_anesthesia_min"]),
+                         "base_units": float(units), "source": label}  # fmt: skip
         return out
 
     def _other_payers(self, src: str, lines: list[Json], q: Req) -> list[Json]:

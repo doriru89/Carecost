@@ -46,16 +46,15 @@ ladder:
   max_by_npi: 20            # D6: list by doctor only when at most this many NPIs are involved
 
 # X2 (C3 + O): kinds of site. A peer set is drawn from one kind only: urgent care from urgent
-# cares, offices from offices, hospitals from hospitals, ASCs from ASCs (P5). ortho_walk_in bills
-# like an urgent care (walk-in, office place of service); imaging_center bills as an office.
-site_kinds:
-  urgent_care: urgent_care
-  ortho_walk_in: urgent_care
-  specialist_office: office
-  primary_care_office: office
-  imaging_center: office
+# cares, offices from offices, hospitals from hospitals, ASCs from ASCs (P5). Urgent care comes
+# from site_type (ortho_walk_in is a walk-in clinic billing like one); every other kind from how
+# the site bills (its effective billing type, P9), so an office A5 resolved to hospital billing
+# (20 specialist offices after wave2/a5-etl) is a hospital clinic's peer, never a plain office's.
+urgent_care_site_types: [urgent_care, ortho_walk_in]
+kind_by_billing:
+  office_visit: office
   hospital_outpatient: hospital_outpatient
-  ambulatory_surgery_center: ambulatory_surgery_center
+  asc: ambulatory_surgery_center
 
 # P9 (R7): a site whose billing type is unknown is priced as a hospital clinic (facility line +
 # doctor line, "may also charge a hospital facility fee"), never as an office. A surgery center
@@ -120,8 +119,10 @@ chain_spread_max: 1.5
 # P7: with no location every admitted site is listed, grouped by kind, by distance from here.
 no_location_origin: {lat: 42.3603, lon: -71.0580, label: Boston City Hall}
 
-# Item 12: typical anesthesia minutes (CMS physician time file, extracted by A5). Absent file = no
-# "with typical time" note.
+# Item 12: typical anesthesia minutes come from A5's data/etl/physician_time.yaml (CMS CY2026
+# Physician Work Time); the base units per code from anesthesia_time_file. Either file absent =
+# no "with typical time" note.
+physician_time_file: data/etl/physician_time.yaml
 anesthesia_time_file: data/quote/anesthesia_time.yaml
 
 # P2: how a payment is named to a person (enum values stay; the words change).

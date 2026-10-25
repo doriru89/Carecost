@@ -71,7 +71,7 @@ def derive_site(sq: dict) -> None:
         st.pop("_exp")
     sq["steps"] = steps
     sq.setdefault("distance_km", None)
-    sq["site"].setdefault("kind", KINDS[sq["site"]["site_type"]])
+    sq["site"].setdefault("kind", KINDS[sq["site"]["site_type"]])  # hand-made: billing agrees
     sq["site"].setdefault("chain_id", None)
     if sq.get("receipt"):
         t = sq["receipt"]["totals"]

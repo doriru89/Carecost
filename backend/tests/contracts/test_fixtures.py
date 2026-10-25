@@ -447,7 +447,7 @@ def _hospital_candidates(rows, m, ln, payment) -> list[dict]:
     part (a facility line reads facility + unknown rows, a doctor's line professional rows), and
     the same dollar kind (a stated dollar is never ranged with a %-derived one, D20)."""
     cited = _cited(rows, m.prov, m.low, m.basis.value, ln.codes, ln.modifier)
-    parts = {"facility", "unknown"} if ln.component == "facility" else {"professional"}
+    parts = {"facility", "unknown"} if ln.component in ("facility", "drug") else {"professional"}
     return [
         r
         for r in rows.values()

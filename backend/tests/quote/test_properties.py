@@ -175,7 +175,7 @@ def test_i7_missing_data_never_makes_a_site_look_cheaper(store, registry, quotes
                 if ln.in_total and ln.at == "this_site" and ln.estimate is None and ln.step_id:
                     picks.append((req, sq.site.site_id, ln))
     checked = estimated = 0
-    for req, site_id, ln in rng.sample(picks, 12):
+    for req, site_id, ln in rng.sample(picks, 30):
         site = registry.sites[site_id]
         eng = Engine(_drop(store, site, ln.codes[0], Engine(store, registry)), registry)
         before = next(s for s in Engine(store, registry).quote(

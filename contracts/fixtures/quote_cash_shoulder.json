@@ -18,8 +18,8 @@
   "picked_by": "person",
   "as_of": "2026-10-25",
   "data_version": {
-    "build_id": "20261024-336340ed",
-    "build_date": "2026-10-24",
+    "build_id": "20261025-336340ed",
+    "build_date": "2026-10-25",
     "tic_release": "tic-2026-10",
     "sites_version": 1,
     "care_paths_version": "1.0.0"
@@ -528,9 +528,13 @@
             "availability": "unknown",
             "availability_reason": "no_evidence",
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "not_published",
+              "what": "a posted self-pay price for this item at this clinic",
+              "ask": "Call the clinic and ask for its self-pay price.",
+              "searched": {
+                "source_id": "posted_afc_watertown",
+                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+              }
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -1314,11 +1318,15 @@
             "component_confirmed": false,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "no_evidence",
+            "availability_reason": "insurer_lists_rate",
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "not_published",
+              "what": "a posted self-pay price for this item at this clinic",
+              "ask": "Call the clinic and ask for its self-pay price.",
+              "searched": {
+                "source_id": "posted_afc_watertown",
+                "source_sha256": "5fb4bac81f1ab4338d7fd8ecdba56bce2242e4e2a86466b24a0e240729ddbae2"
+              }
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -1511,7 +1519,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "no_evidence",
+            "availability_reason": "insurer_lists_rate",
             "cell": {
               "kind": "not_published",
               "what": "a posted self-pay price for this item at this clinic",
@@ -1561,7 +1569,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "no_evidence",
+            "availability_reason": "insurer_lists_rate",
             "cell": {
               "kind": "not_published",
               "what": "a posted self-pay price for this item at this clinic",
@@ -1673,7 +1681,7 @@
         },
         "address_line": "1493 CAMBRIDGE ST, Cambridge, MA 02139",
         "phone": null,
-        "billing_type": "unknown",
+        "billing_type": "hospital_outpatient",
         "booking": [],
         "portal_links": [],
         "hours": null,
@@ -1686,7 +1694,7 @@
           "gi",
           "ortho"
         ],
-        "kind": "office",
+        "kind": "hospital_outpatient",
         "chain_id": null,
         "children_only": false,
         "data_notices": []
@@ -1769,7 +1777,7 @@
           "high": null,
           "rank_value": null,
           "estimated": false,
-          "unusual": false,
+          "unusual": true,
           "in_total": false,
           "missing": false,
           "line_ids": [
@@ -2333,7 +2341,7 @@
           },
           {
             "line_id": "steroid_injection_drug_ai",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "possible",
             "step_id": "steroid_injection",
             "codes": [
@@ -2353,9 +2361,22 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "money",
+              "low": 18.58,
+              "high": 18.58,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:381959",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -2366,7 +2387,41 @@
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
-            "unusual": null,
+            "unusual": {
+              "peer_median": 6.73,
+              "n_groups": 7,
+              "whole_line": false,
+              "set_aside": [
+                {
+                  "kind": "money",
+                  "low": 35.0,
+                  "high": 69.23,
+                  "basis": "discounted_cash",
+                  "prov": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:218757",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:363978",
+                    "payer_id": null,
+                    "row_id": null
+                  }
+                }
+              ]
+            },
             "anesthesia_time": null,
             "chain_price_from": null,
             "at": "this_site"
@@ -2778,7 +2833,7 @@
           },
           {
             "line_id": "mr_arthrogram_23350_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -2795,16 +2850,46 @@
               "facility_fee"
             ],
             "component": "facility",
-            "component_confirmed": true,
+            "component_confirmed": false,
             "unit": "once",
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 400.0,
+              "high": 400.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:16927",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 400.0,
+              "high": 400.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:16927",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -2879,7 +2964,7 @@
           },
           {
             "line_id": "mr_arthrogram_77002_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -2896,16 +2981,46 @@
               "facility_fee"
             ],
             "component": "facility",
-            "component_confirmed": true,
+            "component_confirmed": false,
             "unit": "once",
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 212.0,
+              "high": 212.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:8483",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 212.0,
+              "high": 212.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:8483",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -3045,7 +3160,7 @@
             },
             {
               "line_id": "mr_arthrogram_23350_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_23350_doctor",
@@ -3053,7 +3168,7 @@
             },
             {
               "line_id": "mr_arthrogram_77002_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_77002_reading",
@@ -4184,7 +4299,7 @@
           "high": null,
           "rank_value": null,
           "estimated": false,
-          "unusual": false,
+          "unusual": true,
           "in_total": false,
           "missing": false,
           "line_ids": [
@@ -4748,7 +4863,7 @@
           },
           {
             "line_id": "steroid_injection_drug_ai",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "possible",
             "step_id": "steroid_injection",
             "codes": [
@@ -4768,9 +4883,22 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "money",
+              "low": 18.58,
+              "high": 18.58,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:381959",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -4781,7 +4909,41 @@
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
-            "unusual": null,
+            "unusual": {
+              "peer_median": 6.73,
+              "n_groups": 7,
+              "whole_line": false,
+              "set_aside": [
+                {
+                  "kind": "money",
+                  "low": 35.0,
+                  "high": 69.23,
+                  "basis": "discounted_cash",
+                  "prov": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:218757",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:363978",
+                    "payer_id": null,
+                    "row_id": null
+                  }
+                }
+              ]
+            },
             "anesthesia_time": null,
             "chain_price_from": null,
             "at": "this_site"
@@ -5193,7 +5355,7 @@
           },
           {
             "line_id": "mr_arthrogram_23350_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -5210,16 +5372,46 @@
               "facility_fee"
             ],
             "component": "facility",
-            "component_confirmed": true,
+            "component_confirmed": false,
             "unit": "once",
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 400.0,
+              "high": 400.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:16927",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 400.0,
+              "high": 400.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:16927",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -5294,7 +5486,7 @@
           },
           {
             "line_id": "mr_arthrogram_77002_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -5311,16 +5503,46 @@
               "facility_fee"
             ],
             "component": "facility",
-            "component_confirmed": true,
+            "component_confirmed": false,
             "unit": "once",
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 212.0,
+              "high": 212.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:8483",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 212.0,
+              "high": 212.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:8483",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -5460,7 +5682,7 @@
             },
             {
               "line_id": "mr_arthrogram_23350_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_23350_doctor",
@@ -5468,7 +5690,7 @@
             },
             {
               "line_id": "mr_arthrogram_77002_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_77002_reading",
@@ -7161,7 +7383,7 @@
           },
           {
             "line_id": "steroid_injection_drug_ai",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "possible",
             "step_id": "steroid_injection",
             "codes": [
@@ -7181,9 +7403,32 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "money",
+              "low": 18.58,
+              "high": 69.23,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:381959",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:363978",
+                "payer_id": null,
+                "row_id": null
+              }
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -7606,7 +7851,7 @@
           },
           {
             "line_id": "mr_arthrogram_23350_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -7623,16 +7868,46 @@
               "facility_fee"
             ],
             "component": "facility",
-            "component_confirmed": true,
+            "component_confirmed": false,
             "unit": "once",
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 400.0,
+              "high": 400.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:16927",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 400.0,
+              "high": 400.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:16927",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -7707,7 +7982,7 @@
           },
           {
             "line_id": "mr_arthrogram_77002_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -7724,16 +7999,46 @@
               "facility_fee"
             ],
             "component": "facility",
-            "component_confirmed": true,
+            "component_confirmed": false,
             "unit": "once",
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 212.0,
+              "high": 212.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:8483",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 212.0,
+              "high": 212.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:8483",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -7873,7 +8178,7 @@
             },
             {
               "line_id": "mr_arthrogram_23350_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_23350_doctor",
@@ -7881,7 +8186,7 @@
             },
             {
               "line_id": "mr_arthrogram_77002_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_77002_reading",
@@ -8929,7 +9234,7 @@
           "gi",
           "ortho"
         ],
-        "kind": "office",
+        "kind": "hospital_outpatient",
         "chain_id": null,
         "children_only": false,
         "data_notices": []
@@ -9012,7 +9317,7 @@
           "high": null,
           "rank_value": null,
           "estimated": false,
-          "unusual": false,
+          "unusual": true,
           "in_total": false,
           "missing": false,
           "line_ids": [
@@ -9576,7 +9881,7 @@
           },
           {
             "line_id": "steroid_injection_drug_ai",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "possible",
             "step_id": "steroid_injection",
             "codes": [
@@ -9596,9 +9901,22 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "money",
+              "low": 18.58,
+              "high": 18.58,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:381959",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -9609,7 +9927,41 @@
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
-            "unusual": null,
+            "unusual": {
+              "peer_median": 6.73,
+              "n_groups": 7,
+              "whole_line": false,
+              "set_aside": [
+                {
+                  "kind": "money",
+                  "low": 35.0,
+                  "high": 69.23,
+                  "basis": "discounted_cash",
+                  "prov": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:218757",
+                    "payer_id": null,
+                    "row_id": null
+                  },
+                  "prov_high": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:363978",
+                    "payer_id": null,
+                    "row_id": null
+                  }
+                }
+              ]
+            },
             "anesthesia_time": null,
             "chain_price_from": null,
             "at": "this_site"
@@ -10021,7 +10373,7 @@
           },
           {
             "line_id": "mr_arthrogram_23350_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -10038,16 +10390,46 @@
               "facility_fee"
             ],
             "component": "facility",
-            "component_confirmed": true,
+            "component_confirmed": false,
             "unit": "once",
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 400.0,
+              "high": 400.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:16927",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 400.0,
+              "high": 400.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:16927",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -10122,7 +10504,7 @@
           },
           {
             "line_id": "mr_arthrogram_77002_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -10139,16 +10521,46 @@
               "facility_fee"
             ],
             "component": "facility",
-            "component_confirmed": true,
+            "component_confirmed": false,
             "unit": "once",
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 212.0,
+              "high": 212.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:8483",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 212.0,
+              "high": 212.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:8483",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -10288,7 +10700,7 @@
             },
             {
               "line_id": "mr_arthrogram_23350_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_23350_doctor",
@@ -10296,7 +10708,7 @@
             },
             {
               "line_id": "mr_arthrogram_77002_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_77002_reading",
@@ -12039,9 +12451,13 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "not_published",
+              "what": "a self-pay (no insurance) price for the facility's own fee for this item",
+              "ask": "Ask the hospital for its self-pay (no insurance) price or a Good Faith Estimate.",
+              "searched": {
+                "source_id": "mtauburn_mrf",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c"
+              }
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -12464,7 +12880,7 @@
           },
           {
             "line_id": "mr_arthrogram_23350_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -12486,11 +12902,41 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 114.0,
+              "high": 114.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4095",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 114.0,
+              "high": 114.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4095",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -12565,7 +13011,7 @@
           },
           {
             "line_id": "mr_arthrogram_77002_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -12587,11 +13033,41 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 252.0,
+              "high": 252.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3328",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 252.0,
+              "high": 252.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3328",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -12731,7 +13207,7 @@
             },
             {
               "line_id": "mr_arthrogram_23350_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_23350_doctor",
@@ -12739,7 +13215,7 @@
             },
             {
               "line_id": "mr_arthrogram_77002_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_77002_reading",
@@ -13202,7 +13678,7 @@
           "gi",
           "ortho"
         ],
-        "kind": "office",
+        "kind": "hospital_outpatient",
         "chain_id": null,
         "children_only": false,
         "data_notices": []
@@ -13890,9 +14366,13 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "not_published",
+              "what": "a self-pay (no insurance) price for the facility's own fee for this item",
+              "ask": "Ask the hospital for its self-pay (no insurance) price or a Good Faith Estimate.",
+              "searched": {
+                "source_id": "mtauburn_mrf",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c"
+              }
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -14315,7 +14795,7 @@
           },
           {
             "line_id": "mr_arthrogram_23350_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -14337,11 +14817,41 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 114.0,
+              "high": 114.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4095",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 114.0,
+              "high": 114.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4095",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -14416,7 +14926,7 @@
           },
           {
             "line_id": "mr_arthrogram_77002_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -14438,11 +14948,41 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 252.0,
+              "high": 252.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3328",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 252.0,
+              "high": 252.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3328",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -14582,7 +15122,7 @@
             },
             {
               "line_id": "mr_arthrogram_23350_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_23350_doctor",
@@ -14590,7 +15130,7 @@
             },
             {
               "line_id": "mr_arthrogram_77002_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_77002_reading",
@@ -15741,9 +16281,13 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "not_published",
+              "what": "a self-pay (no insurance) price for the facility's own fee for this item",
+              "ask": "Ask the hospital for its self-pay (no insurance) price or a Good Faith Estimate.",
+              "searched": {
+                "source_id": "mtauburn_mrf",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c"
+              }
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -16166,7 +16710,7 @@
           },
           {
             "line_id": "mr_arthrogram_23350_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -16188,11 +16732,41 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 114.0,
+              "high": 114.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4095",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 114.0,
+              "high": 114.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4095",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -16267,7 +16841,7 @@
           },
           {
             "line_id": "mr_arthrogram_77002_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -16289,11 +16863,41 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 252.0,
+              "high": 252.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3328",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 252.0,
+              "high": 252.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3328",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -16433,7 +17037,7 @@
             },
             {
               "line_id": "mr_arthrogram_23350_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_23350_doctor",
@@ -16441,7 +17045,7 @@
             },
             {
               "line_id": "mr_arthrogram_77002_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_77002_reading",
@@ -17333,10 +17937,10 @@
             "component_confirmed": false,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "no_evidence",
+            "availability_reason": "insurer_lists_rate",
             "cell": {
               "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
               "eta": null
             },
             "list_price": null,
@@ -17518,7 +18122,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "no_evidence",
+            "availability_reason": "insurer_lists_rate",
             "cell": {
               "kind": "not_loaded",
               "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
@@ -17564,7 +18168,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "no_evidence",
+            "availability_reason": "insurer_lists_rate",
             "cell": {
               "kind": "not_loaded",
               "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
@@ -17678,7 +18282,7 @@
         "service_areas": [
           "ortho"
         ],
-        "kind": "office",
+        "kind": "hospital_outpatient",
         "chain_id": null,
         "children_only": false,
         "data_notices": []
@@ -17819,7 +18423,7 @@
           "high": null,
           "rank_value": null,
           "estimated": false,
-          "unusual": false,
+          "unusual": true,
           "in_total": false,
           "missing": false,
           "line_ids": [
@@ -18346,7 +18950,7 @@
           },
           {
             "line_id": "steroid_injection_drug_ai",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "possible",
             "step_id": "steroid_injection",
             "codes": [
@@ -18366,9 +18970,22 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "money",
+              "low": 6.73,
+              "high": 6.73,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mgh_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba.zip",
+                "source_sha256": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "mgh_mrf:5be51f8464a8:154411",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -18791,7 +19408,7 @@
           },
           {
             "line_id": "mr_arthrogram_23350_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -18813,11 +19430,41 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 282.0,
+              "high": 282.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mgh_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba.zip",
+                "source_sha256": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "mgh_mrf:5be51f8464a8:66833",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 376.0,
+              "high": 376.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mgh_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba.zip",
+                "source_sha256": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "mgh_mrf:5be51f8464a8:66833",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -18892,7 +19539,7 @@
           },
           {
             "line_id": "mr_arthrogram_77002_facility",
-            "tier": "not_in_public_data",
+            "tier": "possible",
             "likelihood": "rare",
             "step_id": "mr_arthrogram",
             "codes": [
@@ -18914,11 +19561,41 @@
             "availability": "offered",
             "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the facility's own fee for this item: we do not read this code from price files yet",
-              "eta": null
+              "kind": "money",
+              "low": 795.0,
+              "high": 795.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mgh_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba.zip",
+                "source_sha256": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "mgh_mrf:5be51f8464a8:159057",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 1060.0,
+              "high": 1060.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mgh_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba.zip",
+                "source_sha256": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "mgh_mrf:5be51f8464a8:159057",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -18932,7 +19609,12 @@
             ],
             "price_notes": [],
             "estimate": null,
-            "unusual": null,
+            "unusual": {
+              "peer_median": 252.0,
+              "n_groups": 14,
+              "whole_line": true,
+              "set_aside": []
+            },
             "anesthesia_time": null,
             "chain_price_from": null,
             "at": "this_site"
@@ -19058,7 +19740,7 @@
             },
             {
               "line_id": "mr_arthrogram_23350_facility",
-              "reason": "no_dollar_amount"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_23350_doctor",
@@ -19066,7 +19748,7 @@
             },
             {
               "line_id": "mr_arthrogram_77002_facility",
-              "reason": "no_dollar_amount"
+              "reason": "unusual"
             },
             {
               "line_id": "mr_arthrogram_77002_reading",
@@ -20338,10 +21020,10 @@
             "component_confirmed": false,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "no_evidence",
+            "availability_reason": "insurer_lists_rate",
             "cell": {
               "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
+              "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
               "eta": null
             },
             "list_price": null,
@@ -20523,7 +21205,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "no_evidence",
+            "availability_reason": "insurer_lists_rate",
             "cell": {
               "kind": "not_loaded",
               "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",
@@ -20569,7 +21251,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "no_evidence",
+            "availability_reason": "insurer_lists_rate",
             "cell": {
               "kind": "not_loaded",
               "what": "this clinic's self-pay price: we have not read a posted self-pay price list for it",

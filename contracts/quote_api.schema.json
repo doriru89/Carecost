@@ -22,7 +22,7 @@
         "minutes": {
           "exclusiveMinimum": 0,
           "title": "Minutes",
-          "type": "integer"
+          "type": "number"
         },
         "source": {
           "description": "the public CMS file the typical minutes come from",
@@ -2607,7 +2607,7 @@
           "type": "string"
         },
         "kind": {
-          "description": "X2 / P7: the kind of site (engine.yaml site_kinds)",
+          "description": "X2 / P7: the kind of site (engine.yaml kind_by_billing)",
           "enum": [
             "urgent_care",
             "office",

@@ -722,7 +722,7 @@ export interface SiteSummary {
   listing_status: "web_verified" | "multi_registry";
   service_areas: ("ortho" | "skin" | "gi" | "urgent_care")[];
   /**
-   * X2 / P7: the kind of site (engine.yaml site_kinds)
+   * X2 / P7: the kind of site (engine.yaml kind_by_billing)
    */
   kind: "urgent_care" | "office" | "hospital_outpatient" | "ambulatory_surgery_center";
   /**

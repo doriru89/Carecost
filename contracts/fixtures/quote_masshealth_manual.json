@@ -16,8 +16,8 @@
   "picked_by": "person",
   "as_of": "2026-10-25",
   "data_version": {
-    "build_id": "20261024-336340ed",
-    "build_date": "2026-10-24",
+    "build_id": "20261025-336340ed",
+    "build_date": "2026-10-25",
     "tic_release": "tic-2026-10",
     "sites_version": 1,
     "care_paths_version": null
@@ -1175,7 +1175,7 @@
         "service_areas": [
           "ortho"
         ],
-        "kind": "office",
+        "kind": "hospital_outpatient",
         "chain_id": null,
         "children_only": false,
         "data_notices": []
@@ -1734,7 +1734,7 @@
           "gi",
           "ortho"
         ],
-        "kind": "office",
+        "kind": "hospital_outpatient",
         "chain_id": null,
         "children_only": false,
         "data_notices": []
@@ -2892,7 +2892,7 @@
         },
         "address_line": "1493 CAMBRIDGE ST, Cambridge, MA 02139",
         "phone": null,
-        "billing_type": "unknown",
+        "billing_type": "hospital_outpatient",
         "booking": [],
         "portal_links": [],
         "hours": null,
@@ -2905,7 +2905,7 @@
           "gi",
           "ortho"
         ],
-        "kind": "office",
+        "kind": "hospital_outpatient",
         "chain_id": null,
         "children_only": false,
         "data_notices": []
@@ -5393,7 +5393,7 @@
           "gi",
           "ortho"
         ],
-        "kind": "office",
+        "kind": "hospital_outpatient",
         "chain_id": null,
         "children_only": false,
         "data_notices": []
