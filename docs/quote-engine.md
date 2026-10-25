@@ -1,4 +1,4 @@
-# Quote engine (stream C, wave 2)
+# Quote engine (streams C and C2, wave 2)
 
 The P1 slice grown into the real engine: every care path in `data/care_paths/paths/` x every payment in
 the contract (each TiC payer and network A2 loaded, cash, Medicare, MassHealth) x every quotable site in
@@ -15,12 +15,11 @@ uv run --frozen --extra dev pytest -q -p no:cacheprovider
 # 2. the app on the committed extract (7,791 real rows, no env vars)
 uv run --frozen uvicorn app.server:app --host 127.0.0.1 --port 8100
 
-# 3. a real pack, then the app on it
+# 3. a real pack (hospital build + TiC + A3's fee schedules), then the app on it
 uv run --frozen --extra etl python -m app.quote.pack \
-  --hospital-build /Users/austin/carecost-wt/a1-refresh/data/build/20261024-10d8a893 \
+  --hospital-build /Users/austin/carecost-wt/a3-gov-sites/data/build/20261024-336340ed \
   --tic-root /Users/austin/carecost-wt/a2-tic/data/intermediate/tic \
-  --gov-rows ../contracts/fixtures/gov_pfs_extract.csv \
-  --gov-sources ../contracts/fixtures/gov_pfs_extract.sources.yaml \
+  --gov-root /Users/austin/carecost-wt/a3-gov-sites/data/intermediate/gov \
   --out ../data/build/quote_pack.sqlite
 CARECOST_QUOTE_PACK=../data/build/quote_pack.sqlite \
   uv run --frozen uvicorn app.server:app --host 127.0.0.1 --port 8100
@@ -29,16 +28,15 @@ CARECOST_QUOTE_PACK=../data/build/quote_pack.sqlite \
 uv run --frozen python -m app.quote.bench --url http://127.0.0.1:8100 -n 200
 
 # 5. regenerate the golden fixtures + extract from a real pack (step 3)
-uv run --frozen python -m app.quote.fixtures_gen --pack ../data/build/quote_pack.sqlite --as-of 2026-10-24
-
-# 6. the tiny Medicare PFS extract (until A3's PFS reader lands)
-uv run --frozen python tests/quote/make_pfs_extract.py \
-  --pfs /Users/austin/carecost/data/raw/government/cms_pfs/PPRRVU2026_Jan_nonQPP.csv \
-  --gpci /Users/austin/carecost/data/raw/government/cms_pfs/GPCI2026.csv
+uv run --frozen python -m app.quote.fixtures_gen --pack ../data/build/quote_pack.sqlite --as-of 2026-10-25
 ```
 
+Tests need `openpyxl` for A3's `tests/sites/test_sites_sources.py`, which is not declared in
+`pyproject.toml` yet; until it is, run `uv run --frozen --extra dev --with openpyxl pytest -q -p no:cacheprovider`.
+
 Env vars: `CARECOST_QUOTE_PACK` (runtime pack; default = the committed extract), `CARECOST_SITES_PATH`
-(site registry; default `contracts/fixtures/sites.json`; A3's `data/sites/sites.yaml` drops in),
+(site registry; default A3's `data/sites/sites.yaml`, 208 sites; `contracts/fixtures/sites.json` is
+the 6-site test registry),
 `CARECOST_CORS_ORIGINS`. Docker: `docker build -t carecost-api .` bakes `data/`, `content/`, `contracts/`
 and `data/build/quote_pack.sqlite` (built from the extract when absent). CMD is uvicorn only.
 
@@ -122,7 +120,28 @@ Blue FI now give 73030-26 $12.04-$17.33, 76881-26 $82.07, 73221-26 $120.81 (HMFP
 
 * Rung 6 can estimate a code the site may not offer (AFC physical therapy): there is no offered-services
   list yet (P1 #14, A3).
-* Response size grows with sites (270 KB raw for 6 sites); a 273-site registry needs a site filter or a
-  summary-first response.
-* Full-TiC memory (1.1 GB) is mostly per-row Python objects; if the registry links every TIN, aggregate
-  TiC rows per (network, TIN, code, POS) at pack time.
+* Response size and full-TiC memory: addressed in C2 (below).
+
+## C2: A3's fee schedules and the 208-site registry
+
+| Brief item | What the engine does now |
+|---|---|
+| Pack inputs | `--gov-root` reads A3's `LATEST.json` (one RateRow parquet and manifest per source, freshness from the manifest). Row counts in the pack per source kind: hospital_mrf 16,053, insurer_tic 1,178,898 (aggregated from 1,518,081 kept rows of 2,374,165 read), medicare_pfs 296 (RVU26D + anesthesia), medicare_opps 45, medicare_asc 26, masshealth_fs 133 (only the codes a quote can look up). |
+| Sites | default `data/sites/sites.yaml`. TiC is joined by `tins` + `tin_npis` + `type_2_npis`, and by `census_id` <-> `tic_site_ids` (the pack's `census_tins`: 97 extra TINs on 54 sites, and a linked TIN's rows count only when they name the site). `children_only` sites are quoted only when `site_ids` names them. `offered` is positive evidence only: no evidence = `availability: "unknown"`, never `not_offered`. |
+| Fee schedules | `RateRow.place_of_service` (`non_facility` / `facility` / None) replaces reading `plan_raw` (older A3 parquet: derived from `plan_raw` on load). A fee-schedule number is basis `fee_schedule`, no payer (`Money` rejects one with a payer), method `computed_fee_schedule` for the PFS and `stated` for OPPS / ASC / MassHealth (A3's split). The PFS locality follows the site's county (26LOCCO.csv line 84: 01 = Middlesex, Norfolk, Suffolk; Brockton, Lynn and Saugus are 99). Medicare facility fee: the hospital file's own Medicare row, else OPPS (hospital) or ASC (surgery center), national unadjusted, with `price_notes: ["price.national_unadjusted"]`; a clinic visit looks up G0463 ($136.02) and the line lists it. MassHealth: 316 / 317 / 318 price the doctor's side (rung 4); the hospital outpatient payment (APAD) is not loaded. |
+| MassHealth plans | hospital rows whose plan names MassHealth Limited / CMSP, out-of-state Medicaid or dental are never used for `masshealth` (`engine.yaml masshealth_plan_exclude`). Tufts' only MassHealth 73221 row is `HB XR MEDICAID LIMITED CMSP 100%` at the $1,631 gross, so Tufts' MassHealth facility fee is now `not_loaded`. |
+| Radiology reads | a -26 line at a hospital uses `radiology_groups.yaml`'s TINs first, the site's own groups when they have no row. Mount Auburn's Schatzki Associates (042482067) and NEB Radiology (043034933) have no row in any loaded TiC file, so Mount Auburn still reads $12.04-$17.33 / $82.07 / $120.81 from its own groups. |
+| Data-quality notices | `SiteSummary.data_notices` (BIDMC: content changed, date unchanged) on every site priced by the named file. |
+| Scale | `QuoteRequest.near`, `max_sites` (default 12, max 50), `site_ids`. With `near`: the closest `max_sites`. Without: every eligible site is priced and the best `max_sites` (I7) come back, ranked again inside that set. |
+| Catalog | a service listed under a path (`/api/catalog/paths/{id}/services`) uses that path's step names; the global list uses the code's neutral description when paths name it differently. |
+| `missing` (I7) | certain / likely, non-AI lines with no number that counts (a gap, a conflict, a repeating unit, a rung-7/8 reference) + steps another site lists. |
+
+Numbers (Austin's Mac, 2026-10-25, full real data, registry of 208 sites):
+
+* Pack: 1,195,451 rows, 62 sources, 136 MB (was 1,534,134 rows, 172 MB); 970,356 packed TiC rows carry NPIs for D6.
+* Startup max RSS (`resource.getrusage` after `load_pack` + `Engine`): 208-site registry 611 MB, 1,047,791 rows
+  (before: 882 MB, 1,240,695 rows); every TiC row 689 MB (before 1,122 MB). Server process RSS after startup: 605 MB.
+* `python -m app.quote.bench -n 200` (uvicorn, 1 worker, gzip, keep-alive): BCBS HMO shoulder, 12 sites near
+  Harvard Square, p50 8.7 ms, p95 9.0 ms, 323,267 B raw / 20,987 B gzip; cash p50 5.2 ms, p95 5.7 ms,
+  257,431 B / 14,870 B; BCBS without `near` (every site priced) p50 38.1 ms, p95 38.9 ms; 8 threads,
+  new connection each: 115 quotes/s, p50 63.7 ms, p95 141.4 ms.

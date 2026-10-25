@@ -1,56 +1,32 @@
 # P1 thin real slice
 
-> Superseded by `docs/quote-engine.md` (stream C, wave 2): the run commands below (`app.quote.api:app`,
-> `p1_slice.yaml`, `slice_data.py`) no longer exist; each problem tagged C has its resolution there.
+> Superseded by `docs/quote-engine.md` (streams C and C2, wave 2), which has the run commands
+> (`app.server:app`, the quote pack) and each problem's resolution. The P1 entry point, its config,
+> its loader and its receipt page were deleted in wave 2; this file keeps the P1 findings only.
 
 The narrowest end-to-end path on real data: `shoulder_chronic_clicking_v1` x {BCBS MA HMO, cash} x 3 sites,
 one route (`POST /api/quote`), one ugly receipt page. Its job is to hit the integration seams once, before
 streams C / D / Chat / A3 start. Those seams are listed below.
 
-## Run it locally
+## How it ran (historical)
 
-```bash
-cd /Users/austin/carecost-wt/p1-slice/backend
-
-# A. API on real local data (pyarrow is needed for the TiC parquet, so use the etl extra)
-CARECOST_HOSPITAL_BUILD=/Users/austin/carecost-wt/a1-refresh/data/build/20261024-10d8a893 \
-CARECOST_TIC_ROOT=/Users/austin/carecost-wt/a2-tic/data/intermediate/tic \
-  uv run --frozen --extra etl uvicorn app.quote.api:app --host 127.0.0.1 --port 8100
-
-# B. or the API on the committed extract (no env vars, no 1 GB data; same numbers)
-uv run --frozen uvicorn app.quote.api:app --host 127.0.0.1 --port 8100
-
-# the page (second terminal), then open http://127.0.0.1:5180/
-python3 -m http.server 5180 --bind 127.0.0.1 -d ../frontend/p1-slice
-
-# tests (the real-data load test runs only with the two env vars above set)
-uv run --frozen --extra dev pytest -q -p no:cacheprovider tests/quote tests/contracts
-
-# latency against the running server
-uv run --frozen python -m app.quote.bench --url http://127.0.0.1:8100 -n 200
-
-# regenerate the golden fixtures + the committed extract from real data
-uv run --frozen --extra dev python -m app.quote.fixtures_gen \
-  --hospital-build /Users/austin/carecost-wt/a1-refresh/data/build/20261024-10d8a893 \
-  --tic-root /Users/austin/carecost-wt/a2-tic/data/intermediate/tic --as-of 2026-10-24
-```
-
-Raw data is never copied into git. The engine reads it from the paths in `CARECOST_HOSPITAL_BUILD` /
-`CARECOST_TIC_ROOT`. Only the ~1,000 rows the two golden quotes look at are committed
-(`contracts/fixtures/rate_row_extract.csv`, 1,021 rows, 0.48 MB).
+P1 ran a FastAPI app from the quote package on port 8100 and served a static receipt page on port 5180,
+reading the a1-refresh hospital build `20261024-10d8a893` and the a2-tic TiC intermediates. Raw data
+was never copied into git; only the ~1,000 rows the two golden quotes looked at were committed
+(`contracts/fixtures/rate_row_extract.csv`, 1,021 rows, 0.48 MB at the time).
 
 ## What is where
 
 | File | What |
 |---|---|
-| `data/quote/p1_slice.yaml` | scope: care path, 3 site ids, payment -> TiC files, place-of-service rule, modifier 26 for imaging reads, facility-only therapy codes, per-15-minute codes, you-pay copy key |
-| `backend/app/quote/slice_data.py` | startup load into in-memory dicts (hospital rows by file+code+payer, cash rows by file+code, TiC rows by file+TIN+code); real build or committed extract |
+| `data/quote/p1_slice.yaml` (deleted; now `data/quote/engine.yaml`) | scope: care path, 3 site ids, payment -> TiC files, place-of-service rule, modifier 26 for imaging reads, facility-only therapy codes, per-15-minute codes, you-pay copy key |
+| `backend/app/quote/slice_data.py` (deleted; now `store.py` + `pack.py`) | startup load into in-memory dicts (hospital rows by file+code+payer, cash rows by file+code, TiC rows by file+TIN+code); real build or committed extract |
 | `backend/app/quote/engine.py` | steps -> codes -> rows -> `QuoteResponse`, validated once by the contract |
-| `backend/app/quote/api.py` | fresh FastAPI app factory, `POST /api/quote`, `GET /api/health`, GZip, CORS for :5180. `app.main` untouched |
+| `backend/app/quote/api.py` | P1: its own app factory; now only the router that `backend/app/server.py` mounts |
 | `backend/app/quote/fixtures_gen.py` | writes the golden fixtures + extract from real data, then replays the extract and requires identical output |
 | `backend/app/quote/bench.py` | p50/p95 over N real HTTP requests |
-| `frontend/p1-slice/index.html` | the receipt page |
-| `backend/tests/quote/test_p1_slice.py` | end to end (engine and HTTP) on the extract, startup load, real-data load, freshness per request |
+| the P1 receipt page (deleted in wave 2; the React app in `frontend/src/` replaced it) | the receipt page |
+| `backend/tests/quote/test_p1_slice.py` (now `test_engine.py`, `test_server.py`) | end to end (engine and HTTP) on the extract, startup load, real-data load, freshness per request |
 
 ## Data picked
 
