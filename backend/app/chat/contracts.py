@@ -602,11 +602,15 @@ class ChatResponse(_Strict):
             raise ValueError("llm_invalid needs an LLM call")
         if self.conversation_turn != ctx.conversation_turn:
             raise ValueError("conversation_turn is the server's count")
+        # A code red flag outranks the cap: the gate runs before it (a person in crisis at turn
+        # 13 gets the 988 page, not "conversation full"). It needs no LLM call, so it costs nothing.
         if self.conversation_turn > MAX_TURNS_PER_CONVERSATION and not (
-            self.reply.kind == "ai_paused" and self.reply.reason == "conversation_cap"
+            (self.reply.kind == "ai_paused" and self.reply.reason == "conversation_cap")
+            or (self.reply.kind == "red_flag" and not self.llm_called)
         ):
             raise ValueError(
-                f"past {MAX_TURNS_PER_CONVERSATION} turns the reply is conversation_cap"
+                f"past {MAX_TURNS_PER_CONVERSATION} turns the reply is conversation_cap "
+                "(or a code red flag)"
             )
         _check_reply(self.reply, ctx)
         escalated = self.reply.kind == "red_flag" and self.reply.escalated_by_llm

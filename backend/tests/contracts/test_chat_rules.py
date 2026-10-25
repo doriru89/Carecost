@@ -289,6 +289,18 @@ def test_conversation_turn_cap():
     _ok(doc)
 
 
+def test_code_red_flag_outranks_the_conversation_cap():
+    doc = _fx("chat_red_flag")
+    doc["conversation_turn"] = chat.MAX_TURNS_PER_CONVERSATION + 1
+    if doc["llm_called"]:
+        pytest.skip("fixture is an LLM-escalated flag")
+    _ok(doc)  # the gate runs before the cap: a crisis at turn 13 still gets its page
+    # an LLM-escalated flag needs an LLM call, and past the cap no LLM call is allowed
+    doc["llm_called"] = True
+    doc["reply"].update(flag_ids=[], escalated_by_llm=True)
+    _bad(doc, "conversation_cap", calls=1)
+
+
 def test_conversation_turn_is_the_servers_count():
     doc = _fx("chat_care_paths")
     ctx = context(doc)
