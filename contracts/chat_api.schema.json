@@ -58,6 +58,33 @@
       "title": "AiPausedReply",
       "type": "object"
     },
+    "BecauseAnswer": {
+      "additionalProperties": false,
+      "description": "D33: one of the person's own chip answers that satisfied the path's entry rule. Built by\nthe server from the request, never written by the LLM.",
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/Title",
+          "description": "The answer's label, verbatim from questions.yaml"
+        },
+        "question_id": {
+          "pattern": "^Q[0-9]+$",
+          "title": "Question Id",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[a-z0-9_]{1,40}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question_id",
+        "value",
+        "label"
+      ],
+      "title": "BecauseAnswer",
+      "type": "object"
+    },
     "BudgetStatus": {
       "additionalProperties": false,
       "description": "D2 + metrics F2. Per hashed IP per provider day (the reset time zone is provider config:\nGemini resets at midnight Pacific). Dollars and turns both count; whichever hits first pauses.\nThe wallet is the prepaid ceiling (~$10).",
@@ -130,6 +157,14 @@
     "CandidatePath": {
       "additionalProperties": false,
       "properties": {
+        "because": {
+          "description": "D33: why this path, as the person's own answers that matched its entry rule (question order). Empty for ai_ranked: the model's guess has no listed reason.",
+          "items": {
+            "$ref": "#/$defs/BecauseAnswer"
+          },
+          "title": "Because",
+          "type": "array"
+        },
         "match": {
           "description": "entry_matched: the answers satisfy the path's entry rule (deterministic). ai_ranked: the LLM picked it from the catalog.",
           "enum": [
@@ -162,7 +197,8 @@
         "path_id",
         "title",
         "match",
-        "review_status"
+        "review_status",
+        "because"
       ],
       "title": "CandidatePath",
       "type": "object"
@@ -183,6 +219,18 @@
             "type": "string"
           },
           "title": "Card Ids",
+          "type": "array"
+        },
+        "copy_keys": {
+          "description": "D33: not-a-diagnosis + when-to-see-a-doctor (fixed copy, not LLM text)",
+          "items": {
+            "enum": [
+              "copy.not_a_diagnosis",
+              "copy.when_to_see_a_doctor"
+            ],
+            "type": "string"
+          },
+          "title": "Copy Keys",
           "type": "array"
         },
         "kind": {
@@ -207,6 +255,7 @@
         "text",
         "understood",
         "candidates",
+        "copy_keys",
         "card_ids"
       ],
       "title": "CarePathsReply",
@@ -498,6 +547,18 @@
           "title": "Card Ids",
           "type": "array"
         },
+        "copy_keys": {
+          "description": "D33: not-a-diagnosis + when-to-see-a-doctor, whenever candidates show",
+          "items": {
+            "enum": [
+              "copy.not_a_diagnosis",
+              "copy.when_to_see_a_doctor"
+            ],
+            "type": "string"
+          },
+          "title": "Copy Keys",
+          "type": "array"
+        },
         "kind": {
           "const": "clarify",
           "title": "Kind",
@@ -538,6 +599,7 @@
         "understood",
         "questions",
         "candidates",
+        "copy_keys",
         "card_ids"
       ],
       "title": "ClarifyReply",

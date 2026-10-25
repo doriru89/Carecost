@@ -83,14 +83,20 @@
         "path_id": "shoulder_chronic_clicking_v1",
         "title": "Shoulder pain that came on gradually, often with painful clicking",
         "match": "ai_ranked",
-        "review_status": "pending_austin"
+        "review_status": "pending_austin",
+        "because": []
       },
       {
         "path_id": "shoulder_acute_injury_v1",
         "title": "Shoulder pain after a fall or injury",
         "match": "ai_ranked",
-        "review_status": "pending_austin"
+        "review_status": "pending_austin",
+        "because": []
       }
+    ],
+    "copy_keys": [
+      "copy.not_a_diagnosis",
+      "copy.when_to_see_a_doctor"
     ],
     "card_ids": []
   },

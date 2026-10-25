@@ -42,6 +42,9 @@ from pydantic import (
     model_validator,
 )
 
+from app.care_paths.loader import load_paths
+from app.care_paths.models import CarePath
+from app.care_paths.router import matches
 from app.quote.contracts import (
     ANSWER_RE,
     PATH_ID_RE,
@@ -195,6 +198,15 @@ class ChipQuestion(_Strict):
     answers: list[ChipAnswer] = Field(min_length=1)
 
 
+class BecauseAnswer(_Strict):
+    """D33: one of the person's own chip answers that satisfied the path's entry rule. Built by
+    the server from the request, never written by the LLM."""
+
+    question_id: str = Field(pattern=QUESTION_ID_RE)
+    value: str = Field(pattern=ANSWER_RE)
+    label: Title = Field(description="The answer's label, verbatim from questions.yaml")
+
+
 class CandidatePath(_Strict):
     path_id: str = Field(pattern=PATH_ID_RE)
     title: str
@@ -203,6 +215,21 @@ class CandidatePath(_Strict):
         "ai_ranked: the LLM picked it from the catalog."
     )
     review_status: Literal["pending_austin", "changes_requested", "approved"]
+    because: list[BecauseAnswer] = Field(
+        description="D33: why this path, as the person's own answers that matched its entry "
+        "rule (question order). Empty for ai_ranked: the model's guess has no listed reason."
+    )
+
+
+CarePathCopyKey = Literal["copy.not_a_diagnosis", "copy.when_to_see_a_doctor"]
+CARE_PATH_COPY_KEYS: tuple[str, ...] = ("copy.not_a_diagnosis", "copy.when_to_see_a_doctor")
+"""D33: fixed copy shown with every reply that shows care paths (not LLM text)."""
+
+
+def _check_copy_keys(candidates: list[CandidatePath], keys: list[str]) -> None:
+    want = list(CARE_PATH_COPY_KEYS) if candidates else []
+    if keys != want:
+        raise ValueError(f"a reply showing care paths carries exactly {want} (D33)")
 
 
 class InferredAnswer(_Strict):
@@ -234,7 +261,15 @@ class ClarifyReply(_Strict):
     candidates: list[CandidatePath] = Field(
         default_factory=list, description="Prices can show from turn one; questions only refine"
     )
+    copy_keys: list[CarePathCopyKey] = Field(
+        description="D33: not-a-diagnosis + when-to-see-a-doctor, whenever candidates show"
+    )
     card_ids: list[str] = Field(default_factory=list, description="questions.yaml card ids")
+
+    @model_validator(mode="after")
+    def _copy(self) -> ClarifyReply:
+        _check_copy_keys(self.candidates, list(self.copy_keys))
+        return self
 
 
 class CarePathsReply(_Strict):
@@ -242,7 +277,15 @@ class CarePathsReply(_Strict):
     text: LlmText
     understood: list[InferredAnswer] = Field(default_factory=list)
     candidates: list[CandidatePath] = Field(min_length=1)
+    copy_keys: list[CarePathCopyKey] = Field(
+        description="D33: not-a-diagnosis + when-to-see-a-doctor (fixed copy, not LLM text)"
+    )
     card_ids: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _copy(self) -> CarePathsReply:
+        _check_copy_keys(self.candidates, list(self.copy_keys))
+        return self
 
 
 class TextReply(_Strict):
@@ -336,12 +379,15 @@ class ChatRegistries:
     flags: dict[str, str]  # flag id -> disposition id
     glossary: frozenset[str]
     catalog: Catalog
+    paths: dict[str, CarePath]
+    conditions: dict[str, tuple[str, ...]]  # D33 vocabulary: condition id -> names
 
     @classmethod
     def load(cls, catalog: Catalog, repo: Path = REPO_ROOT) -> ChatRegistries:
         qs = yaml.safe_load((repo / "data" / "questions" / "questions.yaml").read_text())
         rf = json.loads((repo / "data" / "redflags" / "redflags.json").read_text())
         gl = yaml.safe_load((repo / "content" / "glossary" / "glossary.yaml").read_text())
+        cn = yaml.safe_load((repo / "data" / "chat" / "condition_names.yaml").read_text())
         return cls(
             questions={q["id"]: q for q in qs["questions"]},
             cards=frozenset(c["id"] for c in qs["cards"]),
@@ -349,7 +395,49 @@ class ChatRegistries:
             flags={f["id"]: f["disposition"] for f in rf["flags"]},
             glossary=frozenset(gl["terms"]),
             catalog=catalog,
+            paths=load_paths(repo / "data" / "care_paths" / "paths"),
+            conditions={k: tuple(v) for k, v in cn["conditions"].items()},
         )
+
+    def conditions_in(self, text: str) -> set[str]:
+        """Condition ids whose names appear in ``text`` (case-insensitive, word boundaries)."""
+        low = text.lower()
+        return {
+            cid
+            for cid, names in self.conditions.items()
+            if any(re.search(rf"(?<![a-z]){re.escape(n.lower())}(?![a-z])", low) for n in names)
+        }
+
+    def allowed_conditions(self, path_ids: list[str]) -> set[str]:
+        """D33, derived: conditions the path's own title/intro names, or its glossary keys."""
+        out: set[str] = set()
+        for pid in path_ids:
+            p = self.paths.get(pid)
+            if p is not None:
+                out |= self.conditions_in(f"{p.title.en} {p.intro}")
+                out |= set(p.glossary) & set(self.conditions)
+        return out
+
+    def because(self, path_id: str, answers: dict[str, list[str]]) -> list[dict[str, Any]] | None:
+        """D33: the person's answers that satisfy the path's entry rule (question order), or None
+        when they do not satisfy it."""
+        p = self.paths[path_id]
+        if not matches(p, answers):
+            return None
+        e = p.entry
+        used: dict[str, set[str]] = {}
+        for cond in [
+            e.all_of,
+            *[c for c in e.any_of if all(set(answers.get(q, [])) & set(v) for q, v in c.items())],
+        ]:
+            for q, vals in cond.items():
+                used.setdefault(q, set()).update(set(answers.get(q, [])) & set(vals))
+        out = []
+        for qid, q in self.questions.items():
+            for a in q["answers"]:
+                if a["value"] in used.get(qid, set()):
+                    out.append({"question_id": qid, "value": a["value"], "label": a["label"]})
+        return out
 
     def check_answers(self, answers: dict[str, list[str]]) -> None:
         for qid, vals in answers.items():
@@ -427,6 +515,15 @@ def _check_reply(reply: Any, ctx: ChatContext) -> None:
                 raise ValueError(f"unknown care path {c.path_id}")
             if (c.title, c.review_status) != (p.title, p.review_status):
                 raise ValueError(f"{c.path_id}: title and review_status come from the catalog")
+            got = [b.model_dump() for b in c.because]
+            if c.match == "entry_matched":
+                want = reg.because(c.path_id, ctx.request.answers)
+                if want is None:
+                    raise ValueError(f"{c.path_id}: entry_matched but the answers miss its entry")
+                if got != want:
+                    raise ValueError(f"{c.path_id}: because must be the answers that matched")
+            elif got:
+                raise ValueError(f"{c.path_id}: an ai_ranked path lists no because")
         texts = ctx.request.user_texts()
         for u in reply.understood:
             reg.check_answers({u.question_id: [u.value]})
@@ -435,6 +532,17 @@ def _check_reply(reply: Any, ctx: ChatContext) -> None:
             if not any(u.evidence in t for t in texts):
                 raise ValueError(f"{u.question_id}: evidence must quote the person's own words")
     if kind in ("clarify", "care_paths", "text"):
+        # D33: condition names in LLM text only from the paths this reply shows
+        if kind == "text":
+            focus = ctx.request.focus
+            shown = [focus.care_path_id] if focus and focus.care_path_id else []
+            llm = [reply.text]
+        else:
+            shown = [c.path_id for c in reply.candidates]
+            llm = [reply.lead_in or ""] if kind == "clarify" else [reply.text]
+        extra = set().union(*(reg.conditions_in(t) for t in llm)) - reg.allowed_conditions(shown)
+        if extra:
+            raise ValueError(f"LLM text names conditions outside the care path: {sorted(extra)}")
         bad = set(reply.card_ids) - reg.cards
         if bad:
             raise ValueError(f"unknown cards {sorted(bad)}")

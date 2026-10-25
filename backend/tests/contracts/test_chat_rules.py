@@ -315,3 +315,70 @@ def test_pause_reason_and_copy_key_agree():
     doc = copy.deepcopy(_fx("chat_ai_paused"))
     doc["reply"]["message_key"] = "ai.paused_wallet"
     _bad(doc, "needs message_key")
+
+
+# --------------------------------------------------------------------------- D33
+
+
+def test_allowed_conditions_are_derived_from_the_path_text():
+    reg = registries()
+    shoulder = reg.allowed_conditions(["shoulder_chronic_clicking_v1"])
+    assert "rotator_cuff" in shoulder and "frozen_shoulder" not in shoulder
+    assert "arthritis" in reg.allowed_conditions(["knee_chronic_v1"])
+    assert {"colon_cancer", "cancer"} <= reg.allowed_conditions(["colon_screening_v1"])
+    assert reg.allowed_conditions([]) == set()
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "This sounds like a frozen shoulder.",
+        "It could be bursitis or arthritis.",
+        "Probably not cancer, but let's check.",
+    ],
+)
+def test_llm_text_names_no_condition_outside_the_care_path(text):
+    doc = _fx("chat_care_paths")
+    doc["reply"]["text"] = text
+    _bad(doc, "names conditions outside the care path")
+
+
+def test_llm_text_may_use_the_paths_own_condition_names():
+    doc = _fx("chat_care_paths")
+    doc["reply"]["text"] = "This often comes from the rotator cuff tendons."
+    _ok(doc)
+
+
+def test_condition_rule_covers_lead_in_and_text_replies():
+    doc = _fx("chat_clarify")
+    doc["reply"]["lead_in"] = "A changing mole could be melanoma, so two questions."
+    _bad(doc, "outside the care path")
+    doc = _fx("chat_text")
+    doc["reply"]["text"] = "That pain sounds like arthritis."
+    _bad(doc, "outside the care path", req=request(focus=None))
+
+
+def test_because_is_the_answers_that_matched_the_entry_rule():
+    doc = _fx("chat_care_paths")
+    _ok(doc)
+    doc["reply"]["candidates"][0]["because"] = doc["reply"]["candidates"][0]["because"][:1]
+    _bad(doc, "because must be the answers that matched")
+    doc = _fx("chat_care_paths")
+    _bad(doc, "miss its entry", req=request(answers={"Q1": ["shoulder"], "Q2": ["injury"]}))
+
+
+def test_ai_ranked_paths_list_no_because():
+    doc = _fx("chat_clarify")
+    doc["reply"]["candidates"][0]["because"] = [
+        {"question_id": "Q1", "value": "shoulder", "label": {"en": "Shoulder", "zh": None}}
+    ]
+    _bad(doc, "ai_ranked path lists no because")
+
+
+def test_care_path_replies_carry_the_fixed_disclaimer_keys():
+    doc = _fx("chat_care_paths")
+    doc["reply"]["copy_keys"] = ["copy.when_to_see_a_doctor"]
+    _bad(doc, "copy.not_a_diagnosis")
+    doc = _fx("chat_clarify")
+    doc["reply"]["candidates"] = []
+    _bad(doc, "exactly")  # no candidates -> no care-path copy

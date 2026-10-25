@@ -81,6 +81,12 @@ separately at the end.
     verbatim from `questions.yaml`; red-flag dispositions, copy and flag ids are read from whatever
     `redflags.json` holds; card ids, glossary keys and suggested services (P5) are members, with catalog
     names; `focus_line_id` must be the line the request focused on;
+  - D33, the AI only phrases: LLM text may name a condition only if the shown care path's own title or
+    intro names it (allowed list derived, never authored per path; vocabulary
+    `data/chat/condition_names.yaml`, a deny-list with the known limit that unlisted names pass);
+    `CandidatePath.because` is built from the person's own chip answers that satisfied the path's entry
+    rule (an `entry_matched` path must really match; `ai_ranked` lists none); every reply showing care
+    paths carries `copy.not_a_diagnosis` + `copy.when_to_see_a_doctor`;
   - `understood` (P5): question/value members, `evidence` quotes the person's own words (current or
     earlier turn), never a `none` value;
   - `llm_called` equals the meter (`LlmMeter.record()` in the LLM client wrapper), never a handler bool;

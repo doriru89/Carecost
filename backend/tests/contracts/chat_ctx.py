@@ -3,6 +3,7 @@ meter with as many calls as the fixture says happened."""
 
 from __future__ import annotations
 
+import functools
 import json
 from pathlib import Path
 
@@ -19,6 +20,7 @@ def _doc(name: str) -> dict:
     return d
 
 
+@functools.cache
 def registries() -> chat.ChatRegistries:
     return chat.ChatRegistries.load(Catalog.model_validate(_doc("catalog")))
 
@@ -37,7 +39,10 @@ def context(body: dict, *, calls: int | None = None, req: chat.ChatRequest | Non
                 "site_id": "mount_auburn_hospital",
                 "line_id": reply["focus_line_id"],
             }
-        req = request(focus=focus)
+        answers = {}
+        if any(c.get("match") == "entry_matched" for c in reply.get("candidates", [])):
+            answers = {"Q1": ["shoulder"], "Q2": ["no_injury"]}  # what drove the entry match
+        req = request(focus=focus, answers=answers)
     if calls is None:
         calls = {"llm_invalid": 2}.get(reply["kind"], 1) if body["llm_called"] else 0
     ctx = chat.ChatContext.for_request(

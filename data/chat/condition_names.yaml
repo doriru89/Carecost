@@ -1,0 +1,44 @@
+# D33: condition names the chat LLM may not use unless the matched care path itself names them.
+#
+# This is a deny-list vocabulary, not clinical content. A path's allowed conditions are DERIVED:
+# a condition is allowed for a path when one of its names appears in that path's title or intro
+# (cited, reviewed text) or its id is one of the path's glossary keys. Nothing here assigns a
+# condition to a path by hand. Matching is case-insensitive on word boundaries.
+#
+# Known limit: a condition name missing from this list is not caught. Add names here when the
+# chat eval (model-first F6) finds one.
+version: 1
+conditions:
+  sprain: [sprain, sprains, sprained]
+  fracture: [fracture, fractures, fractured, broken bone, broken bones]
+  arthritis: [arthritis, osteoarthritis, rheumatoid arthritis]
+  rotator_cuff: [rotator cuff, rotator cuff tear, torn rotator cuff]
+  tendon_disorder: [tendinitis, tendonitis, tendinopathy, tendinosis]
+  bursitis: [bursitis]
+  impingement: [impingement, impingement syndrome]
+  frozen_shoulder: [frozen shoulder, adhesive capsulitis]
+  labral_tear: [labral tear, labrum tear, torn labrum, slap tear]
+  dislocation: [dislocation, dislocated]
+  meniscus_tear: [meniscus tear, meniscal tear, torn meniscus]
+  ligament_tear: [acl tear, torn acl, mcl tear]
+  disc_herniation: [herniated disc, slipped disc, bulging disc, disc herniation]
+  sciatica: [sciatica]
+  spinal_stenosis: [spinal stenosis, stenosis]
+  cancer: [cancer, cancers, tumor, tumour, carcinoma, malignancy, malignant]
+  colon_cancer: [colon cancer, colorectal cancer, bowel cancer]
+  skin_cancer: [skin cancer, melanoma, basal cell carcinoma, squamous cell carcinoma]
+  polyp: [polyp, polyps]
+  reflux: [gerd, acid reflux, reflux disease, heartburn]
+  ulcer: [ulcer, ulcers, peptic ulcer]
+  barretts: [barrett's esophagus, barretts esophagus]
+  ibs: [ibs, irritable bowel syndrome, irritable bowel]
+  ibd: [crohn's disease, crohn's, crohns, ulcerative colitis, colitis]
+  hemorrhoids: [hemorrhoids, haemorrhoids, piles]
+  anemia: [anemia, anaemia]
+  appendicitis: [appendicitis]
+  gallstones: [gallstones, gallbladder disease]
+  heart_attack: [heart attack, myocardial infarction]
+  stroke: [stroke]
+  gout: [gout]
+  carpal_tunnel: [carpal tunnel, carpal tunnel syndrome]
+  infection: [infection, infected, cellulitis]

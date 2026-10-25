@@ -13,6 +13,19 @@ export interface AiPausedReply {
 }
 
 /**
+ * D33: one of the person's own chip answers that satisfied the path's entry rule. Built by
+ * the server from the request, never written by the LLM.
+ */
+export interface BecauseAnswer {
+  question_id: string;
+  value: string;
+  /**
+   * The answer's label, verbatim from questions.yaml
+   */
+  label: Title;
+}
+
+/**
  * D2 + metrics F2. Per hashed IP per provider day (the reset time zone is provider config:
  * Gemini resets at midnight Pacific). Dollars and turns both count; whichever hits first pauses.
  * The wallet is the prepaid ceiling (~$10).
@@ -42,6 +55,10 @@ export interface CandidatePath {
    */
   match: "entry_matched" | "ai_ranked";
   review_status: "pending_austin" | "changes_requested" | "approved";
+  /**
+   * D33: why this path, as the person's own answers that matched its entry rule (question order). Empty for ai_ranked: the model's guess has no listed reason.
+   */
+  because: BecauseAnswer[];
 }
 
 export interface CarePathsReply {
@@ -49,6 +66,10 @@ export interface CarePathsReply {
   text: string;
   understood: InferredAnswer[];
   candidates: CandidatePath[];
+  /**
+   * D33: not-a-diagnosis + when-to-see-a-doctor (fixed copy, not LLM text)
+   */
+  copy_keys: ("copy.not_a_diagnosis" | "copy.when_to_see_a_doctor")[];
   card_ids: string[];
 }
 
@@ -122,6 +143,10 @@ export interface ClarifyReply {
    * Prices can show from turn one; questions only refine
    */
   candidates: CandidatePath[];
+  /**
+   * D33: not-a-diagnosis + when-to-see-a-doctor, whenever candidates show
+   */
+  copy_keys: ("copy.not_a_diagnosis" | "copy.when_to_see_a_doctor")[];
   /**
    * questions.yaml card ids
    */
