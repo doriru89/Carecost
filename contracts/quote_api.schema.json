@@ -289,14 +289,6 @@
           "title": "Sites Version",
           "type": "integer"
         },
-        "sources_behind": {
-          "description": "Every source behind this answer that is late (publisher) or stale (ours)",
-          "items": {
-            "$ref": "#/$defs/SourceStatus"
-          },
-          "title": "Sources Behind",
-          "type": "array"
-        },
         "tic_release": {
           "anyOf": [
             {
@@ -306,7 +298,7 @@
               "type": "null"
             }
           ],
-          "description": "e.g. tic-2026-11; None = TiC not loaded yet",
+          "description": "e.g. tic-2026-10; None = TiC not loaded yet",
           "title": "Tic Release"
         }
       },
@@ -315,8 +307,7 @@
         "build_date",
         "tic_release",
         "sites_version",
-        "care_paths_version",
-        "sources_behind"
+        "care_paths_version"
       ],
       "title": "DataVersion",
       "type": "object"
@@ -499,14 +490,6 @@
         "site_name": {
           "title": "Site Name",
           "type": "string"
-        },
-        "sources": {
-          "description": "Chips for the price shown, with freshness",
-          "items": {
-            "$ref": "#/$defs/SourceChip"
-          },
-          "title": "Sources",
-          "type": "array"
         }
       },
       "required": [
@@ -514,8 +497,7 @@
         "site_name",
         "lat",
         "lon",
-        "cell",
-        "sources"
+        "cell"
       ],
       "title": "ElsewhereOption",
       "type": "object"
@@ -894,8 +876,7 @@
         "stated",
         "derived_pct_x_gross",
         "computed_fee_schedule",
-        "estimate_medicare_multiple",
-        "ai_drafted"
+        "estimate_medicare_multiple"
       ],
       "title": "Method",
       "type": "string"
@@ -1046,6 +1027,9 @@
           "title": "Kind",
           "type": "string"
         },
+        "searched": {
+          "$ref": "#/$defs/Searched"
+        },
         "what": {
           "title": "What",
           "type": "string"
@@ -1054,7 +1038,8 @@
       "required": [
         "kind",
         "what",
-        "ask"
+        "ask",
+        "searched"
       ],
       "title": "NotPublished",
       "type": "object"
@@ -1196,11 +1181,11 @@
           "type": "string"
         },
         "sources": {
-          "items": {
-            "$ref": "#/$defs/SourceStatus"
+          "additionalProperties": {
+            "$ref": "#/$defs/SourceInfo"
           },
           "title": "Sources",
-          "type": "array"
+          "type": "object"
         }
       },
       "required": [
@@ -1290,12 +1275,16 @@
           "minimum": 0,
           "title": "Pct",
           "type": "number"
+        },
+        "searched": {
+          "$ref": "#/$defs/Searched"
         }
       },
       "required": [
         "kind",
         "pct",
-        "of"
+        "of",
+        "searched"
       ],
       "title": "PercentOnly",
       "type": "object"
@@ -1358,6 +1347,20 @@
         "method": {
           "$ref": "#/$defs/Method"
         },
+        "payer_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z][A-Z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whose rate this is (payer_aliases.yaml id) for payer-specific rows (hospital MRF payer rows, TiC); None for fee schedules, cash and chargemaster prices. Lets the quote check that a BCBS receipt only sums BCBS rates.",
+          "title": "Payer Id"
+        },
         "row_ref": {
           "description": "<source_id>:<sha256[:12]>:<staged row ordinal>",
           "title": "Row Ref",
@@ -1381,6 +1384,12 @@
           "title": "Source File",
           "type": "string"
         },
+        "source_id": {
+          "description": "Sources registry id. The UI's source chip is derived from this (never stored separately), so a number cannot sit next to another file's chip.",
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Source Id",
+          "type": "string"
+        },
         "source_kind": {
           "$ref": "#/$defs/SourceKind"
         },
@@ -1390,12 +1399,14 @@
         }
       },
       "required": [
+        "source_id",
         "source_kind",
         "source_file",
         "source_sha256",
         "source_date",
         "method",
-        "row_ref"
+        "row_ref",
+        "payer_id"
       ],
       "title": "Provenance",
       "type": "object"
@@ -1408,9 +1419,11 @@
             "items": {
               "type": "string"
             },
+            "maxItems": 8,
             "type": "array"
           },
           "description": "Chip answers keyed by questions.yaml id (Q14 -> referral layer, tier modifiers). Ids and values only; never free text.",
+          "maxProperties": 20,
           "title": "Answers",
           "type": "object"
         },
@@ -1452,11 +1465,20 @@
           ],
           "title": "Payment"
         },
+        "picked_by": {
+          "enum": [
+            "person",
+            "assistant"
+          ],
+          "title": "Picked By",
+          "type": "string"
+        },
         "service_codes": {
           "description": "D3 manual picker: CPT/HCPCS codes from the catalog",
           "items": {
             "type": "string"
           },
+          "maxItems": 40,
           "title": "Service Codes",
           "type": "array"
         },
@@ -1466,6 +1488,7 @@
               "items": {
                 "type": "string"
               },
+              "maxItems": 500,
               "type": "array"
             },
             {
@@ -1481,6 +1504,7 @@
         "care_path_id",
         "answers",
         "service_codes",
+        "picked_by",
         "site_ids"
       ],
       "title": "QuoteRequest",
@@ -1489,6 +1513,12 @@
     "QuoteResponse": {
       "additionalProperties": false,
       "properties": {
+        "as_of": {
+          "description": "The day freshness was computed for (per request, not build)",
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
         "care_path": {
           "anyOf": [
             {
@@ -1543,6 +1573,14 @@
           ],
           "title": "Payment"
         },
+        "picked_by": {
+          "enum": [
+            "person",
+            "assistant"
+          ],
+          "title": "Picked By",
+          "type": "string"
+        },
         "service_codes": {
           "items": {
             "type": "string"
@@ -1551,6 +1589,7 @@
           "type": "array"
         },
         "sites": {
+          "description": "Ordered by rank_key (I7)",
           "items": {
             "$ref": "#/$defs/SiteQuote"
           },
@@ -1564,13 +1603,24 @@
           },
           "title": "Sites Without Service",
           "type": "array"
+        },
+        "sources": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SourceInfo"
+          },
+          "description": "Every source behind a number or a 'not published' claim in this response, stored once (P2); lines point here by prov.source_id / searched.source_id",
+          "title": "Sources",
+          "type": "object"
         }
       },
       "required": [
         "payment",
         "care_path",
         "service_codes",
+        "picked_by",
+        "as_of",
         "data_version",
+        "sources",
         "sites",
         "sites_without_service",
         "notices"
@@ -1736,6 +1786,18 @@
           "title": "Line Id",
           "type": "string"
         },
+        "list_price": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The gross charge (chargemaster list price), shown on its own row and never summed. Never the line's price: almost nobody pays it."
+        },
         "modifier": {
           "anyOf": [
             {
@@ -1753,14 +1815,6 @@
           "description": "Primary label (D8)",
           "title": "Plain Name",
           "type": "string"
-        },
-        "sources": {
-          "description": "One chip per number shown (two for a conflict)",
-          "items": {
-            "$ref": "#/$defs/SourceChip"
-          },
-          "title": "Sources",
-          "type": "array"
         },
         "step_id": {
           "anyOf": [
@@ -1789,6 +1843,16 @@
             "not_in_public_data"
           ],
           "title": "Tier",
+          "type": "string"
+        },
+        "tier_basis": {
+          "enum": [
+            "guideline",
+            "plan_rule",
+            "our_judgment",
+            "picked"
+          ],
+          "title": "Tier Basis",
           "type": "string"
         },
         "unit": {
@@ -1830,7 +1894,8 @@
         "unit",
         "availability",
         "cell",
-        "sources",
+        "list_price",
+        "tier_basis",
         "doctor_fee",
         "ai_suggested",
         "in_total",
@@ -1838,6 +1903,27 @@
         "learn_more"
       ],
       "title": "ReceiptLine",
+      "type": "object"
+    },
+    "Searched": {
+      "additionalProperties": false,
+      "description": "Which file we looked in. Lets a test re-run the lookup, so \"the hospital did not publish\nit\" cannot hide our own lookup bug (a missed alias, a wrong code).",
+      "properties": {
+        "source_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_sha256": {
+          "title": "Source Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_sha256"
+      ],
+      "title": "Searched",
       "type": "object"
     },
     "SiteQuote": {
@@ -1872,20 +1958,11 @@
           "title": "Address Line",
           "type": "string"
         },
-        "any_source_late": {
-          "description": "(a) any source on this receipt is late to refresh (publisher side)",
-          "title": "Any Source Late",
-          "type": "boolean"
-        },
-        "any_source_stale_on_our_side": {
-          "description": "(b) we are behind on refreshing any source on this receipt (our side)",
-          "title": "Any Source Stale On Our Side",
-          "type": "boolean"
-        },
         "billing_type": {
           "enum": [
             "office_visit",
             "hospital_outpatient",
+            "asc",
             "unknown"
           ],
           "title": "Billing Type",
@@ -1921,6 +1998,15 @@
           "title": "Hours Label",
           "type": "string"
         },
+        "listing_status": {
+          "description": "registry_only sites are never quoted (to-verify queue, D27)",
+          "enum": [
+            "web_verified",
+            "multi_registry"
+          ],
+          "title": "Listing Status",
+          "type": "string"
+        },
         "name": {
           "title": "Name",
           "type": "string"
@@ -1943,10 +2029,6 @@
           "title": "Portal Links",
           "type": "array"
         },
-        "price_freshness": {
-          "$ref": "#/$defs/Freshness",
-          "description": "Per site: freshness of the site's own price source (both sides)"
-        },
         "price_label": {
           "enum": [
             "price_file",
@@ -1958,7 +2040,7 @@
           "type": "string"
         },
         "price_source_id": {
-          "description": "The site's own price source (its hospital MRF or posted page)",
+          "description": "The site's own price source (its hospital MRF or posted page); its freshness is QuoteResponse.sources[price_source_id]",
           "pattern": "^[a-z0-9][a-z0-9_]*$",
           "title": "Price Source Id",
           "type": "string"
@@ -2021,9 +2103,7 @@
         "hours_label",
         "price_label",
         "price_source_id",
-        "price_freshness",
-        "any_source_late",
-        "any_source_stale_on_our_side",
+        "listing_status",
         "service_areas"
       ],
       "title": "SiteSummary",
@@ -2041,43 +2121,17 @@
       ],
       "type": "string"
     },
-    "SourceChip": {
+    "SourceInfo": {
       "additionalProperties": false,
-      "description": "What the source chip on a line shows (hover text keys off source_kind, plan §2.2).",
+      "description": "One source, stored once per response (P2). Every number points at it by\n``prov.source_id``; that is its chip. The chip copy key is ``source.<source_kind>``.",
       "properties": {
         "freshness": {
           "$ref": "#/$defs/Freshness",
-          "description": "Per data point: (a) publisher late to refresh, (b) stale on our side"
-        },
-        "label_key": {
-          "description": "fixed copy key: source.<source_kind>",
-          "pattern": "^source\\.[a-z0-9_]+$",
-          "title": "Label Key",
-          "type": "string"
+          "description": "Both sides, computed on the response's as_of: (a) publisher late to refresh, (b) stale on our side"
         },
         "publisher": {
           "description": "Who published it, e.g. 'Mount Auburn Hospital', 'BCBS MA', 'CMS'",
           "title": "Publisher",
-          "type": "string"
-        },
-        "rows": {
-          "anyOf": [
-            {
-              "minimum": 0,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "price-file rows behind the number",
-          "title": "Rows"
-        },
-        "source_id": {
-          "description": "data/etl sources registry id, e.g. mtauburn_mrf (joins /our-data)",
-          "pattern": "^[a-z0-9][a-z0-9_]*$",
-          "title": "Source Id",
           "type": "string"
         },
         "source_kind": {
@@ -2085,14 +2139,11 @@
         }
       },
       "required": [
-        "source_id",
         "source_kind",
         "publisher",
-        "label_key",
-        "freshness",
-        "rows"
+        "freshness"
       ],
-      "title": "SourceChip",
+      "title": "SourceInfo",
       "type": "object"
     },
     "SourceKind": {
@@ -2104,41 +2155,10 @@
         "medicare_asc",
         "masshealth_fs",
         "clinic_posted",
-        "chia_rp",
-        "estimate",
-        "ai_potential"
+        "chia_rp"
       ],
       "title": "SourceKind",
       "type": "string"
-    },
-    "SourceStatus": {
-      "additionalProperties": false,
-      "description": "One source and both freshness sides. Listed in DataVersion.sources_behind and /our-data.",
-      "properties": {
-        "freshness": {
-          "$ref": "#/$defs/Freshness"
-        },
-        "publisher": {
-          "title": "Publisher",
-          "type": "string"
-        },
-        "source_id": {
-          "pattern": "^[a-z0-9][a-z0-9_]*$",
-          "title": "Source Id",
-          "type": "string"
-        },
-        "source_kind": {
-          "$ref": "#/$defs/SourceKind"
-        }
-      },
-      "required": [
-        "source_id",
-        "source_kind",
-        "publisher",
-        "freshness"
-      ],
-      "title": "SourceStatus",
-      "type": "object"
     },
     "SummedAmount": {
       "additionalProperties": false,
@@ -2150,17 +2170,17 @@
           "type": "number"
         },
         "includes_estimate": {
-          "description": "True when a rung-6 estimate is in the sum",
+          "description": "Derived: a rung-6 estimate (estimate_medicare_multiple) is in the sum",
           "title": "Includes Estimate",
           "type": "boolean"
         },
         "includes_late_source": {
-          "description": "True when a 'late to refresh' price is in it",
+          "description": "Derived: a summed price's source is late to refresh (publisher side)",
           "title": "Includes Late Source",
           "type": "boolean"
         },
         "includes_stale_source": {
-          "description": "True when a price we are behind on refreshing (our side) is in it",
+          "description": "Derived: we are behind on refreshing a summed price's source (our side)",
           "title": "Includes Stale Source",
           "type": "boolean"
         },
@@ -2189,6 +2209,16 @@
       "title": "SummedAmount",
       "type": "object"
     },
+    "TierBasis": {
+      "description": "what a line's likelihood rests on",
+      "enum": [
+        "guideline",
+        "plan_rule",
+        "our_judgment",
+        "picked"
+      ],
+      "type": "string"
+    },
     "Totals": {
       "additionalProperties": false,
       "properties": {
@@ -2213,7 +2243,13 @@
               "type": "null"
             }
           ],
-          "description": "certain + likely Money lines with in_total; None when nothing can be summed"
+          "description": "certain + likely Money lines with in_total; None when nothing can be summed. Shown as what the care is billed at (you plus your plan), not as what you owe."
+        },
+        "missing": {
+          "description": "Derived (I7): certain/likely, non-AI lines here that are not in the total, plus certain/likely steps another site in this quote lists and this site does not",
+          "minimum": 0,
+          "title": "Missing",
+          "type": "integer"
         },
         "you_pay": {
           "$ref": "#/$defs/YouPay"
@@ -2222,6 +2258,7 @@
       "required": [
         "likely",
         "complete",
+        "missing",
         "excluded",
         "you_pay"
       ],
@@ -2235,6 +2272,7 @@
         "kind": {
           "enum": [
             "deductible_then_coinsurance",
+            "copay_or_deductible",
             "medicare_20_percent",
             "masshealth_small_or_no_copay",
             "cash_full_amount"

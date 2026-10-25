@@ -79,15 +79,11 @@ export interface DataVersion {
   build_id: string;
   build_date: string;
   /**
-   * e.g. tic-2026-11; None = TiC not loaded yet
+   * e.g. tic-2026-10; None = TiC not loaded yet
    */
   tic_release: string | null;
   sites_version: number;
   care_paths_version: string | null;
-  /**
-   * Every source behind this answer that is late (publisher) or stale (ours)
-   */
-  sources_behind: SourceStatus[];
 }
 
 /**
@@ -122,10 +118,6 @@ export interface ElsewhereOption {
   lat: number;
   lon: number;
   cell: Money | NotPublished | NotLoaded | NoSource | PercentOnly | Conflict;
-  /**
-   * Chips for the price shown, with freshness
-   */
-  sources: SourceChip[];
 }
 
 export interface ExcludedLine {
@@ -249,7 +241,7 @@ export interface MedicarePayment {
 /**
  * How the number in a ``Money`` was obtained.
  */
-export type Method = "stated" | "derived_pct_x_gross" | "computed_fee_schedule" | "estimate_medicare_multiple" | "ai_drafted";
+export type Method = "stated" | "derived_pct_x_gross" | "computed_fee_schedule" | "estimate_medicare_multiple";
 
 export interface Money {
   kind: "money";
@@ -294,6 +286,7 @@ export interface NotPublished {
   kind: "not_published";
   what: string;
   ask: string;
+  searched: Searched;
 }
 
 export interface NpiPrice {
@@ -333,7 +326,7 @@ export type OurCadence = "hospital_monthly" | "tic_monthly" | "nppes_monthly" | 
  */
 export interface OurDataResponse {
   as_of: string;
-  sources: SourceStatus[];
+  sources: Record<string, SourceInfo>;
 }
 
 export interface PayerPoint {
@@ -358,6 +351,7 @@ export interface PercentOnly {
   kind: "percent_only";
   pct: number;
   of: string;
+  searched: Searched;
 }
 
 /**
@@ -379,6 +373,10 @@ export interface PortalLink {
 export type PriceBasis = "negotiated" | "gross" | "discounted_cash" | "min_negotiated" | "max_negotiated" | "median_allowed" | "fee_schedule" | "posted_self_pay" | "estimate";
 
 export interface Provenance {
+  /**
+   * Sources registry id. The UI's source chip is derived from this (never stored separately), so a number cannot sit next to another file's chip.
+   */
+  source_id: string;
   source_kind: SourceKind;
   /**
    * Basename only; never an absolute or relative path.
@@ -394,6 +392,10 @@ export interface Provenance {
    * <source_id>:<sha256[:12]>:<staged row ordinal>
    */
   row_ref: string;
+  /**
+   * Whose rate this is (payer_aliases.yaml id) for payer-specific rows (hospital MRF payer rows, TiC); None for fee schedules, cash and chargemaster prices. Lets the quote check that a BCBS receipt only sums BCBS rates.
+   */
+  payer_id: string | null;
 }
 
 export interface QuoteRequest {
@@ -407,6 +409,7 @@ export interface QuoteRequest {
    * D3 manual picker: CPT/HCPCS codes from the catalog
    */
   service_codes: string[];
+  picked_by: "person" | "assistant";
   /**
    * Only these sites; None = every site that offers the services
    */
@@ -417,7 +420,19 @@ export interface QuoteResponse {
   payment: InsurancePayment | MedicarePayment | MassHealthPayment | CashPayment;
   care_path: CarePathRef | null;
   service_codes: string[];
+  picked_by: "person" | "assistant";
+  /**
+   * The day freshness was computed for (per request, not build)
+   */
+  as_of: string;
   data_version: DataVersion;
+  /**
+   * Every source behind a number or a 'not published' claim in this response, stored once (P2); lines point here by prov.source_id / searched.source_id
+   */
+  sources: Record<string, SourceInfo>;
+  /**
+   * Ordered by rank_key (I7)
+   */
   sites: SiteQuote[];
   /**
    * Sites filtered out because they offer none of it
@@ -469,9 +484,10 @@ export interface ReceiptLine {
    */
   cell: Money | NotPublished | NotLoaded | NoSource | PercentOnly | Conflict | null;
   /**
-   * One chip per number shown (two for a conflict)
+   * The gross charge (chargemaster list price), shown on its own row and never summed. Never the line's price: almost nobody pays it.
    */
-  sources: SourceChip[];
+  list_price: Money | null;
+  tier_basis: "guideline" | "plan_rule" | "our_judgment" | "picked";
   doctor_fee: DoctorFee | null;
   ai_suggested: boolean;
   in_total: boolean;
@@ -480,6 +496,15 @@ export interface ReceiptLine {
    */
   elsewhere: ElsewhereOption[];
   learn_more: LearnMore[];
+}
+
+/**
+ * Which file we looked in. Lets a test re-run the lookup, so "the hospital did not publish
+ * it" cannot hide our own lookup bug (a missed alias, a wrong code).
+ */
+export interface Searched {
+  source_id: string;
+  source_sha256: string;
 }
 
 export interface SiteQuote {
@@ -496,28 +521,20 @@ export interface SiteSummary {
   coords: Coordinates;
   address_line: string;
   phone: string | null;
-  billing_type: "office_visit" | "hospital_outpatient" | "unknown";
+  billing_type: "office_visit" | "hospital_outpatient" | "asc" | "unknown";
   booking: BookingOption[];
   portal_links: PortalLink[];
   hours: Hours | null;
   hours_label: "live_by_operator" | "posted_hours" | "may_close_early" | "unknown";
   price_label: "price_file" | "posted_price" | "price_on_request" | "mixed";
   /**
-   * The site's own price source (its hospital MRF or posted page)
+   * The site's own price source (its hospital MRF or posted page); its freshness is QuoteResponse.sources[price_source_id]
    */
   price_source_id: string;
   /**
-   * Per site: freshness of the site's own price source (both sides)
+   * registry_only sites are never quoted (to-verify queue, D27)
    */
-  price_freshness: Freshness;
-  /**
-   * (a) any source on this receipt is late to refresh (publisher side)
-   */
-  any_source_late: boolean;
-  /**
-   * (b) we are behind on refreshing any source on this receipt (our side)
-   */
-  any_source_stale_on_our_side: boolean;
+  listing_status: "web_verified" | "multi_registry";
   service_areas: ("ortho" | "skin" | "gi" | "urgent_care")[];
 }
 
@@ -527,43 +544,22 @@ export interface SiteSummary {
 export type SourceCadence = "hospital_mrf_365_days" | "tic_45_days" | "fee_schedule_annual" | "fee_schedule_quarterly" | "posted_page_date_365_days" | "no_publisher_deadline";
 
 /**
- * What the source chip on a line shows (hover text keys off source_kind, plan §2.2).
+ * One source, stored once per response (P2). Every number points at it by
+ * ``prov.source_id``; that is its chip. The chip copy key is ``source.<source_kind>``.
  */
-export interface SourceChip {
-  /**
-   * data/etl sources registry id, e.g. mtauburn_mrf (joins /our-data)
-   */
-  source_id: string;
+export interface SourceInfo {
   source_kind: SourceKind;
   /**
    * Who published it, e.g. 'Mount Auburn Hospital', 'BCBS MA', 'CMS'
    */
   publisher: string;
   /**
-   * fixed copy key: source.<source_kind>
-   */
-  label_key: string;
-  /**
-   * Per data point: (a) publisher late to refresh, (b) stale on our side
+   * Both sides, computed on the response's as_of: (a) publisher late to refresh, (b) stale on our side
    */
   freshness: Freshness;
-  /**
-   * price-file rows behind the number
-   */
-  rows: number | null;
 }
 
-export type SourceKind = "hospital_mrf" | "insurer_tic" | "medicare_pfs" | "medicare_opps" | "medicare_asc" | "masshealth_fs" | "clinic_posted" | "chia_rp" | "estimate" | "ai_potential";
-
-/**
- * One source and both freshness sides. Listed in DataVersion.sources_behind and /our-data.
- */
-export interface SourceStatus {
-  source_id: string;
-  source_kind: SourceKind;
-  publisher: string;
-  freshness: Freshness;
-}
+export type SourceKind = "hospital_mrf" | "insurer_tic" | "medicare_pfs" | "medicare_opps" | "medicare_asc" | "masshealth_fs" | "clinic_posted" | "chia_rp";
 
 /**
  * A sum of line Money values. Not a ``Money``: a sum has no single Provenance; each part's
@@ -574,28 +570,37 @@ export interface SummedAmount {
   high: number;
   line_ids: string[];
   /**
-   * True when a rung-6 estimate is in the sum
+   * Derived: a rung-6 estimate (estimate_medicare_multiple) is in the sum
    */
   includes_estimate: boolean;
   /**
-   * True when a 'late to refresh' price is in it
+   * Derived: a summed price's source is late to refresh (publisher side)
    */
   includes_late_source: boolean;
   /**
-   * True when a price we are behind on refreshing (our side) is in it
+   * Derived: we are behind on refreshing a summed price's source (our side)
    */
   includes_stale_source: boolean;
 }
 
+/**
+ * what a line's likelihood rests on
+ */
+export type TierBasis = "guideline" | "plan_rule" | "our_judgment" | "picked";
+
 export interface Totals {
   /**
-   * certain + likely Money lines with in_total; None when nothing can be summed
+   * certain + likely Money lines with in_total; None when nothing can be summed. Shown as what the care is billed at (you plus your plan), not as what you owe.
    */
   likely: SummedAmount | null;
   /**
    * False when a certain/likely line has no dollar amount (the total is a floor)
    */
   complete: boolean;
+  /**
+   * Derived (I7): certain/likely, non-AI lines here that are not in the total, plus certain/likely steps another site in this quote lists and this site does not
+   */
+  missing: number;
   excluded: ExcludedLine[];
   you_pay: YouPay;
 }
@@ -604,7 +609,7 @@ export interface Totals {
  * What the person actually owes depends on their plan; we say how, never guess the number.
  */
 export interface YouPay {
-  kind: "deductible_then_coinsurance" | "medicare_20_percent" | "masshealth_small_or_no_copay" | "cash_full_amount";
+  kind: "deductible_then_coinsurance" | "copay_or_deductible" | "medicare_20_percent" | "masshealth_small_or_no_copay" | "cash_full_amount";
   note_key: string;
   portal_label: string | null;
   /**

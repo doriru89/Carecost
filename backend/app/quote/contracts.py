@@ -19,7 +19,15 @@ them and the frontend can trust the shape:
 * ``in_total`` only for certain/likely, offered, Money, non-AI, one-off lines whose doctor-fee
   rung (if any) is 1-6. Rungs 7-8 are reference only.
 * Doctor-fee rung 6 (estimate) must carry its multiple; ``by_npi`` (D6) needs >= 2 distinct prices.
-* ``Totals.likely`` is the exact sum of the lines listed in it.
+* ``Totals.likely`` is the exact sum of the lines listed in it; its ``includes_*`` flags and line
+  counts are derived from those lines.
+* Payment <-> price type (``PRICE_MATRIX``): a BCBS receipt carries only BCBS negotiated rates
+  (or a rung-6 estimate), Medicare only Medicare, cash only cash prices. A gross charge is never a
+  line price; it may only appear as ``list_price``, which is never summed.
+* Sources are stored once per response (``QuoteResponse.sources``). A number's chip is its
+  ``prov.source_id``; freshness is computed on ``as_of`` for each request.
+* I7: sites are ordered by completeness first (fewest missing certain/likely lines), then price,
+  so missing data never makes a site look cheaper.
 
 ``python -m app.api_contracts`` regenerates ``contracts/quote_api.schema.json`` and
 ``contracts/catalog.schema.json``.
@@ -27,13 +35,25 @@ them and the frontend can trust the shape:
 
 from __future__ import annotations
 
+import math
 import re
+from collections.abc import Iterator
 from datetime import date
 from typing import Annotated, Literal, Union
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator, model_validator
 
-from app.etl.contracts import Cell, Method, Money, SourceKind
+from app.etl.contracts import (
+    Cell,
+    Conflict,
+    Method,
+    Money,
+    NotPublished,
+    PercentOnly,
+    PriceBasis,
+    SourceKind,
+    placeholders_allowed,
+)
 from app.sites.contracts import (
     CODE_RE,
     ID_RE,
@@ -45,12 +65,30 @@ from app.sites.contracts import (
     PortalLink,
     ServiceArea,
     SiteType,
+    check_npi,
 )
 
 PAYER_ID_RE = r"^[A-Z][A-Z0-9_]*$"  # data/etl/payer_aliases.yaml `payers:` keys (BCBS_MA ...)
 PATH_ID_RE = r"^[a-z0-9_]+_v[0-9]+$"  # care_paths.CarePath.id
 QUESTION_ID_RE = r"^Q[0-9]+$"
-ANSWER_RE = r"^[a-z0-9_]+$"
+ANSWER_RE = r"^[a-z0-9_]{1,40}$"
+
+# Request size bounds (security review F4: a 20 MB `answers` validated before).
+MAX_ANSWER_KEYS = 20
+MAX_VALUES_PER_ANSWER = 8
+MAX_SERVICE_CODES = 40
+MAX_SITE_IDS = 500
+
+Answers = Annotated[
+    dict[str, Annotated[list[str], Field(max_length=MAX_VALUES_PER_ANSWER)]],
+    Field(max_length=MAX_ANSWER_KEYS),
+]
+
+
+def check_answers(answers: dict[str, list[str]]) -> None:
+    for q, vals in answers.items():
+        if not re.match(QUESTION_ID_RE, q) or not all(re.match(ANSWER_RE, v) for v in vals):
+            raise ValueError(f"answers must be question ids -> answer values, got {q!r}")
 
 
 class _Strict(BaseModel):
@@ -97,30 +135,38 @@ Payment = Annotated[
 # --------------------------------------------------------------------------- request
 
 
+PickedBy = Literal["person", "assistant"]
+"""Who chose the services: the person (D3 manual picker, or a care path) or the assistant
+(P5: the LLM pointed at catalog services). Assistant picks are shown, labelled, never summed."""
+
+
 class QuoteRequest(_Strict):
     payment: Payment
     care_path_id: str | None = Field(pattern=PATH_ID_RE)
-    answers: dict[str, list[str]] = Field(
+    answers: Answers = Field(
         description="Chip answers keyed by questions.yaml id (Q14 -> referral layer, tier "
         "modifiers). Ids and values only; never free text.",
     )
     service_codes: list[str] = Field(
-        description="D3 manual picker: CPT/HCPCS codes from the catalog"
+        max_length=MAX_SERVICE_CODES,
+        description="D3 manual picker: CPT/HCPCS codes from the catalog",
     )
+    picked_by: PickedBy
     site_ids: list[str] | None = Field(
-        description="Only these sites; None = every site that offers the services"
+        max_length=MAX_SITE_IDS,
+        description="Only these sites; None = every site that offers the services",
     )
 
     @model_validator(mode="after")
     def _one_of(self) -> QuoteRequest:
         if (self.care_path_id is None) == (not self.service_codes):
             raise ValueError("give exactly one of care_path_id or service_codes")
+        if self.picked_by == "assistant" and self.care_path_id is not None:
+            raise ValueError("assistant picks are catalog services, never a care path quote")
         for c in self.service_codes:
             if not re.match(CODE_RE, c):
                 raise ValueError(f"bad service code {c!r}")
-        for q, vals in self.answers.items():
-            if not re.match(QUESTION_ID_RE, q) or not all(re.match(ANSWER_RE, v) for v in vals):
-                raise ValueError(f"answers must be question ids -> answer values, got {q!r}")
+        check_answers(self.answers)
         for s in self.site_ids or []:
             if not re.match(ID_RE, s):
                 raise ValueError(f"bad site id {s!r}")
@@ -174,29 +220,73 @@ ExcludedReason = Literal[
     "reference_only",  # doctor-fee rung 7 or 8
 ]
 
+TierBasis = Literal["guideline", "plan_rule", "our_judgment", "picked"]
+"""P11: what the line's likelihood rests on, so the gradient does not look like data.
+guideline: a guideline rating (ACR / AAOS / USPSTF / ACG). plan_rule: an insurance rule (HMO
+referral). our_judgment: our own reading (the visit itself, a step implied by another).
+picked: no care path; the person or the assistant picked the service."""
 
-class SourceChip(_Strict):
-    """What the source chip on a line shows (hover text keys off source_kind, plan §2.2)."""
+GUIDELINE_RATINGS = frozenset(
+    {
+        "UA",
+        "MBA",
+        "UNA",
+        "aaos_strong",
+        "aaos_moderate",
+        "aaos_limited",
+        "aaos_consensus",
+        "uspstf_A",
+        "uspstf_B",
+        "uspstf_C",
+        "uspstf_D",
+        "uspstf_I",
+        "acg_strong",
+        "acg_conditional",
+    }
+)
 
-    source_id: str = Field(
-        pattern=ID_RE,
-        description="data/etl sources registry id, e.g. mtauburn_mrf (joins /our-data)",
-    )
+
+def tier_basis_for_rating(rating: str) -> TierBasis:
+    """care_paths Step.appropriateness.rating -> TierBasis (the engine and the tests use this)."""
+    if rating in GUIDELINE_RATINGS:
+        return "guideline"
+    if rating == "plan_rule":
+        return "plan_rule"
+    if rating in ("standard_of_care", "implied_by_parent"):
+        return "our_judgment"
+    raise ValueError(f"unknown appropriateness rating {rating!r}")
+
+
+class SourceInfo(_Strict):
+    """One source, stored once per response (P2). Every number points at it by
+    ``prov.source_id``; that is its chip. The chip copy key is ``source.<source_kind>``."""
+
     source_kind: SourceKind
     publisher: str = Field(
         description="Who published it, e.g. 'Mount Auburn Hospital', 'BCBS MA', 'CMS'"
     )
-    label_key: str = Field(
-        pattern=r"^source\.[a-z0-9_]+$", description="fixed copy key: source.<source_kind>"
-    )
     freshness: Freshness = Field(
-        description="Per data point: (a) publisher late to refresh, (b) stale on our side"
+        description="Both sides, computed on the response's as_of: (a) publisher late to "
+        "refresh, (b) stale on our side"
     )
-    rows: int | None = Field(default=None, ge=0, description="price-file rows behind the number")
+
+
+def _check_sources(sources: dict[str, SourceInfo], as_of: date) -> None:
+    for sid, info in sources.items():
+        if not re.match(ID_RE, sid):
+            raise ValueError(f"bad source id {sid!r}")
+        if info.freshness != info.freshness.at(as_of):
+            raise ValueError(f"source {sid}: freshness is not what its inputs give on {as_of}")
 
 
 class NpiPrice(_Strict):
     npi: str = Field(pattern=r"^[0-9]{10}$")
+
+    @field_validator("npi")
+    @classmethod
+    def _npi(cls, v: str, info: ValidationInfo) -> str:
+        return check_npi(v, placeholders_ok=placeholders_allowed(info))
+
     display_name: str | None = Field(
         default=None, description="Public NPPES name; None when only an NPI block is known"
     )
@@ -260,13 +350,6 @@ class ElsewhereOption(_Strict):
     lat: float
     lon: float
     cell: Cell
-    sources: list[SourceChip] = Field(description="Chips for the price shown, with freshness")
-
-    @model_validator(mode="after")
-    def _chip(self) -> ElsewhereOption:
-        if self.cell.kind == "money" and not self.sources:
-            raise ValueError(f"elsewhere {self.site_id}: a Money needs its source chip")
-        return self
 
 
 class LearnMore(_Strict):
@@ -292,9 +375,12 @@ class ReceiptLine(_Strict):
     unit: Literal["once", "per_visit", "per_15_minutes"] = "once"
     availability: Literal["offered", "not_offered", "unknown"] = "offered"
     cell: Cell | None = Field(description="None only when availability == not_offered")
-    sources: list[SourceChip] = Field(
-        default_factory=list, description="One chip per number shown (two for a conflict)"
+    list_price: Money | None = Field(
+        default=None,
+        description="The gross charge (chargemaster list price), shown on its own row and never "
+        "summed. Never the line's price: almost nobody pays it.",
     )
+    tier_basis: TierBasis
     doctor_fee: DoctorFee | None = None
     ai_suggested: bool = False
     in_total: bool
@@ -321,10 +407,17 @@ class ReceiptLine(_Strict):
                 expected = "possible" if self.likelihood == "rare" else self.likelihood
                 if self.tier != expected:
                     raise ValueError(f"{self.line_id}: tier {self.tier} != likelihood {expected}")
-            if kind == "money" and not self.sources:
-                raise ValueError(f"{self.line_id}: a Money line needs its source chip")
-            if kind == "conflict" and len(self.sources) < 2:
-                raise ValueError(f"{self.line_id}: a conflict shows both sources")
+        for m in _line_moneys(self):
+            if m.basis == PriceBasis.gross:
+                raise ValueError(f"{self.line_id}: a gross charge is only ever list_price")
+            if (m.basis == PriceBasis.estimate) != (
+                m.prov.method == Method.estimate_medicare_multiple
+            ):
+                raise ValueError(f"{self.line_id}: basis estimate <=> estimate_medicare_multiple")
+        if self.list_price is not None and self.list_price.basis != PriceBasis.gross:
+            raise ValueError(f"{self.line_id}: list_price is the gross charge")
+        if (self.step_id is None) != (self.tier_basis == "picked"):
+            raise ValueError(f"{self.line_id}: tier_basis picked <=> no care path step")
         if self.ai_suggested and self.in_total:
             raise ValueError(f"{self.line_id}: AI-suggested lines never count in a total")
         if self.in_total:
@@ -341,6 +434,17 @@ class ReceiptLine(_Strict):
         return self
 
 
+def _line_moneys(ln: ReceiptLine) -> Iterator[Money]:
+    """Every Money a line prices with (cell, both sides of a conflict, elsewhere cells)."""
+    cells = [ln.cell, *(e.cell for e in ln.elsewhere)]
+    for c in cells:
+        if isinstance(c, Money):
+            yield c
+        elif isinstance(c, Conflict):
+            yield c.a
+            yield c.b
+
+
 # --------------------------------------------------------------------------- totals
 
 
@@ -351,10 +455,14 @@ class SummedAmount(_Strict):
     low: float = Field(ge=0)
     high: float = Field(ge=0)
     line_ids: list[str] = Field(min_length=1)
-    includes_estimate: bool = Field(description="True when a rung-6 estimate is in the sum")
-    includes_late_source: bool = Field(description="True when a 'late to refresh' price is in it")
+    includes_estimate: bool = Field(
+        description="Derived: a rung-6 estimate (estimate_medicare_multiple) is in the sum"
+    )
+    includes_late_source: bool = Field(
+        description="Derived: a summed price's source is late to refresh (publisher side)"
+    )
     includes_stale_source: bool = Field(
-        description="True when a price we are behind on refreshing (our side) is in it"
+        description="Derived: we are behind on refreshing a summed price's source (our side)"
     )
 
 
@@ -368,6 +476,7 @@ class YouPay(_Strict):
 
     kind: Literal[
         "deductible_then_coinsurance",  # commercial: until the deductible is met, the full amount
+        "copay_or_deductible",  # commercial: a flat copay or the deductible, depending on the plan
         "medicare_20_percent",
         "masshealth_small_or_no_copay",
         "cash_full_amount",
@@ -377,12 +486,26 @@ class YouPay(_Strict):
     portal_url: str | None = Field(default=None, description="Insurer member portal, e.g. MyBlue")
 
 
+YOU_PAY_BY_PAYMENT: dict[str, set[str]] = {
+    "insurance": {"deductible_then_coinsurance", "copay_or_deductible"},
+    "medicare": {"medicare_20_percent"},
+    "masshealth": {"masshealth_small_or_no_copay"},
+    "cash": {"cash_full_amount"},
+}
+
+
 class Totals(_Strict):
     likely: SummedAmount | None = Field(
-        description="certain + likely Money lines with in_total; None when nothing can be summed"
+        description="certain + likely Money lines with in_total; None when nothing can be summed. "
+        "Shown as what the care is billed at (you plus your plan), not as what you owe."
     )
     complete: bool = Field(
         description="False when a certain/likely line has no dollar amount (the total is a floor)"
+    )
+    missing: int = Field(
+        ge=0,
+        description="Derived (I7): certain/likely, non-AI lines here that are not in the total, "
+        "plus certain/likely steps another site in this quote lists and this site does not",
     )
     excluded: list[ExcludedLine]
     you_pay: YouPay
@@ -411,6 +534,10 @@ class Receipt(_Strict):
             high = round(sum(c.high for c in cells), 2)
             if (round(t.low, 2), round(t.high, 2)) != (low, high):
                 raise ValueError(f"totals.likely {t.low}-{t.high} != sum of lines {low}-{high}")
+            est = any(c.prov.method == Method.estimate_medicare_multiple for c in cells)
+            if t.includes_estimate != est:
+                raise ValueError(f"totals.likely.includes_estimate must be {est}")
+
         excluded = {e.line_id for e in self.totals.excluded}
         if not excluded <= set(by_id):
             raise ValueError("totals.excluded names an unknown line")
@@ -473,16 +600,12 @@ class SiteSummary(_Strict):
     hours_label: Literal["live_by_operator", "posted_hours", "may_close_early", "unknown"]
     price_label: Literal["price_file", "posted_price", "price_on_request", "mixed"]
     price_source_id: str = Field(
-        pattern=ID_RE, description="The site's own price source (its hospital MRF or posted page)"
+        pattern=ID_RE,
+        description="The site's own price source (its hospital MRF or posted page); its freshness "
+        "is QuoteResponse.sources[price_source_id]",
     )
-    price_freshness: Freshness = Field(
-        description="Per site: freshness of the site's own price source (both sides)"
-    )
-    any_source_late: bool = Field(
-        description="(a) any source on this receipt is late to refresh (publisher side)"
-    )
-    any_source_stale_on_our_side: bool = Field(
-        description="(b) we are behind on refreshing any source on this receipt (our side)"
+    listing_status: Literal["web_verified", "multi_registry"] = Field(
+        description="registry_only sites are never quoted (to-verify queue, D27)"
     )
     service_areas: list[ServiceArea]
 
@@ -492,37 +615,18 @@ class SiteQuote(_Strict):
     receipt: Receipt
     other_payers: list[OtherPayerRange] = Field(default_factory=list)
 
-    @model_validator(mode="after")
-    def _site_freshness(self) -> SiteQuote:
-        chips = [c for ln in self.receipt.lines for c in ln.sources]
-        s = self.site
-        for c in chips:
-            if c.source_id == s.price_source_id and c.freshness != s.price_freshness:
-                raise ValueError(f"{s.site_id}: chip {c.source_id} disagrees with price_freshness")
-        late = any(c.freshness.late_to_refresh for c in chips) or s.price_freshness.late_to_refresh
-        stale = (
-            any(c.freshness.stale_on_our_side for c in chips) or s.price_freshness.stale_on_our_side
-        )
-        if (s.any_source_late, s.any_source_stale_on_our_side) != (late, stale):
-            raise ValueError(f"{s.site_id}: any_source_late / any_source_stale_on_our_side wrong")
-        return self
-
-
-class SourceStatus(_Strict):
-    """One source and both freshness sides. Listed in DataVersion.sources_behind and /our-data."""
-
-    source_id: str = Field(pattern=ID_RE)
-    source_kind: SourceKind
-    publisher: str
-    freshness: Freshness
-
 
 class OurDataResponse(_Strict):
     """Future /our-data page: every registered source, both sides, so Austin can tell 'we forgot
     to update' (stale_on_our_side) from 'the publisher did not publish' (late_to_refresh)."""
 
     as_of: date
-    sources: list[SourceStatus]
+    sources: dict[str, SourceInfo]
+
+    @model_validator(mode="after")
+    def _fresh(self) -> OurDataResponse:
+        _check_sources(self.sources, self.as_of)
+        return self
 
 
 class DataVersion(_Strict):
@@ -530,20 +634,9 @@ class DataVersion(_Strict):
 
     build_id: str = Field(description="ETL build id, e.g. 20261024-1cb8089d")
     build_date: date
-    tic_release: str | None = Field(description="e.g. tic-2026-11; None = TiC not loaded yet")
+    tic_release: str | None = Field(description="e.g. tic-2026-10; None = TiC not loaded yet")
     sites_version: int
     care_paths_version: str | None
-    sources_behind: list[SourceStatus] = Field(
-        description="Every source behind this answer that is late (publisher) or stale (ours)"
-    )
-
-    @model_validator(mode="after")
-    def _behind_only(self) -> DataVersion:
-        for st in self.sources_behind:
-            f = st.freshness
-            if not (f.late_to_refresh or f.stale_on_our_side):
-                raise ValueError(f"{st.source_id} is current; only list sources that are behind")
-        return self
 
 
 class CarePathRef(_Strict):
@@ -555,12 +648,101 @@ class CarePathRef(_Strict):
     )
 
 
+PRICE_MATRIX: dict[str, frozenset[tuple[str, str]]] = {
+    "insurance": frozenset(
+        {
+            ("hospital_mrf", "negotiated"),
+            ("insurer_tic", "negotiated"),
+            ("medicare_pfs", "estimate"),  # rung 6: Medicare x the same payer's own multiple
+        }
+    ),
+    "medicare": frozenset(
+        {
+            ("medicare_pfs", "fee_schedule"),
+            ("medicare_opps", "fee_schedule"),
+            ("medicare_asc", "fee_schedule"),
+            ("hospital_mrf", "negotiated"),  # the hospital file's own Medicare row (E4)
+        }
+    ),
+    "masshealth": frozenset({("masshealth_fs", "fee_schedule"), ("hospital_mrf", "negotiated")}),
+    "cash": frozenset({("hospital_mrf", "discounted_cash"), ("clinic_posted", "posted_self_pay")}),
+}
+"""Payment -> the (source_kind, basis) pairs a line may be priced with (challenger F1). Rung 7
+(Medicare reference) is checked separately: it is shown, never summed."""
+
+RUNGS_BY_PAYMENT: dict[str, set[int | None]] = {
+    "insurance": {1, 2, 3, 6, 7, 8},
+    "medicare": {5},
+    "masshealth": {4, 7, 8},
+    "cash": {None},
+}
+REFERENCE_PAIR = ("medicare_pfs", "fee_schedule")  # rung 7
+
+
+def _payer_of(
+    payment: InsurancePayment | MedicarePayment | MassHealthPayment | CashPayment,
+) -> str | None:
+    if isinstance(payment, InsurancePayment):
+        return payment.payer_id
+    return {"medicare": "MEDICARE", "masshealth": "MASSHEALTH"}.get(payment.kind)
+
+
+def _all_moneys(sq: SiteQuote) -> Iterator[Money]:
+    for ln in sq.receipt.lines:
+        yield from _line_moneys(ln)
+        if ln.list_price is not None:
+            yield ln.list_price
+        if ln.doctor_fee and ln.doctor_fee.by_npi:
+            yield from (p.money for p in ln.doctor_fee.by_npi)
+    for o in sq.other_payers:
+        yield from (p.money for p in o.points)
+        if isinstance(o.cash, Money):
+            yield o.cash
+
+
+def _searched(sq: SiteQuote) -> Iterator[str]:
+    for ln in sq.receipt.lines:
+        for c in [ln.cell, *(e.cell for e in ln.elsewhere)]:
+            if isinstance(c, (NotPublished, PercentOnly)):
+                yield c.searched.source_id
+
+
+def rank_key(sq: SiteQuote) -> tuple[int, float]:
+    """I7: completeness band first (missing certain/likely lines), then price. A site that is
+    missing a number never sorts above an otherwise identical site that has it."""
+    t = sq.receipt.totals
+    return (t.missing, t.likely.low if t.likely else math.inf)
+
+
+def _expected(ln: ReceiptLine) -> bool:
+    return ln.likelihood in ("certain", "likely") and not ln.ai_suggested
+
+
+def _step_key(ln: ReceiptLine) -> str:
+    """A care path step, or the codes of a manual pick. Sites bill a step in different lines
+    (an office visit is one global fee; a hospital clinic bills facility + doctor)."""
+    return ln.step_id or ",".join(ln.codes)
+
+
+def missing_for(sq: SiteQuote, expected_steps: set[str]) -> int:
+    lines = sq.receipt.lines
+    unpriced = sum(1 for ln in lines if _expected(ln) and not ln.in_total)
+    absent = expected_steps - {_step_key(ln) for ln in lines}
+    return unpriced + len(absent)
+
+
 class QuoteResponse(_Strict):
     payment: Payment
     care_path: CarePathRef | None
     service_codes: list[str]
+    picked_by: PickedBy
+    as_of: date = Field(description="The day freshness was computed for (per request, not build)")
     data_version: DataVersion
-    sites: list[SiteQuote]
+    sources: dict[str, SourceInfo] = Field(
+        description="Every source behind a number or a 'not published' claim in this response, "
+        "stored once (P2); lines point here by prov.source_id / searched.source_id"
+    )
+    sites: list[SiteQuote] = Field(description="Ordered by rank_key (I7)")
     sites_without_service: list[str] = Field(
         default_factory=list, description="Sites filtered out because they offer none of it"
     )
@@ -576,34 +758,113 @@ class QuoteResponse(_Strict):
     ] = Field(default_factory=list)
 
     @model_validator(mode="after")
-    def _ids(self) -> QuoteResponse:
+    def _rules(self) -> QuoteResponse:
         ids = [s.site.site_id for s in self.sites]
         if len(ids) != len(set(ids)):
             raise ValueError("duplicate site in quote")
-        seen: dict[str, Freshness] = {}
-        for sq in self.sites:
-            pairs = [(c.source_id, c.freshness) for ln in sq.receipt.lines for c in ln.sources]
-            pairs.append((sq.site.price_source_id, sq.site.price_freshness))
-            pairs += [
-                (c.source_id, c.freshness)
-                for ln in sq.receipt.lines
-                for e in ln.elsewhere
-                for c in e.sources
-            ]
-            for sid, f in pairs:
-                if seen.setdefault(sid, f) != f:
-                    raise ValueError(f"source {sid} has two different freshness values")
-        flagged = {k for k, f in seen.items() if f.late_to_refresh or f.stale_on_our_side}
-        behind = {st.source_id: st.freshness for st in self.data_version.sources_behind}
-        if set(behind) != flagged or any(behind[k] != seen[k] for k in flagged):
-            raise ValueError("data_version.sources_behind must list exactly the flagged sources")
-        late = any(f.late_to_refresh for f in seen.values())
-        stale = any(f.stale_on_our_side for f in seen.values())
-        if late != ("late_to_refresh_sources" in self.notices):
+        _check_sources(self.sources, self.as_of)
+        self._check_source_refs()
+        self._check_payment_matrix()
+        self._check_totals_flags()
+        self._check_ranking()
+        f = [s.freshness for s in self.sources.values()]
+        if any(x.late_to_refresh for x in f) != ("late_to_refresh_sources" in self.notices):
             raise ValueError("notice late_to_refresh_sources <=> some source is late (publisher)")
-        if stale != ("stale_on_our_side_sources" in self.notices):
+        if any(x.stale_on_our_side for x in f) != ("stale_on_our_side_sources" in self.notices):
             raise ValueError("notice stale_on_our_side_sources <=> we are behind on some source")
+        tic = any(s.source_kind == SourceKind.insurer_tic for s in self.sources.values())
+        if tic and self.data_version.tic_release is None:
+            raise ValueError("a TiC price needs data_version.tic_release")
+        if (self.data_version.tic_release is None) != ("tic_not_loaded" in self.notices):
+            raise ValueError("notice tic_not_loaded <=> data_version.tic_release is None")
+        if self.picked_by == "assistant":
+            if self.care_path is not None:
+                raise ValueError("assistant picks are catalog services, never a care path")
+            if not all(ln.ai_suggested for sq in self.sites for ln in sq.receipt.lines):
+                raise ValueError("every line the assistant picked is ai_suggested")
         return self
+
+    def _check_source_refs(self) -> None:
+        used: set[str] = set()
+        for sq in self.sites:
+            used.add(sq.site.price_source_id)
+            used.update(_searched(sq))
+            for m in _all_moneys(sq):
+                info = self.sources.get(m.prov.source_id)
+                if info is None:
+                    raise ValueError(f"{m.prov.row_ref}: source {m.prov.source_id} not in sources")
+                if info.source_kind != m.prov.source_kind:
+                    raise ValueError(
+                        f"{m.prov.row_ref}: says {m.prov.source_kind} but source "
+                        f"{m.prov.source_id} is {info.source_kind}"
+                    )
+                used.add(m.prov.source_id)
+        if used != set(self.sources):
+            missing, extra = sorted(used - set(self.sources)), sorted(set(self.sources) - used)
+            raise ValueError(
+                f"sources must be exactly the ones used: missing {missing}, unused {extra}"
+            )
+
+    def _check_payment_matrix(self) -> None:
+        kind = self.payment.kind
+        payer = _payer_of(self.payment)
+        allowed = PRICE_MATRIX[kind]
+        for sq in self.sites:
+            if sq.receipt.totals.you_pay.kind not in YOU_PAY_BY_PAYMENT[kind]:
+                raise ValueError(
+                    f"{sq.site.site_id}: you_pay {sq.receipt.totals.you_pay.kind} is not for {kind}"
+                )
+            for ln in sq.receipt.lines:
+                fee = ln.doctor_fee
+                rung = fee.rung if fee else None
+                if fee is not None and rung not in RUNGS_BY_PAYMENT[kind]:
+                    raise ValueError(f"{ln.line_id}: doctor-fee rung {rung} is not for {kind}")
+                if fee and fee.multiple and fee.multiple.payer_id != payer:
+                    raise ValueError(f"{ln.line_id}: rung 6 multiple must be {payer}'s own")
+                for m in _line_moneys(ln):
+                    pair = (m.prov.source_kind.value, m.basis.value)
+                    if rung == 7:
+                        if pair != REFERENCE_PAIR:
+                            raise ValueError(f"{ln.line_id}: rung 7 is the Medicare reference")
+                        continue
+                    if pair not in allowed:
+                        raise ValueError(f"{ln.line_id}: {pair} is not a {kind} price")
+                    if m.basis == PriceBasis.negotiated and m.prov.payer_id != payer:
+                        raise ValueError(
+                            f"{ln.line_id}: {m.prov.row_ref} is {m.prov.payer_id}'s rate, "
+                            f"not {payer}'s"
+                        )
+
+    def _check_totals_flags(self) -> None:
+        for sq in self.sites:
+            t = sq.receipt.totals.likely
+            if t is None:
+                continue
+            fresh = [
+                self.sources[ln.cell.prov.source_id].freshness
+                for ln in sq.receipt.lines
+                if ln.in_total and isinstance(ln.cell, Money)
+            ]
+            late = any(f.late_to_refresh for f in fresh)
+            stale = any(f.stale_on_our_side for f in fresh)
+            if (t.includes_late_source, t.includes_stale_source) != (late, stale):
+                raise ValueError(
+                    f"{sq.site.site_id}: includes_late_source / includes_stale_source must be "
+                    f"{late} / {stale} (derived from the summed lines)"
+                )
+
+    def _check_ranking(self) -> None:
+        steps = {_step_key(ln) for sq in self.sites for ln in sq.receipt.lines if _expected(ln)}
+        for sq in self.sites:
+            want = missing_for(sq, steps)
+            if sq.receipt.totals.missing != want:
+                raise ValueError(
+                    f"{sq.site.site_id}: totals.missing must be {want} (unpriced certain/likely "
+                    "lines + steps this site does not list), so skipping a line cannot help rank"
+                )
+        keys = [rank_key(sq) for sq in self.sites]
+        if keys != sorted(keys):
+            raise ValueError("sites must be ordered by rank_key: completeness band, then price")
 
 
 # --------------------------------------------------------------------------- catalog (D3)

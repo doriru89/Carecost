@@ -79,6 +79,7 @@ SPECS: dict[str, dict[str, Any]] = {
             "BillComponent": _literal_alias(quote.BillComponent, "which part of the bill"),
             "LadderExplanation": _literal_alias(quote.LadderExplanation, "doctor-fee copy key"),
             "ExcludedReason": _literal_alias(quote.ExcludedReason, "why a line is not summed"),
+            "TierBasis": _literal_alias(quote.TierBasis, "what a line's likelihood rests on"),
             "SourceCadence": _literal_alias(sites.SourceCadence, "(a) publisher deadline rule"),
             "OurCadence": _literal_alias(sites.OurCadence, "(b) our own refresh schedule"),
         },

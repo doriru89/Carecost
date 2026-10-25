@@ -148,8 +148,13 @@ def _arrow_type(ann: Any) -> pa.DataType:
 
 
 def rate_row_schema() -> pa.Schema:
+    """Hospital MRF columns: every RateRow field except the insurer-TiC ``tic_*`` ones."""
     return pa.schema(
-        [pa.field(n, _arrow_type(f.annotation)) for n, f in RateRow.model_fields.items()]
+        [
+            pa.field(n, _arrow_type(f.annotation))
+            for n, f in RateRow.model_fields.items()
+            if not n.startswith("tic_")
+        ]
     )
 
 

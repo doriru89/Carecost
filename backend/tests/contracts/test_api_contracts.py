@@ -23,11 +23,18 @@ REPO = Path(__file__).resolve().parents[3]
 FIX = REPO / "contracts" / "fixtures"
 
 
+PLACEHOLDERS = {"allow_placeholders": True}  # fixtures carry placeholder shas / NPIs
+
+
 def _fixture(name: str) -> dict:
     doc = json.loads((FIX / f"{name}.json").read_text())
     doc.pop("_fixture")
     doc.pop("_schema")
     return doc
+
+
+def _quote(doc: dict) -> q.QuoteResponse:
+    return q.QuoteResponse.model_validate(doc, context=PLACEHOLDERS)
 
 
 # --------------------------------------------------------------------------- drift
@@ -174,6 +181,7 @@ def _req(**kw):
         "care_path_id": None,
         "answers": {},
         "service_codes": [],
+        "picked_by": "person",
         "site_ids": None,
     }
     base.update(kw)
@@ -224,8 +232,21 @@ def test_chat_request_requires_email_and_caps_text():
 # --------------------------------------------------------------------------- receipt invariants
 
 
-def _bcbs_site(i: int = 0) -> dict:
-    return copy.deepcopy(_fixture("quote_bcbs_hmo_shoulder")["sites"][i])
+class _Site(dict):
+    """A BCBS fixture site that validates inside its whole response (sources live there)."""
+
+    def __init__(self, i: int):
+        self.resp = _fixture("quote_bcbs_hmo_shoulder")
+        super().__init__(self.resp["sites"][i])
+        self.resp["sites"][i] = self
+
+
+def _bcbs_site(i: int = 0) -> _Site:
+    return _Site(i)
+
+
+def _check(site: _Site) -> None:
+    _quote(site.resp)
 
 
 def _line(receipt: dict, line_id: str) -> dict:
@@ -237,25 +258,25 @@ def test_ai_suggested_line_can_never_count_in_total():
     ln = _line(site["receipt"], "injection_drug_ai")
     ln["in_total"] = True
     with pytest.raises(ValidationError, match="AI-suggested"):
-        q.SiteQuote.model_validate(site)
+        _check(site)
 
 
 def test_not_in_public_data_tier_iff_no_number_gap():
     site = _bcbs_site()
     _line(site["receipt"], "xray_reading")["tier"] = "likely"
     with pytest.raises(ValidationError, match="not_in_public_data"):
-        q.SiteQuote.model_validate(site)
+        _check(site)
     site = _bcbs_site()
     _line(site["receipt"], "xray_facility")["tier"] = "not_in_public_data"
     with pytest.raises(ValidationError, match="not_in_public_data"):
-        q.SiteQuote.model_validate(site)
+        _check(site)
 
 
 def test_total_must_equal_sum_of_in_total_lines():
     site = _bcbs_site()
     site["receipt"]["totals"]["likely"]["high"] += 1
     with pytest.raises(ValidationError, match="sum of lines"):
-        q.SiteQuote.model_validate(site)
+        _check(site)
 
 
 def test_possible_line_cannot_be_summed():
@@ -263,14 +284,14 @@ def test_possible_line_cannot_be_summed():
     ln = _line(site["receipt"], "mri")
     ln["in_total"] = True
     with pytest.raises(ValidationError, match="in_total"):
-        q.SiteQuote.model_validate(site)
+        _check(site)
 
 
 def test_every_line_is_summed_or_excluded_with_a_reason():
     site = _bcbs_site()
     site["receipt"]["totals"]["excluded"] = site["receipt"]["totals"]["excluded"][1:]
     with pytest.raises(ValidationError, match="neither in the total nor excluded"):
-        q.SiteQuote.model_validate(site)
+        _check(site)
 
 
 def test_complete_flag_is_honest():
@@ -278,7 +299,7 @@ def test_complete_flag_is_honest():
     assert site["receipt"]["totals"]["complete"] is False  # doctor fee is reference-only
     site["receipt"]["totals"]["complete"] = True
     with pytest.raises(ValidationError, match="complete"):
-        q.SiteQuote.model_validate(site)
+        _check(site)
 
 
 def test_reference_rungs_are_never_summed():
@@ -287,7 +308,7 @@ def test_reference_rungs_are_never_summed():
     assert ln["doctor_fee"]["rung"] == 7
     ln["in_total"] = True
     with pytest.raises(ValidationError, match="rungs 7-8"):
-        q.SiteQuote.model_validate(site)
+        _check(site)
 
 
 def test_doctor_fee_rules():
@@ -311,12 +332,18 @@ def test_doctor_fee_rules():
     by_npi = _line(_bcbs_site(1)["receipt"], "visit_doctor")["doctor_fee"]["by_npi"]
     same = [by_npi[0], {**by_npi[0], "npi": "0000000003"}]
     with pytest.raises(ValidationError, match="D6"):
-        q.DoctorFee.model_validate({**ok, "by_npi": same})
+        q.DoctorFee.model_validate({**ok, "by_npi": same}, context=PLACEHOLDERS)
+    with pytest.raises(ValidationError, match="rung 8 needs chia_badge"):
+        q.DoctorFee.model_validate({**ok, "rung": 8, "explanation_key": "fee.rung_8_chia_badge"})
 
 
-def test_rung_6_money_must_be_marked_estimate():
-    site = _bcbs_site(1)
+def _rung6(site: _Site) -> dict:
+    """Brigham's doctor fee as a rung-6 estimate: Medicare PFS x BCBS's own multiple."""
     ln = _line(site["receipt"], "visit_doctor")
+    pfs = copy.deepcopy(_line(_bcbs_site(0)["receipt"], "visit_doctor")["cell"])  # PFS 99203
+    pfs.update(low=90.66, high=135.97, basis="estimate")
+    pfs["prov"]["method"] = "estimate_medicare_multiple"
+    ln["cell"] = pfs
     ln["doctor_fee"] = {
         **ln["doctor_fee"],
         "rung": 6,
@@ -324,11 +351,41 @@ def test_rung_6_money_must_be_marked_estimate():
         "by_npi": None,
         "multiple": {"low": 2.4, "high": 3.6, "n_codes": 5, "payer_id": "BCBS_MA"},
     }
-    with pytest.raises(ValidationError, match="estimate_medicare_multiple"):
-        q.SiteQuote.model_validate(site)
-    ln["cell"]["prov"]["method"] = "estimate_medicare_multiple"
-    site["receipt"]["totals"]["likely"]["includes_estimate"] = True
-    q.SiteQuote.model_validate(site)
+    t = site["receipt"]["totals"]["likely"]
+    t.update(low=90.66, high=135.97, includes_estimate=True, includes_late_source=False)
+    site.resp["sources"]["cms_pfs_rvu26a"] = copy.deepcopy(
+        _fixture("quote_bcbs_hmo_shoulder")["sources"]["cms_pfs_rvu26a"]
+    )
+    del site.resp["sources"]["bcbs_ma_tic_hmo"]
+    site.resp["notices"].remove("late_to_refresh_sources")
+    return ln
+
+
+def test_rung_6_money_must_be_marked_estimate():
+    site = _bcbs_site(1)
+    _rung6(site)
+    _check(site)
+    site = _bcbs_site(1)
+    ln = _rung6(site)
+    ln["cell"]["prov"]["method"] = "computed_fee_schedule"
+    with pytest.raises(ValidationError, match="estimate"):
+        _check(site)
+
+
+def test_includes_estimate_is_derived_from_the_summed_lines():
+    site = _bcbs_site(1)
+    _rung6(site)
+    site["receipt"]["totals"]["likely"]["includes_estimate"] = False
+    with pytest.raises(ValidationError, match="includes_estimate"):
+        _check(site)
+
+
+def test_rung_6_multiple_must_be_the_same_payers():
+    site = _bcbs_site(1)
+    ln = _rung6(site)
+    ln["doctor_fee"]["multiple"]["payer_id"] = "AETNA"
+    with pytest.raises(ValidationError, match="multiple must be BCBS_MA"):
+        _check(site)
 
 
 def test_not_offered_needs_elsewhere_and_no_cell():
@@ -336,7 +393,7 @@ def test_not_offered_needs_elsewhere_and_no_cell():
     ln = _line(site["receipt"], "mri")
     ln["elsewhere"] = []
     with pytest.raises(ValidationError, match="not_offered"):
-        q.SiteQuote.model_validate(site)
+        _check(site)
 
 
 def _fresh(**kw):
@@ -471,24 +528,15 @@ def test_freshness_compute_cadences(kw, late, stale):
     assert (f.late_to_refresh, f.stale_on_our_side) == (late, stale)
 
 
-def test_site_rollups_and_sources_behind_must_match_the_chips():
+def test_freshness_notices_must_match_the_sources():
     resp = _fixture("quote_bcbs_hmo_shoulder")
-    bad = copy.deepcopy(resp)
-    bad["sites"][1]["site"]["any_source_late"] = False  # Brigham's TiC chip is late
-    with pytest.raises(ValidationError, match="any_source_late"):
-        q.QuoteResponse.model_validate(bad)
-    bad = copy.deepcopy(resp)
-    bad["data_version"]["sources_behind"] = []
-    with pytest.raises(ValidationError, match="sources_behind"):
-        q.QuoteResponse.model_validate(bad)
-    bad = copy.deepcopy(resp)
-    bad["notices"].remove("late_to_refresh_sources")
+    resp["notices"].remove("late_to_refresh_sources")
     with pytest.raises(ValidationError, match="late_to_refresh_sources"):
-        q.QuoteResponse.model_validate(bad)
+        _quote(resp)
     cash = _fixture("quote_cash_shoulder")
     cash["notices"].remove("stale_on_our_side_sources")
     with pytest.raises(ValidationError, match="stale_on_our_side_sources"):
-        q.QuoteResponse.model_validate(cash)
+        _quote(cash)
 
 
 def test_chat_red_flag_and_pause_never_call_the_llm():

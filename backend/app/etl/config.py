@@ -25,7 +25,7 @@ from typing import Any, Literal
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from app.etl.contracts import SourceKind, StrEnum
+from app.etl.contracts import SourceKind
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CONFIG_DIR = REPO_ROOT / "data" / "etl"
@@ -68,58 +68,23 @@ class FetchSettings(BaseModel):
     timeout_s: float = 600
 
 
-class ReferenceKind(StrEnum):
-    """Sources that carry no consumer price: who a provider is, where, who bills for whom.
-
-    Kept out of ``SourceKind`` on purpose: ``SourceKind`` is the price provenance a ``Money``
-    can carry (the source chip); a reference row never becomes a ``Money``.
-    """
-
-    provider_registry = "provider_registry"  # NPPES (NPI -> name, taxonomy, practice locations)
-    provider_directory = (
-        "provider_directory"  # payer public FHIR Provider Directory (network membership)
-    )
-    facility_registry = "facility_registry"  # DPH licensed facilities, CMS Provider of Services
-    clinician_directory = (
-        "clinician_directory"  # CMS Doctors & Clinicians (NPI -> group PAC id, affiliations)
-    )
-    billing_relationship = (
-        "billing_relationship"  # CMS Reassignment (individual NPI -> billing group)
-    )
-    utilization = "utilization"  # CMS Physician & Other Practitioners by Provider and Service
-    plan_benefits = "plan_benefits"  # CMS QHP PUF (deductibles, plan ids)
-
-
 SourceFormat = Literal[
     # hospital price transparency files (the rate_row pipeline: stage -> normalize -> build)
     "cms_v3_csv_tall",
     "cms_v3_csv_wide",
     "cms_v3_json",
-    # insurer Transparency in Coverage
+    # insurer Transparency in Coverage (app.etl.tic)
     "tic_table_of_contents",  # the index JSON that lists in_network file URLs
-    "tic_in_network",  # one in_network .json.gz, read with HTTP Range against a seek index
-    # registries and directories (no prices)
-    "nppes_monthly",  # NPPES monthly zip: main + pl_pfile + othername_pfile + endpoint_pfile CSVs
-    "dph_xlsx",  # MA DPH facility lists
-    "fhir_provider_directory",  # payer public Provider Directory FHIR API, paged Bundles, no auth
-    "cms_dataset_csv",  # data.cms.gov dataset as a CSV download
-    "cms_dataset_api",  # data.cms.gov data API (paged JSON, filters e.g. state=MA)
-    # government fee schedules
-    "cms_pfs_rvu",  # PFS relative value file (PPRRVU + GPCI), zip of csv/xlsx
-    "cms_pfs_anes",  # PFS anesthesia conversion factors (ANES)
-    "cms_opps_addendum",  # OPPS Addendum B / AA
-    "cms_asc_addendum",  # ASC Addendum AA / BB
-    "masshealth_fee_schedule",  # 101 CMR 316/317/318 tables (pdf or xlsx)
-    # a clinic's own posted self-pay page
-    "html_price_page",
+    "tic_in_network",  # one in_network .json.gz (or .zip, D30), read with HTTP Range
 ]
+"""Only formats that have a reader (P3). A stream adds its format row here in the same commit as
+its reader, with rules taken from the real file (no pre-registered guesses)."""
 
 MRF_FORMATS: frozenset[str] = frozenset({"cms_v3_csv_tall", "cms_v3_csv_wide", "cms_v3_json"})
 """The only formats the rate_row pipeline (stage / normalize / build / report) reads today."""
 
-Media = Literal["csv", "json", "xlsx", "pdf", "html"]
-Access = Literal["download", "http_range", "paged_api"]
-AnyKind = SourceKind | ReferenceKind
+Media = Literal["csv", "json"]
+Access = Literal["download", "http_range"]
 
 # format -> (allowed kinds, allowed media (first = default), allowed containers, allowed access)
 _FORMAT_RULES: dict[str, tuple[set[str], tuple[str, ...], set[str], set[str]]] = {
@@ -127,43 +92,13 @@ _FORMAT_RULES: dict[str, tuple[set[str], tuple[str, ...], set[str], set[str]]] =
     "cms_v3_csv_wide": ({"hospital_mrf"}, ("csv",), {"zip", "plain"}, {"download"}),
     "cms_v3_json": ({"hospital_mrf"}, ("json",), {"zip", "plain"}, {"download"}),
     "tic_table_of_contents": ({"insurer_tic"}, ("json",), {"plain", "gzip"}, {"download"}),
-    "tic_in_network": ({"insurer_tic"}, ("json",), {"gzip", "plain"}, {"http_range", "download"}),
-    "nppes_monthly": ({"provider_registry"}, ("csv",), {"zip"}, {"download"}),
-    "dph_xlsx": ({"facility_registry"}, ("xlsx",), {"plain"}, {"download"}),
-    "fhir_provider_directory": ({"provider_directory"}, ("json",), {"plain"}, {"paged_api"}),
-    "cms_dataset_csv": (
-        {
-            "clinician_directory",
-            "billing_relationship",
-            "facility_registry",
-            "utilization",
-            "plan_benefits",
-        },
-        ("csv",),
-        {"plain", "zip"},
-        {"download"},
-    ),
-    "cms_dataset_api": (
-        {
-            "clinician_directory",
-            "billing_relationship",
-            "facility_registry",
-            "utilization",
-            "plan_benefits",
-        },
+    "tic_in_network": (
+        {"insurer_tic"},
         ("json",),
-        {"plain"},
-        {"paged_api"},
+        {"gzip", "plain", "zip"},  # D30: Harvard Pilgrim / Tufts publish .zip
+        {"http_range", "download"},
     ),
-    "cms_pfs_rvu": ({"medicare_pfs"}, ("csv", "xlsx"), {"zip", "plain"}, {"download"}),
-    "cms_pfs_anes": ({"medicare_pfs"}, ("csv", "xlsx"), {"zip", "plain"}, {"download"}),
-    "cms_opps_addendum": ({"medicare_opps"}, ("csv", "xlsx"), {"zip", "plain"}, {"download"}),
-    "cms_asc_addendum": ({"medicare_asc"}, ("csv", "xlsx"), {"zip", "plain"}, {"download"}),
-    "masshealth_fee_schedule": ({"masshealth_fs"}, ("pdf", "xlsx"), {"plain"}, {"download"}),
-    "html_price_page": ({"clinic_posted"}, ("html",), {"plain"}, {"download"}),
 }
-
-NPPES_MEMBERS = frozenset({"main", "pl_pfile", "othername_pfile", "endpoint_pfile"})
 _PAYER_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
 
 
@@ -174,15 +109,13 @@ class SourceSpec(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
     source_id: str = Field(pattern=r"^[a-z0-9][a-z0-9_]*$")
-    kind: AnyKind
+    kind: SourceKind
     format: SourceFormat
     entity_id: str | None = Field(
         default=None,
-        description="hospitals.yaml id (hospital_mrf) or sites.yaml id (clinic_posted)",
+        description="hospitals.yaml id (hospital_mrf)",
     )
-    payer_id: str | None = Field(
-        default=None, description="payer_aliases.yaml id (insurer_tic, provider_directory)"
-    )
+    payer_id: str | None = Field(default=None, description="payer_aliases.yaml id (insurer_tic)")
     container: Literal["zip", "gzip", "plain"] = "plain"
     media: Media | None = Field(default=None, description="None -> the format's default")
     access: Access = "download"
@@ -192,12 +125,6 @@ class SourceSpec(BaseModel):
     discovery: str | None = None
     legacy_filename: str | None = None
     max_bytes: int | None = None
-    members: dict[str, str] = Field(
-        default_factory=dict, description="zip member role -> filename glob (nppes_monthly)"
-    )
-    filters: dict[str, str] = Field(
-        default_factory=dict, description="API query filters, e.g. {state: MA} (paged_api)"
-    )
     release: str | None = Field(default=None, description="e.g. RVU26A, 2026-11, CY2026 Q4")
 
     @field_validator("npis")
@@ -229,19 +156,11 @@ class SourceSpec(BaseModel):
                 raise ValueError(f"{sid}: hospital_mrf needs entity_id and npis")
         elif self.npis:
             raise ValueError(f"{sid}: npis are only checked for hospital_mrf files")
-        if k == "clinic_posted" and not self.entity_id:
-            raise ValueError(f"{sid}: clinic_posted needs entity_id (the sites.yaml id)")
-        if k in ("insurer_tic", "provider_directory"):
+        if k == "insurer_tic":
             if not self.payer_id or not _PAYER_RE.match(self.payer_id):
                 raise ValueError(f"{sid}: {k} needs payer_id (payer_aliases.yaml id)")
         elif self.payer_id is not None:
-            raise ValueError(f"{sid}: payer_id only applies to insurer_tic / provider_directory")
-        if self.format == "nppes_monthly" and set(self.members) != NPPES_MEMBERS:
-            raise ValueError(f"{sid}: nppes_monthly needs members {sorted(NPPES_MEMBERS)}")
-        if self.format != "nppes_monthly" and self.members and self.container != "zip":
-            raise ValueError(f"{sid}: members only apply to zip containers")
-        if self.filters and self.access != "paged_api":
-            raise ValueError(f"{sid}: filters only apply to paged_api sources")
+            raise ValueError(f"{sid}: payer_id only applies to insurer_tic")
         if self.url is not None and not self.url.startswith("https://"):
             raise ValueError(f"{sid}: url must be https")
         return self

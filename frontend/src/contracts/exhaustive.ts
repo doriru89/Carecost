@@ -21,6 +21,8 @@ import type {
   QuoteResponse,
   SourceCadence,
   SourceKind,
+  TierBasis,
+  YouPay,
 } from "@/generated/contracts/quote_api";
 import type { ChatReply, Disposition } from "@/generated/contracts/chat_api";
 
@@ -107,7 +109,7 @@ export const OUR_CADENCE_KEY = {
   fee_schedule_per_release: "fresh.ours.fee_schedule_per_release",
 } as const satisfies Record<OurCadence, string>;
 
-/** Source chip copy key per price source (SourceChip.label_key = `source.<kind>`). */
+/** Source chip copy key per price source: the chip of a number is `sources[prov.source_id]`. */
 export const SOURCE_CHIP_KEY = {
   hospital_mrf: "source.hospital_mrf",
   insurer_tic: "source.insurer_tic",
@@ -117,9 +119,24 @@ export const SOURCE_CHIP_KEY = {
   masshealth_fs: "source.masshealth_fs",
   clinic_posted: "source.clinic_posted",
   chia_rp: "source.chia_rp",
-  estimate: "source.estimate",
-  ai_potential: "source.ai_potential",
 } as const satisfies { [K in SourceKind]: `source.${K}` };
+
+/** P11: what a line's likelihood rests on, shown next to the gradient. */
+export const TIER_BASIS_KEY = {
+  guideline: "tier_basis.guideline",
+  plan_rule: "tier_basis.plan_rule",
+  our_judgment: "tier_basis.our_judgment",
+  picked: "tier_basis.picked",
+} as const satisfies Record<TierBasis, string>;
+
+/** "You pay" rule per plan type (copay plans included, P11). */
+export const YOU_PAY_KEY = {
+  deductible_then_coinsurance: "youpay.deductible_then_coinsurance",
+  copay_or_deductible: "youpay.copay_or_deductible",
+  medicare_20_percent: "youpay.medicare_20_percent",
+  masshealth_small_or_no_copay: "youpay.masshealth_small_or_no_copay",
+  cash_full_amount: "youpay.cash_full_amount",
+} as const satisfies Record<YouPay["kind"], string>;
 
 export const PAYMENT_KINDS = {
   insurance: true,

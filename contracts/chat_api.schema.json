@@ -370,7 +370,7 @@
           "$ref": "#/$defs/Title"
         },
         "value": {
-          "pattern": "^[a-z0-9_]+$",
+          "pattern": "^[a-z0-9_]{1,40}$",
           "title": "Value",
           "type": "string"
         }

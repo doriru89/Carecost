@@ -1,0 +1,389 @@
+"""One negative test per quote/site/catalog contract rule (contract fix round, 2026-10-24).
+
+Each test breaks one rule on a real fixture and expects the validator to refuse it. The mutation
+table in the round's report lists, per rule, the test that fails when the rule is deleted.
+"""
+
+from __future__ import annotations
+
+import copy
+import json
+from datetime import date, timedelta
+from pathlib import Path
+
+import pytest
+from pydantic import ValidationError
+
+from app.quote import contracts as q
+from app.sites import contracts as sites
+
+REPO = Path(__file__).resolve().parents[3]
+FIX = REPO / "contracts" / "fixtures"
+CTX = {"allow_placeholders": True}
+
+
+def _fx(name: str) -> dict:
+    doc = json.loads((FIX / f"{name}.json").read_text())
+    doc.pop("_fixture")
+    doc.pop("_schema")
+    return doc
+
+
+def _ok(doc: dict) -> q.QuoteResponse:
+    return q.QuoteResponse.model_validate(doc, context=CTX)
+
+
+def _bad(doc: dict, match: str) -> None:
+    with pytest.raises(ValidationError, match=match):
+        _ok(doc)
+
+
+def _site(doc: dict, site_id: str) -> dict:
+    return next(s for s in doc["sites"] if s["site"]["site_id"] == site_id)
+
+
+def _line(doc: dict, site_id: str, line_id: str) -> dict:
+    return next(ln for ln in _site(doc, site_id)["receipt"]["lines"] if ln["line_id"] == line_id)
+
+
+MA, BWH, FR, AFC = (
+    "mount_auburn_hospital",
+    "brigham_and_womens_hospital",
+    "franciscan_childrens",
+    "afc_watertown",
+)
+
+
+def test_fixtures_are_valid_starting_points():
+    for n in ("quote_bcbs_hmo_shoulder", "quote_cash_shoulder", "quote_medicare_shoulder"):
+        _ok(_fx(n))
+
+
+# --------------------------------------------------------------------------- AI never in totals
+
+
+def test_ai_suggested_money_line_is_never_summed():
+    """An AI-picked service may show a deterministic price (P5), but never in the total."""
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    _line(doc, MA, "referral_visit")["ai_suggested"] = True  # certain + Money + in_total
+    _bad(doc, "AI-suggested")
+
+
+def test_assistant_picks_are_all_labelled_ai_suggested():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    doc["picked_by"] = "assistant"
+    _bad(doc, "assistant")
+
+
+def test_assistant_cannot_request_a_care_path_quote():
+    req = {
+        "payment": {"kind": "cash"},
+        "care_path_id": "shoulder_chronic_clicking_v1",
+        "answers": {},
+        "service_codes": [],
+        "picked_by": "assistant",
+        "site_ids": None,
+    }
+    with pytest.raises(ValidationError, match="assistant"):
+        q.QuoteRequest.model_validate(req)
+
+
+# --------------------------------------------------------------------------- chips = provenance
+
+
+def test_every_number_needs_its_source_in_the_response():
+    """M06/M08: the chip is prov.source_id; a number whose source is not listed is refused."""
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    el = _line(doc, FR, "xray_facility")["elsewhere"][0]["cell"]["prov"]
+    el["source_id"] = "made_up_mrf"
+    el["row_ref"] = el["row_ref"].replace("mtauburn_mrf", "made_up_mrf")
+    _bad(doc, "not in sources")
+
+
+def test_both_sides_of_a_conflict_need_their_source():
+    """M07: a conflict shows both numbers, so both sources must be listed."""
+    doc = _fx("quote_medicare_shoulder")
+    b = _line(doc, BWH, "injection_doctor")["cell"]["b"]["prov"]
+    old = b["source_id"]
+    b["source_id"] = "made_up_pfs"
+    b["row_ref"] = b["row_ref"].replace(old, "made_up_pfs")
+    _bad(doc, "not in sources")
+
+
+def test_a_tic_price_cannot_wear_a_hospital_chip():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    p = _line(doc, BWH, "visit_doctor")["cell"]["prov"]
+    sha = doc["sources"] and _line(doc, BWH, "steroid_injection")["cell"]["prov"]["source_sha256"]
+    p.update(source_id="brigham_mrf", source_sha256=sha, row_ref=f"brigham_mrf:{sha[:12]}:1")
+    _bad(doc, "says insurer_tic but source brigham_mrf is hospital_mrf")
+
+
+def test_sources_lists_only_what_is_used():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    doc["sources"]["mgh_mrf"] = copy.deepcopy(doc["sources"]["brigham_mrf"])
+    _bad(doc, "unused")
+
+
+# --------------------------------------------------------------------------- freshness per request
+
+
+def test_freshness_is_computed_on_as_of_not_frozen_at_build():
+    """Failure review F1 / challenger F4: 40 days without a refetch must read 'stale on our side'
+    even though nobody rebuilt the data."""
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    later = date(2026, 10, 24) + timedelta(days=40)
+    doc["as_of"] = later.isoformat()
+    _bad(doc, "freshness is not what its inputs give")
+    f = q.SourceInfo.model_validate(doc["sources"]["mtauburn_mrf"]).freshness
+    assert not f.stale_on_our_side
+    assert f.at(later).stale_on_our_side and not f.at(later).late_to_refresh
+
+
+def test_our_data_page_freshness_is_computed_on_as_of():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    page = {"as_of": "2026-10-24", "sources": doc["sources"]}
+    q.OurDataResponse.model_validate(page)
+    page["sources"]["mtauburn_mrf"]["freshness"]["stale_on_our_side"] = True
+    page["sources"]["mtauburn_mrf"]["freshness"]["late_to_refresh"] = False
+    with pytest.raises(ValidationError, match="freshness"):
+        q.OurDataResponse.model_validate(page)
+
+
+def test_total_honesty_flags_are_derived():
+    """Theater F03: includes_late_source / includes_stale_source must match the summed lines."""
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    _site(doc, BWH)["receipt"]["totals"]["likely"]["includes_late_source"] = False
+    _bad(doc, "includes_late_source")
+    doc = _fx("quote_cash_shoulder")
+    _site(doc, AFC)["receipt"]["totals"]["likely"]["includes_stale_source"] = False
+    _bad(doc, "includes_stale_source")
+
+
+def test_tic_price_needs_a_tic_release_and_no_not_loaded_notice():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    doc["data_version"]["tic_release"] = None
+    _bad(doc, "tic_release")
+    doc = _fx("quote_cash_shoulder")
+    doc["notices"].append("tic_not_loaded")
+    _bad(doc, "tic_not_loaded")
+
+
+# --------------------------------------------------------------------------- payment <-> price
+
+
+def test_bcbs_receipt_cannot_sum_a_medicare_rate():
+    """Challenger F1/P1: rung 5 (Medicare's rate) in a BCBS total."""
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    ln = _line(doc, MA, "visit_doctor")
+    ln["doctor_fee"].update(rung=5, explanation_key="fee.rung_5_medicare")
+    _bad(doc, "rung 5 is not for insurance")
+
+
+def test_bcbs_receipt_cannot_use_another_payers_rate():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    _line(doc, MA, "visit_facility")["cell"]["prov"]["payer_id"] = "AETNA"
+    _bad(doc, "AETNA's rate, not BCBS_MA's")
+
+
+def test_medicare_receipt_cannot_use_a_commercial_rate():
+    doc = _fx("quote_medicare_shoulder")
+    _line(doc, BWH, "steroid_injection")["cell"]["prov"]["payer_id"] = "BCBS_MA"
+    _bad(doc, "BCBS_MA's rate, not MEDICARE's")
+
+
+def test_cash_receipt_cannot_use_a_negotiated_rate():
+    doc = _fx("quote_cash_shoulder")
+    _line(doc, MA, "visit_facility")["cell"]["basis"] = "negotiated"
+    _bad(doc, "is not a cash price")
+
+
+def test_gross_charge_is_never_a_line_price():
+    """Challenger P3/P4: the list price almost nobody pays, summed as 'what cash costs'."""
+    doc = _fx("quote_cash_shoulder")
+    _line(doc, MA, "visit_facility")["cell"]["basis"] = "gross"
+    _bad(doc, "only ever list_price")
+    doc = _fx("quote_cash_shoulder")
+    _line(doc, MA, "visit_facility")["list_price"]["basis"] = "discounted_cash"
+    _bad(doc, "list_price is the gross charge")
+
+
+def test_you_pay_kind_matches_the_payment():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    _site(doc, MA)["receipt"]["totals"]["you_pay"]["kind"] = "medicare_20_percent"
+    _bad(doc, "is not for insurance")
+
+
+# --------------------------------------------------------------------------- I7 ranking
+
+
+def test_sites_are_ranked_by_completeness_then_price():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    doc["sites"] = doc["sites"][::-1]  # Franciscan (cheap, gappy) first
+    _bad(doc, "rank_key")
+
+
+def test_missing_is_derived_and_counts_skipped_steps():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    _site(doc, BWH)["receipt"]["totals"]["missing"] -= 1
+    _bad(doc, "totals.missing must be")
+    # dropping a line from a site (the engine 'forgets' it) does not lower its missing count
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    resp = _ok(doc)
+    steps = {q._step_key(ln) for sq in resp.sites for ln in sq.receipt.lines if q._expected(ln)}
+    bwh = next(sq for sq in resp.sites if sq.site.site_id == BWH)
+    before = q.missing_for(bwh, steps)
+    gone = bwh.model_copy(
+        update={
+            "receipt": bwh.receipt.model_copy(
+                update={"lines": [ln for ln in bwh.receipt.lines if ln.line_id != "referral_visit"]}
+            )
+        }
+    )
+    assert q.missing_for(gone, steps) == before
+
+
+def test_losing_a_price_never_improves_rank():
+    """I7 property: turning any summed line into a gap makes the site's key strictly worse,
+    whatever it does to the price."""
+    for name in ("quote_bcbs_hmo_shoulder", "quote_cash_shoulder", "quote_medicare_shoulder"):
+        resp = _ok(_fx(name))
+        steps = {q._step_key(ln) for sq in resp.sites for ln in sq.receipt.lines if q._expected(ln)}
+        for sq in resp.sites:
+            key = q.rank_key(sq)
+            for ln in sq.receipt.lines:
+                if not ln.in_total:
+                    continue
+                lines = [
+                    x.model_copy(update={"in_total": x.in_total and x is not ln})
+                    for x in sq.receipt.lines
+                ]
+                gapped = sq.model_copy(
+                    update={"receipt": sq.receipt.model_copy(update={"lines": lines})}
+                )
+                assert q.missing_for(gapped, steps) == key[0] + 1, (name, ln.line_id)
+
+
+# --------------------------------------------------------------------------- receipt line rules
+
+
+def test_display_tier_follows_likelihood():
+    """V2: a likely line cannot be drawn as certain."""
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    _line(doc, MA, "xray_facility")["tier"] = "certain"
+    _bad(doc, "!= likelihood")
+
+
+def test_per_15_minute_lines_are_never_summed():
+    """V6: the count of PT sessions is unknown, so the line cannot be in the total."""
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    _line(doc, MA, "physical_therapy_sessions")["in_total"] = True
+    _bad(doc, "in_total needs certain/likely")
+
+
+def test_tier_basis_picked_iff_no_care_path_step():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    _line(doc, MA, "xray_facility")["tier_basis"] = "picked"
+    _bad(doc, "tier_basis picked")
+
+
+def test_estimate_basis_needs_the_estimate_method():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    _line(doc, MA, "visit_facility")["cell"]["basis"] = "estimate"
+    _bad(doc, "basis estimate")
+
+
+# --------------------------------------------------------------------------- placeholders + bounds
+
+
+def test_placeholder_sha_and_npi_are_refused_outside_fixtures():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    with pytest.raises(ValidationError, match="placeholder"):
+        q.QuoteResponse.model_validate(doc)  # no allow_placeholders context
+    with pytest.raises(ValidationError, match="start with 1 or 2"):
+        q.NpiPrice.model_validate(
+            {
+                "npi": "0000000001",
+                "display_name": None,
+                "money": _line(doc, MA, "xray_facility")["cell"],
+            }
+        )
+
+
+@pytest.mark.parametrize(
+    "answers",
+    [
+        {f"Q{i}": ["x"] for i in range(q.MAX_ANSWER_KEYS + 1)},
+        {"Q1": ["x"] * (q.MAX_VALUES_PER_ANSWER + 1)},
+        {"Q1": ["x" * 41]},
+    ],
+)
+def test_quote_request_answers_are_bounded(answers):
+    req = {
+        "payment": {"kind": "cash"},
+        "care_path_id": "shoulder_chronic_clicking_v1",
+        "answers": answers,
+        "service_codes": [],
+        "picked_by": "person",
+        "site_ids": None,
+    }
+    with pytest.raises(ValidationError):
+        q.QuoteRequest.model_validate(req)
+
+
+# --------------------------------------------------------------------------- sites + catalog
+
+
+def _sites() -> dict:
+    return _fx("sites")
+
+
+def test_hospital_outpatient_never_bills_as_office_visit():
+    """M17."""
+    doc = _sites()
+    doc["sites"][2]["billing_type"] = "office_visit"
+    with pytest.raises(ValidationError, match="cannot bill as office_visit"):
+        sites.SitesFile.model_validate(doc, context=CTX)
+
+
+def test_asc_billing_iff_ambulatory_surgery_center():
+    doc = _sites()
+    doc["sites"][0]["billing_type"] = "asc"  # an urgent care
+    with pytest.raises(ValidationError, match="asc"):
+        sites.SitesFile.model_validate(doc, context=CTX)
+    doc = _sites()
+    doc["sites"][0].update(site_type="ambulatory_surgery_center", billing_type="office_visit")
+    with pytest.raises(ValidationError, match="asc"):
+        sites.SitesFile.model_validate(doc, context=CTX)
+    doc = _sites()
+    doc["sites"][0].update(site_type="ambulatory_surgery_center", billing_type="asc")
+    sites.SitesFile.model_validate(doc, context=CTX)
+
+
+def test_site_tins_are_digits_and_sourced():
+    doc = _sites()
+    doc["sites"][0]["tins"] = ["27-2343207"]
+    doc["sites"][0]["tins_source"] = "tic match"
+    with pytest.raises(ValidationError, match="9 digits"):
+        sites.SitesFile.model_validate(doc, context=CTX)
+    doc["sites"][0]["tins"] = ["272343207"]
+    sites.SitesFile.model_validate(doc, context=CTX)
+    doc["sites"][0]["tins_source"] = None
+    with pytest.raises(ValidationError, match="tins_source"):
+        sites.SitesFile.model_validate(doc, context=CTX)
+
+
+def test_registry_only_sites_are_never_quoted():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    _site(doc, MA)["site"]["listing_status"] = "registry_only"
+    _bad(doc, "listing_status")
+    s = _sites()
+    s["sites"][0]["listing_status"] = "registry_only"
+    sites.SitesFile.model_validate(s, context=CTX)  # allowed in sites.yaml (to-verify queue)
+
+
+def test_catalog_services_point_at_known_care_paths():
+    """M11."""
+    cat = _fx("catalog")
+    cat["services"][0]["care_paths"] = ["made_up_path_v1"]
+    with pytest.raises(ValidationError, match="unknown care paths"):
+        q.Catalog.model_validate(cat)

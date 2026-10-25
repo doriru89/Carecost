@@ -74,6 +74,10 @@
         "urgent_care",
         "ortho"
       ],
+      "tins": [],
+      "tins_source": null,
+      "listing_status": "web_verified",
+      "listing_checked_at": "2026-10-24",
       "cash_prices": [
         {
           "item_id": "evaluation_consultation",
@@ -172,7 +176,11 @@
       ],
       "service_areas": [
         "urgent_care"
-      ]
+      ],
+      "tins": [],
+      "tins_source": null,
+      "listing_status": "web_verified",
+      "listing_checked_at": "2026-10-24"
     },
     {
       "id": "mount_auburn_hospital",
@@ -209,7 +217,80 @@
       ],
       "type_2_npis": [
         "1689670259"
-      ]
+      ],
+      "tins": [],
+      "tins_source": null,
+      "listing_status": "web_verified",
+      "listing_checked_at": "2026-10-24"
+    },
+    {
+      "id": "brigham_and_womens_hospital",
+      "name": "Brigham and Women's Hospital",
+      "site_type": "hospital_outpatient",
+      "operator": "MGB",
+      "system_id": "mgb",
+      "hospital_entity_id": "brigham",
+      "billing_type": "hospital_outpatient",
+      "address": {
+        "street": "75 Francis St",
+        "city": "Boston",
+        "state": "MA",
+        "zip": "02115"
+      },
+      "coords": {
+        "lat": 42.3358,
+        "lon": -71.1065,
+        "geocoded_by": "hospital_registry",
+        "geocoded_at": "2026-10-24"
+      },
+      "portal_links": [
+        {
+          "kind": "patient_gateway",
+          "system_id": "mgb",
+          "label": "MGB Patient Gateway",
+          "url": "https://patientgateway.massgeneralbrigham.org/"
+        }
+      ],
+      "service_areas": [
+        "ortho",
+        "skin",
+        "gi"
+      ],
+      "type_2_npis": [],
+      "tins": [],
+      "tins_source": null,
+      "listing_status": "web_verified",
+      "listing_checked_at": "2026-10-24"
+    },
+    {
+      "id": "franciscan_childrens",
+      "name": "Franciscan Children's",
+      "site_type": "hospital_outpatient",
+      "operator": "Franciscan Children's",
+      "system_id": null,
+      "hospital_entity_id": "franciscan",
+      "billing_type": "hospital_outpatient",
+      "address": {
+        "street": "30 Warren St",
+        "city": "Brighton",
+        "state": "MA",
+        "zip": "02135"
+      },
+      "coords": {
+        "lat": 42.354,
+        "lon": -71.153,
+        "geocoded_by": "hospital_registry",
+        "geocoded_at": "2026-10-24"
+      },
+      "portal_links": [],
+      "service_areas": [
+        "ortho"
+      ],
+      "type_2_npis": [],
+      "tins": [],
+      "tins_source": null,
+      "listing_status": "web_verified",
+      "listing_checked_at": "2026-10-24"
     }
   ]
 }

@@ -14,29 +14,86 @@
     "review_status": "pending_austin"
   },
   "service_codes": [],
+  "picked_by": "person",
+  "as_of": "2026-10-24",
   "data_version": {
     "build_id": "20261024-1cb8089d",
     "build_date": "2026-10-24",
-    "tic_release": null,
+    "tic_release": "tic-2026-10",
     "sites_version": 1,
-    "care_paths_version": "1.0.0",
-    "sources_behind": [
-      {
-        "source_id": "bcbs_ma_tic_hmo",
-        "source_kind": "insurer_tic",
-        "publisher": "Blue Cross Blue Shield of Massachusetts",
-        "freshness": {
-          "last_updated": "2026-05-01",
-          "expected_by": "2026-06-15",
-          "late_to_refresh": true,
-          "source_rule": "tic_45_days",
-          "fetched_at": "2026-10-20",
-          "our_refresh_due": "2026-11-20",
-          "stale_on_our_side": false,
-          "our_rule": "tic_monthly"
-        }
+    "care_paths_version": "1.0.0"
+  },
+  "sources": {
+    "bcbs_ma_tic_hmo": {
+      "source_kind": "insurer_tic",
+      "publisher": "Blue Cross Blue Shield of Massachusetts",
+      "freshness": {
+        "last_updated": "2026-05-01",
+        "expected_by": "2026-06-15",
+        "late_to_refresh": true,
+        "source_rule": "tic_45_days",
+        "fetched_at": "2026-10-20",
+        "our_refresh_due": "2026-11-20",
+        "stale_on_our_side": false,
+        "our_rule": "tic_monthly"
       }
-    ]
+    },
+    "brigham_mrf": {
+      "source_kind": "hospital_mrf",
+      "publisher": "Brigham and Women's Hospital",
+      "freshness": {
+        "last_updated": "2026-03-27",
+        "expected_by": "2027-03-27",
+        "late_to_refresh": false,
+        "source_rule": "hospital_mrf_365_days",
+        "fetched_at": "2026-10-24",
+        "our_refresh_due": "2026-11-24",
+        "stale_on_our_side": false,
+        "our_rule": "hospital_monthly"
+      }
+    },
+    "cms_pfs_rvu26a": {
+      "source_kind": "medicare_pfs",
+      "publisher": "CMS (Medicare, Boston 2026)",
+      "freshness": {
+        "last_updated": "2026-01-01",
+        "expected_by": "2027-01-01",
+        "late_to_refresh": false,
+        "source_rule": "fee_schedule_annual",
+        "fetched_at": "2026-10-24",
+        "our_refresh_due": null,
+        "stale_on_our_side": false,
+        "our_rule": "fee_schedule_per_release"
+      }
+    },
+    "franciscan_mrf": {
+      "source_kind": "hospital_mrf",
+      "publisher": "Franciscan Children's",
+      "freshness": {
+        "last_updated": "2026-04-01",
+        "expected_by": "2027-04-01",
+        "late_to_refresh": false,
+        "source_rule": "hospital_mrf_365_days",
+        "fetched_at": "2026-10-24",
+        "our_refresh_due": "2026-11-24",
+        "stale_on_our_side": false,
+        "our_rule": "hospital_monthly"
+      }
+    },
+    "mtauburn_mrf": {
+      "source_kind": "hospital_mrf",
+      "publisher": "Mount Auburn Hospital",
+      "freshness": {
+        "last_updated": "2026-04-01",
+        "expected_by": "2027-04-01",
+        "late_to_refresh": false,
+        "source_rule": "hospital_mrf_365_days",
+        "fetched_at": "2026-10-24",
+        "our_refresh_due": "2026-11-24",
+        "stale_on_our_side": false,
+        "our_rule": "hospital_monthly"
+      }
+    }
   },
   "sites": [
     {
@@ -67,23 +124,12 @@
         "hours_label": "unknown",
         "price_label": "price_file",
         "price_source_id": "mtauburn_mrf",
-        "price_freshness": {
-          "last_updated": "2026-04-01",
-          "expected_by": "2027-04-01",
-          "late_to_refresh": false,
-          "source_rule": "hospital_mrf_365_days",
-          "fetched_at": "2026-10-24",
-          "our_refresh_due": "2026-11-24",
-          "stale_on_our_side": false,
-          "our_rule": "hospital_monthly"
-        },
-        "any_source_late": false,
-        "any_source_stale_on_our_side": false,
         "service_areas": [
           "ortho",
           "skin",
           "gi"
-        ]
+        ],
+        "listing_status": "web_verified"
       },
       "receipt": {
         "lines": [
@@ -113,33 +159,18 @@
               "high": 143.97,
               "basis": "negotiated",
               "prov": {
+                "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                 "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "mtauburn_mrf:a9e5ac64beef:12987"
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:12987",
+                "payer_id": "BCBS_MA"
               }
             },
-            "sources": [
-              {
-                "source_id": "mtauburn_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Mount Auburn Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "plan_rule",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": true,
@@ -169,33 +200,18 @@
               "high": 214.93,
               "basis": "negotiated",
               "prov": {
+                "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                 "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "mtauburn_mrf:a9e5ac64beef:12845"
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:12845",
+                "payer_id": "BCBS_MA"
               }
             },
-            "sources": [
-              {
-                "source_id": "mtauburn_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Mount Auburn Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "our_judgment",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": true,
@@ -225,33 +241,18 @@
               "high": 75.54,
               "basis": "fee_schedule",
               "prov": {
+                "source_id": "cms_pfs_rvu26a",
                 "source_kind": "medicare_pfs",
                 "source_file": "PPRRVU2026_Jan_nonQPP.csv",
                 "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
                 "source_date": "2026-01-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "medicare_pfs:9a15cb9cc117:99203"
+                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:99203",
+                "payer_id": null
               }
             },
-            "sources": [
-              {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "publisher": "CMS (Medicare, Boston 2026)",
-                "label_key": "source.medicare_pfs",
-                "freshness": {
-                  "last_updated": "2026-01-01",
-                  "expected_by": "2027-01-01",
-                  "late_to_refresh": false,
-                  "source_rule": "fee_schedule_annual",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": null,
-                  "stale_on_our_side": false,
-                  "our_rule": "fee_schedule_per_release"
-                },
-                "rows": null
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "our_judgment",
             "doctor_fee": {
               "rung": 7,
               "explanation_key": "fee.rung_7_medicare_reference",
@@ -292,33 +293,18 @@
               "high": 110.42,
               "basis": "negotiated",
               "prov": {
+                "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                 "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "mtauburn_mrf:a9e5ac64beef:41007"
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:41007",
+                "payer_id": "BCBS_MA"
               }
             },
-            "sources": [
-              {
-                "source_id": "mtauburn_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Mount Auburn Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": true,
@@ -358,7 +344,8 @@
               "what": "BCBS's rate for the radiologist reading the X-ray",
               "eta": "tic-2026-11"
             },
-            "sources": [],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -399,36 +386,64 @@
               "high": 246.33,
               "basis": "negotiated",
               "prov": {
+                "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                 "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "mtauburn_mrf:a9e5ac64beef:12378"
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:12378",
+                "payer_id": "BCBS_MA"
               }
             },
-            "sources": [
-              {
-                "source_id": "mtauburn_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Mount Auburn Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": true,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "physical_therapy_sessions",
+            "tier": "likely",
+            "likelihood": "likely",
+            "step_id": "physical_therapy",
+            "codes": [
+              "97110"
+            ],
+            "modifier": null,
+            "plain_name": "Exercise sessions with a physical therapist, per 15 minutes",
+            "technical_name": "Therapeutic exercise (per 15 minutes)",
+            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
+            "glossary_keys": [
+              "pt_evaluation"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "per_15_minutes",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 89.07,
+              "high": 89.07,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:11158",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
             "elsewhere": [],
             "learn_more": []
           },
@@ -458,33 +473,18 @@
               "high": 483.38,
               "basis": "negotiated",
               "prov": {
+                "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                 "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "mtauburn_mrf:a9e5ac64beef:21755"
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:21755",
+                "payer_id": "BCBS_MA"
               }
             },
-            "sources": [
-              {
-                "source_id": "mtauburn_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Mount Auburn Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -511,9 +511,14 @@
             "cell": {
               "kind": "not_published",
               "what": "a price for the injected medicine",
-              "ask": "Ask whether the medicine is billed separately from the shot."
+              "ask": "Ask whether the medicine is billed separately from the shot.",
+              "searched": {
+                "source_id": "mtauburn_mrf",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c"
+              }
             },
-            "sources": [],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": true,
             "in_total": false,
@@ -546,33 +551,18 @@
               "high": 199.42,
               "basis": "negotiated",
               "prov": {
+                "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                 "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "mtauburn_mrf:a9e5ac64beef:41274"
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:41274",
+                "payer_id": "BCBS_MA"
               }
             },
-            "sources": [
-              {
-                "source_id": "mtauburn_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Mount Auburn Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -614,33 +604,18 @@
               "high": 659.15,
               "basis": "negotiated",
               "prov": {
+                "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                 "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "mtauburn_mrf:a9e5ac64beef:40087"
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:40087",
+                "payer_id": "BCBS_MA"
               }
             },
-            "sources": [
-              {
-                "source_id": "mtauburn_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Mount Auburn Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -672,6 +647,7 @@
             "includes_stale_source": false
           },
           "complete": false,
+          "missing": 3,
           "excluded": [
             {
               "line_id": "visit_doctor",
@@ -696,11 +672,15 @@
             {
               "line_id": "mri",
               "reason": "possible_tier"
+            },
+            {
+              "line_id": "physical_therapy_sessions",
+              "reason": "repeats"
             }
           ],
           "you_pay": {
-            "kind": "deductible_then_coinsurance",
-            "note_key": "youpay.deductible_then_coinsurance",
+            "kind": "copay_or_deductible",
+            "note_key": "youpay.copay_or_deductible",
             "portal_label": "Check my deductible at MyBlue",
             "portal_url": "https://www.bluecrossma.org/myblue"
           }
@@ -721,12 +701,14 @@
                 "high": 74.46,
                 "basis": "negotiated",
                 "prov": {
+                  "source_id": "mtauburn_mrf",
                   "source_kind": "hospital_mrf",
                   "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                   "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                   "source_date": "2026-04-01",
                   "method": "stated",
-                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41010"
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41010",
+                  "payer_id": "WELLPOINT"
                 }
               }
             },
@@ -740,12 +722,14 @@
                 "high": 104.29,
                 "basis": "negotiated",
                 "prov": {
+                  "source_id": "mtauburn_mrf",
                   "source_kind": "hospital_mrf",
                   "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                   "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                   "source_date": "2026-04-01",
                   "method": "stated",
-                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41011"
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41011",
+                  "payer_id": null
                 }
               }
             },
@@ -759,12 +743,14 @@
                 "high": 110.42,
                 "basis": "negotiated",
                 "prov": {
+                  "source_id": "mtauburn_mrf",
                   "source_kind": "hospital_mrf",
                   "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                   "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                   "source_date": "2026-04-01",
                   "method": "stated",
-                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41007"
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41007",
+                  "payer_id": "BCBS_MA"
                 }
               }
             },
@@ -778,12 +764,14 @@
                 "high": 110.42,
                 "basis": "negotiated",
                 "prov": {
+                  "source_id": "mtauburn_mrf",
                   "source_kind": "hospital_mrf",
                   "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                   "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                   "source_date": "2026-04-01",
                   "method": "stated",
-                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41008"
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41008",
+                  "payer_id": "BCBS_MA"
                 }
               }
             },
@@ -797,12 +785,14 @@
                 "high": 153.26,
                 "basis": "negotiated",
                 "prov": {
+                  "source_id": "mtauburn_mrf",
                   "source_kind": "hospital_mrf",
                   "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                   "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                   "source_date": "2026-04-01",
                   "method": "stated",
-                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41009"
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41009",
+                  "payer_id": "HARVARD_PILGRIM"
                 }
               }
             }
@@ -813,12 +803,14 @@
             "high": 527.0,
             "basis": "discounted_cash",
             "prov": {
+              "source_id": "mtauburn_mrf",
               "source_kind": "hospital_mrf",
               "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
               "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
               "source_date": "2026-04-01",
               "method": "stated",
-              "row_ref": "mtauburn_mrf:a9e5ac64beef:3235"
+              "row_ref": "mtauburn_mrf:a9e5ac64beef:3235",
+              "payer_id": null
             }
           },
           "yours": "in_points"
@@ -853,23 +845,12 @@
         "hours_label": "unknown",
         "price_label": "price_file",
         "price_source_id": "brigham_mrf",
-        "price_freshness": {
-          "last_updated": "2026-03-27",
-          "expected_by": "2027-03-27",
-          "late_to_refresh": false,
-          "source_rule": "hospital_mrf_365_days",
-          "fetched_at": "2026-10-24",
-          "our_refresh_due": "2026-11-24",
-          "stale_on_our_side": false,
-          "our_rule": "hospital_monthly"
-        },
-        "any_source_late": true,
-        "any_source_stale_on_our_side": false,
         "service_areas": [
           "ortho",
           "skin",
           "gi"
-        ]
+        ],
+        "listing_status": "web_verified"
       },
       "receipt": {
         "lines": [
@@ -896,27 +877,14 @@
             "cell": {
               "kind": "not_published",
               "what": "a BCBS HMO rate for a primary-care visit at Brigham",
-              "ask": "Ask your primary care office what the referral visit costs with BCBS HMO."
-            },
-            "sources": [
-              {
+              "ask": "Ask your primary care office what the referral visit costs with BCBS HMO.",
+              "searched": {
                 "source_id": "brigham_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Brigham and Women's Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-03-27",
-                  "expected_by": "2027-03-27",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 0
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce"
               }
-            ],
+            },
+            "list_price": null,
+            "tier_basis": "plan_rule",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -943,27 +911,14 @@
             "cell": {
               "kind": "not_published",
               "what": "a BCBS HMO facility rate for a new-patient visit",
-              "ask": "Ask Brigham billing for a Good Faith Estimate of the facility fee."
-            },
-            "sources": [
-              {
+              "ask": "Ask Brigham billing for a Good Faith Estimate of the facility fee.",
+              "searched": {
                 "source_id": "brigham_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Brigham and Women's Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-03-27",
-                  "expected_by": "2027-03-27",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 0
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce"
               }
-            ],
+            },
+            "list_price": null,
+            "tier_basis": "our_judgment",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -993,33 +948,18 @@
               "high": 328.84,
               "basis": "negotiated",
               "prov": {
+                "source_id": "bcbs_ma_tic_hmo",
                 "source_kind": "insurer_tic",
                 "source_file": "bcbsma_hmo_in-network-rates_2026-05-01.json.gz",
                 "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
                 "source_date": "2026-05-01",
                 "method": "stated",
-                "row_ref": "bcbsma_tic:000000000000:99203:group_bwpo"
+                "row_ref": "bcbs_ma_tic_hmo:000000000000:99203:group_bwpo",
+                "payer_id": "BCBS_MA"
               }
             },
-            "sources": [
-              {
-                "source_id": "bcbs_ma_tic_hmo",
-                "source_kind": "insurer_tic",
-                "publisher": "Blue Cross Blue Shield of Massachusetts",
-                "label_key": "source.insurer_tic",
-                "freshness": {
-                  "last_updated": "2026-05-01",
-                  "expected_by": "2026-06-15",
-                  "late_to_refresh": true,
-                  "source_rule": "tic_45_days",
-                  "fetched_at": "2026-10-20",
-                  "our_refresh_due": "2026-11-20",
-                  "stale_on_our_side": false,
-                  "our_rule": "tic_monthly"
-                },
-                "rows": 13
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "our_judgment",
             "doctor_fee": {
               "rung": 2,
               "explanation_key": "fee.rung_2_group",
@@ -1038,12 +978,14 @@
                     "high": 80.0,
                     "basis": "negotiated",
                     "prov": {
+                      "source_id": "bcbs_ma_tic_hmo",
                       "source_kind": "insurer_tic",
                       "source_file": "bcbsma_hmo_in-network-rates_2026-05-01.json.gz",
                       "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
                       "source_date": "2026-05-01",
                       "method": "stated",
-                      "row_ref": "bcbsma_tic:000000000000:99203:block_a"
+                      "row_ref": "bcbs_ma_tic_hmo:000000000000:99203:block_a",
+                      "payer_id": "BCBS_MA"
                     }
                   }
                 },
@@ -1056,12 +998,14 @@
                     "high": 328.84,
                     "basis": "negotiated",
                     "prov": {
+                      "source_id": "bcbs_ma_tic_hmo",
                       "source_kind": "insurer_tic",
                       "source_file": "bcbsma_hmo_in-network-rates_2026-05-01.json.gz",
                       "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
                       "source_date": "2026-05-01",
                       "method": "stated",
-                      "row_ref": "bcbsma_tic:000000000000:99203:block_b"
+                      "row_ref": "bcbs_ma_tic_hmo:000000000000:99203:block_b",
+                      "payer_id": "BCBS_MA"
                     }
                   }
                 }
@@ -1094,27 +1038,14 @@
             "cell": {
               "kind": "not_published",
               "what": "a BCBS HMO rate for a shoulder X-ray at Brigham",
-              "ask": "Ask Brigham billing for a Good Faith Estimate."
-            },
-            "sources": [
-              {
+              "ask": "Ask Brigham billing for a Good Faith Estimate.",
+              "searched": {
                 "source_id": "brigham_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Brigham and Women's Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-03-27",
-                  "expected_by": "2027-03-27",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 0
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce"
               }
-            ],
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -1138,9 +1069,9 @@
             "codes": [
               "20610"
             ],
-            "modifier": null,
-            "plain_name": "Shot of anti-inflammatory and numbing medicine",
-            "technical_name": "Corticosteroid shoulder injection",
+            "modifier": "50",
+            "plain_name": "Shot of anti-inflammatory and numbing medicine, both shoulders",
+            "technical_name": "Corticosteroid shoulder injection, bilateral (modifier 50)",
             "why": "It can calm the pain for a while so you can do your exercises.",
             "glossary_keys": [
               "steroid_injection",
@@ -1156,33 +1087,18 @@
               "high": 424.52,
               "basis": "negotiated",
               "prov": {
+                "source_id": "brigham_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
                 "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
                 "source_date": "2026-03-27",
                 "method": "stated",
-                "row_ref": "brigham_mrf:188337340e25:4049"
+                "row_ref": "brigham_mrf:188337340e25:4049",
+                "payer_id": "BCBS_MA"
               }
             },
-            "sources": [
-              {
-                "source_id": "brigham_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Brigham and Women's Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-03-27",
-                  "expected_by": "2027-03-27",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -1202,6 +1118,7 @@
             "includes_stale_source": false
           },
           "complete": false,
+          "missing": 4,
           "excluded": [
             {
               "line_id": "referral_visit",
@@ -1221,8 +1138,8 @@
             }
           ],
           "you_pay": {
-            "kind": "deductible_then_coinsurance",
-            "note_key": "youpay.deductible_then_coinsurance",
+            "kind": "copay_or_deductible",
+            "note_key": "youpay.copay_or_deductible",
             "portal_label": "Check my deductible at MyBlue",
             "portal_url": "https://www.bluecrossma.org/myblue"
           }
@@ -1251,21 +1168,10 @@
         "hours_label": "unknown",
         "price_label": "price_file",
         "price_source_id": "franciscan_mrf",
-        "price_freshness": {
-          "last_updated": "2026-04-01",
-          "expected_by": "2027-04-01",
-          "late_to_refresh": false,
-          "source_rule": "hospital_mrf_365_days",
-          "fetched_at": "2026-10-24",
-          "our_refresh_due": "2026-11-24",
-          "stale_on_our_side": false,
-          "our_rule": "hospital_monthly"
-        },
-        "any_source_late": false,
-        "any_source_stale_on_our_side": false,
         "service_areas": [
           "ortho"
-        ]
+        ],
+        "listing_status": "web_verified"
       },
       "receipt": {
         "lines": [
@@ -1277,7 +1183,7 @@
             "codes": [
               "97161"
             ],
-            "modifier": null,
+            "modifier": "GP",
             "plain_name": "Guided exercise program for the shoulder",
             "technical_name": "Physical therapy evaluation and visits",
             "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
@@ -1289,29 +1195,59 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "percent_only",
-              "pct": 71.0,
-              "of": "gross charges"
-            },
-            "sources": [
-              {
+              "kind": "money",
+              "low": 97.76,
+              "high": 97.76,
+              "basis": "negotiated",
+              "prov": {
                 "source_id": "franciscan_mrf",
                 "source_kind": "hospital_mrf",
-                "publisher": "Franciscan Children's",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
+                "source_file": "f7d22355fb08df5fc1fbf7655b7c632a6dc47b1c79c24d56498be2a9fccc2fcd.csv",
+                "source_sha256": "f7d22355fb08df5fc1fbf7655b7c632a6dc47b1c79c24d56498be2a9fccc2fcd",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "franciscan_mrf:f7d22355fb08:2854",
+                "payer_id": "BCBS_MA"
               }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "physical_therapy_sessions",
+            "tier": "likely",
+            "likelihood": "likely",
+            "step_id": "physical_therapy",
+            "codes": [
+              "97110"
             ],
+            "modifier": null,
+            "plain_name": "Exercise sessions with a physical therapist, per 15 minutes",
+            "technical_name": "Therapeutic exercise (per 15 minutes)",
+            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
+            "glossary_keys": [
+              "pt_evaluation"
+            ],
+            "component": "unknown",
+            "component_confirmed": false,
+            "unit": "per_15_minutes",
+            "availability": "offered",
+            "cell": {
+              "kind": "percent_only",
+              "pct": 71.0,
+              "of": "gross charges",
+              "searched": {
+                "source_id": "franciscan_mrf",
+                "source_sha256": "f7d22355fb08df5fc1fbf7655b7c632a6dc47b1c79c24d56498be2a9fccc2fcd"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -1338,7 +1274,8 @@
             "unit": "once",
             "availability": "not_offered",
             "cell": null,
-            "sources": [],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -1354,33 +1291,16 @@
                   "high": 110.42,
                   "basis": "negotiated",
                   "prov": {
+                    "source_id": "mtauburn_mrf",
                     "source_kind": "hospital_mrf",
                     "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                     "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                     "source_date": "2026-04-01",
                     "method": "stated",
-                    "row_ref": "mtauburn_mrf:a9e5ac64beef:41007"
+                    "row_ref": "mtauburn_mrf:a9e5ac64beef:41007",
+                    "payer_id": "BCBS_MA"
                   }
-                },
-                "sources": [
-                  {
-                    "source_id": "mtauburn_mrf",
-                    "source_kind": "hospital_mrf",
-                    "publisher": "Mount Auburn Hospital",
-                    "label_key": "source.hospital_mrf",
-                    "freshness": {
-                      "last_updated": "2026-04-01",
-                      "expected_by": "2027-04-01",
-                      "late_to_refresh": false,
-                      "source_rule": "hospital_mrf_365_days",
-                      "fetched_at": "2026-10-24",
-                      "our_refresh_due": "2026-11-24",
-                      "stale_on_our_side": false,
-                      "our_rule": "hospital_monthly"
-                    },
-                    "rows": 1
-                  }
-                ]
+                }
               }
             ],
             "learn_more": [
@@ -1415,7 +1335,8 @@
             "unit": "once",
             "availability": "not_offered",
             "cell": null,
-            "sources": [],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -1431,33 +1352,16 @@
                   "high": 659.15,
                   "basis": "negotiated",
                   "prov": {
+                    "source_id": "mtauburn_mrf",
                     "source_kind": "hospital_mrf",
                     "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                     "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                     "source_date": "2026-04-01",
                     "method": "stated",
-                    "row_ref": "mtauburn_mrf:a9e5ac64beef:40087"
+                    "row_ref": "mtauburn_mrf:a9e5ac64beef:40087",
+                    "payer_id": "BCBS_MA"
                   }
-                },
-                "sources": [
-                  {
-                    "source_id": "mtauburn_mrf",
-                    "source_kind": "hospital_mrf",
-                    "publisher": "Mount Auburn Hospital",
-                    "label_key": "source.hospital_mrf",
-                    "freshness": {
-                      "last_updated": "2026-04-01",
-                      "expected_by": "2027-04-01",
-                      "late_to_refresh": false,
-                      "source_rule": "hospital_mrf_365_days",
-                      "fetched_at": "2026-10-24",
-                      "our_refresh_due": "2026-11-24",
-                      "stale_on_our_side": false,
-                      "our_rule": "hospital_monthly"
-                    },
-                    "rows": 1
-                  }
-                ]
+                }
               }
             ],
             "learn_more": [
@@ -1473,13 +1377,19 @@
           }
         ],
         "totals": {
-          "likely": null,
+          "likely": {
+            "low": 97.76,
+            "high": 97.76,
+            "line_ids": [
+              "physical_therapy_eval"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
           "complete": false,
+          "missing": 4,
           "excluded": [
-            {
-              "line_id": "physical_therapy_eval",
-              "reason": "no_dollar_amount"
-            },
             {
               "line_id": "xray_facility",
               "reason": "not_offered_here"
@@ -1487,11 +1397,15 @@
             {
               "line_id": "mri",
               "reason": "not_offered_here"
+            },
+            {
+              "line_id": "physical_therapy_sessions",
+              "reason": "no_dollar_amount"
             }
           ],
           "you_pay": {
-            "kind": "deductible_then_coinsurance",
-            "note_key": "youpay.deductible_then_coinsurance",
+            "kind": "copay_or_deductible",
+            "note_key": "youpay.copay_or_deductible",
             "portal_label": "Check my deductible at MyBlue",
             "portal_url": "https://www.bluecrossma.org/myblue"
           }
@@ -1503,7 +1417,6 @@
   "sites_without_service": [],
   "notices": [
     "care_path_draft",
-    "tic_not_loaded",
     "late_to_refresh_sources"
   ]
 }

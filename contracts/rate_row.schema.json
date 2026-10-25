@@ -85,9 +85,7 @@
         "medicare_asc",
         "masshealth_fs",
         "clinic_posted",
-        "chia_rp",
-        "estimate",
-        "ai_potential"
+        "chia_rp"
       ],
       "title": "SourceKind",
       "type": "string"
@@ -406,6 +404,261 @@
       "minimum": 0,
       "title": "Stage Row",
       "type": "integer"
+    },
+    "tic_billing_code_type_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Billing Code Type Version"
+    },
+    "tic_business_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Business Name"
+    },
+    "tic_expiration_date": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Expiration Date"
+    },
+    "tic_fetched_at": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Fetched At"
+    },
+    "tic_group_ordinal": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Group Ordinal"
+    },
+    "tic_item_name": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Item Name"
+    },
+    "tic_item_ordinal": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Item Ordinal"
+    },
+    "tic_match": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "how the group matched a target",
+      "title": "Tic Match"
+    },
+    "tic_negotiated_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Negotiated Type"
+    },
+    "tic_negotiation_arrangement": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Negotiation Arrangement"
+    },
+    "tic_network_label": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Network Label"
+    },
+    "tic_npi_count": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Npi Count"
+    },
+    "tic_price_ordinal": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Price Ordinal"
+    },
+    "tic_product": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Product"
+    },
+    "tic_provider_group_id": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Provider Group Id"
+    },
+    "tic_rate_group_ordinal": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Rate Group Ordinal"
+    },
+    "tic_reporting_entity": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Reporting Entity"
+    },
+    "tic_service_codes": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Service Codes"
+    },
+    "tic_site_ids": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "';'-joined sites.yaml ids",
+      "title": "Tic Site Ids"
+    },
+    "tic_tin_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "TiC tin.type: ein | npi",
+      "title": "Tic Tin Type"
+    },
+    "tic_tin_value": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Tic Tin Value"
     }
   },
   "required": [

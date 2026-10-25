@@ -30,8 +30,7 @@
         "stated",
         "derived_pct_x_gross",
         "computed_fee_schedule",
-        "estimate_medicare_multiple",
-        "ai_drafted"
+        "estimate_medicare_multiple"
       ],
       "title": "Method",
       "type": "string"
@@ -144,6 +143,9 @@
           "title": "Kind",
           "type": "string"
         },
+        "searched": {
+          "$ref": "#/$defs/Searched"
+        },
         "what": {
           "title": "What",
           "type": "string"
@@ -151,7 +153,8 @@
       },
       "required": [
         "what",
-        "ask"
+        "ask",
+        "searched"
       ],
       "title": "NotPublished",
       "type": "object"
@@ -174,11 +177,15 @@
           "minimum": 0,
           "title": "Pct",
           "type": "number"
+        },
+        "searched": {
+          "$ref": "#/$defs/Searched"
         }
       },
       "required": [
         "pct",
-        "of"
+        "of",
+        "searched"
       ],
       "title": "PercentOnly",
       "type": "object"
@@ -205,6 +212,20 @@
         "method": {
           "$ref": "#/$defs/Method"
         },
+        "payer_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z][A-Z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whose rate this is (payer_aliases.yaml id) for payer-specific rows (hospital MRF payer rows, TiC); None for fee schedules, cash and chargemaster prices. Lets the quote check that a BCBS receipt only sums BCBS rates.",
+          "title": "Payer Id"
+        },
         "row_ref": {
           "description": "<source_id>:<sha256[:12]>:<staged row ordinal>",
           "title": "Row Ref",
@@ -228,6 +249,12 @@
           "title": "Source File",
           "type": "string"
         },
+        "source_id": {
+          "description": "Sources registry id. The UI's source chip is derived from this (never stored separately), so a number cannot sit next to another file's chip.",
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Source Id",
+          "type": "string"
+        },
         "source_kind": {
           "$ref": "#/$defs/SourceKind"
         },
@@ -237,6 +264,7 @@
         }
       },
       "required": [
+        "source_id",
         "source_kind",
         "source_file",
         "source_sha256",
@@ -245,6 +273,27 @@
         "row_ref"
       ],
       "title": "Provenance",
+      "type": "object"
+    },
+    "Searched": {
+      "additionalProperties": false,
+      "description": "Which file we looked in. Lets a test re-run the lookup, so \"the hospital did not publish\nit\" cannot hide our own lookup bug (a missed alias, a wrong code).",
+      "properties": {
+        "source_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Source Id",
+          "type": "string"
+        },
+        "source_sha256": {
+          "title": "Source Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_id",
+        "source_sha256"
+      ],
+      "title": "Searched",
       "type": "object"
     },
     "SourceKind": {
@@ -256,9 +305,7 @@
         "medicare_asc",
         "masshealth_fs",
         "clinic_posted",
-        "chia_rp",
-        "estimate",
-        "ai_potential"
+        "chia_rp"
       ],
       "title": "SourceKind",
       "type": "string"

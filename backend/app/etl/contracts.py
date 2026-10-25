@@ -21,7 +21,15 @@ from enum import Enum
 from pathlib import Path
 from typing import Annotated, Any, Literal, Union
 
-from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    TypeAdapter,
+    ValidationInfo,
+    field_validator,
+    model_validator,
+)
 
 
 class StrEnum(str, Enum):
@@ -40,8 +48,12 @@ class SourceKind(StrEnum):
     masshealth_fs = "masshealth_fs"
     clinic_posted = "clinic_posted"
     chia_rp = "chia_rp"
-    estimate = "estimate"
-    ai_potential = "ai_potential"
+
+
+# AI never produces dollars: there is no AI source kind and no AI method, so no Money can say
+# "an AI wrote this number" (the old ai_potential / ai_drafted members are gone on purpose).
+# A rung-6 estimate is not a source either: it is Medicare PFS data (source_kind medicare_pfs)
+# with method estimate_medicare_multiple and basis estimate.
 
 
 class Method(StrEnum):
@@ -51,7 +63,6 @@ class Method(StrEnum):
     derived_pct_x_gross = "derived_pct_x_gross"  # negotiated % x the same line's gross charge
     computed_fee_schedule = "computed_fee_schedule"  # e.g. RVU x GPCI x CF (Medicare PFS)
     estimate_medicare_multiple = "estimate_medicare_multiple"  # ladder step 6
-    ai_drafted = "ai_drafted"  # offline AI draft reviewed by Austin (never in totals)
 
 
 class PriceBasis(StrEnum):
@@ -128,6 +139,22 @@ class LineOfBusiness(StrEnum):
 
 _BASENAME_RE = re.compile(r"^[^/\\]+$")
 _SHA_RE = re.compile(r"^[0-9a-f]{64}$")
+SOURCE_ID_RE = r"^[a-z0-9][a-z0-9_]*$"  # data/etl sources registry id
+PLACEHOLDER_SHA = "0" * 64
+
+
+def placeholders_allowed(info: ValidationInfo) -> bool:
+    """Fixtures may carry placeholder values (all-zero sha, NPI 0000000001). Only when the caller
+    validates with ``context={"allow_placeholders": True}``; real data never does."""
+    return bool(info.context and info.context.get("allow_placeholders"))
+
+
+def _check_sha(v: str, info: ValidationInfo) -> str:
+    if not _SHA_RE.match(v):
+        raise ValueError("source_sha256 must be 64 lowercase hex chars")
+    if v == PLACEHOLDER_SHA and not placeholders_allowed(info):
+        raise ValueError("all-zero sha256 is a placeholder, never real data")
+    return v
 
 
 def _check_basename(v: str) -> str:
@@ -139,12 +166,24 @@ def _check_basename(v: str) -> str:
 class Provenance(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
+    source_id: str = Field(
+        pattern=SOURCE_ID_RE,
+        description="Sources registry id. The UI's source chip is derived from this (never stored "
+        "separately), so a number cannot sit next to another file's chip.",
+    )
     source_kind: SourceKind
     source_file: str = Field(description="Basename only; never an absolute or relative path.")
     source_sha256: str
     source_date: date | None = Field(description="The file's own last_updated_on (ISO).")
     method: Method
     row_ref: str = Field(description="<source_id>:<sha256[:12]>:<staged row ordinal>")
+    payer_id: str | None = Field(
+        default=None,
+        pattern=r"^[A-Z][A-Z0-9_]*$",
+        description="Whose rate this is (payer_aliases.yaml id) for payer-specific rows (hospital "
+        "MRF payer rows, TiC); None for fee schedules, cash and chargemaster prices. Lets the quote "
+        "check that a BCBS receipt only sums BCBS rates.",
+    )
 
     @field_validator("source_file")
     @classmethod
@@ -153,10 +192,15 @@ class Provenance(BaseModel):
 
     @field_validator("source_sha256")
     @classmethod
-    def _v_sha(cls, v: str) -> str:
-        if not _SHA_RE.match(v):
-            raise ValueError("source_sha256 must be 64 lowercase hex chars")
-        return v
+    def _v_sha(cls, v: str, info: ValidationInfo) -> str:
+        return _check_sha(v, info)
+
+    @model_validator(mode="after")
+    def _row_ref_names_its_file(self) -> Provenance:
+        prefix = f"{self.source_id}:{self.source_sha256[:12]}:"
+        if not self.row_ref.startswith(prefix) or len(self.row_ref) == len(prefix):
+            raise ValueError(f"row_ref {self.row_ref!r} must start with {prefix!r}")
+        return self
 
 
 class Money(BaseModel):
@@ -191,12 +235,28 @@ class _GapBase(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
 
+class Searched(BaseModel):
+    """Which file we looked in. Lets a test re-run the lookup, so "the hospital did not publish
+    it" cannot hide our own lookup bug (a missed alias, a wrong code)."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    source_id: str = Field(pattern=SOURCE_ID_RE)
+    source_sha256: str
+
+    @field_validator("source_sha256")
+    @classmethod
+    def _v_sha(cls, v: str, info: ValidationInfo) -> str:
+        return _check_sha(v, info)
+
+
 class NotPublished(_GapBase):
     """The source type exists but this provider did not list this item (in dollars)."""
 
     kind: Literal["not_published"] = "not_published"
     what: str
     ask: str
+    searched: Searched
 
 
 class NotLoaded(_GapBase):
@@ -221,6 +281,7 @@ class PercentOnly(_GapBase):
     kind: Literal["percent_only"] = "percent_only"
     pct: float = Field(ge=0)
     of: str
+    searched: Searched
 
 
 class Conflict(_GapBase):
@@ -326,10 +387,46 @@ class RateRow(BaseModel):
     stage_row: int = Field(ge=0)
     row_ref: str
 
+    # D30: insurer TiC columns. Required (non-None) on insurer_tic rows, absent on hospital rows.
+    # NPIs stay in the TiC groups.parquet (a UHC group can list 2,000+), joined on
+    # (source_sha256, tic_provider_group_id, tic_group_ordinal).
+    tic_tin_type: str | None = Field(default=None, description="TiC tin.type: ein | npi")
+    tic_tin_value: str | None = None
+    tic_business_name: str | None = None
+    tic_provider_group_id: int | None = None
+    tic_group_ordinal: int | None = None
+    tic_npi_count: int | None = None
+    tic_match: str | None = Field(default=None, description="how the group matched a target")
+    tic_site_ids: str | None = Field(default=None, description="';'-joined sites.yaml ids")
+    tic_negotiated_type: str | None = None
+    tic_negotiation_arrangement: str | None = None
+    tic_expiration_date: str | None = None
+    tic_service_codes: str | None = None
+    tic_billing_code_type_version: str | None = None
+    tic_item_name: str | None = None
+    tic_network_label: str | None = None
+    tic_product: str | None = None
+    tic_reporting_entity: str | None = None
+    tic_fetched_at: str | None = None
+    tic_item_ordinal: int | None = None
+    tic_rate_group_ordinal: int | None = None
+    tic_price_ordinal: int | None = None
+
     @field_validator("source_file")
     @classmethod
     def _v_file(cls, v: str) -> str:
         return _check_basename(v)
+
+    @model_validator(mode="after")
+    def _tic_fields(self) -> RateRow:
+        present = {n for n in TIC_FIELD_NAMES if getattr(self, n) is not None}
+        if self.source_kind == SourceKind.insurer_tic:
+            missing = set(TIC_REQUIRED) - present
+            if missing:
+                raise ValueError(f"{self.row_ref}: insurer_tic row needs {sorted(missing)}")
+        elif present:
+            raise ValueError(f"{self.row_ref}: tic_* fields are only for insurer_tic rows")
+        return self
 
     def provenance(self) -> Provenance:
         method = (
@@ -338,16 +435,19 @@ class RateRow(BaseModel):
             else Method.stated
         )
         return Provenance(
+            source_id=self.source_id,
             source_kind=self.source_kind,
             source_file=self.source_file,
             source_sha256=self.source_sha256,
             source_date=self.source_date,
             method=method,
             row_ref=self.row_ref,
+            payer_id=self.payer_id if self.row_kind == "payer_rate" else None,
         )
 
     def to_cell(self) -> Money | NotPublished | PercentOnly:
         """Every rate row renders as Money or a typed Gap, never as None."""
+        searched = Searched(source_id=self.source_id, source_sha256=self.source_sha256)
         if self.row_kind == "chargemaster":
             if self.discounted_cash is not None:
                 return Money.point(
@@ -358,15 +458,21 @@ class RateRow(BaseModel):
             return NotPublished(
                 what="a self-pay price for this line",
                 ask="Ask the hospital for its discounted cash price or a Good Faith Estimate.",
+                searched=searched,
             )
         if self.amount is not None:
             return Money.point(self.amount, basis=PriceBasis.negotiated, prov=self.provenance())
         if self.negotiated_pct is not None:
-            return PercentOnly(pct=self.negotiated_pct, of="gross charges")
+            return PercentOnly(pct=self.negotiated_pct, of="gross charges", searched=searched)
         return NotPublished(
             what="a dollar amount (the contract is a formula)",
             ask="Ask the hospital billing office for a Good Faith Estimate.",
+            searched=searched,
         )
+
+
+TIC_FIELD_NAMES: tuple[str, ...] = tuple(n for n in RateRow.model_fields if n.startswith("tic_"))
+TIC_REQUIRED = ("tic_tin_type", "tic_tin_value", "tic_provider_group_id", "tic_negotiated_type")
 
 
 SCHEMA_MODELS: dict[str, Any] = {

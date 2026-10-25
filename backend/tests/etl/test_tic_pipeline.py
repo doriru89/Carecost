@@ -17,6 +17,7 @@ from pathlib import Path
 import pyarrow.parquet as pq
 import pytest
 import yaml
+from pydantic import ValidationError
 
 from app.etl.config import Paths
 from app.etl.contracts import RateRow
@@ -116,7 +117,9 @@ def test_provider_references_resolve_to_tins(runs):
     assert afc and {r["amount"] for r in afc} == {135.61}
     assert all(r["tic_tin_type"] == "ein" and r["tic_tin_value"] == "27-2343207" for r in afc)
     for r in rows:
-        RateRow(**{k: r[k] for k in CORE})
+        RateRow(**r)  # D30: the tic_* columns are contract fields
+    with pytest.raises(ValidationError, match="insurer_tic row needs"):
+        RateRow(**{k: r[k] for k in CORE})  # a TiC row without its TiC fields is rejected
 
 
 def test_inline_provider_groups_and_pretty_json(tmp_path):

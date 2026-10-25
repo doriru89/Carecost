@@ -45,7 +45,7 @@ payer_rules:
   - {payer_id: MGB_HP, payer: '^(MGB|MGBHP|MASS GEN(ERAL)? BRIGHAM)\b|ALLWAYS|^NEIGHBORHOOD HEALTH PLAN$'}
   - {payer_id: TUFTS_HP, payer: '^(OTHER )?(TUFTS|THP)\b'}
   - {payer_id: HARVARD_PILGRIM, payer: '^(HARVARD PILGRIM|HPHC)\b'}
-  - {payer_id: UHC, payer: '^(ZZZ)?(UNITED|UHC|UBH|UMR|OXFORD)\b|^AARP\b'}
+  - {payer_id: UHC, payer: '^(ZZZ)?(UNITED ?HEALTH ?CARE|UNITED|UHC|UBH|UMR|OXFORD)\b|^AARP\b'}
   - {payer_id: BCBS_MA, payer: '^(BCBS|BLUE CROSS|BLUE BENEFITS)\b'}
   - {payer_id: AETNA, payer: '^(ZZZ)?AETNA'}
   - {payer_id: CIGNA, payer: '^(ZZZ)?CIGNA'}

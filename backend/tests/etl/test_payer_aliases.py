@@ -142,3 +142,16 @@ def test_payer_plan_mismatch_is_flagged_not_overridden(r):
 def test_unknown_payer_is_none_not_a_guess(r):
     res = r.resolve("ALLARACARE [100163]", "HB XR ALLARACARE TMC")
     assert res.payer_id is None and not res.excluded
+
+
+@pytest.mark.parametrize(
+    "payer",
+    [
+        # TiC reporting_entity_name values (docs/etl/payer_alias_proposals.csv, approved D30)
+        "UnitedHealthcare of New England, Inc.",
+        "UnitedHealthcare Insurance Company",
+    ],
+)
+def test_one_word_unitedhealthcare_resolves_to_uhc(r, payer):
+    """D30: `\\bUNITED\\b` alone missed UNITEDHEALTHCARE (no word break after UNITED)."""
+    assert r.resolve(payer, "").payer_id == "UHC"

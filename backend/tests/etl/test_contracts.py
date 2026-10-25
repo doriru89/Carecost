@@ -16,6 +16,7 @@ REPO = Path(__file__).resolve().parents[3]
 
 def _prov(**kw):
     base = dict(
+        source_id="brigham_mrf",
         source_kind="hospital_mrf",
         source_file="042312909_Brigham-and-Womens-Hospital_StandardCharges.zip",
         source_sha256="a" * 64,
@@ -37,9 +38,36 @@ def test_source_kind_enum_is_exactly_the_plan_list():
         "masshealth_fs",
         "clinic_posted",
         "chia_rp",
-        "estimate",
-        "ai_potential",
     ]
+    # AI never produces dollars: no AI source kind and no AI method exist (P5 / review F1)
+    assert "ai_drafted" not in {m.value for m in c.Method}
+
+
+def test_provenance_row_ref_must_name_its_own_file():
+    """The chip is derived from prov.source_id, so the row_ref must cite that same file."""
+    _prov()
+    with pytest.raises(ValidationError, match="must start with"):
+        _prov(row_ref="mtauburn_mrf:aaaaaaaaaaaa:17")  # another hospital's row
+    with pytest.raises(ValidationError, match="must start with"):
+        _prov(row_ref="brigham_mrf:bbbbbbbbbbbb:17")  # another version of the file
+
+
+def test_placeholder_sha_needs_the_fixture_context():
+    zero = "0" * 64
+    with pytest.raises(ValidationError, match="placeholder"):
+        _prov(source_sha256=zero, row_ref="brigham_mrf:000000000000:1")
+    c.Provenance.model_validate(
+        dict(
+            source_id="brigham_mrf",
+            source_kind="hospital_mrf",
+            source_file="x.zip",
+            source_sha256=zero,
+            source_date=None,
+            method="stated",
+            row_ref="brigham_mrf:000000000000:1",
+        ),
+        context={"allow_placeholders": True},
+    )
 
 
 @pytest.mark.parametrize(
@@ -82,10 +110,16 @@ def test_gap_union_is_closed_and_discriminated():
         "percent_only",
         "conflict",
     }
-    g = ta.validate_python({"kind": "percent_only", "pct": 69.8, "of": "gross charges"})
+    searched = {"source_id": "franciscan_mrf", "source_sha256": "f" * 64}
+    g = ta.validate_python(
+        {"kind": "percent_only", "pct": 69.8, "of": "gross charges", "searched": searched}
+    )
     assert isinstance(g, c.PercentOnly)
     with pytest.raises(ValidationError):
         ta.validate_python({"kind": "made_up", "what": "x"})
+    # a "not published" claim must say which file was searched
+    with pytest.raises(ValidationError, match="searched"):
+        ta.validate_python({"kind": "not_published", "what": "x", "ask": "y"})
 
 
 def test_every_gap_kind_has_fixed_glossary_copy():
@@ -111,7 +145,9 @@ def test_exported_schemas_match_committed_contracts():
     # Every committed schema has exactly one generator: the ETL contracts, the care-path exporter
     # or the wave-2 API contracts (app.api_contracts).
     other_generators = {CARE_PATH_CONTRACT.name, *API_CONTRACTS}
-    assert set(generated) | other_generators == {p.name for p in committed_dir.glob("*.schema.json")}
+    assert set(generated) | other_generators == {
+        p.name for p in committed_dir.glob("*.schema.json")
+    }
     for name, schema in generated.items():
         committed = json.loads((committed_dir / name).read_text())
         assert committed == schema, f"{name} is stale: run python -m app.etl.contracts"

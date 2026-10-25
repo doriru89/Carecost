@@ -17,6 +17,7 @@
     ]
   },
   "service_codes": [],
+  "picked_by": "person",
   "site_ids": [
     "brigham_and_womens_hospital"
   ]

@@ -11,29 +11,44 @@
     "review_status": "pending_austin"
   },
   "service_codes": [],
+  "picked_by": "person",
+  "as_of": "2026-10-24",
   "data_version": {
     "build_id": "20261024-1cb8089d",
     "build_date": "2026-10-24",
-    "tic_release": null,
+    "tic_release": "tic-2026-10",
     "sites_version": 1,
-    "care_paths_version": "1.0.0",
-    "sources_behind": [
-      {
-        "source_id": "afc_watertown_self_pay",
-        "source_kind": "clinic_posted",
-        "publisher": "AFC Urgent Care Watertown",
-        "freshness": {
-          "last_updated": null,
-          "expected_by": null,
-          "late_to_refresh": false,
-          "source_rule": "posted_page_date_365_days",
-          "fetched_at": "2026-10-10",
-          "our_refresh_due": "2026-10-17",
-          "stale_on_our_side": true,
-          "our_rule": "sites_weekly"
-        }
+    "care_paths_version": "1.0.0"
+  },
+  "sources": {
+    "afc_watertown_self_pay": {
+      "source_kind": "clinic_posted",
+      "publisher": "AFC Urgent Care Watertown",
+      "freshness": {
+        "last_updated": null,
+        "expected_by": null,
+        "late_to_refresh": false,
+        "source_rule": "posted_page_date_365_days",
+        "fetched_at": "2026-10-10",
+        "our_refresh_due": "2026-10-17",
+        "stale_on_our_side": true,
+        "our_rule": "sites_weekly"
       }
-    ]
+    },
+    "mtauburn_mrf": {
+      "source_kind": "hospital_mrf",
+      "publisher": "Mount Auburn Hospital",
+      "freshness": {
+        "last_updated": "2026-04-01",
+        "expected_by": "2027-04-01",
+        "late_to_refresh": false,
+        "source_rule": "hospital_mrf_365_days",
+        "fetched_at": "2026-10-24",
+        "our_refresh_due": "2026-11-24",
+        "stale_on_our_side": false,
+        "our_rule": "hospital_monthly"
+      }
+    }
   },
   "sites": [
     {
@@ -98,22 +113,11 @@
         "hours_label": "posted_hours",
         "price_label": "posted_price",
         "price_source_id": "afc_watertown_self_pay",
-        "price_freshness": {
-          "last_updated": null,
-          "expected_by": null,
-          "late_to_refresh": false,
-          "source_rule": "posted_page_date_365_days",
-          "fetched_at": "2026-10-10",
-          "our_refresh_due": "2026-10-17",
-          "stale_on_our_side": true,
-          "our_rule": "sites_weekly"
-        },
-        "any_source_late": false,
-        "any_source_stale_on_our_side": true,
         "service_areas": [
           "urgent_care",
           "ortho"
-        ]
+        ],
+        "listing_status": "web_verified"
       },
       "receipt": {
         "lines": [
@@ -140,33 +144,18 @@
               "high": 179.0,
               "basis": "posted_self_pay",
               "prov": {
+                "source_id": "afc_watertown_self_pay",
                 "source_kind": "clinic_posted",
                 "source_file": "afc-watertown-self-pay.html",
                 "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
                 "source_date": "2026-10-24",
                 "method": "stated",
-                "row_ref": "afc_watertown:000000000000:evaluation_consultation"
+                "row_ref": "afc_watertown_self_pay:000000000000:evaluation_consultation",
+                "payer_id": null
               }
             },
-            "sources": [
-              {
-                "source_id": "afc_watertown_self_pay",
-                "source_kind": "clinic_posted",
-                "publisher": "AFC Urgent Care Watertown",
-                "label_key": "source.clinic_posted",
-                "freshness": {
-                  "last_updated": null,
-                  "expected_by": null,
-                  "late_to_refresh": false,
-                  "source_rule": "posted_page_date_365_days",
-                  "fetched_at": "2026-10-10",
-                  "our_refresh_due": "2026-10-17",
-                  "stale_on_our_side": true,
-                  "our_rule": "sites_weekly"
-                },
-                "rows": null
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "our_judgment",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": true,
@@ -198,33 +187,18 @@
               "high": 150.0,
               "basis": "posted_self_pay",
               "prov": {
+                "source_id": "afc_watertown_self_pay",
                 "source_kind": "clinic_posted",
                 "source_file": "afc-watertown-self-pay.html",
                 "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
                 "source_date": "2026-10-24",
                 "method": "stated",
-                "row_ref": "afc_watertown:000000000000:xray_2_views"
+                "row_ref": "afc_watertown_self_pay:000000000000:xray_2_views",
+                "payer_id": null
               }
             },
-            "sources": [
-              {
-                "source_id": "afc_watertown_self_pay",
-                "source_kind": "clinic_posted",
-                "publisher": "AFC Urgent Care Watertown",
-                "label_key": "source.clinic_posted",
-                "freshness": {
-                  "last_updated": null,
-                  "expected_by": null,
-                  "late_to_refresh": false,
-                  "source_rule": "posted_page_date_365_days",
-                  "fetched_at": "2026-10-10",
-                  "our_refresh_due": "2026-10-17",
-                  "stale_on_our_side": true,
-                  "our_rule": "sites_weekly"
-                },
-                "rows": null
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": true,
@@ -260,7 +234,8 @@
             "unit": "once",
             "availability": "not_offered",
             "cell": null,
-            "sources": [],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -276,33 +251,16 @@
                   "high": 365.0,
                   "basis": "discounted_cash",
                   "prov": {
+                    "source_id": "mtauburn_mrf",
                     "source_kind": "hospital_mrf",
                     "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                     "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                     "source_date": "2026-04-01",
                     "method": "stated",
-                    "row_ref": "mtauburn_mrf:a9e5ac64beef:3772"
+                    "row_ref": "mtauburn_mrf:a9e5ac64beef:3772",
+                    "payer_id": null
                   }
-                },
-                "sources": [
-                  {
-                    "source_id": "mtauburn_mrf",
-                    "source_kind": "hospital_mrf",
-                    "publisher": "Mount Auburn Hospital",
-                    "label_key": "source.hospital_mrf",
-                    "freshness": {
-                      "last_updated": "2026-04-01",
-                      "expected_by": "2027-04-01",
-                      "late_to_refresh": false,
-                      "source_rule": "hospital_mrf_365_days",
-                      "fetched_at": "2026-10-24",
-                      "our_refresh_due": "2026-11-24",
-                      "stale_on_our_side": false,
-                      "our_rule": "hospital_monthly"
-                    },
-                    "rows": 1
-                  }
-                ]
+                }
               }
             ],
             "learn_more": []
@@ -330,27 +288,14 @@
             "cell": {
               "kind": "not_published",
               "what": "a posted self-pay price for a joint injection",
-              "ask": "Call and ask whether they give shoulder injections and what it costs."
-            },
-            "sources": [
-              {
+              "ask": "Call and ask whether they give shoulder injections and what it costs.",
+              "searched": {
                 "source_id": "afc_watertown_self_pay",
-                "source_kind": "clinic_posted",
-                "publisher": "AFC Urgent Care Watertown",
-                "label_key": "source.clinic_posted",
-                "freshness": {
-                  "last_updated": null,
-                  "expected_by": null,
-                  "late_to_refresh": false,
-                  "source_rule": "posted_page_date_365_days",
-                  "fetched_at": "2026-10-10",
-                  "our_refresh_due": "2026-10-17",
-                  "stale_on_our_side": true,
-                  "our_rule": "sites_weekly"
-                },
-                "rows": null
+                "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
               }
-            ],
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -378,7 +323,8 @@
             "unit": "once",
             "availability": "not_offered",
             "cell": null,
-            "sources": [],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -394,33 +340,16 @@
                   "high": 2741.0,
                   "basis": "discounted_cash",
                   "prov": {
+                    "source_id": "mtauburn_mrf",
                     "source_kind": "hospital_mrf",
                     "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                     "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                     "source_date": "2026-04-01",
                     "method": "stated",
-                    "row_ref": "mtauburn_mrf:a9e5ac64beef:4603"
+                    "row_ref": "mtauburn_mrf:a9e5ac64beef:4603",
+                    "payer_id": null
                   }
-                },
-                "sources": [
-                  {
-                    "source_id": "mtauburn_mrf",
-                    "source_kind": "hospital_mrf",
-                    "publisher": "Mount Auburn Hospital",
-                    "label_key": "source.hospital_mrf",
-                    "freshness": {
-                      "last_updated": "2026-04-01",
-                      "expected_by": "2027-04-01",
-                      "late_to_refresh": false,
-                      "source_rule": "hospital_mrf_365_days",
-                      "fetched_at": "2026-10-24",
-                      "our_refresh_due": "2026-11-24",
-                      "stale_on_our_side": false,
-                      "our_rule": "hospital_monthly"
-                    },
-                    "rows": 1
-                  }
-                ]
+                }
               }
             ],
             "learn_more": [
@@ -448,6 +377,7 @@
             "includes_stale_source": true
           },
           "complete": true,
+          "missing": 1,
           "excluded": [
             {
               "line_id": "physical_therapy_eval",
@@ -500,23 +430,12 @@
         "hours_label": "unknown",
         "price_label": "price_file",
         "price_source_id": "mtauburn_mrf",
-        "price_freshness": {
-          "last_updated": "2026-04-01",
-          "expected_by": "2027-04-01",
-          "late_to_refresh": false,
-          "source_rule": "hospital_mrf_365_days",
-          "fetched_at": "2026-10-24",
-          "our_refresh_due": "2026-11-24",
-          "stale_on_our_side": false,
-          "our_rule": "hospital_monthly"
-        },
-        "any_source_late": false,
-        "any_source_stale_on_our_side": false,
         "service_areas": [
           "ortho",
           "skin",
           "gi"
-        ]
+        ],
+        "listing_status": "web_verified"
       },
       "receipt": {
         "lines": [
@@ -543,33 +462,33 @@
               "high": 203.0,
               "basis": "discounted_cash",
               "prov": {
+                "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                 "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "mtauburn_mrf:a9e5ac64beef:4409"
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4409",
+                "payer_id": null
               }
             },
-            "sources": [
-              {
+            "list_price": {
+              "kind": "money",
+              "low": 203.0,
+              "high": 203.0,
+              "basis": "gross",
+              "prov": {
                 "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
-                "publisher": "Mount Auburn Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4409",
+                "payer_id": null
               }
-            ],
+            },
+            "tier_basis": "our_judgment",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": true,
@@ -598,7 +517,8 @@
               "what": "a self-pay price for the doctor's own fee",
               "ask": "Ask for a Good Faith Estimate (federal No Surprises Act). Massachusetts law (c.111 §228) says they must tell you the price within 2 business days."
             },
-            "sources": [],
+            "list_price": null,
+            "tier_basis": "our_judgment",
             "doctor_fee": {
               "rung": null,
               "explanation_key": "fee.self_pay_no_source",
@@ -639,33 +559,33 @@
               "high": 527.0,
               "basis": "discounted_cash",
               "prov": {
+                "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                 "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "mtauburn_mrf:a9e5ac64beef:3235"
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3235",
+                "payer_id": null
               }
             },
-            "sources": [
-              {
+            "list_price": {
+              "kind": "money",
+              "low": 527.0,
+              "high": 527.0,
+              "basis": "gross",
+              "prov": {
                 "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
-                "publisher": "Mount Auburn Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3235",
+                "payer_id": null
               }
-            ],
+            },
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": true,
@@ -705,7 +625,8 @@
               "what": "a self-pay price for the radiologist's reading",
               "ask": "Ask for a Good Faith Estimate (federal No Surprises Act). Massachusetts law (c.111 §228) says they must tell you the price within 2 business days."
             },
-            "sources": [],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": {
               "rung": null,
               "explanation_key": "fee.self_pay_no_source",
@@ -755,33 +676,33 @@
               "high": 365.0,
               "basis": "discounted_cash",
               "prov": {
+                "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                 "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "mtauburn_mrf:a9e5ac64beef:3772"
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3772",
+                "payer_id": null
               }
             },
-            "sources": [
-              {
+            "list_price": {
+              "kind": "money",
+              "low": 365.0,
+              "high": 365.0,
+              "basis": "gross",
+              "prov": {
                 "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
-                "publisher": "Mount Auburn Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3772",
+                "payer_id": null
               }
-            ],
+            },
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": true,
@@ -814,33 +735,33 @@
               "high": 2741.0,
               "basis": "discounted_cash",
               "prov": {
+                "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
                 "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "mtauburn_mrf:a9e5ac64beef:4603"
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4603",
+                "payer_id": null
               }
             },
-            "sources": [
-              {
+            "list_price": {
+              "kind": "money",
+              "low": 2741.0,
+              "high": 2741.0,
+              "basis": "gross",
+              "prov": {
                 "source_id": "mtauburn_mrf",
                 "source_kind": "hospital_mrf",
-                "publisher": "Mount Auburn Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-04-01",
-                  "expected_by": "2027-04-01",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4603",
+                "payer_id": null
               }
-            ],
+            },
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -871,6 +792,7 @@
             "includes_stale_source": false
           },
           "complete": false,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit_doctor",

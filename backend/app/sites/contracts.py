@@ -25,7 +25,9 @@ import re
 from datetime import date, timedelta
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator, model_validator
+
+from app.etl.contracts import placeholders_allowed
 
 ID_RE = r"^[a-z0-9][a-z0-9_]*$"
 CODE_RE = r"^([0-9]{4}[0-9A-Z]|[A-Z][0-9]{4})$"  # CPT / HCPCS (same rule as care_paths.CptRef)
@@ -156,6 +158,19 @@ class Freshness(_Strict):
             our_rule=our_rule,
         )
 
+    def at(self, as_of: date) -> Freshness:
+        """The same inputs evaluated on ``as_of``. Served freshness is computed per request, never
+        frozen at build time: an image nobody rebuilt must still turn "stale on our side"."""
+        return Freshness.compute(
+            as_of=as_of,
+            source_rule=self.source_rule,
+            last_updated=self.last_updated,
+            our_rule=self.our_rule,
+            fetched_at=self.fetched_at,
+            expected_by=self.expected_by,
+            our_refresh_due=self.our_refresh_due,
+        )
+
 
 # --------------------------------------------------------------------------- site parts
 
@@ -170,9 +185,27 @@ SiteType = Literal[
     "ambulatory_surgery_center",
 ]
 
-BillingType = Literal["office_visit", "hospital_outpatient", "unknown"]
+BillingType = Literal["office_visit", "hospital_outpatient", "asc", "unknown"]
 """office_visit: one professional/global bill. hospital_outpatient: the hospital adds a facility
-fee on top of the doctor's fee (e.g. MGH Chelsea). unknown: not established yet (UI says so)."""
+fee on top of the doctor's fee (e.g. MGH Chelsea). asc: an ambulatory surgery center bills its
+facility fee plus the doctor (and anesthesia) separately (colonoscopy centers). unknown: not
+established yet (UI says so)."""
+
+ListingStatus = Literal["web_verified", "multi_registry", "registry_only"]
+"""How sure we are the site exists and is open. registry_only sites (one registry, no web
+confirmation) wait in the to-verify queue and are never quoted (D27 / census D7)."""
+
+TIN_RE = r"^[0-9]{9}$"  # EIN digits only, the form TiC provider groups join on
+
+
+def check_npi(n: str, *, placeholders_ok: bool = False) -> str:
+    """A CMS NPI is 10 digits starting with 1 or 2. Fixtures may use 000000000x placeholders."""
+    if not (len(n) == 10 and n.isdigit()):
+        raise ValueError(f"bad NPI {n!r}")
+    if n[0] not in "12" and not placeholders_ok:
+        raise ValueError(f"NPI {n!r} does not start with 1 or 2 (placeholder?)")
+    return n
+
 
 ServiceArea = Literal["ortho", "skin", "gi", "urgent_care"]
 
@@ -328,21 +361,45 @@ class Site(_Strict):
     portal_links: list[PortalLink] = Field(default_factory=list)
     service_areas: list[ServiceArea] = Field(min_length=1)
     type_2_npis: list[str] = Field(default_factory=list)
+    tins: list[str] = Field(
+        default_factory=list,
+        description="Billing TINs (9 digits) that price this site in TiC files. Match by TIN, "
+        "never by name: one AFC franchise bills under several TINs.",
+    )
+    tins_source: str | None = Field(
+        default=None, description="Where the TINs came from (NPPES, TiC match, census row)"
+    )
+    listing_status: ListingStatus
+    listing_checked_at: date
     cash_prices: list[PostedCashPrice] = Field(default_factory=list)
     notes: str | None = None
 
     @field_validator("type_2_npis")
     @classmethod
-    def _npi10(cls, v: list[str]) -> list[str]:
+    def _npi10(cls, v: list[str], info: ValidationInfo) -> list[str]:
         for n in v:
-            if not (len(n) == 10 and n.isdigit()):
-                raise ValueError(f"bad NPI {n!r}")
+            check_npi(n, placeholders_ok=placeholders_allowed(info))
+        return v
+
+    @field_validator("tins")
+    @classmethod
+    def _tins(cls, v: list[str]) -> list[str]:
+        for t in v:
+            if not re.match(TIN_RE, t):
+                raise ValueError(f"TIN {t!r} must be 9 digits (no dash)")
+        if len(v) != len(set(v)):
+            raise ValueError("duplicate TIN")
         return v
 
     @model_validator(mode="after")
     def _billing(self) -> Site:
         if self.site_type == "hospital_outpatient" and self.billing_type == "office_visit":
             raise ValueError(f"{self.id}: a hospital outpatient site cannot bill as office_visit")
+        if (self.billing_type == "asc") != (self.site_type == "ambulatory_surgery_center"):
+            if self.billing_type == "asc" or self.billing_type != "unknown":
+                raise ValueError(f"{self.id}: billing_type asc <=> an ambulatory surgery center")
+        if self.tins and not self.tins_source:
+            raise ValueError(f"{self.id}: tins need tins_source")
         ids = [p.item_id for p in self.cash_prices]
         if len(ids) != len(set(ids)):
             raise ValueError(f"{self.id}: duplicate cash price item_id")

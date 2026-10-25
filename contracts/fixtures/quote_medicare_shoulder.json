@@ -11,13 +11,44 @@
     "review_status": "pending_austin"
   },
   "service_codes": [],
+  "picked_by": "person",
+  "as_of": "2026-10-24",
   "data_version": {
     "build_id": "20261024-1cb8089d",
     "build_date": "2026-10-24",
-    "tic_release": null,
+    "tic_release": "tic-2026-10",
     "sites_version": 1,
-    "care_paths_version": "1.0.0",
-    "sources_behind": []
+    "care_paths_version": "1.0.0"
+  },
+  "sources": {
+    "brigham_mrf": {
+      "source_kind": "hospital_mrf",
+      "publisher": "Brigham and Women's Hospital",
+      "freshness": {
+        "last_updated": "2026-03-27",
+        "expected_by": "2027-03-27",
+        "late_to_refresh": false,
+        "source_rule": "hospital_mrf_365_days",
+        "fetched_at": "2026-10-24",
+        "our_refresh_due": "2026-11-24",
+        "stale_on_our_side": false,
+        "our_rule": "hospital_monthly"
+      }
+    },
+    "cms_pfs_rvu26a": {
+      "source_kind": "medicare_pfs",
+      "publisher": "CMS (Medicare, Boston 2026)",
+      "freshness": {
+        "last_updated": "2026-01-01",
+        "expected_by": "2027-01-01",
+        "late_to_refresh": false,
+        "source_rule": "fee_schedule_annual",
+        "fetched_at": "2026-10-24",
+        "our_refresh_due": null,
+        "stale_on_our_side": false,
+        "our_rule": "fee_schedule_per_release"
+      }
+    }
   },
   "sites": [
     {
@@ -48,23 +79,12 @@
         "hours_label": "unknown",
         "price_label": "price_file",
         "price_source_id": "brigham_mrf",
-        "price_freshness": {
-          "last_updated": "2026-03-27",
-          "expected_by": "2027-03-27",
-          "late_to_refresh": false,
-          "source_rule": "hospital_mrf_365_days",
-          "fetched_at": "2026-10-24",
-          "our_refresh_due": "2026-11-24",
-          "stale_on_our_side": false,
-          "our_rule": "hospital_monthly"
-        },
-        "any_source_late": false,
-        "any_source_stale_on_our_side": false,
         "service_areas": [
           "ortho",
           "skin",
           "gi"
-        ]
+        ],
+        "listing_status": "web_verified"
       },
       "receipt": {
         "lines": [
@@ -88,27 +108,14 @@
             "cell": {
               "kind": "not_published",
               "what": "Brigham's Medicare facility rate for a new-patient visit",
-              "ask": "Ask Brigham billing what the hospital facility fee is."
-            },
-            "sources": [
-              {
+              "ask": "Ask Brigham billing what the hospital facility fee is.",
+              "searched": {
                 "source_id": "brigham_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Brigham and Women's Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-03-27",
-                  "expected_by": "2027-03-27",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 0
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce"
               }
-            ],
+            },
+            "list_price": null,
+            "tier_basis": "our_judgment",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -138,33 +145,18 @@
               "high": 75.54,
               "basis": "fee_schedule",
               "prov": {
+                "source_id": "cms_pfs_rvu26a",
                 "source_kind": "medicare_pfs",
                 "source_file": "PPRRVU2026_Jan_nonQPP.csv",
                 "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
                 "source_date": "2026-01-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "medicare_pfs:9a15cb9cc117:99203"
+                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:99203",
+                "payer_id": null
               }
             },
-            "sources": [
-              {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "publisher": "CMS (Medicare, Boston 2026)",
-                "label_key": "source.medicare_pfs",
-                "freshness": {
-                  "last_updated": "2026-01-01",
-                  "expected_by": "2027-01-01",
-                  "late_to_refresh": false,
-                  "source_rule": "fee_schedule_annual",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": null,
-                  "stale_on_our_side": false,
-                  "our_rule": "fee_schedule_per_release"
-                },
-                "rows": null
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "our_judgment",
             "doctor_fee": {
               "rung": 5,
               "explanation_key": "fee.rung_5_medicare",
@@ -202,27 +194,14 @@
             "cell": {
               "kind": "not_published",
               "what": "Brigham's Medicare facility rate for a shoulder X-ray",
-              "ask": "Ask Brigham billing for the outpatient X-ray price."
-            },
-            "sources": [
-              {
+              "ask": "Ask Brigham billing for the outpatient X-ray price.",
+              "searched": {
                 "source_id": "brigham_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Brigham and Women's Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-03-27",
-                  "expected_by": "2027-03-27",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 0
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce"
               }
-            ],
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -263,33 +242,18 @@
               "high": 9.75,
               "basis": "fee_schedule",
               "prov": {
+                "source_id": "cms_pfs_rvu26a",
                 "source_kind": "medicare_pfs",
                 "source_file": "PPRRVU2026_Jan_nonQPP.csv",
                 "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
                 "source_date": "2026-01-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "medicare_pfs:9a15cb9cc117:73030-26"
+                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:73030-26",
+                "payer_id": null
               }
             },
-            "sources": [
-              {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "publisher": "CMS (Medicare, Boston 2026)",
-                "label_key": "source.medicare_pfs",
-                "freshness": {
-                  "last_updated": "2026-01-01",
-                  "expected_by": "2027-01-01",
-                  "late_to_refresh": false,
-                  "source_rule": "fee_schedule_annual",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": null,
-                  "stale_on_our_side": false,
-                  "our_rule": "fee_schedule_per_release"
-                },
-                "rows": null
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": {
               "rung": 5,
               "explanation_key": "fee.rung_5_medicare",
@@ -340,33 +304,18 @@
               "high": 350.52,
               "basis": "negotiated",
               "prov": {
+                "source_id": "brigham_mrf",
                 "source_kind": "hospital_mrf",
                 "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
                 "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
                 "source_date": "2026-03-27",
                 "method": "stated",
-                "row_ref": "brigham_mrf:188337340e25:4007"
+                "row_ref": "brigham_mrf:188337340e25:4007",
+                "payer_id": "MEDICARE"
               }
             },
-            "sources": [
-              {
-                "source_id": "brigham_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Brigham and Women's Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-03-27",
-                  "expected_by": "2027-03-27",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
@@ -401,12 +350,14 @@
                 "high": 350.52,
                 "basis": "negotiated",
                 "prov": {
+                  "source_id": "brigham_mrf",
                   "source_kind": "hospital_mrf",
                   "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
                   "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
                   "source_date": "2026-03-27",
                   "method": "stated",
-                  "row_ref": "brigham_mrf:188337340e25:4026"
+                  "row_ref": "brigham_mrf:188337340e25:4026",
+                  "payer_id": "MEDICARE"
                 }
               },
               "b": {
@@ -415,51 +366,19 @@
                 "high": 42.2,
                 "basis": "fee_schedule",
                 "prov": {
+                  "source_id": "cms_pfs_rvu26a",
                   "source_kind": "medicare_pfs",
                   "source_file": "PPRRVU2026_Jan_nonQPP.csv",
                   "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
                   "source_date": "2026-01-01",
                   "method": "computed_fee_schedule",
-                  "row_ref": "medicare_pfs:9a15cb9cc117:20610"
+                  "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:20610",
+                  "payer_id": null
                 }
               }
             },
-            "sources": [
-              {
-                "source_id": "brigham_mrf",
-                "source_kind": "hospital_mrf",
-                "publisher": "Brigham and Women's Hospital",
-                "label_key": "source.hospital_mrf",
-                "freshness": {
-                  "last_updated": "2026-03-27",
-                  "expected_by": "2027-03-27",
-                  "late_to_refresh": false,
-                  "source_rule": "hospital_mrf_365_days",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": "2026-11-24",
-                  "stale_on_our_side": false,
-                  "our_rule": "hospital_monthly"
-                },
-                "rows": 1
-              },
-              {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "publisher": "CMS (Medicare, Boston 2026)",
-                "label_key": "source.medicare_pfs",
-                "freshness": {
-                  "last_updated": "2026-01-01",
-                  "expected_by": "2027-01-01",
-                  "late_to_refresh": false,
-                  "source_rule": "fee_schedule_annual",
-                  "fetched_at": "2026-10-24",
-                  "our_refresh_due": null,
-                  "stale_on_our_side": false,
-                  "our_rule": "fee_schedule_per_release"
-                },
-                "rows": null
-              }
-            ],
+            "list_price": null,
+            "tier_basis": "guideline",
             "doctor_fee": {
               "rung": 5,
               "explanation_key": "fee.rung_5_medicare",
@@ -489,6 +408,7 @@
             "includes_stale_source": false
           },
           "complete": false,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit_facility",

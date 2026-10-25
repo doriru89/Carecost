@@ -8,9 +8,7 @@
     "medicare_asc",
     "masshealth_fs",
     "clinic_posted",
-    "chia_rp",
-    "estimate",
-    "ai_potential"
+    "chia_rp"
   ],
   "title": "SourceKind",
   "type": "string"

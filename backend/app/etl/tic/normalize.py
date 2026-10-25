@@ -6,13 +6,12 @@ collapsed: identical keys get ``nk_ordinal`` 0, 1, ...; if they disagree on the 
 all flagged ``ambiguous_multi_rate``. Placeholder dollar amounts ($0, $0.01, $1) are dropped and
 counted, as in the hospital pipeline.
 
-Columns: every ``contracts.RateRow`` field (each row is validated against the model) followed by
-TiC fields the contract has no slot for yet (``tic_*``: TIN type/value, business name,
-provider_group_id, NPI count, negotiated_type, negotiation_arrangement, expiration_date,
-service codes, network, fetched_at, ...). ``billing_npis`` is '' for TiC rows: a UHC group can
+Columns: every ``contracts.RateRow`` field, including the insurer-TiC ``tic_*`` fields (TIN
+type/value, business name, provider_group_id, NPI count, negotiated_type,
+negotiation_arrangement, expiration_date, service codes, network, fetched_at, ...; D30). Each
+row is validated against the model. ``billing_npis`` is '' for TiC rows: a UHC group can
 list 2,000+ NPIs, so NPIs stay in ``groups.parquet`` and join on
-(``source_sha256``, ``tic_provider_group_id``, ``tic_group_ordinal``). See the A2 report for the
-proposed contract change.
+(``source_sha256``, ``tic_provider_group_id``, ``tic_group_ordinal``).
 """
 
 from __future__ import annotations
@@ -29,8 +28,8 @@ from typing import Any
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from app.etl.contracts import RateRow
-from app.etl.normalize import RATE_ROW_SCHEMA, is_placeholder
+from app.etl.contracts import TIC_FIELD_NAMES, RateRow
+from app.etl.normalize import RATE_ROW_SCHEMA, _arrow_type, is_placeholder
 from app.etl.tic.index import atomic_write_table, atomic_write_text
 from app.etl.tic.networks import TicNetwork
 from app.etl.tic.targets import Targets
@@ -44,17 +43,9 @@ _NEG_TYPE = {
 }
 _SETTING = {"inpatient", "outpatient", "both"}
 
-S = pa.string()
 TIC_FIELDS = [
-    ("tic_tin_type", S), ("tic_tin_value", S), ("tic_business_name", S),
-    ("tic_provider_group_id", pa.int64()), ("tic_group_ordinal", pa.int64()),
-    ("tic_npi_count", pa.int64()), ("tic_match", S), ("tic_site_ids", S),
-    ("tic_negotiated_type", S), ("tic_negotiation_arrangement", S), ("tic_expiration_date", S),
-    ("tic_service_codes", S), ("tic_billing_code_type_version", S), ("tic_item_name", S),
-    ("tic_network_label", S), ("tic_product", S), ("tic_reporting_entity", S),
-    ("tic_fetched_at", S), ("tic_item_ordinal", pa.int64()), ("tic_rate_group_ordinal", pa.int64()),
-    ("tic_price_ordinal", pa.int64()),
-]  # fmt: skip
+    (n, _arrow_type(RateRow.model_fields[n].annotation)) for n in TIC_FIELD_NAMES
+]  # D30: the tic_* columns are RateRow fields (contract-typed), in contract order
 TIC_RATE_ROW_SCHEMA = pa.schema(list(RATE_ROW_SCHEMA) + [pa.field(n, t) for n, t in TIC_FIELDS])
 CORE = [f.name for f in RATE_ROW_SCHEMA]
 
@@ -244,7 +235,7 @@ def normalize_network(
     for r in rows:
         r["ambiguous_multi_rate"] = r["nk_hash"] in ambiguous
         r["tic_negotiation_arrangement"] = arr.get(r["tic_item_ordinal"], "")
-        RateRow(**{k: r[k] for k in CORE})  # every row typed against the contract
+        RateRow(**r)  # every row, tic_* included, typed against the contract
     st.rate_rows = len(rows)
     st.placeholders_dropped = dict(placeholders)
     st.unresolved_ref_ids = len(unresolved)

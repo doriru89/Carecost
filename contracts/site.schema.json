@@ -368,6 +368,7 @@
           "enum": [
             "office_visit",
             "hospital_outpatient",
+            "asc",
             "unknown"
           ],
           "title": "Billing Type",
@@ -431,6 +432,20 @@
         "id": {
           "pattern": "^[a-z0-9][a-z0-9_]*$",
           "title": "Id",
+          "type": "string"
+        },
+        "listing_checked_at": {
+          "format": "date",
+          "title": "Listing Checked At",
+          "type": "string"
+        },
+        "listing_status": {
+          "enum": [
+            "web_verified",
+            "multi_registry",
+            "registry_only"
+          ],
+          "title": "Listing Status",
           "type": "string"
         },
         "name": {
@@ -514,6 +529,27 @@
           "description": "Health system id (mgb, bilh, bmc ...) if any",
           "title": "System Id"
         },
+        "tins": {
+          "description": "Billing TINs (9 digits) that price this site in TiC files. Match by TIN, never by name: one AFC franchise bills under several TINs.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Tins",
+          "type": "array"
+        },
+        "tins_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where the TINs came from (NPPES, TiC match, census row)",
+          "title": "Tins Source"
+        },
         "type_2_npis": {
           "items": {
             "type": "string"
@@ -530,7 +566,9 @@
         "billing_type",
         "address",
         "coords",
-        "service_areas"
+        "service_areas",
+        "listing_status",
+        "listing_checked_at"
       ],
       "title": "Site",
       "type": "object"
