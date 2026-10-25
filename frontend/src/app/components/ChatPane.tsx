@@ -11,6 +11,9 @@ import { GlossaryChips } from "./Glossary";
 const CARDS = (cardsJson as { cards: Record<string, { title: string; text: string }> }).cards;
 const QUESTIONS = (questionsJson as { questions: Record<string, { text: string; answers: Record<string, string> }> }).questions;
 
+/** Replies that say only something about the AI itself; they carry no chips and supersede none. */
+const AI_ONLY_KINDS = new Set<ChatReply["kind"]>(["ai_paused", "llm_invalid"]);
+
 export type ChatTurn = { role: "user"; text: string } | { role: "assistant"; res: ChatResponse };
 
 export interface ChatActions {
@@ -42,6 +45,13 @@ export function ChatPane({
     end.current?.scrollIntoView?.({ block: "end" });
   }, [turns.length, busy]);
 
+  // R18: chips are code-only (questions.yaml), so a paused or invalid AI turn does not switch them off.
+  // The chips that stay answerable are the newest turn's that is not such a turn.
+  const chipTurn = turns.reduce(
+    (at, turn, i) => (turn.role === "assistant" && !AI_ONLY_KINDS.has(turn.res.reply.kind) ? i : at),
+    -1,
+  );
+
   const submit = () => {
     const text = draft.trim();
     if (!text || busy) return;
@@ -63,7 +73,7 @@ export function ChatPane({
               res={turn.res}
               answers={answers}
               actions={actions}
-              latest={i === turns.length - 1}
+              latest={i === chipTurn}
               activePathId={activePathId}
             />
           ),

@@ -28,6 +28,8 @@ import {
 
 export interface Copy {
   en: string;
+  /** Chinese text where Austin has fixed it (P2: the self-pay label). The UI is English-only today. */
+  zh?: string;
   /** Austin must review this wording before launch. */
   review?: true;
 }
@@ -92,7 +94,8 @@ export const CONTRACT_COPY = {
   "fee.rung_7_medicare_reference": { en: "For reference only: what Medicare pays. Not added to the total." },
   "fee.rung_8_chia_badge": { en: "No price, only a ranking: the state's report says this group is relatively expensive or cheap for your plan." },
   "fee.self_pay_no_source": {
-    en: "No public file lists the doctor's fee for people paying cash. Ask the office before your visit.",
+    en: "No public file lists the doctor's fee for self-pay (no insurance). Ask the office before your visit.",
+    review: true,
   },
 
   // ---- Why a line is not in the total
@@ -167,7 +170,8 @@ export const CONTRACT_COPY = {
     review: true,
   },
   "youpay.cash_full_amount": {
-    en: "Paying cash, you pay the full amount. Ask for the self-pay price before your visit; many places discount it.",
+    en: "Self-pay (no insurance): you pay the full amount. Ask for the self-pay price before your visit; many places discount it.",
+    review: true,
   },
 
   // ---- Response notices
@@ -221,6 +225,18 @@ export const APP_COPY = {
   "start.chat_placeholder": { en: "Describe what's going on, e.g. my shoulder has hurt for months and clicks" },
   "start.email": { en: "Email (needed to use the AI helper; we do not verify it)" },
   "start.skip_ai": { en: "Skip AI → Browse prices" },
+  // P2 (Austin, 2026-10-25): "cash price" is called self-pay / no insurance wherever a person reads it.
+  // The enum value stays `cash`.
+  "payment.self_pay": { en: "Self-pay (no insurance)", zh: "自费（无保险）", review: true },
+  // R15: a new quote is loading; the receipt below is the previous one, dimmed
+  "quote.updating": { en: "Updating prices for {payment}… The prices below are from your previous choice and are not current." },
+  "quote.timeout": { en: "The price server did not answer within 10 seconds. Try again in a moment." },
+  // P3: the map shows a price only for one selected service
+  "map.places_only": {
+    en: "Places only. The map shows a price for one service at a time: pick a single service under Browse. The List shows the full total.",
+    review: true,
+  },
+  "map.price_for": { en: "Prices on the map: {service}" },
   "start.privacy": {
     en: "If you add a ZIP or your location, we send that point (your location rounded to about half a mile) with the price request, only to pick the places nearest you. We do not store it. Distances are computed on your device.",
     review: true,
@@ -237,7 +253,10 @@ export const APP_COPY = {
   "gap.label.not_loaded": { en: "Not loaded yet" },
   "gap.label.no_source": { en: "No public source" },
   "receipt.list_price": { en: "List price (almost nobody pays this; never added up)" },
-  "receipt.no_cash_discount": { en: "No cash discount listed: the cash price equals the list price." },
+  "receipt.no_cash_discount": {
+    en: "No self-pay discount listed: the self-pay price equals the list price.",
+    review: true,
+  },
   "receipt.ai_suggested": { en: "✦ AI-suggested: public data doesn't say whether this happens" },
   "receipt.per_15_minutes": { en: "per 15 minutes" },
   "receipt.per_visit": { en: "per session; repeats are not in the total" },

@@ -14,7 +14,8 @@ export const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 maplibregl.setWorkerUrl(workerUrl);
 
 /**
- * MapLibre map with the path total on each pin. Clicking a pin opens the same card's receipt.
+ * MapLibre map. Clicking a pin opens the same card's receipt. P3: a pin carries a price only when the
+ * quote is one selected service (`showPrice`); a care path shows places only (lib/mapPrice.ts).
  * The person's own location (if given) is drawn locally and never sent anywhere.
  */
 export function SiteMap({
@@ -22,11 +23,14 @@ export function SiteMap({
   selectedId,
   onOpen,
   location,
+  showPrice,
 }: {
   views: SiteView[];
   selectedId: string | null;
   onOpen: (siteId: string) => void;
   location: UserLocation | null;
+  /** P3: true only when the quote prices one selected service */
+  showPrice: boolean;
 }) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -45,7 +49,11 @@ export function SiteMap({
     });
     m.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
     map.current = m;
+    // the phone tabs keep this pane mounted but hidden; redraw at the right size when it shows again
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(() => m.resize()) : null;
+    ro?.observe(el.current);
     return () => {
+      ro?.disconnect();
       m.remove();
       map.current = null;
     };
@@ -59,15 +67,22 @@ export function SiteMap({
     const bounds = new maplibregl.LngLatBounds();
     for (const v of views) {
       const { site } = v.sq;
-      const low = totalLow(v.sq);
+      const low = showPrice ? totalLow(v.sq) : null;
       const pin = document.createElement("button");
       pin.type = "button";
       pin.dataset.testid = "map-pin";
-      pin.setAttribute("aria-label", `${site.name}: ${low != null ? money(low, false) : "no total"}`);
-      pin.className =
-        "rounded-full border-2 border-white px-2 py-0.5 text-xs font-bold shadow-md tabular-nums " +
-        (site.site_id === selectedId ? "bg-ink text-white" : "bg-white text-ink");
-      pin.textContent = low != null ? `${v.sq.receipt.totals.complete ? "" : "≥"}${money(low, false)}` : "—";
+      pin.dataset.priced = showPrice ? "true" : "false";
+      pin.title = site.name;
+      const on = site.site_id === selectedId ? "bg-ink text-white" : "bg-white text-ink";
+      if (showPrice) {
+        pin.setAttribute("aria-label", `${site.name}: ${low != null ? money(low, false) : "no total"}`);
+        pin.className = "rounded-full border-2 border-white px-2 py-0.5 text-xs font-bold shadow-md tabular-nums " + on;
+        pin.textContent = low != null ? `${v.sq.receipt.totals.complete ? "" : "≥"}${money(low, false)}` : "—";
+      } else {
+        // a place, not a price
+        pin.setAttribute("aria-label", site.name);
+        pin.className = "h-4 w-4 rounded-full border-2 border-ink shadow-md " + on;
+      }
       pin.addEventListener("click", (e) => {
         e.stopPropagation();
         onOpenRef.current(site.site_id);
@@ -83,7 +98,7 @@ export function SiteMap({
       bounds.extend([location.lon, location.lat]);
     }
     if (!bounds.isEmpty()) m.fitBounds(bounds, { padding: 60, maxZoom: 13, duration: 0 });
-  }, [views, selectedId, location]);
+  }, [views, selectedId, location, showPrice]);
 
   return <div ref={el} className="h-[420px] md:h-[calc(100vh-15rem)] min-h-[320px] w-full rounded-xl overflow-hidden border border-border" data-testid="site-map" />;
 }
