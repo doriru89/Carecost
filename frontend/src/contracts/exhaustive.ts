@@ -20,6 +20,7 @@ import type {
   Payment,
   QuoteResponse,
   SourceCadence,
+  SiteSummary,
   SourceKind,
   TierBasis,
   YouPay,
@@ -130,6 +131,14 @@ export const TIER_BASIS_KEY = {
   our_judgment: "tier_basis.our_judgment",
   picked: "tier_basis.picked",
 } as const satisfies Record<TierBasis, string>;
+
+/** X2 / P7: the kind of site. A list with no location is grouped by kind under these headers. */
+export const KIND_LABEL_KEY = {
+  urgent_care: "kind.urgent_care",
+  office: "kind.office",
+  hospital_outpatient: "kind.hospital_outpatient",
+  ambulatory_surgery_center: "kind.ambulatory_surgery_center",
+} as const satisfies { [K in SiteSummary["kind"]]: `kind.${K}` };
 
 /** "You pay" rule per plan type (copay plans included, P11). */
 export const YOU_PAY_KEY = {

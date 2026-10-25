@@ -297,7 +297,8 @@ const REPLY_RENDER = {
   ),
   clarify: (r, { answers, actions, latest, activePathId }) => (
     <Bubble>
-      {r.lead_in && <p>{r.lead_in}</p>}
+      {/* Chat2 (R18 / P13): fixed copy where the model's lead-in would be; never both */}
+      {r.fixed_text_key ? <p data-testid="fixed-text">{t(r.fixed_text_key)}</p> : r.lead_in && <p>{r.lead_in}</p>}
       <Understood items={r.understood} />
       <Questions questions={r.questions} answers={answers} actions={actions} enabled={latest} />
       <Candidates list={r.candidates} actions={actions} activePathId={activePathId} />
@@ -307,7 +308,7 @@ const REPLY_RENDER = {
   ),
   care_paths: (r, { actions, activePathId }) => (
     <Bubble>
-      <p>{r.text}</p>
+      {r.fixed_text_key ? <p data-testid="fixed-text">{t(r.fixed_text_key)}</p> : r.text != null && <p>{r.text}</p>}
       <Understood items={r.understood} />
       <Candidates list={r.candidates} actions={actions} activePathId={activePathId} />
       <Cards ids={r.card_ids} />

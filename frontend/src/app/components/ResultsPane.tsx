@@ -1,14 +1,15 @@
-import { lazy, Suspense, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { LocateFixed } from "lucide-react";
 import type { Catalog, CatalogPath, CatalogService } from "@/generated/contracts/catalog";
-import type { Payment, QuoteResponse } from "@/generated/contracts/quote_api";
+import type { Payment, QuoteResponse, SiteQuote } from "@/generated/contracts/quote_api";
 import { t } from "@/contracts/copy";
 import { cn } from "@/lib/utils";
 import { mapService } from "../lib/mapPrice";
 import { paymentLabel } from "../lib/payments";
 import { zipToLocation, type UserLocation } from "../lib/geo";
 import { bostonNow } from "../lib/hours";
-import { siteViews, sortSites, type SiteScope, type SortMode } from "../lib/sites";
+import { siteViews, sortSites, sortWithinKinds, type SiteScope, type SortMode } from "../lib/sites";
+import { mapStepKeys, stepLabels } from "../lib/steps";
 import { BrowsePicker } from "./BrowsePicker";
 import { PaymentSelect } from "./PaymentSelect";
 import { Receipt } from "./Receipt";
@@ -53,6 +54,7 @@ export function ResultsPane({
   onLocation,
   pick,
   onPick,
+  loadSite,
 }: {
   payment: Payment;
   onPayment: (p: Payment) => void;
@@ -69,6 +71,11 @@ export function ResultsPane({
   /** Kept by the parent so a layout change (SplitView re-parents this pane across 768 px) keeps the pick. */
   pick: SitePick;
   onPick: (p: SitePick) => void;
+  /**
+   * C3 item 9: a no-location list carries full receipts for its first `full_receipts` sites only; any
+   * other site's receipt is asked for by `site_ids` when the person opens it (same payment and query).
+   */
+  loadSite?: (siteId: string) => Promise<QuoteResponse>;
 }) {
   const { sort, selected } = pick;
   const setSort = (s: SortMode) => onPick({ ...pick, sort: s });
@@ -81,8 +88,43 @@ export function ResultsPane({
   const priced = useMemo(() => (quote ? mapService(quote, catalog) : null), [quote, catalog]);
   const now = useMemo(() => bostonNow(), [quote]); // eslint-disable-line react-hooks/exhaustive-deps
   const views = useMemo(() => (quote ? siteViews(quote.sites, location, now) : []), [quote, location, now]);
-  const sorted = useMemo(() => sortSites(views, sort), [views, sort]);
+  const byKind = quote?.ordering === "kind_then_distance";
+  const sorted = useMemo(() => (byKind ? sortWithinKinds(views, sort) : sortSites(views, sort)), [views, sort, byKind]);
   const current = views.find((v) => v.sq.site.site_id === selected) ?? sorted[0];
+  const labels = useMemo(() => (quote ? stepLabels(quote) : {}), [quote]);
+
+  // P3: the map prices one step at a time. A manual pick of one service has one step: it is selected.
+  const stepChoices = useMemo(() => (quote ? mapStepKeys(quote) : []), [quote]);
+  const [mapStep, setMapStep] = useState<string | null>(null);
+  const shownKey = shown?.key ?? "";
+  useEffect(() => setMapStep(null), [shownKey]);
+  const onlyStep = quote && !quote.care_path && stepChoices.length === 1 ? stepChoices[0] : null;
+  const step = mapStep && stepChoices.includes(mapStep) ? mapStep : onlyStep;
+
+  // C3 item 9: fetch the opened site's receipt when the list carries only its summary
+  const [fetched, setFetched] = useState<Record<string, { status: "loading" } | { status: "error" } | { status: "ok"; quote: QuoteResponse }>>({});
+  useEffect(() => setFetched({}), [shownKey]);
+  const needId = view === "receipt" && current && current.sq.receipt == null ? current.sq.site.site_id : null;
+  const need = needId ? fetched[needId] : undefined;
+  useEffect(() => {
+    if (!needId || need || !loadSite) return;
+    setFetched((f) => ({ ...f, [needId]: { status: "loading" } }));
+    loadSite(needId).then(
+      (q) => setFetched((f) => ({ ...f, [needId]: { status: "ok", quote: q } })),
+      () => setFetched((f) => ({ ...f, [needId]: { status: "error" } })),
+    );
+  }, [needId, need, loadSite]);
+  const receiptFor = (sq: SiteQuote): { quote: QuoteResponse; sq: SiteQuote } | "loading" | "error" | null => {
+    if (!quote) return null;
+    if (sq.receipt) return { quote, sq };
+    const f = fetched[sq.site.site_id];
+    if (!f || f.status === "loading") return "loading";
+    if (f.status === "error") return "error";
+    const got = f.quote.sites.find((x) => x.site.site_id === sq.site.site_id);
+    if (!got?.receipt) return "error";
+    // the site's own sources join the list's; the list's distance (from the person or City Hall) stays
+    return { quote: { ...quote, sources: { ...quote.sources, ...f.quote.sources } }, sq: { ...got, distance_km: sq.distance_km } };
+  };
 
   const open = (id: string) => {
     setSelected(id);
@@ -159,17 +201,57 @@ export function ResultsPane({
                 ))}
               </div>
             )}
-            <Receipt quote={quote} sq={current.sq} distance={current.distance} open={current.open} location={location} />
+            {(() => {
+              const r = receiptFor(current.sq);
+              if (r === "error")
+                return (
+                  <p className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm" data-testid="receipt-load-failed">
+                    {t("receipt.load_failed")}
+                  </p>
+                );
+              if (r === "loading" || r == null)
+                return <Receipt quote={quote} sq={current.sq} distance={current.distance} open={current.open} location={location} />;
+              return <Receipt quote={r.quote} sq={r.sq} distance={current.distance} open={current.open} location={location} />;
+            })()}
           </div>
         ) : view === "list" ? (
-          <SiteList views={sorted} sort={sort} onSort={setSort} selectedId={current.sq.site.site_id} onOpen={open} hasLocation={!!location} scope={scope} />
+          <SiteList
+            views={sorted}
+            sort={sort}
+            onSort={setSort}
+            selectedId={current.sq.site.site_id}
+            onOpen={open}
+            hasLocation={!!location}
+            scope={scope}
+            ordering={quote.ordering}
+            labels={labels}
+          />
         ) : (
           <div className="space-y-2">
+            {stepChoices.length > (onlyStep ? 1 : 0) && (
+              <div className="flex flex-wrap items-center gap-1 text-xs" role="radiogroup" aria-label={t("map.pick_step")} data-testid="map-steps">
+                <span className="mr-1 text-muted-foreground">{t("map.pick_step")}</span>
+                {[null, ...stepChoices].map((k) => (
+                  <button
+                    key={k ?? "none"}
+                    type="button"
+                    role="radio"
+                    aria-checked={step === k}
+                    onClick={() => setMapStep(k)}
+                    className={cn("rounded-full border px-2.5 py-1", step === k ? "border-ink bg-ink text-white" : "border-border bg-card")}
+                  >
+                    {k == null ? t("map.no_step") : labels[k] ?? k}
+                  </button>
+                ))}
+              </div>
+            )}
             <p className="text-xs text-muted-foreground" data-testid="map-price-note">
-              {priced ? t("map.price_for", { service: priced.plain_name }) : t("map.places_only")}
+              {step
+                ? t("map.step_price_for", { step: (onlyStep && priced ? priced.plain_name : labels[step]) ?? step })
+                : t("map.places_only")}
             </p>
             <Suspense fallback={<p className="p-6 text-center text-sm text-muted-foreground">Loading map…</p>}>
-              <SiteMap views={sorted} selectedId={current.sq.site.site_id} onOpen={open} location={location} showPrice={priced != null} />
+              <SiteMap views={sorted} selectedId={current.sq.site.site_id} onOpen={open} location={location} step={step} />
             </Suspense>
           </div>
         )}

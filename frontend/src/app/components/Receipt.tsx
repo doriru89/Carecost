@@ -1,34 +1,101 @@
 import { t } from "@/contracts/copy";
 import { NOTICE_KEY, YOU_PAY_KEY } from "@/contracts/exhaustive";
-import type { QuoteResponse, SiteQuote } from "@/generated/contracts/quote_api";
+import type { QuoteResponse, ReceiptLine, SiteQuote, StepSummary, Totals } from "@/generated/contracts/quote_api";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
 import { isoDate, range } from "../lib/format";
 import { milesText, type UserLocation } from "../lib/geo";
 import type { OpenStatus } from "../lib/hours";
-import { dataNoticeKey, freshnessDetail, freshnessLabel, freshnessState, sections, siteSourceIds, sourceHover } from "../lib/receipt";
+import { availabilityKey, dataNoticeKey, freshnessDetail, freshnessLabel, freshnessState, sections, siteSourceIds, sourceHover } from "../lib/receipt";
 import { Booking } from "./Booking";
 import { GLOSSARY_CREDIT } from "../lib/glossary";
 import { ReceiptLineView } from "./ReceiptLineView";
+import { elsewhereSteps, stepLabels } from "../lib/steps";
 import { ChildrenOnlyBadge } from "./SiteList";
 
-function Total({ sq, where }: { sq: SiteQuote; where: "top" | "bottom" }) {
-  const { totals } = sq.receipt;
+function Total({ totals, where, labels }: { totals: Totals; where: "top" | "bottom"; labels: Record<string, string> }) {
   const l = totals.likely;
+  const might = totals.might_add;
   return (
-    <div className={cn("flex flex-wrap items-end justify-between gap-x-3 gap-y-1", where === "top" ? "py-3" : "pt-3 border-t-2 border-foreground/80")}>
-      <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("receipt.total")}</p>
-        {!totals.complete && <p className="text-[11px] text-warn">{t("receipt.total_floor")}</p>}
-        <div className="flex flex-wrap gap-1 mt-0.5">
-          {l?.includes_estimate && <Flag>{t("receipt.includes_estimate")}</Flag>}
-          {l?.includes_late_source && <Flag>{t("receipt.includes_late")}</Flag>}
-          {l?.includes_stale_source && <Flag>{t("receipt.includes_stale")}</Flag>}
+    <div className={cn("py-3", where === "bottom" && "pt-3 pb-0 border-t-2 border-foreground/80")}>
+      <div className="flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("receipt.total")}</p>
+          {!totals.complete && <p className="text-[11px] text-warn">{t("receipt.total_floor")}</p>}
+          <div className="flex flex-wrap gap-1 mt-0.5">
+            {l?.includes_estimate && <Flag>{t("receipt.includes_estimate")}</Flag>}
+            {l?.includes_late_source && <Flag>{t("receipt.includes_late")}</Flag>}
+            {l?.includes_stale_source && <Flag>{t("receipt.includes_stale")}</Flag>}
+          </div>
         </div>
+        <p className={cn("ml-auto whitespace-nowrap tabular-nums font-bold text-ink", where === "top" ? "text-2xl sm:text-3xl" : "text-xl")} data-testid={`total-${where}`}>
+          {l ? `${totals.complete ? "" : "≥ "}${range(l.low, l.high)}` : "—"}
+        </p>
       </div>
-      <p className={cn("ml-auto whitespace-nowrap tabular-nums font-bold text-ink", where === "top" ? "text-2xl sm:text-3xl" : "text-xl")} data-testid={`total-${where}`}>
-        {l ? `${totals.complete ? "" : "≥ "}${range(l.low, l.high)}` : "—"}
+      {might && where === "top" && (
+        // P9: possible steps (the doctor may decide against them) are never in the headline
+        <p className="mt-1 text-xs text-muted-foreground" data-testid="might-add">
+          <span className="font-semibold text-foreground">{t("receipt.might_add", { range: range(might.low, might.high) })}</span>{" "}
+          {t("receipt.might_add_detail", { steps: might.step_keys.map((k) => labels[k] ?? k).join(", ") })}
+        </p>
+      )}
+    </div>
+  );
+}
+
+const LIKELIHOOD_LABEL: Record<StepSummary["likelihood"], string> = {
+  certain: "Happens at this visit",
+  likely: "Likely",
+  possible: "Possible",
+  rare: "Rare",
+};
+
+/**
+ * P4: a step this place does not do (or does not say it does) is its own line, priced at the places that
+ * do it ("Elsewhere, about $X–$Y", p25–p75 of the same payer). Never in this place's total. The step's
+ * own lines (what the files say here) are folded away under it.
+ */
+function ElsewhereStep({
+  step,
+  label,
+  lines,
+  render,
+  payment,
+}: {
+  payment: QuoteResponse["payment"];
+  step: StepSummary;
+  label: string;
+  lines: ReceiptLine[];
+  render: (l: ReceiptLine) => React.ReactNode;
+}) {
+  const e = step.elsewhere;
+  // P6: why it is here, said on the step itself (the reason its lines carry)
+  const reason = lines.find((l) => l.availability === step.availability && l.availability_reason)?.availability_reason ?? null;
+  return (
+    <div className="rounded-md border border-dashed border-border px-3 py-2.5" data-testid="elsewhere-step" data-step={step.key}>
+      <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+        <div className="min-w-[11rem] flex-1">
+          <p className="text-sm font-medium leading-snug">{label}</p>
+          <p className="text-[11px] text-muted-foreground">{LIKELIHOOD_LABEL[step.likelihood]}</p>
+        </div>
+        <p className="ml-auto text-right text-sm font-medium tabular-nums text-foreground/80" data-testid="elsewhere-about">
+          {e ? t("receipt.elsewhere_about", { range: range(e.low, e.high) }) : "—"}
+        </p>
+      </div>
+      {step.availability !== "offered" && (
+        <p className="mt-1 text-xs text-foreground/85" data-testid="elsewhere-why">
+          {reason ? t(availabilityKey(reason, payment)!) : t("receipt.not_offered")}
+        </p>
+      )}
+      <p className="mt-0.5 text-[11px] text-muted-foreground">
+        {e ? t("receipt.elsewhere_basis", { n: e.n_groups }) : t("receipt.elsewhere_none")}
       </p>
+      {lines.length > 0 && (
+        <details className="mt-1.5 text-xs">
+          <summary className="cursor-pointer text-[11px] text-muted-foreground">What the files say about this place</summary>
+          <div className="mt-1.5 space-y-2">{lines.map(render)}</div>
+        </details>
+      )}
     </div>
   );
 }
@@ -51,10 +118,37 @@ export function Receipt({
   location: UserLocation | null;
 }) {
   const { site, receipt } = sq;
+  const labels = stepLabels({ ...quote, sites: [sq, ...quote.sites] });
+  if (!receipt) {
+    // C3 item 9: past the first full_receipts sites the receipt is fetched by site_ids (ResultsPane)
+    return (
+      <article className="rounded-2xl border border-border bg-card shadow-card p-4 sm:p-5" data-testid="receipt-pending">
+        <h2 className="text-lg font-bold leading-tight">{site.name}</h2>
+        <p className="mt-2 text-sm text-muted-foreground animate-pulse">{t("receipt.loading")}</p>
+      </article>
+    );
+  }
   const excluded = new Map(receipt.totals.excluded.map((e) => [e.line_id, e]));
   const op = new Map(sq.other_payers.map((r) => [r.line_id, r]));
   const yp = receipt.totals.you_pay;
   const usedSources = siteSourceIds(sq).flatMap((id) => (quote.sources[id] ? [[id, quote.sources[id]] as const] : []));
+  // P4: the steps this place does not do get their own lines; their receipt lines fold under them
+  const away = elsewhereSteps(sq);
+  const awayIds = new Set(away.flatMap((st) => st.line_ids));
+  const byId = new Map(receipt.lines.map((l) => [l.line_id, l]));
+  const ownLines = receipt.lines.filter((l) => !awayIds.has(l.line_id));
+  const render = (line: ReceiptLine) => (
+    <ReceiptLineView
+      key={line.line_id}
+      line={line}
+      sources={quote.sources}
+      payment={quote.payment}
+      excluded={excluded.get(line.line_id)}
+      otherPayers={op.get(line.line_id)}
+      location={location}
+      site={site}
+    />
+  );
   return (
     <article className="rounded-2xl border border-border bg-card shadow-card p-4 sm:p-5" data-testid="receipt">
       <header className="space-y-0.5">
@@ -101,10 +195,10 @@ export function Receipt({
         </ul>
       )}
 
-      <Total sq={sq} where="top" />
+      <Total totals={receipt.totals} where="top" labels={labels} />
 
       <div className="space-y-4">
-        {sections(receipt.lines).map((s) => (
+        {sections(ownLines).map((s) => (
           <section key={s.tier} data-testid={`section-${s.tier}`}>
             <h3
               className={cn(
@@ -117,25 +211,30 @@ export function Receipt({
             >
               {t(`tier.${s.tier}`)}
             </h3>
+            <div className="space-y-2">{s.lines.map(render)}</div>
+          </section>
+        ))}
+        {away.length > 0 && (
+          <section data-testid="section-elsewhere">
+            <h3 className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("receipt.elsewhere_section")}</h3>
             <div className="space-y-2">
-              {s.lines.map((line) => (
-                <ReceiptLineView
-                  key={line.line_id}
-                  line={line}
-                  sources={quote.sources}
+              {away.map((st) => (
+                <ElsewhereStep
+                  key={st.key}
+                  step={st}
+                  label={labels[st.key] ?? st.key}
+                  lines={st.line_ids.flatMap((id) => (byId.has(id) ? [byId.get(id)!] : []))}
+                  render={render}
                   payment={quote.payment}
-                  excluded={excluded.get(line.line_id)}
-                  otherPayers={op.get(line.line_id)}
-                  location={location}
                 />
               ))}
             </div>
           </section>
-        ))}
+        )}
       </div>
 
       <div className="mt-5">
-        <Total sq={sq} where="bottom" />
+        <Total totals={receipt.totals} where="bottom" labels={labels} />
       </div>
 
       <div className="mt-3 rounded-lg bg-muted/60 p-3 text-xs space-y-1.5" data-testid="you-pay">

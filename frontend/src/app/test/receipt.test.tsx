@@ -20,7 +20,8 @@ describe("gradient receipt (D8, §4.2)", () => {
     render(<TooltipProvider><Receipt quote={BCBS} sq={sq} distance={null} open={closed} location={null} /></TooltipProvider>);
     const top = screen.getByTestId("total-top").textContent;
     expect(top).toBe(screen.getByTestId("total-bottom").textContent);
-    expect(top).toContain("663.74");
+    // Data change (C3, ee409cf): Mount Auburn's totals.likely is now 669.03-723.38 (was 663.74-723.38)
+    expect(top).toContain("669.03");
     expect(top).toContain("723.38");
     expect(top?.startsWith("≥")).toBe(!sq.receipt.totals.complete);
   });
@@ -76,18 +77,25 @@ describe("gradient receipt (D8, §4.2)", () => {
     expect(screen.getAllByTestId("estimate-tag").length).toBe(est);
     expect(screen.getByTestId("total-top").parentElement?.textContent).toMatch(/Includes an estimate/);
     unmount();
-    // Data change (C2): rung 7 moved from MassHealth at Tufts (not in the fixture any more) to BCBS at
-    // Cambridge Health Alliance's hospital: visit_doctor ($75.54) and steroid_injection_doctor ($42.20).
+    // Data change (C3, ee409cf): at Cambridge Health Alliance's hospital only visit_doctor ($75.54) is
+    // rung 7 now (steroid_injection_doctor became a rung-6 peer estimate), and visit_facility ($30.92)
+    // is set aside as unusual (P8), so it left the total too.
     const cha = BCBS.sites.find((s) => s.site.site_id === "cha_cambridge_hospital")!;
     const ref = cha.receipt.lines.filter((l) => l.doctor_fee?.rung === 7);
-    expect(ref.length).toBe(2);
+    expect(ref.length).toBe(1);
     expect(ref.every((l) => !l.in_total)).toBe(true);
     render(<TooltipProvider><Receipt quote={BCBS} sq={cha} distance={null} open={closed} location={null} /></TooltipProvider>);
-    expect(screen.getAllByTestId("reference-tag").length).toBe(2);
-    // the total is the four in-total lines only: 30.92 + 71.24 + (12.04-17.33) + 294.35, no rung-7 amount
+    expect(screen.getAllByTestId("reference-tag").length).toBe(1);
+    // P2 (D5): a BCBS person never sees the Medicare figure as the price: it is folded away, labelled
+    const hidden = screen.getAllByTestId("hidden-price").filter((h) => h.getAttribute("data-hidden") === "medicare_reference");
+    expect(hidden.length).toBe(1);
+    expect(hidden[0].textContent).toMatch(/^No price for your plan/);
+    expect(hidden[0].querySelector("details")?.open).toBe(false);
+    // the total is the three in-total lines only: 71.24 + (12.04-17.33) + 294.35, no rung-7 amount
+    // (was 408.55-413.84 with the visit facility fee)
     const top = screen.getByTestId("total-top").textContent;
-    expect(top).toContain("408.55");
-    expect(top).toContain("413.84");
+    expect(top).toContain("377.63");
+    expect(top).toContain("382.92");
   });
 
   it("a site whose own price source we do not read says so (price_source_id null, P1 problem 9)", () => {
@@ -117,10 +125,13 @@ describe("C2 fields on the receipt and the site card", () => {
   });
 
   it("availability unknown has its own label; offered lines carry none", () => {
-    const sq = MEDICARE.sites[0];
+    // Data change (C3, ee409cf): the Medicare fixture has no availability-unknown line any more; AFC
+    // Cambridge under BCBS HMO has 9, all insurer_lists_rate (was MEDICARE.sites[0] with 5).
+    expect(MEDICARE.sites.flatMap((s) => s.receipt.lines).filter((l) => l.availability === "unknown").length).toBe(0);
+    const sq = BCBS.sites.find((s) => s.site.site_id === "afc_urgent_care_cambridge_cambridge")!;
     const unknown = sq.receipt.lines.filter((l) => l.availability === "unknown").length;
-    expect(unknown).toBe(5);
-    render(<TooltipProvider><Receipt quote={MEDICARE} sq={sq} distance={null} open={closed} location={null} /></TooltipProvider>);
+    expect(unknown).toBe(9);
+    render(<TooltipProvider><Receipt quote={BCBS} sq={sq} distance={null} open={closed} location={null} /></TooltipProvider>);
     const labels = screen.getAllByTestId("availability-unknown");
     expect(labels.length).toBe(unknown);
     expect(labels[0].textContent).toBe("Not known whether this place offers it");
@@ -161,10 +172,14 @@ describe("C2 fields on the receipt and the site card", () => {
 });
 
 describe("which sites the list holds (C2 near / max_sites)", () => {
-  it("says nearest only when a location was sent, best value overall otherwise", () => {
-    const { unmount } = render(<ScopeNote scope={{ kind: "overall" }} count={12} />);
-    expect(screen.getByTestId("site-scope").textContent).toMatch(/^The 12 best-value places overall/);
-    expect(screen.getByTestId("site-scope").textContent).not.toMatch(/^The 12 places nearest/);
+  // Rule change (P7, Austin 2026-10-25; C3 ordering kind_then_distance): with no location the list is
+  // every admitted place grouped by kind, by distance from Boston City Hall. "Best value overall" is
+  // never said anywhere (was: "The 12 best-value places overall").
+  it("says nearest only when a location was sent, all places by kind otherwise, never best value", () => {
+    const { unmount } = render(<ScopeNote scope={{ kind: "all" }} count={133} />);
+    expect(screen.getByTestId("site-scope").textContent).toMatch(/^All 133 places that do this, grouped by kind of place, nearest to Boston City Hall first/);
+    expect(screen.getByTestId("site-scope").textContent).not.toMatch(/best/i);
+    expect(screen.getByTestId("site-scope").textContent).not.toMatch(/^The 133 places nearest/);
     unmount();
     render(<ScopeNote scope={{ kind: "near", label: "ZIP 02138" }} count={12} />);
     expect(screen.getByTestId("site-scope").textContent).toBe("The 12 places nearest ZIP 02138");

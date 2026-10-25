@@ -3,10 +3,9 @@ import * as maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 // maplibre-gl 6 builds its worker URL at runtime, which the bundler cannot see; bundle it here.
 import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
-import { money } from "../lib/format";
 import type { UserLocation } from "../lib/geo";
-import { totalLow } from "../lib/receipt";
 import type { SiteView } from "../lib/sites";
+import { stepOf, stepPin } from "../lib/steps";
 
 /** OpenFreeMap: free vector tiles, no key (§4.3). */
 export const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
@@ -14,8 +13,10 @@ export const MAP_STYLE = "https://tiles.openfreemap.org/styles/liberty";
 maplibregl.setWorkerUrl(workerUrl);
 
 /**
- * MapLibre map. Clicking a pin opens the same card's receipt. P3: a pin carries a price only when the
- * quote is one selected service (`showPrice`); a care path shows places only (lib/mapPrice.ts).
+ * MapLibre map. Clicking a pin opens the same card's receipt. P3: a pin carries a price only for one
+ * selected step (`step`, a StepSummary key): that step's own or estimated figure at that site. With no
+ * step selected the map shows places only. With a step, a site that does not say it offers the step
+ * (availability unknown or not offered) gets no pin (P6); lib/steps.ts stepPin.
  * The person's own location (if given) is drawn locally and never sent anywhere.
  */
 export function SiteMap({
@@ -23,14 +24,14 @@ export function SiteMap({
   selectedId,
   onOpen,
   location,
-  showPrice,
+  step,
 }: {
   views: SiteView[];
   selectedId: string | null;
   onOpen: (siteId: string) => void;
   location: UserLocation | null;
-  /** P3: true only when the quote prices one selected service */
-  showPrice: boolean;
+  /** P3: the one step whose price the pins show; null = places only */
+  step: string | null;
 }) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -67,17 +68,26 @@ export function SiteMap({
     const bounds = new maplibregl.LngLatBounds();
     for (const v of views) {
       const { site } = v.sq;
-      const low = showPrice ? totalLow(v.sq) : null;
+      const sp = step ? stepPin(stepOf(v.sq, step)) : null;
+      if (step && !sp) continue; // P6: no pin where the site does not say it offers this step
       const pin = document.createElement("button");
       pin.type = "button";
       pin.dataset.testid = "map-pin";
-      pin.dataset.priced = showPrice ? "true" : "false";
+      pin.dataset.priced = sp?.kind === "price" ? "true" : "false";
       pin.title = site.name;
       const on = site.site_id === selectedId ? "bg-ink text-white" : "bg-white text-ink";
-      if (showPrice) {
-        pin.setAttribute("aria-label", `${site.name}: ${low != null ? money(low, false) : "no total"}`);
-        pin.className = "rounded-full border-2 border-white px-2 py-0.5 text-xs font-bold shadow-md tabular-nums " + on;
-        pin.textContent = low != null ? `${v.sq.receipt.totals.complete ? "" : "≥"}${money(low, false)}` : "—";
+      if (sp?.kind === "price") {
+        pin.setAttribute("aria-label", `${site.name}: ${sp.text}${sp.estimated ? " (estimate)" : ""}`);
+        pin.className =
+          "rounded-full border-2 px-2 py-0.5 text-xs font-bold shadow-md tabular-nums " +
+          (sp.estimated ? "border-dashed border-amber-500 " : "border-white ") +
+          on;
+        pin.textContent = `${sp.estimated ? "~" : ""}${sp.text}`;
+      } else if (sp?.kind === "no_price") {
+        // offered, but no dollar figure here: never a cheap-looking pin
+        pin.setAttribute("aria-label", `${site.name}: ${sp.unusual ? "price looks unusual, being checked" : "no price"}`);
+        pin.className = "rounded-full border-2 border-white px-2 py-0.5 text-xs font-bold shadow-md text-muted-foreground " + on;
+        pin.textContent = sp.unusual ? "?" : "—";
       } else {
         // a place, not a price
         pin.setAttribute("aria-label", site.name);
@@ -98,7 +108,7 @@ export function SiteMap({
       bounds.extend([location.lon, location.lat]);
     }
     if (!bounds.isEmpty()) m.fitBounds(bounds, { padding: 60, maxZoom: 13, duration: 0 });
-  }, [views, selectedId, location, showPrice]);
+  }, [views, selectedId, location, step]);
 
   return <div ref={el} className="h-[420px] md:h-[calc(100vh-15rem)] min-h-[320px] w-full rounded-xl overflow-hidden border border-border" data-testid="site-map" />;
 }
