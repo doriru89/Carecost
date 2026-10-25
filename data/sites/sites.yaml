@@ -7516,8 +7516,20 @@ sites:
       = Yes'
     checked_at: '2026-10-24'
   - service: xray
+    evidence: posted_price
+    source: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
+  - service: xray
     codes:
     - '73030'
+    - '73600'
+    evidence: posted_price
+    source: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
+  - service: xray
+    codes:
+    - '73562'
+    - '73610'
     evidence: posted_price
     source: https://www.afcurgentcare.com/watertown/resources/self-pay
     checked_at: '2026-10-24'
@@ -7539,11 +7551,63 @@ sites:
     includes_provider_fee: true
     source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
     checked_at: '2026-10-24'
+  - item_id: xray_1_view
+    label: X-Ray 1 View
+    amount: 80.0
+    includes_provider_fee: null
+    source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
   - item_id: xray_2_views
     label: X-ray, 2 views
     codes:
     - '73030'
+    - '73600'
     amount: 150.0
+    includes_provider_fee: null
+    source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
+  - item_id: xray_3_views
+    label: X-Ray 3 views
+    codes:
+    - '73562'
+    - '73610'
+    amount: 225.0
+    includes_provider_fee: null
+    source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
+  - item_id: urinalysis_rapid
+    label: Rapid Urine analysis (UA)
+    amount: 30.0
+    includes_provider_fee: null
+    source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
+  - item_id: urinalysis_send_out
+    label: Urine analysis (UA)
+    amount: 30.0
+    includes_provider_fee: null
+    source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
+  - item_id: pregnancy_test_rapid
+    label: Rapid Pregnancy test
+    codes:
+    - '81025'
+    amount: 30.0
+    includes_provider_fee: null
+    source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
+  - item_id: cbc_diff_plt
+    label: CBC DIFF PLT
+    codes:
+    - '85025'
+    amount: 60.0
+    includes_provider_fee: null
+    source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
+  - item_id: cmp
+    label: CMP
+    codes:
+    - '80053'
+    amount: 60.0
     includes_provider_fee: null
     source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
     checked_at: '2026-10-24'

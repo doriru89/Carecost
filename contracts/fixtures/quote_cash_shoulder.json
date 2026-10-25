@@ -301,10 +301,10 @@
                 "source_id": "posted_afc_watertown",
                 "source_kind": "clinic_posted",
                 "source_file": "self-pay",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                 "source_date": null,
                 "method": "stated",
-                "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                 "payer_id": null,
                 "row_id": null
               },
@@ -353,10 +353,10 @@
                 "source_id": "posted_afc_watertown",
                 "source_kind": "clinic_posted",
                 "source_file": "self-pay",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                 "source_date": null,
                 "method": "stated",
-                "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
+                "row_ref": "posted_afc_watertown:83b07ffd9b2c:xray_2_views",
                 "payer_id": null,
                 "row_id": null
               },
@@ -411,7 +411,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -454,7 +454,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -498,7 +498,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -542,7 +542,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -586,7 +586,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -639,7 +639,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -693,7 +693,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -743,7 +743,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -793,7 +793,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -1099,10 +1099,10 @@
                 "source_id": "posted_afc_watertown",
                 "source_kind": "clinic_posted",
                 "source_file": "self-pay",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                 "source_date": null,
                 "method": "stated",
-                "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                 "payer_id": null,
                 "row_id": null
               },
@@ -1151,10 +1151,10 @@
                 "source_id": "posted_afc_watertown",
                 "source_kind": "clinic_posted",
                 "source_file": "self-pay",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                 "source_date": null,
                 "method": "stated",
-                "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
+                "row_ref": "posted_afc_watertown:83b07ffd9b2c:xray_2_views",
                 "payer_id": null,
                 "row_id": null
               },
@@ -1209,7 +1209,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -1252,7 +1252,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -1296,7 +1296,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -1340,7 +1340,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -1384,7 +1384,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -1437,7 +1437,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -1491,7 +1491,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -1541,7 +1541,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -1591,7 +1591,7 @@
               "ask": "Call the clinic and ask for its self-pay price.",
               "searched": {
                 "source_id": "posted_afc_watertown",
-                "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c"
+                "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef"
               }
             },
             "list_price": null,
@@ -1984,10 +1984,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -2008,10 +2008,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -4469,10 +4469,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -4493,10 +4493,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -6952,10 +6952,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -6976,10 +6976,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -9413,10 +9413,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -9437,10 +9437,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -11905,10 +11905,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -11929,10 +11929,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -13869,10 +13869,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -13893,10 +13893,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -15833,10 +15833,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -15857,10 +15857,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -17719,10 +17719,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -17743,10 +17743,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -17807,10 +17807,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:xray_2_views",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -17831,10 +17831,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:xray_2_views",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -18620,10 +18620,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -18644,10 +18644,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -20895,10 +20895,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -20919,10 +20919,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:evaluation_consultation",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:evaluation_consultation",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -20983,10 +20983,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:xray_2_views",
                     "payer_id": null,
                     "row_id": null
                   },
@@ -21007,10 +21007,10 @@
                     "source_id": "posted_afc_watertown",
                     "source_kind": "clinic_posted",
                     "source_file": "self-pay",
-                    "source_sha256": "be952f51ae7f6fe6095d55bd2bc20e6c9fbc6bb6c537da0518fedb6439fc879c",
+                    "source_sha256": "83b07ffd9b2c7b0af99cf3510b9598c778551c2f3ed19256326cea1e1770d7ef",
                     "source_date": null,
                     "method": "stated",
-                    "row_ref": "posted_afc_watertown:be952f51ae7f:xray_2_views",
+                    "row_ref": "posted_afc_watertown:83b07ffd9b2c:xray_2_views",
                     "payer_id": null,
                     "row_id": null
                   },

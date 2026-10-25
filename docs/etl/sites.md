@@ -63,9 +63,15 @@ diff for review; nothing is committed by CI).
   visit codes 99202-99205 and 99212-99215 in `curated.yaml`, so a self-pay visit at AFC is priced
   from the page instead of `not_published`. The page posts one provider-visit price with no levels
   ("Evaluation Consultation (provider)", and "STD Testing $179 plus the cost of the test"), so the
-  mapping reads it as any level 2-5 office visit; 99211 (a nurse visit) is left out. The other two
-  cash prices: `xray_2_views` has 73030; `sling` has no code (a supply with no confident CPT /
-  HCPCS mapping, left empty on purpose). No other site has cash prices.
+  mapping reads it as any level 2-5 office visit; 99211 (a nurse visit) is left out. The page's X-ray
+  and lab rows are curated too (same URL, snapshot `posted/afc_watertown.json`; the page's
+  amount for every one, checked by `posted_prices.diff`): X-Ray 1 / 2 / 3 views $80 / $150 / $225
+  (one item each; 2 views -> 73030, 73600; 3 views -> 73562, 73610; 73560 knee "1 or 2 views" and
+  72100 "2 or 3 views" span two prices and stay unmapped), Rapid Pregnancy test $30 -> 81025, CBC
+  DIFF PLT $60 -> 85025 and CMP $60 -> 80053 (send-out labs, but AFC's own posted charge to the
+  patient), Rapid UA and send-out UA $30 each with no code (81002 vs 81003, or 81001 at the lab:
+  the page does not say). `sling` has no code (a supply). No other site has cash prices; AFC's
+  sit in the registry (`sites.yaml`), not the pack.
 - **Problem 14 (offered services):** `Site.offered` holds positive evidence only (absence = unknown,
   never "not offered"): census category (visit / endoscopy), AFC's posted X-ray price, DPH licensed
   service flags (MRI, physical rehab) and the DPH/HPC urgent-care flags (imaging, lab) applied only
