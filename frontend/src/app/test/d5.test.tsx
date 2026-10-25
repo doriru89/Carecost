@@ -17,7 +17,7 @@ import { ChatPane, type ChatActions } from "../components/ChatPane";
 import { Receipt } from "../components/Receipt";
 import { ResultsPane, type QuoteState } from "../components/ResultsPane";
 import { SiteCard, SiteList } from "../components/SiteList";
-import { priceHidden } from "../lib/receipt";
+import { availabilityKey, priceHidden } from "../lib/receipt";
 import { kindGroups, siteViews, sortWithinKinds } from "../lib/sites";
 import { mapStepKeys, stepLabels, stepOf, stepPin } from "../lib/steps";
 import { BCBS, CASH, MASSHEALTH, MEDICARE } from "./fixtures";
@@ -232,6 +232,21 @@ describe("P4 / P5 / P6 · own steps make the total; the rest are 'elsewhere' lin
       const shown = amounts.filter((a) => a.textContent === `$${(l.cell as { low: number }).low.toFixed(2)}`);
       for (const a of shown) expect(a.closest("details")?.open).toBe(false);
     }
+  });
+
+  it("P6: 'your insurer lists a rate' is said only to a person paying with insurance", () => {
+    expect(availabilityKey("insurer_lists_rate", BCBS.payment)).toBe("receipt.availability.insurer_lists_rate");
+    for (const p of [MEDICARE.payment, CASH.payment, MASSHEALTH.payment])
+      expect(availabilityKey("insurer_lists_rate", p)).toBe("receipt.availability.no_evidence");
+    expect(availabilityKey(null, BCBS.payment)).toBeNull();
+  });
+
+  it("a card with no total says there is no price for this way of paying (never a bare dash)", () => {
+    const base = site(CASH, AFC_CAMBRIDGE);
+    const sq = { ...base, receipt: null, headline: { ...base.headline, likely_low: null, likely_high: null } };
+    render(<SiteCard v={{ sq, rank: 0, distance: null, open: closed }} onOpen={() => {}} />);
+    expect(screen.getByTestId("card-total").textContent).toBe("—");
+    expect(screen.getByTestId("card-no-total").textContent).toBe(t("list.no_total"));
   });
 
   it("priceHidden: rung 7 is hidden for every payment but Medicare, across every fixture line", () => {

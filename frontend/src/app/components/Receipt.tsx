@@ -6,7 +6,7 @@ import { ExternalLink } from "lucide-react";
 import { isoDate, range } from "../lib/format";
 import { milesText, type UserLocation } from "../lib/geo";
 import type { OpenStatus } from "../lib/hours";
-import { dataNoticeKey, freshnessDetail, freshnessLabel, freshnessState, sections, siteSourceIds, sourceHover } from "../lib/receipt";
+import { availabilityKey, dataNoticeKey, freshnessDetail, freshnessLabel, freshnessState, sections, siteSourceIds, sourceHover } from "../lib/receipt";
 import { Booking } from "./Booking";
 import { GLOSSARY_CREDIT } from "../lib/glossary";
 import { ReceiptLineView } from "./ReceiptLineView";
@@ -60,13 +60,17 @@ function ElsewhereStep({
   label,
   lines,
   render,
+  payment,
 }: {
+  payment: QuoteResponse["payment"];
   step: StepSummary;
   label: string;
   lines: ReceiptLine[];
   render: (l: ReceiptLine) => React.ReactNode;
 }) {
   const e = step.elsewhere;
+  // P6: why it is here, said on the step itself (the reason its lines carry)
+  const reason = lines.find((l) => l.availability === step.availability && l.availability_reason)?.availability_reason ?? null;
   return (
     <div className="rounded-md border border-dashed border-border px-3 py-2.5" data-testid="elsewhere-step" data-step={step.key}>
       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
@@ -78,7 +82,12 @@ function ElsewhereStep({
           {e ? t("receipt.elsewhere_about", { range: range(e.low, e.high) }) : "—"}
         </p>
       </div>
-      <p className="mt-1 text-[11px] text-muted-foreground">
+      {step.availability !== "offered" && (
+        <p className="mt-1 text-xs text-foreground/85" data-testid="elsewhere-why">
+          {reason ? t(availabilityKey(reason, payment)!) : t("receipt.not_offered")}
+        </p>
+      )}
+      <p className="mt-0.5 text-[11px] text-muted-foreground">
         {e ? t("receipt.elsewhere_basis", { n: e.n_groups }) : t("receipt.elsewhere_none")}
       </p>
       {lines.length > 0 && (
@@ -216,6 +225,7 @@ export function Receipt({
                   label={labels[st.key] ?? st.key}
                   lines={st.line_ids.flatMap((id) => (byId.has(id) ? [byId.get(id)!] : []))}
                   render={render}
+                  payment={quote.payment}
                 />
               ))}
             </div>

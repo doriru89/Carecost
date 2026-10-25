@@ -4,7 +4,7 @@ import type { ExcludedLine, OtherPayerRange, Payment, PeerRange, QuoteResponse, 
 import { cn } from "@/lib/utils";
 import { range } from "../lib/format";
 import { miles, milesText, type UserLocation } from "../lib/geo";
-import { cellHasDollars, chainName, noCashDiscount, priceHidden } from "../lib/receipt";
+import { availabilityKey, cellHasDollars, chainName, noCashDiscount, priceHidden } from "../lib/receipt";
 import { CellView, GapDetail, MoneyChips } from "./CellView";
 import { DoctorFeeNote } from "./DoctorFeeNote";
 import { GlossaryChips } from "./Glossary";
@@ -64,7 +64,7 @@ export function ReceiptLineView({
           )}
           {line.availability !== "offered" && line.availability_reason && (
             <p className="mt-0.5 text-[11px] text-foreground/80" data-testid="availability-why">
-              {t(`receipt.availability.${line.availability_reason}`)}
+              {t(availabilityKey(line.availability_reason, payment)!)}
             </p>
           )}
           {line.at === "your_primary_care" && (

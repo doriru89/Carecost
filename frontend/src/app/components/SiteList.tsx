@@ -80,6 +80,11 @@ export function SiteCard({
             <p className="text-lg font-bold tabular-nums text-ink" data-testid="card-total">
               {total ? `${headline.complete ? "" : "≥ "}${total}` : "—"}
             </p>
+            {!total && (
+              <p className="max-w-[10rem] text-[11px] text-muted-foreground" data-testid="card-no-total">
+                {t("list.no_total")}
+              </p>
+            )}
             {headline.includes_estimate && (
               <p className="text-[11px] font-medium text-amber-900" data-testid="card-estimate">
                 {t("receipt.includes_estimate")}

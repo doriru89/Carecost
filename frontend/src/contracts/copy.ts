@@ -280,7 +280,7 @@ export const APP_COPY = {
   "quote.timeout": { en: "The price server did not answer within 10 seconds. Try again in a moment." },
   // P3: the map shows a price only for one selected service
   "map.places_only": {
-    en: "Places only. The map shows a price for one service at a time: pick a single service under Browse. The List shows the full total.",
+    en: "Places only. The map shows the price of one step at a time: pick a step above, or a single service under Browse. The List shows the full total.",
     review: true,
   },
   "map.price_for": { en: "Prices on the map: {service}" },
@@ -290,7 +290,7 @@ export const APP_COPY = {
   },
 
   "receipt.total": { en: "Estimated total billed (you + your plan)" },
-  "receipt.total_floor": { en: "At least this much: some likely items have no public price." },
+  "receipt.total_floor": { en: "At least this much: some likely steps have no price at this place (see below)." },
   "receipt.includes_estimate": { en: "Includes an estimate" },
   "receipt.includes_late": { en: "Includes a price from a file that is late to refresh" },
   "receipt.includes_stale": { en: "Includes a price we are behind on refreshing" },
@@ -357,6 +357,7 @@ export const APP_COPY = {
   "receipt.step_included": { en: "Done here" },
   "receipt.loading": { en: "Loading this place's receipt…" },
   "receipt.load_failed": { en: "Could not load this place's receipt. Try again in a moment." },
+  "list.no_total": { en: "No price here in public data for this way of paying" },
   "list.done_elsewhere": { en: "{step}: elsewhere, about {range}" },
   // P3: on the map, one step's price at a time
   "map.pick_step": { en: "Show the price of one step on the map:" },

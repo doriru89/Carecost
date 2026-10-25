@@ -176,3 +176,14 @@ const CHAIN_NAMES: Record<string, string> = { afc_urgent_care: "AFC" };
 export function chainName(chainId: string | null): string {
   return (chainId && CHAIN_NAMES[chainId]) ?? "This chain";
 }
+
+/**
+ * P6 wording for a line or step that is not "offered". "Your insurer lists a rate" is said only to a
+ * person paying with insurance: for Medicare, MassHealth or self-pay the engine's insurer_lists_rate
+ * reason (a TiC row exists) reads as "doesn't say whether it offers this".
+ */
+export function availabilityKey(reason: ReceiptLine["availability_reason"], payment: Payment): string | null {
+  if (!reason) return null;
+  if (reason === "insurer_lists_rate" && payment.kind !== "insurance") return "receipt.availability.no_evidence";
+  return `receipt.availability.${reason}`;
+}
