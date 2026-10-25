@@ -3,6 +3,7 @@ import type { Hours, ReceiptLine, SourceInfo } from "@/generated/contracts/quote
 import { miles, zipToLocation } from "../lib/geo";
 import { bostonNow, openStatus } from "../lib/hours";
 import {
+  freshnessDetail,
   freshnessState,
   noCashDiscount,
   sections,
@@ -48,6 +49,16 @@ describe("source chip and freshness (§2.2, D18)", () => {
     expect(freshnessState(base)).toBe("current");
     expect(freshnessState({ ...base, freshness: { ...base.freshness, late_to_refresh: true } })).toBe("late");
     expect(freshnessState({ ...base, freshness: { ...base.freshness, stale_on_our_side: true } })).toBe("stale");
+  });
+  it("D18: both flags true -> stale on our side, never the publisher's lateness (state and detail text)", () => {
+    const both: SourceInfo = {
+      ...base,
+      freshness: { ...base.freshness, late_to_refresh: true, stale_on_our_side: true, our_refresh_due: "2026-11-24" },
+    };
+    expect(freshnessState(both)).toBe("stale");
+    const detail = freshnessDetail(both);
+    expect(detail).toMatch(/^We last downloaded it/);
+    expect(detail).not.toMatch(/publisher's file/);
   });
   it("lists exactly sources the response carries for each site", () => {
     for (const sq of BCBS.sites) for (const id of siteSourceIds(sq)) expect(BCBS.sources[id]).toBeDefined();
