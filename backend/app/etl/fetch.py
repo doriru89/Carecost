@@ -318,6 +318,9 @@ class FetchRecord:
     store: str = ""
     imported_at: str | None = None  # set (instead of fetched_at) for --import-dir copies
     publisher_last_updated_on: str | None = None  # the file's own date (header peek), D18
+    note: str | None = None  # browser / manual: how the file was obtained
+    landing_url: str | None = None  # browser: the page whose link was clicked
+    user_agent: str | None = None  # browser: the browser's own (unchanged) user agent
 
     @property
     def path(self) -> Path:
@@ -325,7 +328,7 @@ class FetchRecord:
 
 
 def _ext(spec: SourceSpec, url: str | None) -> str:
-    name = urlparse(url).path if url else (spec.legacy_filename or "")
+    name = (urlparse(url).path if "://" in url else url) if url else (spec.legacy_filename or "")
     low = name.lower()
     for e in (".csv.zip", ".json.gz", ".zip", ".csv", ".json", ".gz", ".xlsx", ".pdf", ".html"):
         if low.endswith(e):
@@ -373,13 +376,14 @@ def _finish(
     else:
         tmp.unlink(missing_ok=True)
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    obtained = kw.pop("fetched_at", None) or now  # browser / manual: when the file was obtained
     imported = kw.get("method") == "import"
     rec = FetchRecord(
         source_id=spec.source_id,
         sha256=sha,
         bytes=size,
         relpath=rel,
-        fetched_at=None if imported else now,
+        fetched_at=None if imported else obtained,
         imported_at=now if imported else None,
         publisher_last_updated_on=peek_publisher_date(dest, spec.container),
         status=status,
@@ -433,6 +437,51 @@ def fetch_source(
             )
     except FetchError as e:
         raise FetchError(f"{spec.source_id}: {e}") from e
+
+
+def store_local(
+    spec: SourceSpec,
+    src: Path,
+    paths: Paths,
+    *,
+    method: str,
+    url: str | None,
+    final_url: str | None,
+    fetched_at: str,
+    note: str,
+    landing_url: str | None = None,
+    user_agent: str | None = None,
+) -> FetchRecord:
+    """Put a file obtained outside ``fetch_source`` (``browser`` click, ``manual`` download) in
+    the content-addressed store. The source file is copied, never moved or modified."""
+    if method not in ("browser", "manual"):
+        raise FetchError(f"{spec.source_id}: store_local method {method!r}")
+    h = hashlib.sha256()
+    with src.open("rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    sha = h.hexdigest()
+    paths.store.mkdir(parents=True, exist_ok=True)
+    tmp = paths.store / f".{spec.source_id}.{sha}.{method}"
+    shutil.copy2(src, tmp)
+    rec = _finish(
+        spec,
+        paths,
+        tmp,
+        sha,
+        src.stat().st_size,
+        _ext(spec, src.name),
+        fetched_at=fetched_at,
+        method=method,
+        url=url,
+        final_url=final_url,
+        http_last_modified=None,
+        etag=None,
+        note=note,
+        landing_url=landing_url,
+        user_agent=user_agent,
+    )
+    return rec
 
 
 def import_local(spec: SourceSpec, src_dir: Path, paths: Paths) -> FetchRecord | None:

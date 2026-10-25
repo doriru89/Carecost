@@ -19,6 +19,7 @@ import functools
 import os
 import re
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Any, Literal
 
@@ -43,6 +44,16 @@ class Paths:
     @property
     def store(self) -> Path:
         return self.data / "raw" / "store"
+
+    @property
+    def manual(self) -> Path:
+        """Files a person downloaded by hand (access: manual); gitignored with data/raw/."""
+        return self.data / "raw" / "manual"
+
+    @property
+    def gov(self) -> Path:
+        """gov/<source_id>/<sha>.parquet (RateRow) + .manifest.json per fee-schedule source."""
+        return self.data / "intermediate" / "gov"
 
     @property
     def fetch_manifest(self) -> Path:
@@ -76,6 +87,12 @@ SourceFormat = Literal[
     # insurer Transparency in Coverage (app.etl.tic)
     "tic_table_of_contents",  # the index JSON that lists in_network file URLs
     "tic_in_network",  # one in_network .json.gz (or .zip, D30), read with HTTP Range
+    # government fee schedules (app.etl.gov, stream A3)
+    "cms_pfs_rvu_zip",  # CMS RVUxxY zip: PPRRVU nonQPP csv + GPCI + ANES
+    "cms_anes_base_units_zip",  # CMS anesthesia base units (508 .txt inside the zip)
+    "cms_opps_addendum_b_zip",  # CMS OPPS Addendum B (tab-separated 508 .txt inside the zip)
+    "cms_asc_addenda_zip",  # CMS ASC Addenda AA + BB (508 csv inside the zip)
+    "masshealth_regulation_pdf",  # 101 CMR 316/317/318 regulation text with the fee tables
 ]
 """Only formats that have a reader (P3). A stream adds its format row here in the same commit as
 its reader, with rules taken from the real file (no pre-registered guesses)."""
@@ -83,8 +100,15 @@ its reader, with rules taken from the real file (no pre-registered guesses)."""
 MRF_FORMATS: frozenset[str] = frozenset({"cms_v3_csv_tall", "cms_v3_csv_wide", "cms_v3_json"})
 """The only formats the rate_row pipeline (stage / normalize / build / report) reads today."""
 
-Media = Literal["csv", "json"]
-Access = Literal["download", "http_range"]
+Media = Literal["csv", "json", "txt", "pdf"]
+Access = Literal["download", "http_range", "browser", "manual"]
+"""download: scripted HTTPS. http_range: TiC ranged reads. browser: a plain headed browser
+clicks the publisher's own download link (mass.gov refuses scripted HTTP, D28). manual: a person
+downloads the file (e.g. behind a license click-through) and the ETL imports it."""
+GOV_FORMATS: frozenset[str] = frozenset(
+    {"cms_pfs_rvu_zip", "cms_anes_base_units_zip", "cms_opps_addendum_b_zip",
+     "cms_asc_addenda_zip", "masshealth_regulation_pdf"}
+)  # fmt: skip
 
 # format -> (allowed kinds, allowed media (first = default), allowed containers, allowed access)
 _FORMAT_RULES: dict[str, tuple[set[str], tuple[str, ...], set[str], set[str]]] = {
@@ -98,6 +122,11 @@ _FORMAT_RULES: dict[str, tuple[set[str], tuple[str, ...], set[str], set[str]]] =
         {"gzip", "plain", "zip"},  # D30: Harvard Pilgrim / Tufts publish .zip
         {"http_range", "download"},
     ),
+    "cms_pfs_rvu_zip": ({"medicare_pfs"}, ("csv",), {"zip"}, {"download"}),
+    "cms_anes_base_units_zip": ({"medicare_pfs"}, ("txt",), {"zip"}, {"download"}),
+    "cms_opps_addendum_b_zip": ({"medicare_opps"}, ("txt",), {"zip"}, {"manual", "download"}),
+    "cms_asc_addenda_zip": ({"medicare_asc"}, ("csv",), {"zip"}, {"download"}),
+    "masshealth_regulation_pdf": ({"masshealth_fs"}, ("pdf",), {"plain"}, {"browser", "manual"}),
 }
 _PAYER_RE = re.compile(r"^[A-Z][A-Z0-9_]*$")
 
@@ -126,6 +155,23 @@ class SourceSpec(BaseModel):
     legacy_filename: str | None = None
     max_bytes: int | None = None
     release: str | None = Field(default=None, description="e.g. RVU26A, 2026-11, CY2026 Q4")
+    # government fee schedules (format in GOV_FORMATS)
+    effective_date: date | None = Field(
+        default=None, description="Date the published rates take effect (reader re-checks it)"
+    )
+    next_release: date | None = Field(
+        default=None, description="When the publisher owes the next version (Freshness.expected_by)"
+    )
+    landing_url: str | None = Field(default=None, description="browser: page holding the link")
+    link_href: str | None = Field(default=None, description="browser: href substring to click")
+    manual_filename: str | None = Field(
+        default=None, description="manual: file name under <data>/raw/manual/"
+    )
+    inputs: list[str] = Field(
+        default_factory=list, description="other source_ids this reader also reads"
+    )
+    regulation: str | None = Field(default=None, description="e.g. 101 CMR 317.00")
+    note: str | None = None
 
     @field_validator("npis")
     @classmethod
@@ -163,6 +209,18 @@ class SourceSpec(BaseModel):
             raise ValueError(f"{sid}: payer_id only applies to insurer_tic")
         if self.url is not None and not self.url.startswith("https://"):
             raise ValueError(f"{sid}: url must be https")
+        if self.access == "browser" and not (
+            self.landing_url and self.landing_url.startswith("https://") and self.link_href
+        ):
+            raise ValueError(f"{sid}: access browser needs an https landing_url and link_href")
+        if self.access == "manual" and not self.manual_filename:
+            raise ValueError(f"{sid}: access manual needs manual_filename")
+        if self.access == "download" and self.format in GOV_FORMATS and not self.url:
+            raise ValueError(f"{sid}: access download needs url")
+        if self.format in GOV_FORMATS and not self.effective_date:
+            raise ValueError(f"{sid}: a fee schedule needs effective_date")
+        if self.manual_filename and ("/" in self.manual_filename or self.manual_filename.startswith(".")):
+            raise ValueError(f"{sid}: manual_filename must be a bare file name")
         return self
 
     @property
@@ -171,6 +229,11 @@ class SourceSpec(BaseModel):
         if not self.entity_id:
             raise ValueError(f"{self.source_id}: no entity_id")
         return self.entity_id
+
+    @property
+    def is_gov_source(self) -> bool:
+        """Read by the government fee-schedule pipeline (``python -m app.etl gov``)."""
+        return self.format in GOV_FORMATS
 
     @property
     def is_rate_row_source(self) -> bool:

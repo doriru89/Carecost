@@ -1,0 +1,105 @@
+# Government fee schedules (stream A3): Medicare PFS + anesthesia, OPPS, ASC (CMS) and the
+# MassHealth physician pricing regulations (EOHHS). Read by `python -m app.etl gov ...`
+# (backend/app/etl/gov/), never by the hospital rate_row pipeline. docs/etl/gov_fee_schedules.md.
+#
+# access:
+#   download  scripted HTTPS through app.etl.fetch (allowlist, size cap, content hash)
+#   browser   mass.gov answers scripted HTTP with 403, so a plain headed browser opens
+#             landing_url and clicks the link whose href contains link_href (D28: real UA, no
+#             fingerprint changes, no stealth; a 403 / captcha stops and the source goes manual)
+#   manual    a person downloads the file into <data>/raw/manual/<manual_filename>; the ETL
+#             imports it (OPPS: every Addendum B sits behind the AMA CPT license click-through)
+# effective_date = when the rates take effect (each reader re-checks it against the file).
+# next_release   = when the publisher owes the next version (Freshness.expected_by).
+# Re-read 2026-10-24.
+
+version: 1
+allowed_domains:
+  - www.cms.gov
+  - mass.gov
+
+sources:
+  - source_id: cms_pfs_rvu26d
+    kind: medicare_pfs
+    format: cms_pfs_rvu_zip
+    container: zip
+    url: https://www.cms.gov/files/zip/rvu26d-updated-08-26-2026.zip
+    discovery: https://www.cms.gov/medicare/payment/fee-schedules/physician/pfs-relative-value-files/rvu26d
+    release: RVU26D
+    effective_date: 2026-10-01
+    next_release: 2027-01-01
+    note: "PFS October 2026 release (RVU26A/B/C/D all exist; D is the newest). MA localities 01 + 99."
+
+  - source_id: cms_anes_base_units_cy2022
+    kind: medicare_pfs
+    format: cms_anes_base_units_zip
+    container: zip
+    url: https://www.cms.gov/files/zip/2022-anesthesia-base-units-cpt-code.zip
+    discovery: https://www.cms.gov/medicare/payment/fee-schedules/physician/anesthesiologists-center
+    release: CY2022 base units x RVU26D anesthesia CF
+    inputs: [cms_pfs_rvu26d]
+    effective_date: 2026-10-01
+    next_release: 2027-01-01
+    note: "CY2022 is the newest base-unit file CMS posts; the CY2026 locality anesthesia CF comes from RVU26D ANES2026.csv."
+
+  - source_id: cms_opps_addb_2026q4
+    kind: medicare_opps
+    format: cms_opps_addendum_b_zip
+    container: zip
+    access: manual
+    url: null
+    manual_filename: 2026_october_web_addendum_b.10.14.26.zip
+    discovery: https://www.cms.gov/medicare/payment/prospective-payment-systems/hospital-outpatient-pps/quarterly-addenda-updates/october-2026-addendum-b
+    release: 2026-10
+    effective_date: 2026-10-01
+    next_release: 2027-01-01
+    note: "Behind the AMA CPT license click-through (cms.gov/apps/ama/license.asp). Austin accepted it and downloaded the file by hand on 2026-10-24."
+
+  - source_id: cms_asc_2026q4
+    kind: medicare_asc
+    format: cms_asc_addenda_zip
+    container: zip
+    url: https://www.cms.gov/files/zip/october-2026-asc-approved-hcpcs-code-payment-rates.zip
+    discovery: https://www.cms.gov/medicare/payment/prospective-payment-systems/ambulatory-surgical-center-asc/asc-payment-rates-addenda
+    release: 2026-10
+    effective_date: 2026-10-01
+    next_release: 2027-01-01
+
+  - source_id: masshealth_317_20261001
+    kind: masshealth_fs
+    format: masshealth_regulation_pdf
+    access: browser
+    url: https://www.mass.gov/doc/emergency-adoption-date-filed-september-25-2026-5/download
+    landing_url: https://www.mass.gov/regulations/101-CMR-31700-rates-for-medicine-services
+    link_href: /doc/emergency-adoption-date-filed-september-25-2026-5/download
+    regulation: 101 CMR 317.00
+    release: emergency adoption filed 2026-09-25
+    effective_date: 2026-10-01
+    next_release: 2027-01-01
+    note: "Medicine (E/M visits, PT). The 2026-09-25 emergency amendment (home-birth supplies, S8415) re-publishes the whole regulation."
+
+  - source_id: masshealth_318_20261001
+    kind: masshealth_fs
+    format: masshealth_regulation_pdf
+    access: browser
+    url: https://www.mass.gov/doc/emergency-adoption-date-filed-september-25-2026-7/download
+    landing_url: https://www.mass.gov/regulations/101-CMR-31800-rates-for-radiology-services
+    link_href: /doc/emergency-adoption-date-filed-september-25-2026-7/download
+    regulation: 101 CMR 318.00
+    release: emergency adoption filed 2026-09-25
+    effective_date: 2026-10-01
+    next_release: 2027-01-01
+    note: "Radiology (X-ray, MRI, ultrasound; global / -26 / -TC)."
+
+  - source_id: masshealth_316_20261001
+    kind: masshealth_fs
+    format: masshealth_regulation_pdf
+    access: browser
+    url: https://www.mass.gov/doc/emergency-adoption-date-filed-september-25-2026-3/download
+    landing_url: https://www.mass.gov/regulations/101-CMR-31600-rates-for-surgery-and-anesthesia-services
+    link_href: /doc/emergency-adoption-date-filed-september-25-2026-3/download
+    regulation: 101 CMR 316.00
+    release: emergency adoption filed 2026-09-25
+    effective_date: 2026-10-01
+    next_release: 2027-01-01
+    note: "Surgery (injections, biopsies, arthroscopy, colonoscopy) + anesthesia base units."
