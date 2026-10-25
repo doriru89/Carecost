@@ -134,7 +134,7 @@ export function ResultsPane({
       ) : quote && current ? (
         <div className="relative space-y-2" data-testid="quote-body" data-updating={updating || undefined} aria-busy={updating || undefined}>
         {updating && (
-          <p role="status" className="sticky top-12 z-10 rounded-lg border border-ink/20 bg-card px-3 py-2 text-xs font-medium shadow-sm animate-pulse" data-testid="quote-updating">
+          <p role="status" className="rounded-lg border border-ink/20 bg-card px-3 py-2 text-xs font-medium shadow-sm animate-pulse" data-testid="quote-updating">
             {t("quote.updating", { payment: paymentLabel(payment) })}
           </p>
         )}

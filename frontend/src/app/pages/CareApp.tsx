@@ -320,9 +320,10 @@ export default function CareApp() {
   }
 
   return (
-    <main className="min-h-screen bg-background" data-testid="workspace">
+    // --header-h: the sticky header's height (h-11 + 1px border); the phone tabs stick right under it
+    <main className="min-h-screen bg-background [--header-h:calc(2.75rem+1px)]" data-testid="workspace">
       <header className="sticky top-0 z-30 border-b border-border bg-card/90 backdrop-blur">
-        <div className="flex items-center justify-between px-4 py-2">
+        <div className="flex h-11 items-center justify-between px-4">
           <Link to="/">
             <CareCostLogo compact />
           </Link>

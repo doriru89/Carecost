@@ -70,7 +70,7 @@ export function SplitView({
   if (phone) {
     return (
       <div className="flex flex-col" data-testid="split-view" data-layout="tabs">
-        <div className="sticky top-0 z-20 grid grid-cols-2 border-b border-border bg-background" role="tablist">
+        <div className="sticky top-[var(--header-h,0px)] z-20 grid grid-cols-2 border-b border-border bg-background" role="tablist">
           {(["chat", "prices"] as const).map((tab) => (
             <button
               key={tab}
