@@ -69,8 +69,11 @@ def main() -> None:  # pragma: no cover - needs a real pack
             m = statistics.median(ratios.values())
             if m >= KEEP_HIGH or m <= KEEP_LOW:
                 groups[eng.contract_key(site, g, q)] = dict(sorted(ratios.items()))
-        print(f"{pay}: {len(seen)} groups, {len(groups)} kept so far, "
-              f"{time.perf_counter() - t0:.0f} s", flush=True)
+        print(
+            f"{pay}: {len(seen)} groups, {len(groups)} kept so far, "
+            f"{time.perf_counter() - t0:.0f} s",
+            flush=True,
+        )
     out = REPO_ROOT / cfg["contract_levels_file"]
     doc = {"version": 1,
            "note": f"Written by python -m app.quote.contract_levels from pack "
