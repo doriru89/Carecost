@@ -69,15 +69,28 @@ export function cellHasDollars(line: ReceiptLine): boolean {
   return line.cell != null && CELL_HAS_DOLLARS[line.cell.kind];
 }
 
+/** Both ends of a range are cited (P1 problem 2): prov for the low end, prov_high for the high end. */
+export function moneySourceIds(m: Money): string[] {
+  return m.prov_high && m.prov_high.source_id !== m.prov.source_id ? [m.prov.source_id, m.prov_high.source_id] : [m.prov.source_id];
+}
+
+/** The high end needs its own chip when it comes from another row than the low end. */
+export function highEndProv(m: Money): Money["prov_high"] {
+  if (!m.prov_high || m.low === m.high) return null;
+  const a = m.prov;
+  const b = m.prov_high;
+  return a.source_id === b.source_id && a.row_ref === b.row_ref && a.row_id === b.row_id ? null : b;
+}
+
 /** Every source id one line points at, for chips and the freshness marks next to a number. */
 export function lineSourceIds(line: ReceiptLine): string[] {
   const ids = new Set<string>();
   const c = line.cell;
   if (c) {
-    if (c.kind === "money") ids.add(c.prov.source_id);
+    if (c.kind === "money") moneySourceIds(c).forEach((id) => ids.add(id));
     else if (c.kind === "conflict") {
-      ids.add(c.a.prov.source_id);
-      ids.add(c.b.prov.source_id);
+      moneySourceIds(c.a).forEach((id) => ids.add(id));
+      moneySourceIds(c.b).forEach((id) => ids.add(id));
     } else if (c.kind === "not_published" || c.kind === "percent_only") ids.add(c.searched.source_id);
   }
   return [...ids];
@@ -105,18 +118,19 @@ export function quoteKey(q: QuoteResponse): string {
 
 /** Sources one site's receipt points at (its lines, list prices, range bar, by-NPI, its own price source). */
 export function siteSourceIds(sq: SiteQuote): string[] {
-  const ids = new Set<string>([sq.site.price_source_id]);
+  // price_source_id is null when the site has its own price source we do not read yet (P1 problem 9)
+  const ids = new Set<string>(sq.site.price_source_id ? [sq.site.price_source_id] : []);
   for (const line of sq.receipt.lines) {
     lineSourceIds(line).forEach((id) => ids.add(id));
-    if (line.list_price) ids.add(line.list_price.prov.source_id);
-    line.doctor_fee?.by_npi?.forEach((n) => ids.add(n.money.prov.source_id));
+    if (line.list_price) moneySourceIds(line.list_price).forEach((id) => ids.add(id));
+    line.doctor_fee?.by_npi?.forEach((n) => moneySourceIds(n.money).forEach((id) => ids.add(id)));
     line.elsewhere.forEach((e) => {
-      if (e.cell.kind === "money") ids.add(e.cell.prov.source_id);
+      if (e.cell.kind === "money") moneySourceIds(e.cell).forEach((id) => ids.add(id));
     });
   }
   for (const r of sq.other_payers) {
-    r.points.forEach((p) => ids.add(p.money.prov.source_id));
-    if (r.cash?.kind === "money") ids.add(r.cash.prov.source_id);
+    r.points.forEach((p) => moneySourceIds(p.money).forEach((id) => ids.add(id)));
+    if (r.cash?.kind === "money") moneySourceIds(r.cash).forEach((id) => ids.add(id));
   }
   return [...ids];
 }

@@ -39,6 +39,25 @@ describe("mock mode (default until integration)", () => {
     await expect(api.quote(quoteReq({ kind: "insurance", payer_id: "AETNA", product: "PPO", network: null }))).rejects.toBeInstanceOf(NoMockData);
     await expect(api.quote(quoteReq({ kind: "cash" }, "knee_chronic_v1"))).rejects.toBeInstanceOf(NoMockData);
     await expect(api.quote(quoteReq({ kind: "masshealth" }))).rejects.toBeInstanceOf(NoMockData);
+    await expect(api.quote({ ...quoteReq({ kind: "cash" }, null), service_codes: ["73030", "73221"] })).rejects.toBeInstanceOf(NoMockData);
+  });
+
+  it("serves the MassHealth manual pick (73030 + 73221) with no D33 lines", async () => {
+    const api = mockApi();
+    const q = await api.quote({ ...quoteReq({ kind: "masshealth" }, null), service_codes: ["73221", "73030"] });
+    expect(q.payment.kind).toBe("masshealth");
+    expect(q.care_path).toBeNull();
+    expect(q.copy_keys).toEqual([]);
+  });
+
+  it("answers the two picker steps from the catalog fixture", async () => {
+    const api = mockApi();
+    const paths = await api.catalogPaths();
+    expect(paths.length).toBeGreaterThan(0);
+    const svcs = await api.pathServices(paths[0].id);
+    expect(svcs.length).toBeGreaterThan(0);
+    expect(svcs.every((s) => s.care_paths.includes(paths[0].id))).toBe(true);
+    await expect(api.pathServices("no_such_path_v1")).rejects.toBeInstanceOf(NoMockData);
   });
 
   it("chat script: crisis words -> crisis_988 with redflags.json copy; emergency -> call_911", async () => {
@@ -66,12 +85,19 @@ describe("http client", () => {
     await api.quote(quoteReq({ kind: "cash" }));
     await api.chat(chatReq("hi"));
     await api.catalog();
+    await api.catalogPaths();
+    await api.pathServices("shoulder_chronic_clicking_v1");
     expect(calls.map((c) => [c[0], c[1]?.method ?? "GET"])).toEqual([
       ["http://x/api/quote", "POST"],
       ["http://x/api/chat", "POST"],
       ["http://x/api/catalog", "GET"],
+      ["http://x/api/catalog/paths", "GET"],
+      ["http://x/api/catalog/paths/shoulder_chronic_clicking_v1/services", "GET"],
     ]);
-    expect(JSON.parse(String(calls[0][1]?.body)).payment).toEqual({ kind: "cash" });
+    const body = JSON.parse(String(calls[0][1]?.body));
+    expect(body.payment).toEqual({ kind: "cash" });
+    // near / max_sites are not sent until the contract has them (C2)
+    expect(Object.keys(body).sort()).toEqual(["answers", "care_path_id", "payment", "picked_by", "service_codes", "site_ids"]);
   });
 
   it("turns a non-2xx into an error", async () => {

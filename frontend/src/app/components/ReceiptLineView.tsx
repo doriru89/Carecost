@@ -5,11 +5,10 @@ import { cn } from "@/lib/utils";
 import { range } from "../lib/format";
 import { miles, milesText, type UserLocation } from "../lib/geo";
 import { noCashDiscount } from "../lib/receipt";
-import { CellView, GapDetail } from "./CellView";
+import { CellView, GapDetail, MoneyChips } from "./CellView";
 import { DoctorFeeNote } from "./DoctorFeeNote";
 import { GlossaryChips } from "./Glossary";
 import { OtherPayers } from "./OtherPayers";
-import { SourceChip } from "./SourceChip";
 
 const TIER_CLASS: Record<ReceiptLine["tier"], string> = {
   certain: "tier-certain",
@@ -41,20 +40,39 @@ export function ReceiptLineView({
   otherPayers?: OtherPayerRange;
   location: UserLocation | null;
 }) {
+  // Rung 6 (plan §2.4, D5): an estimate, in the total but marked. Rung 7: Medicare as a reference, never summed.
+  const estimate = line.cell?.kind === "money" && line.cell.basis === "estimate";
+  const reference = excluded?.reason === "reference_only" || line.doctor_fee?.explanation_key === "fee.rung_7_medicare_reference";
   const body = (
     <div className={cn("pl-3 pr-2 py-2.5 rounded-r-md", TIER_CLASS[line.tier])} data-testid="receipt-line" data-tier={line.tier}>
       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
         <div className="min-w-[11rem] flex-1">
           <p className={cn("text-sm leading-snug", NAME_CLASS[line.tier])}>{line.plain_name}</p>
+          {line.at === "your_primary_care" && (
+            <p className="mt-0.5 text-[11px] font-medium text-ink" data-testid="at-primary-care">
+              {t("receipt.at_your_primary_care")}
+            </p>
+          )}
           <p className="text-[11px] text-muted-foreground">
             {line.technical_name}
             {line.codes.length > 0 && <> · {line.codes.join(", ")}{line.modifier ? `-${line.modifier}` : ""}</>}
             {!line.component_confirmed && <> · {t(COMPONENT_LABEL_KEY.unknown)}</>}
           </p>
         </div>
-        <div className="ml-auto shrink-0 text-right">
+        <div className={cn("ml-auto max-w-full shrink-0 text-right sm:max-w-[18rem]", reference && "opacity-70")}>
+          {(estimate || reference) && (
+            <p
+              className={cn(
+                "mb-0.5 inline-block rounded px-1.5 py-0.5 text-[10px] font-semibold",
+                estimate ? "bg-amber-100 text-amber-900" : "bg-muted text-muted-foreground",
+              )}
+              data-testid={estimate ? "estimate-tag" : "reference-tag"}
+            >
+              {t(estimate ? "receipt.estimate_tag" : "receipt.reference_tag")}
+            </p>
+          )}
           {line.cell ? (
-            <CellView cell={line.cell} sources={sources} strong={line.tier === "certain"} />
+            <CellView cell={line.cell} sources={sources} strong={line.tier === "certain" && !reference} />
           ) : (
             <span className="text-sm text-muted-foreground">{t("receipt.not_offered")}</span>
           )}
@@ -79,7 +97,7 @@ export function ReceiptLineView({
       {line.list_price && (
         <p className="mt-1 text-[11px] text-muted-foreground flex flex-wrap items-center gap-1">
           {t("receipt.list_price")}: <span className="tabular-nums">{range(line.list_price.low, line.list_price.high)}</span>
-          <SourceChip sourceId={line.list_price.prov.source_id} info={sources[line.list_price.prov.source_id]} rowRef={line.list_price.prov.row_ref} />
+          <MoneyChips m={line.list_price} sources={sources} />
         </p>
       )}
       {noCashDiscount(line, payment) && (
@@ -91,7 +109,7 @@ export function ReceiptLineView({
         {line.tier === "not_in_public_data" && line.likelihood !== "possible" && line.likelihood !== "rare" && (
           <span>· usually happens ({line.likelihood})</span>
         )}
-        {excluded && line.tier !== "possible" && line.tier !== "not_in_public_data" && (
+        {excluded && !reference && line.tier !== "possible" && line.tier !== "not_in_public_data" && (
           <span>· {t(EXCLUDED_REASON_KEY[excluded.reason])}</span>
         )}
         <GlossaryChips keys={line.glossary_keys} />

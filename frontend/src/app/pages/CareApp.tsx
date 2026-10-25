@@ -4,10 +4,10 @@ import { Send } from "lucide-react";
 import CareCostLogo from "@/components/CareCostLogo";
 import { t } from "@/contracts/copy";
 import { CHAT_REPLY_FULL_PAGE } from "@/contracts/exhaustive";
-import type { Catalog, CatalogService } from "@/generated/contracts/catalog";
+import type { Catalog, CatalogPath, CatalogService } from "@/generated/contracts/catalog";
 import type { CandidatePath, ChatRequest, RedFlagReply, ServiceRef } from "@/generated/contracts/chat_api";
 import type { Payment, QuoteRequest } from "@/generated/contracts/quote_api";
-import { getApi, NoMockData } from "../api/client";
+import { ApiError, getApi, NoMockData } from "../api/client";
 import { ChatPane, type ChatTurn } from "../components/ChatPane";
 import { PaymentSelect } from "../components/PaymentSelect";
 import { ResultsPane, type QuoteState, type ResultsView } from "../components/ResultsPane";
@@ -58,10 +58,13 @@ export default function CareApp() {
   const [split, setSplit] = useState<SplitState>({ orientation: "side", swapped: false });
   const [phoneTab, setPhoneTab] = useState<"chat" | "prices">("chat");
   const [catalog, setCatalog] = useState<Catalog | null>(null);
+  const [paths, setPaths] = useState<CatalogPath[] | null>(null);
 
   useEffect(() => {
     api.catalog().then(setCatalog, () => setCatalog(null));
+    api.catalogPaths().then(setPaths, () => setPaths([]));
   }, [api]);
+  const loadServices = useCallback((id: string) => api.pathServices(id), [api]);
 
   // ---- quotes: one request per (payment, query); cached so switching back is instant
   useEffect(() => {
@@ -151,7 +154,8 @@ export default function CareApp() {
           setView("receipt");
         }
       } catch (e) {
-        setChatError(e instanceof Error ? e.message : String(e));
+        // The server could not answer at all (no reply to render): say so plainly, keep browsing open.
+        setChatError(e instanceof ApiError ? t("chat.unreachable", { status: e.status }) : t("chat.unreachable_network"));
       } finally {
         setChatBusy(false);
       }
@@ -334,6 +338,8 @@ export default function CareApp() {
             view={view}
             onView={setView}
             catalog={catalog}
+            paths={paths}
+            loadServices={loadServices}
             onPickPath={pickPath}
             onPickService={(s) => pickService(s)}
             location={location}

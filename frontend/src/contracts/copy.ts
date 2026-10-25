@@ -169,20 +169,36 @@ export const CONTRACT_COPY = {
     en: "Medicare Advantage plans are private insurance: pick your insurer above instead of Medicare.",
   },
 
-  // ---- AI states
-  "ai.paused_ip_cap": { en: "The AI helper has reached today's limit for this connection. You can still browse prices." },
-  "ai.paused_wallet": { en: "The AI helper is paused for now. You can still browse prices." },
-  "ai.paused_provider": { en: "The AI helper is not available right now. You can still browse prices." },
-  "ai.paused_conversation_cap": { en: "This conversation has reached its length limit. Start over, or browse prices." },
-  "ai.output_invalid": { en: "The AI's answer did not pass our checks, so we are not showing it. You can rephrase, or browse prices." },
+  // ---- AI states. Wording from the Chat stream (git show wave2/chat:data/chat/copy.yaml, review pending_austin)
+  "ai.paused_ip_cap": {
+    en: "The assistant has reached today's limit for this network. It comes back tomorrow; prices are still here.",
+    review: true,
+  },
+  "ai.paused_wallet": {
+    en: "The assistant is paused for today. You can still browse prices.",
+    review: true,
+  },
+  "ai.paused_provider": {
+    en: "The assistant isn't available right now. You can still browse prices.",
+    review: true,
+  },
+  "ai.paused_conversation_cap": {
+    en: "This conversation is long enough. Start a new one, or browse prices directly.",
+    review: true,
+  },
+  "ai.output_invalid": {
+    en: "The assistant couldn't give a clear answer this time. You can still browse prices and pick a care path yourself.",
+    review: true,
+  },
 
-  // ---- D33: fixed lines shown with every set of care paths
+  // ---- D33: fixed lines shown with every set of care paths and under a receipt reached from a care path.
+  // Wording from the Chat stream (data/chat/copy.yaml): patient-facing clinical text, pending Austin + 1 outside reader (P10).
   "copy.not_a_diagnosis": {
     en: "These are common causes, not a diagnosis. A doctor needs to examine you to know what is going on.",
     review: true,
   },
   "copy.when_to_see_a_doctor": {
-    en: "See a doctor if it keeps getting worse, has not improved after a few weeks, or stops you from doing everyday things. Get care today for a high fever, severe pain, or new numbness or weakness. Call 911 for chest pain, trouble breathing or fainting.",
+    en: "See a doctor soon if it gets worse quickly, keeps you up at night, or comes with fever, numbness or weakness. For chest pain, trouble breathing or thoughts of harming yourself, call 911 or 988 now.",
     review: true,
   },
 } as const satisfies Record<ContractCopyKey, Copy>;
@@ -212,6 +228,15 @@ export const APP_COPY = {
   "receipt.per_15_minutes": { en: "per 15 minutes" },
   "receipt.per_visit": { en: "per session; repeats are not in the total" },
   "receipt.not_offered": { en: "Not offered here" },
+  "receipt.at_your_primary_care": {
+    en: "Happens at your own primary care office, not at this place. Not priced at this place.",
+  },
+  "receipt.estimate_tag": { en: "Estimate" },
+  "receipt.reference_tag": { en: "Reference only, not added" },
+  "receipt.price_source_not_read": {
+    en: "This place has its own price list, but we do not read it yet. Its prices show as not loaded.",
+  },
+  "receipt.d33_heading": { en: "Before you go" },
   "receipt.cheapest_elsewhere": { en: "Available elsewhere" },
   "receipt.other_payers": { en: "Same item here, other ways of paying" },
   "receipt.sources": { en: "Sources & dates" },
@@ -222,6 +247,9 @@ export const APP_COPY = {
   "billing.hospital_outpatient": { en: "Billed as a hospital outpatient department: expect a separate facility fee" },
   "billing.asc": { en: "Billed as a surgery center" },
   "billing.unknown": { en: "Billing type not confirmed" },
+
+  "chat.unreachable": { en: "The AI helper could not answer (server error {status}). You can still browse prices." },
+  "chat.unreachable_network": { en: "The AI helper could not be reached. You can still browse prices." },
 
   "redflag.no_prices": { en: "We've stopped here and are not showing prices." },
   "redflag.back_home": { en: "Back to the home page", review: true },

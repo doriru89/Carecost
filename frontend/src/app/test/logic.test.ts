@@ -5,13 +5,15 @@ import { bostonNow, openStatus } from "../lib/hours";
 import {
   freshnessDetail,
   freshnessState,
+  highEndProv,
+  moneySourceIds,
   noCashDiscount,
   sections,
   siteSourceIds,
   sourceHover,
 } from "../lib/receipt";
 import { siteViews, sortSites } from "../lib/sites";
-import { BCBS, CASH } from "./fixtures";
+import { ALL_QUOTES, BCBS, CASH } from "./fixtures";
 
 describe("receipt sections (D8)", () => {
   it("orders tiers strongest first, keeps every line once, drops empty tiers", () => {
@@ -60,8 +62,22 @@ describe("source chip and freshness (§2.2, D18)", () => {
     expect(detail).toMatch(/^We last downloaded it/);
     expect(detail).not.toMatch(/publisher's file/);
   });
-  it("lists exactly sources the response carries for each site", () => {
-    for (const sq of BCBS.sites) for (const id of siteSourceIds(sq)) expect(BCBS.sources[id]).toBeDefined();
+  it("lists exactly sources the response carries for each site, both ends of every range included", () => {
+    for (const q of ALL_QUOTES) for (const sq of q.sites) for (const id of siteSourceIds(sq)) expect(q.sources[id]).toBeDefined();
+    const withHigh = BCBS.sites.flatMap((sq) => sq.receipt.lines).flatMap((l) => (l.cell?.kind === "money" && l.cell.prov_high ? [l.cell] : []));
+    expect(withHigh.length).toBeGreaterThan(0);
+    for (const m of withHigh) expect(moneySourceIds(m)).toContain(m.prov_high!.source_id);
+  });
+  it("a null price_source_id adds no source", () => {
+    const sq = CASH.sites.find((s) => s.site.price_source_id == null)!;
+    expect(siteSourceIds(sq)).not.toContain(null);
+  });
+  it("a point needs one chip; a range whose ends come from different rows needs two", () => {
+    const m = BCBS.sites.flatMap((sq) => sq.receipt.lines).flatMap((l) => (l.cell?.kind === "money" ? [l.cell] : []));
+    const point = m.find((x) => x.low === x.high)!;
+    expect(highEndProv(point)).toBeNull();
+    const ranged = m.find((x) => x.low < x.high && x.prov_high)!;
+    expect(highEndProv(ranged)).toEqual(ranged.prov_high);
   });
 });
 
@@ -113,7 +129,9 @@ describe("site sorting (I7 respected)", () => {
   });
   it("nearest without a location falls back to I7 order", () => {
     const views = siteViews(BCBS.sites, null, now);
-    expect(sortSites(views, "nearest").map((v) => v.rank)).toEqual([0, 1, 2]);
+    // data change: the fixture now has 6 sites (was 3)
+    expect(BCBS.sites.length).toBe(6);
+    expect(sortSites(views, "nearest").map((v) => v.rank)).toEqual([0, 1, 2, 3, 4, 5]);
   });
 });
 

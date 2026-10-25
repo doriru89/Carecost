@@ -4,7 +4,27 @@ import { GAP_COPY_KEY } from "@/contracts/exhaustive";
 import type { Cell, Money, QuoteResponse } from "@/generated/contracts/quote_api";
 import { AlertTriangle } from "lucide-react";
 import { range } from "../lib/format";
+import { highEndProv } from "../lib/receipt";
 import { SourceChip } from "./SourceChip";
+
+/** The chip(s) for one Money: one chip, or a low-end and a high-end chip when each end has its own row. */
+export function MoneyChips({ m, sources }: { m: Money; sources: QuoteResponse["sources"] }) {
+  const high = highEndProv(m);
+  return (
+    <span className="inline-flex flex-wrap justify-end gap-1">
+      <SourceChip
+        sourceId={m.prov.source_id}
+        info={sources[m.prov.source_id]}
+        rowRef={m.prov.row_ref}
+        rowId={m.prov.row_id}
+        end={high ? "low" : undefined}
+      />
+      {high && (
+        <SourceChip sourceId={high.source_id} info={sources[high.source_id]} rowRef={high.row_ref} rowId={high.row_id} end="high" />
+      )}
+    </span>
+  );
+}
 
 export function MoneyWithChip({
   m,
@@ -20,11 +40,7 @@ export function MoneyWithChip({
       <span className={strong ? "font-semibold tabular-nums" : "tabular-nums"} data-testid="line-amount">
         {range(m.low, m.high)}
       </span>
-      <SourceChip
-        sourceId={m.prov.source_id}
-        info={sources[m.prov.source_id]}
-        rowRef={m.prov.row_ref}
-      />
+      <MoneyChips m={m} sources={sources} />
     </span>
   );
 }
@@ -49,7 +65,7 @@ function GapLabel({ kind }: { kind: "not_published" | "not_loaded" | "no_source"
 const CELL_RENDER = {
   money: (c, sources, strong) => <MoneyWithChip m={c} sources={sources} strong={strong} />,
   conflict: (c, sources) => (
-    <div className="text-right space-y-1">
+    <div className="ml-auto max-w-[15rem] text-right space-y-1">
       <p className="text-xs text-warn font-medium">{t(GAP_COPY_KEY.conflict)}</p>
       <MoneyWithChip m={c.a} sources={sources} />
       <MoneyWithChip m={c.b} sources={sources} />

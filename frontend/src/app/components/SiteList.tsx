@@ -37,7 +37,7 @@ export function SiteCard({ v, selected, onOpen }: { v: SiteView; selected?: bool
               {total ? `${receipt.totals.complete ? "" : "≥ "}${total}` : "—"}
             </p>
             {receipt.totals.missing > 0 && (
-              <p className="text-[11px] text-warn">{receipt.totals.missing} likely items without a price</p>
+              <p className="text-[11px] text-warn">{receipt.totals.missing} likely {receipt.totals.missing === 1 ? "item" : "items"} without a price</p>
             )}
           </div>
         </div>

@@ -21,7 +21,7 @@ export function DoctorFeeNote({ fee, sources }: { fee: DoctorFee; sources: Quote
       </p>
       {fee.multiple && (
         <p>
-          Markup used: {fee.multiple.low.toFixed(2)}×–{fee.multiple.high.toFixed(2)}× Medicare, from {fee.multiple.n_codes} of
+          Markup used: {fee.multiple.low.toFixed(2)}×{fee.multiple.high !== fee.multiple.low ? `–${fee.multiple.high.toFixed(2)}×` : ""} Medicare, from {fee.multiple.n_codes} of
           this group's own codes.
         </p>
       )}
