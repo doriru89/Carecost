@@ -61,14 +61,21 @@ PLACEHOLDERS = {"allow_placeholders": True}
 
 # Sources the fixtures cite that are not in data/etl/sources.yaml + sources.d/ yet. Each one is a
 # README-listed placeholder; a new unregistered id fails test_fixture_sources_are_registered.
-# P1: the BCBS and cash quotes are real engine output now, so only the hand-made Medicare quote's
-# fee schedule is left.
+# Stream C: every golden quote is real engine output (python -m app.quote.fixtures_gen). Medicare
+# PFS comes from tests/quote/make_pfs_extract.py until A3 registers its reader. A clinic's posted
+# self-pay page is a source derived from sites.yaml (posted_<site id>), never from sources.yaml.
 UNREGISTERED_SOURCES = {
     "cms_pfs_rvu26a": "Medicare PFS RVU26A; its format is added with the A3 reader (P3)",
 }
-QUOTES = ("quote_bcbs_hmo_shoulder", "quote_cash_shoulder", "quote_medicare_shoulder")
-REAL_QUOTES = ("quote_bcbs_hmo_shoulder", "quote_cash_shoulder")  # app.quote.fixtures_gen
-HANDMADE = Path(__file__).resolve().parent / "handmade"  # the pre-P1 hand-made BCBS / cash quotes
+QUOTES = (
+    "quote_bcbs_hmo_shoulder",
+    "quote_cash_shoulder",
+    "quote_medicare_shoulder",
+    "quote_masshealth_manual",
+)
+REAL_QUOTES = QUOTES  # all four are app.quote.fixtures_gen output
+HANDMADE_QUOTES = ("quote_bcbs_hmo_shoulder", "quote_cash_shoulder", "quote_medicare_shoulder")
+HANDMADE = Path(__file__).resolve().parent / "handmade"  # the pre-engine hand-made quotes
 
 
 def _validate(model: str, body: dict):
@@ -142,28 +149,45 @@ def test_fixture_sources_are_registered():
     from app.etl.config import load_sources
 
     registered = {s.source_id for s in load_sources().sources}
+    sites = json.loads((FIX / "sites.json").read_text())["sites"]
+    registered |= {f"posted_{s['id']}" for s in sites if s.get("cash_prices")}
     used = set()
     for name in QUOTES:
         used |= set(_validated(name).sources)
     assert used - registered == set(UNREGISTERED_SOURCES)
 
 
+def _modified(path, st, answers):
+    """P1 #19: the step after the path's tier modifiers for these answers (tier, rating)."""
+    tier, rating = st.likelihood_tier, st.appropriateness.rating
+    for m in path.tier_modifiers:
+        if m.step == st.id and all(set(v) & set(answers.get(k, [])) for k, v in m.when.items()):
+            tier = m.tier
+            rating = m.appropriateness.rating if m.appropriateness else rating
+    return tier, rating
+
+
 def test_quote_lines_match_the_care_path():
-    """step ids exist in the path, and the line's likelihood is the step's likelihood_tier."""
-    for name in ("quote_bcbs_hmo_shoulder", "quote_cash_shoulder", "quote_medicare_shoulder"):
+    """step ids exist in the path, and the line's likelihood is the (modified) step's tier."""
+    for name in QUOTES:
         resp = _validated(name)
-        steps = {s.id: s for s in PATHS[resp.care_path.id].steps}
-        assert resp.care_path.review_status == PATHS[resp.care_path.id].review.status
+        if resp.care_path is None:
+            continue
+        req = json.loads((FIX / f"{name.replace('quote_', 'quote_request_', 1)}.json").read_text())
+        path = PATHS[resp.care_path.id]
+        steps = {s.id: s for s in path.steps}
+        assert resp.care_path.review_status == path.review.status
         for sq in resp.sites:
             for ln in sq.receipt.lines:
                 st = steps[ln.step_id]
-                assert ln.likelihood == st.likelihood_tier, (name, ln.line_id)
+                tier, rating = _modified(path, st, req["answers"])
+                assert ln.likelihood == tier, (name, ln.line_id)
                 step_codes = st.all_codes()
                 assert set(ln.codes) <= step_codes, (name, ln.line_id, ln.codes)
                 if ln.ai_suggested:
                     assert set(ln.codes) <= {c.code for a in st.ai_potential for c in a.cpts}
                 # P11: the line says what its likelihood rests on, derived from the step
-                assert ln.tier_basis == q.tier_basis_for_rating(st.appropriateness.rating), (
+                assert ln.tier_basis == q.tier_basis_for_rating(rating), (
                     name,
                     ln.line_id,
                 )
@@ -255,20 +279,19 @@ CONTRACT_FEATURES = {
     *(f"payment:{p}" for p in ("insurance", "cash", "medicare")),
     "billing:office_visit",
     "billing:hospital_outpatient",
-    *(f"rung:{r}" for r in (2, 5, 7, None)),
+    *(f"rung:{r}" for r in (2, 5, 6, 7, None)),
 }
 
 # Shapes the real P1 quotes cannot show yet, and why. Only the hand-made quotes in handmade/ show
 # them (they stay the mutation base of the negative rule tests). When real data starts showing one,
 # test_real_fixtures_cover_what_real_data_can fails: drop it from here.
 NOT_IN_REAL_DATA = {
-    "cell:percent_only": "no BCBS HMO / cash row of the 3 sites is percent-only for these codes",
-    "by_npi": "a care-path quote never knows the doctor's NPI (D6 needs a picked doctor)",
+    "cell:percent_only": "no BCBS HMO / cash row of the fixture sites is percent-only for these codes",
     "not_offered_elsewhere": "sites.yaml has no offered-services list yet (A3); absence is "
     "not_published, never 'not offered'",
-    "late_to_refresh": "no source of the 3 sites is past its publisher deadline on 2026-10-24",
-    "stale_on_our_side": "every source was fetched 2026-10-24",
-    "rung:7": "Medicare PFS (the rung-7 reference) is not loaded until A3",
+    "late_to_refresh": "no source the fixture quotes use is past its publisher deadline on "
+    "2026-10-24 (Fallon's 2026-09-01 TiC file is, but no golden quote reads Fallon)",
+    "stale_on_our_side": "every source was fetched within our own schedule",
 }
 
 
@@ -282,7 +305,7 @@ def test_real_fixtures_cover_what_real_data_can():
 def test_fixtures_together_cover_the_whole_contract():
     """With the hand-made quotes, every tier, Gap kind, rung and freshness case is still shown."""
     hand = []
-    for n in REAL_QUOTES:
+    for n in HANDMADE_QUOTES:
         doc = json.loads((HANDMADE / f"{n}.json").read_text())
         hand.append(
             _validate(doc.pop("_schema"), {k: v for k, v in doc.items() if k != "_fixture"})
@@ -330,6 +353,17 @@ def test_committed_sites_yaml_matches_contract_when_present():
 
 
 # --------------------------------------------------------------------------- numbers vs the build
+# An independent re-implementation of each lookup over the committed extract (it reads the rule
+# files, never the engine), so a number cannot pass because the engine agrees with itself.
+
+ENGINE_RULES = yaml.safe_load((REPO / "data" / "quote" / "engine.yaml").read_text())
+NETWORKS = yaml.safe_load((REPO / "data" / "etl" / "tic_networks.yaml").read_text())["networks"]
+OFFICE_POS = set(
+    yaml.safe_load((REPO / "data" / "etl" / "tic_visit_codes.yaml").read_text())["pos_buckets"][
+        "non_facility"
+    ]
+)
+SITES = {s["id"]: s for s in json.loads((FIX / "sites.json").read_text())["sites"]}
 
 
 def _extract() -> dict[str, dict]:
@@ -337,100 +371,168 @@ def _extract() -> dict[str, dict]:
 
     # keyed by source + row_id: a row_ref is not unique (one TiC price row serves every provider
     # group listed with it; a hospital line with two target codes gives two rows)
-    with (FIX / "rate_row_extract.csv").open() as f:
-        return {f"{r['source_id']}:{r['row_id']}": r for r in csv.DictReader(f)}
+    rows = {}
+    for f in ("rate_row_extract.csv",):
+        with (FIX / f).open() as fh:
+            rows |= {f"{r['source_id']}:{r['row_id']}": r for r in csv.DictReader(fh)}
+    return rows
 
 
-def _cited(rows, m, codes, modifier) -> dict:
-    """The row a Money cites: its row_ref, one of the line's codes, its modifier and its number."""
-    col = _BASIS_COLUMN[m.basis.value]
-    hits = [
-        r
-        for r in rows.values()
-        if r["row_ref"] == m.prov.row_ref
-        and r["code"] in codes
-        and r["modifiers"] == (modifier or "")
-        and _num(r[col]) == m.low
-    ]
-    assert hits, (m.prov.row_ref, codes, modifier, m.low)
-    return hits[0]
+_BASIS_COLUMN = {
+    "negotiated": "amount",
+    "discounted_cash": "discounted_cash",
+    "gross": "gross",
+    "fee_schedule": "amount",
+    "estimate": "amount",
+}
 
 
 def _num(v: str) -> float | None:
     return None if v == "" else float(v)
 
 
-_BASIS_COLUMN = {"negotiated": "amount", "discounted_cash": "discounted_cash", "gross": "gross"}
+def _cited(rows, prov, amount, basis, codes, modifier) -> dict:
+    """The row a Provenance cites: row_ref (+ row_id on TiC), one of the line's codes, the
+    modifier and the number."""
+    col = _BASIS_COLUMN[basis]
+    hits = [
+        r
+        for r in rows.values()
+        if r["row_ref"] == prov.row_ref
+        and (prov.row_id is None or r["row_id"] == prov.row_id)
+        and r["code"] in codes
+        and r["modifiers"] in {modifier or "", "TC"}
+        and (basis == "estimate" or _num(r[col]) == amount)
+    ]
+    assert hits, (prov.row_ref, codes, modifier, amount)
+    return hits[0]
 
 
 def _payer_ok(r: dict, payment) -> bool:
-    """Would this row price the person's payment? (the lookup a 'not published' claim denies)
-    P1: tall CSV files (Tufts) put the hospital's cash price on every payer row, so a cash price
-    is any row with a discounted_cash value, not only a chargemaster row."""
+    """Would this hospital row price the person's payment? Tall CSV files (Tufts) put the cash
+    price on every payer row, so a cash price is any row with a discounted_cash value."""
     if payment.kind == "cash":
         return r["discounted_cash"] != ""
     if payment.kind == "medicare":
-        return r["payer_id"] == "MEDICARE"
+        return r["payer_id"] == "MEDICARE" and r["line_of_business"] == "medicare"
     if payment.kind == "masshealth":
-        return r["payer_id"] == "MASSHEALTH"
+        return r["payer_id"] == "MASSHEALTH" and r["line_of_business"] == "medicaid"
     return (
         r["payer_id"] == payment.payer_id
-        and r["line_of_business"] in ("commercial", "unknown")
+        and r["line_of_business"] in ("commercial", "connector", "unknown")
         and (r["product"] == "" or payment.product in r["product"].split("/"))
     )
 
 
 def _hospital_candidates(rows, m, ln, payment) -> list[dict]:
-    """Re-run the line's lookup on the extract: same file, code, modifier, payer (or cash), and
-    bill part (the engine reads facility + unknown rows together; a doctor's row stays apart)."""
-    part = _cited(rows, m, ln.codes, ln.modifier)["component"]
-    parts = {"facility", "unknown"} if part in ("facility", "unknown") else {part}
+    """Re-run the line's lookup on the extract: same file, code, modifier, payer (or cash), bill
+    part (a facility line reads facility + unknown rows, a doctor's line professional rows), and
+    the same dollar kind (a stated dollar is never ranged with a %-derived one, D20)."""
+    cited = _cited(rows, m.prov, m.low, m.basis.value, ln.codes, ln.modifier)
+    parts = {"facility", "unknown"} if ln.component == "facility" else {"professional"}
     return [
         r
         for r in rows.values()
         if r["source_id"] == m.prov.source_id
         and r["code"] in ln.codes
-        and r["modifiers"] == (ln.modifier or "")
-        and r["excluded"] == "0"
+        and r["modifiers"] == cited["modifiers"]
         and r["component"] in parts
         and (m.basis.value != "negotiated" or _payer_ok(r, payment))
+        and (m.basis.value != "negotiated" or r["amount_method"] == cited["amount_method"])
         and r[_BASIS_COLUMN[m.basis.value]] != ""
     ]
 
 
-def _tic_candidates(rows, m, ln, site_id) -> list[dict]:
-    """A TiC range: every professional row of the site's billing TINs for the code / modifier at
-    the site's place of service, in the networks P1 reads for the payment."""
-    cfg = yaml.safe_load((REPO / "data" / "quote" / "p1_slice.yaml").read_text())
-    site = {s["id"]: s for s in json.loads((FIX / "sites.json").read_text())["sites"]}[site_id]
-    nets = {s for srcs in cfg["networks"].values() for s in srcs}
-    pos = set(cfg["place_of_service"][site["billing_type"]])
-    return [
+def _networks(payment) -> set[str]:
+    if payment.kind != "insurance":
+        return set()
+    from app.etl.config import load_sources
+
+    payer = {s.source_id: s.payer_id for s in load_sources().sources}
+    return {
+        n["source_id"]
+        for n in NETWORKS
+        if (n.get("payer_id") or payer.get(n["source_id"])) == payment.payer_id
+        and (n.get("product") or payment.product) == payment.product
+    }
+
+
+def _tic_candidates(rows, ln, site_id, payment, billing_class) -> list[dict]:
+    """Every TiC row of the site's billing TINs for the code / modifier, in the payment's
+    networks; professional rows at the site's place of service (any POS for a modifier-26 reading,
+    Austin 2026-10-24), preferring facility-only rows on a hospital line."""
+    site = SITES[site_id]
+    pos = set(ENGINE_RULES["place_of_service"][site["billing_type"]])
+    nets = _networks(payment)
+    tins = set(site["tins"]) | set(site.get("type_2_npis", []))
+    cands = [
         r
         for r in rows.values()
         if r["source_id"] in nets
-        and r["tin"] in site["tins"]
+        and r["tin"] in tins
         and r["code"] in ln.codes
-        and r["modifiers"] == (ln.modifier or "")
-        and r["billing_class"] == "professional"
-        and r["excluded"] == "0"
-        and set(r["service_codes"].split("|")) & pos
+        and r["modifiers"] == ("" if billing_class == "facility" else (ln.modifier or ""))
+        and r["billing_class"] == billing_class
         and r["amount"] != ""
         and r["negotiated_type"] != "percentage"
     ]
+    if billing_class == "professional" and ln.modifier != "26":
+        cands = [r for r in cands if set(r["service_codes"].split("|")) & pos]
+        if not pos & OFFICE_POS:
+            fac = [r for r in cands if not set(r["service_codes"].split("|")) & OFFICE_POS]
+            cands = fac or cands
+    return cands
+
+
+def _check_money(rows, m, ln, sq, payment, where):
+    kind = m.prov.source_kind.value
+    if kind == "clinic_posted":
+        posted = [
+            p for p in SITES[sq.site.site_id]["cash_prices"] if set(p["codes"]) & set(ln.codes)
+        ]
+        assert m.low == m.high == min(p["amount"] for p in posted), where
+        return
+    lo = _cited(rows, m.prov, m.low, m.basis.value, ln.codes, ln.modifier)
+    if m.prov_high is not None:
+        _cited(rows, m.prov_high, m.high, m.basis.value, ln.codes, ln.modifier)
+    want_payer = (lo["payer_id"] or None) if m.basis.value == "negotiated" else None
+    assert m.prov.payer_id == want_payer, where
+    assert m.prov.source_sha256.startswith(m.prov.row_ref.split(":")[1]), where
+    col = _BASIS_COLUMN[m.basis.value]
+    if kind == "hospital_mrf":
+        cands = _hospital_candidates(rows, m, ln, payment)
+    elif kind == "insurer_tic":
+        bc = "facility" if ln.component == "facility" else "professional"
+        cands = _tic_candidates(rows, ln, sq.site.site_id, payment, bc)
+    elif m.basis.value == "estimate":
+        mult = ln.doctor_fee.multiple
+        base = _num(lo["amount"])
+        assert (m.low, m.high) == (round(base * mult.low, 2), round(base * mult.high, 2)), where
+        return
+    else:  # fee schedule: one row per code / modifier / setting
+        assert m.low == m.high == _num(lo["amount"]), where
+        return
+    assert any(x["row_ref"] == m.prov.row_ref for x in cands), where
+    assert m.low == min(_num(x[col]) for x in cands), where
+    assert m.high == max(_num(x[col]) for x in cands), where
 
 
 def test_fixture_numbers_match_the_build():
-    """Theater F4: every hospital-MRF and TiC number in a quote fixture is the cited row's number,
-    for the line's code and modifier and the payment's payer; a range's high end is the highest
-    row the same lookup finds; every 'not published' / 'percent only' claim survives re-running
-    the lookup. Extract: python -m app.quote.fixtures_gen (P1)."""
+    """Theater F4: every number in a quote fixture is the cited row's number for the line's code,
+    modifier and the payment's payer; a range's high end is the highest row the same lookup finds
+    and is cited too (prov_high); a rung-6 estimate is the cited Medicare row x the multiple; every
+    'not published' / 'percent only' claim survives re-running the lookup. Extract:
+    python -m app.quote.fixtures_gen."""
     rows = _extract()
     for name in QUOTES:
         resp = _validated(name)
+        pay = resp.payment
         for sq in resp.sites:
             for ln in sq.receipt.lines:
-                cells = [ln.cell, ln.list_price, *(e.cell for e in ln.elsewhere)]
+                if ln.at != "this_site":
+                    continue  # the referral visit is priced at the person's own primary care office
+                where = (name, sq.site.site_id, ln.line_id)
+                cells = [ln.cell, ln.list_price]
                 moneys = []
                 for c in cells:
                     if isinstance(c, etl.Money):
@@ -438,21 +540,7 @@ def test_fixture_numbers_match_the_build():
                     elif isinstance(c, etl.Conflict):
                         moneys += [c.a, c.b]
                 for m in moneys:
-                    if m.prov.source_kind not in ("hospital_mrf", "insurer_tic"):
-                        continue
-                    r = _cited(rows, m, ln.codes, ln.modifier)
-                    where = (name, sq.site.site_id, ln.line_id)
-                    want_payer = (r["payer_id"] or None) if m.basis.value == "negotiated" else None
-                    assert m.prov.payer_id == want_payer, where
-                    assert m.prov.source_sha256.startswith(m.prov.row_ref.split(":")[1]), where
-                    if m.prov.source_kind == "hospital_mrf":
-                        cands = _hospital_candidates(rows, m, ln, resp.payment)
-                    else:
-                        cands = _tic_candidates(rows, m, ln, sq.site.site_id)
-                    col = _BASIS_COLUMN[m.basis.value]
-                    assert any(x["row_ref"] == m.prov.row_ref for x in cands), where
-                    assert m.low == min(_num(x[col]) for x in cands), where
-                    assert m.high == max(_num(x[col]) for x in cands), where
+                    _check_money(rows, m, ln, sq, pay, where)
                 c = ln.cell
                 if isinstance(
                     c, (etl.NotPublished, etl.PercentOnly)
@@ -462,33 +550,26 @@ def test_fixture_numbers_match_the_build():
                         for r in rows.values()
                         if r["source_id"] == c.searched.source_id
                         and r["code"] in ln.codes
-                        and r["modifiers"] == (ln.modifier or "")
-                        and r["excluded"] == "0"
-                        and _payer_ok(r, resp.payment)
+                        and r["modifiers"] in ("", "TC")
+                        and r["component"] in ("facility", "unknown")
+                        and _payer_ok(r, pay)
                     ]
-                    col = "discounted_cash" if resp.payment.kind == "cash" else "amount"
+                    col = "discounted_cash" if pay.kind == "cash" else "amount"
                     dollars = [r for r in cands if r[col] != ""]
-                    assert not dollars, (
-                        name,
-                        ln.line_id,
-                        "has a dollar row",
-                        dollars[0]["row_ref"],
-                    )
+                    assert not dollars, (*where, "has a dollar row", dollars[0]["row_ref"])
                     if isinstance(c, etl.PercentOnly):
-                        assert any(_num(r["negotiated_pct"]) == c.pct for r in cands), ln.line_id
-                if isinstance(c, etl.NotPublished) and c.searched.source_id.startswith("tic_"):
-                    fake = etl.Money.point(
-                        0, basis="negotiated", prov=etl.Provenance(
-                            source_id=c.searched.source_id, source_kind="insurer_tic",
-                            source_file="x", source_sha256=c.searched.source_sha256,
-                            source_date=None, method="stated",
-                            row_ref=f"{c.searched.source_id}:{c.searched.source_sha256[:12]}:0",
-                        ),
-                    )  # fmt: skip
-                    found = _tic_candidates(rows, fake, ln, sq.site.site_id)
-                    assert not found, (name, ln.line_id, "has a TiC row", found[0]["row_ref"])
+                        assert any(_num(r["negotiated_pct"]) == c.pct for r in cands), where
+                if (
+                    isinstance(c, etl.NotPublished)
+                    and c.searched.source_id.startswith("tic_")
+                    and ln.component == "professional"
+                    and ln.doctor_fee is None
+                ):
+                    found = _tic_candidates(rows, ln, sq.site.site_id, pay, "professional")
+                    assert not found, (*where, "has a TiC row", found[0]["row_ref"])
         for sq in resp.sites:
             for o in sq.other_payers:
                 for p in o.points:
-                    if p.money.prov.source_kind == "hospital_mrf":
-                        _cited(rows, p.money, [o.code], "")
+                    _cited(rows, p.money.prov, p.money.low, "negotiated", [o.code], "")
+                    if p.money.prov_high:
+                        _cited(rows, p.money.prov_high, p.money.high, "negotiated", [o.code], "")

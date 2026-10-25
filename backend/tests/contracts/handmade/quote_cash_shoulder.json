@@ -515,7 +515,7 @@
             "cell": {
               "kind": "no_source",
               "what": "a self-pay price for the doctor's own fee",
-              "ask": "Ask for a Good Faith Estimate (federal No Surprises Act). Massachusetts law (c.111 §228) says they must tell you the price within 2 business days."
+              "ask": "Ask for a Good Faith Estimate (federal No Surprises Act). Massachusetts law (c.111 \u00a7228) says they must tell you the price within 2 business days."
             },
             "list_price": null,
             "tier_basis": "our_judgment",
@@ -623,7 +623,7 @@
             "cell": {
               "kind": "no_source",
               "what": "a self-pay price for the radiologist's reading",
-              "ask": "Ask for a Good Faith Estimate (federal No Surprises Act). Massachusetts law (c.111 §228) says they must tell you the price within 2 business days."
+              "ask": "Ask for a Good Faith Estimate (federal No Surprises Act). Massachusetts law (c.111 \u00a7228) says they must tell you the price within 2 business days."
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -819,6 +819,10 @@
     }
   ],
   "sites_without_service": [],
+  "copy_keys": [
+    "copy.not_a_diagnosis",
+    "copy.when_to_see_a_doctor"
+  ],
   "notices": [
     "care_path_draft",
     "stale_on_our_side_sources"

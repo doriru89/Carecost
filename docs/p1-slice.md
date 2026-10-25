@@ -1,5 +1,8 @@
 # P1 thin real slice
 
+> Superseded by `docs/quote-engine.md` (stream C, wave 2): the run commands below (`app.quote.api:app`,
+> `p1_slice.yaml`, `slice_data.py`) no longer exist; each problem tagged C has its resolution there.
+
 The narrowest end-to-end path on real data: `shoulder_chronic_clicking_v1` x {BCBS MA HMO, cash} x 3 sites,
 one route (`POST /api/quote`), one ugly receipt page. Its job is to hit the integration seams once, before
 streams C / D / Chat / A3 start. Those seams are listed below.

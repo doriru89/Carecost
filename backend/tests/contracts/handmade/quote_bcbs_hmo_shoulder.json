@@ -693,7 +693,7 @@
           "points": [
             {
               "payer_id": "WELLPOINT",
-              "label": "Wellpoint (GIC) · all commercial plans",
+              "label": "Wellpoint (GIC) \u00b7 all commercial plans",
               "product": null,
               "money": {
                 "kind": "money",
@@ -735,7 +735,7 @@
             },
             {
               "payer_id": "BCBS_MA",
-              "label": "Blue Cross · HMO",
+              "label": "Blue Cross \u00b7 HMO",
               "product": "HMO",
               "money": {
                 "kind": "money",
@@ -756,7 +756,7 @@
             },
             {
               "payer_id": "BCBS_MA",
-              "label": "Blue Cross · PPO",
+              "label": "Blue Cross \u00b7 PPO",
               "product": "PPO",
               "money": {
                 "kind": "money",
@@ -777,7 +777,7 @@
             },
             {
               "payer_id": "HARVARD_PILGRIM",
-              "label": "Harvard Pilgrim · self-insured commercial",
+              "label": "Harvard Pilgrim \u00b7 self-insured commercial",
               "product": null,
               "money": {
                 "kind": "money",
@@ -955,7 +955,19 @@
                 "source_date": "2026-05-01",
                 "method": "stated",
                 "row_ref": "bcbs_ma_tic_hmo:000000000000:99203:group_bwpo",
-                "payer_id": "BCBS_MA"
+                "payer_id": "BCBS_MA",
+                "row_id": "0000000000000000:0"
+              },
+              "prov_high": {
+                "source_id": "bcbs_ma_tic_hmo",
+                "source_kind": "insurer_tic",
+                "source_file": "bcbsma_hmo_in-network-rates_2026-05-01.json.gz",
+                "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                "source_date": "2026-05-01",
+                "method": "stated",
+                "row_ref": "bcbs_ma_tic_hmo:000000000000:99203:group_bwpo9",
+                "payer_id": "BCBS_MA",
+                "row_id": "0000000000000000:0"
               }
             },
             "list_price": null,
@@ -985,7 +997,8 @@
                       "source_date": "2026-05-01",
                       "method": "stated",
                       "row_ref": "bcbs_ma_tic_hmo:000000000000:99203:block_a",
-                      "payer_id": "BCBS_MA"
+                      "payer_id": "BCBS_MA",
+                      "row_id": "0000000000000001:0"
                     }
                   }
                 },
@@ -1005,7 +1018,8 @@
                       "source_date": "2026-05-01",
                       "method": "stated",
                       "row_ref": "bcbs_ma_tic_hmo:000000000000:99203:block_b",
-                      "payer_id": "BCBS_MA"
+                      "payer_id": "BCBS_MA",
+                      "row_id": "0000000000000002:0"
                     }
                   }
                 }
@@ -1415,6 +1429,10 @@
     }
   ],
   "sites_without_service": [],
+  "copy_keys": [
+    "copy.not_a_diagnosis",
+    "copy.when_to_see_a_doctor"
+  ],
   "notices": [
     "care_path_draft",
     "late_to_refresh_sources"

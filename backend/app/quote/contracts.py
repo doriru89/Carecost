@@ -388,6 +388,12 @@ class ReceiptLine(_Strict):
         default_factory=list, description="Cheapest sites that offer it, when not offered here"
     )
     learn_more: list[LearnMore] = Field(default_factory=list)
+    at: Literal["this_site", "your_primary_care"] = Field(
+        default="this_site",
+        description="Where this part of the care happens. your_primary_care: an HMO referral visit "
+        "happens at the person's own primary care office, not at this site; the price is a range "
+        "over the primary care groups we have, never this site's (P1 problem 15)",
+    )
 
     @model_validator(mode="after")
     def _invariants(self) -> ReceiptLine:
@@ -599,10 +605,12 @@ class SiteSummary(_Strict):
     hours: Hours | None
     hours_label: Literal["live_by_operator", "posted_hours", "may_close_early", "unknown"]
     price_label: Literal["price_file", "posted_price", "price_on_request", "mixed"]
-    price_source_id: str = Field(
+    price_source_id: str | None = Field(
         pattern=ID_RE,
         description="The site's own price source (its hospital MRF or posted page); its freshness "
-        "is QuoteResponse.sources[price_source_id]",
+        "is QuoteResponse.sources[price_source_id]. None = the site has its own price source but "
+        "we do not read it yet (e.g. a clinic's self-pay page): its lines are not_loaded "
+        "(P1 problem 9)",
     )
     listing_status: Literal["web_verified", "multi_registry"] = Field(
         description="registry_only sites are never quoted (to-verify queue, D27)"
@@ -746,6 +754,11 @@ class QuoteResponse(_Strict):
     sites_without_service: list[str] = Field(
         default_factory=list, description="Sites filtered out because they offer none of it"
     )
+    copy_keys: list[Literal["copy.not_a_diagnosis", "copy.when_to_see_a_doctor"]] = Field(
+        default_factory=list,
+        description="D33: a quote reached from a care path carries both fixed lines (common causes, "
+        "not a diagnosis; when to see a doctor); a manual pick carries none (P1 problem 13)",
+    )
     notices: list[
         Literal[
             "care_path_draft",
@@ -777,6 +790,9 @@ class QuoteResponse(_Strict):
             raise ValueError("a TiC price needs data_version.tic_release")
         if (self.data_version.tic_release is None) != ("tic_not_loaded" in self.notices):
             raise ValueError("notice tic_not_loaded <=> data_version.tic_release is None")
+        want_copy = ["copy.not_a_diagnosis", "copy.when_to_see_a_doctor"] if self.care_path else []
+        if self.copy_keys != want_copy:
+            raise ValueError(f"copy_keys must be {want_copy} (D33)")
         if self.picked_by == "assistant":
             if self.care_path is not None:
                 raise ValueError("assistant picks are catalog services, never a care path")
@@ -787,18 +803,20 @@ class QuoteResponse(_Strict):
     def _check_source_refs(self) -> None:
         used: set[str] = set()
         for sq in self.sites:
-            used.add(sq.site.price_source_id)
+            if sq.site.price_source_id is not None:
+                used.add(sq.site.price_source_id)
             used.update(_searched(sq))
             for m in _all_moneys(sq):
-                info = self.sources.get(m.prov.source_id)
-                if info is None:
-                    raise ValueError(f"{m.prov.row_ref}: source {m.prov.source_id} not in sources")
-                if info.source_kind != m.prov.source_kind:
-                    raise ValueError(
-                        f"{m.prov.row_ref}: says {m.prov.source_kind} but source "
-                        f"{m.prov.source_id} is {info.source_kind}"
-                    )
-                used.add(m.prov.source_id)
+                for p in m.provs():
+                    info = self.sources.get(p.source_id)
+                    if info is None:
+                        raise ValueError(f"{p.row_ref}: source {p.source_id} not in sources")
+                    if info.source_kind != p.source_kind:
+                        raise ValueError(
+                            f"{p.row_ref}: says {p.source_kind} but source "
+                            f"{p.source_id} is {info.source_kind}"
+                        )
+                    used.add(p.source_id)
         if used != set(self.sources):
             missing, extra = sorted(used - set(self.sources)), sorted(set(self.sources) - used)
             raise ValueError(
@@ -829,11 +847,11 @@ class QuoteResponse(_Strict):
                         continue
                     if pair not in allowed:
                         raise ValueError(f"{ln.line_id}: {pair} is not a {kind} price")
-                    if m.basis == PriceBasis.negotiated and m.prov.payer_id != payer:
-                        raise ValueError(
-                            f"{ln.line_id}: {m.prov.row_ref} is {m.prov.payer_id}'s rate, "
-                            f"not {payer}'s"
-                        )
+                    for p in m.provs():
+                        if m.basis == PriceBasis.negotiated and p.payer_id != payer:
+                            raise ValueError(
+                                f"{ln.line_id}: {p.row_ref} is {p.payer_id}'s rate, not {payer}'s"
+                            )
 
     def _check_totals_flags(self) -> None:
         for sq in self.sites:
@@ -841,9 +859,10 @@ class QuoteResponse(_Strict):
             if t is None:
                 continue
             fresh = [
-                self.sources[ln.cell.prov.source_id].freshness
+                self.sources[p.source_id].freshness
                 for ln in sq.receipt.lines
                 if ln.in_total and isinstance(ln.cell, Money)
+                for p in ln.cell.provs()
             ]
             late = any(f.late_to_refresh for f in fresh)
             stale = any(f.stale_on_our_side for f in fresh)

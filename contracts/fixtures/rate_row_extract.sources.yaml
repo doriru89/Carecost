@@ -1,43 +1,238 @@
-version: 1
+version: 2
 note: Freshness inputs for the sources in rate_row_extract.csv. Written by python
   -m app.quote.fixtures_gen; do not edit by hand.
 data_version:
   build_id: 20261024-10d8a893
   build_date: '2026-10-24'
   tic_release: tic-2026-10
+codes:
+- 00811
+- 00812
+- 00813
+- '11102'
+- '11104'
+- '11300'
+- '11301'
+- '11302'
+- '11303'
+- '11305'
+- '11306'
+- '11307'
+- '11308'
+- '11310'
+- '11311'
+- '11312'
+- '11313'
+- '17000'
+- '17110'
+- '20610'
+- '20611'
+- '29826'
+- '29827'
+- '43239'
+- '45378'
+- '45380'
+- '45385'
+- '73030'
+- '73221'
+- '73222'
+- '76881'
+- '76882'
+- '88305'
+- '97110'
+- '97161'
+- '97162'
+- '97163'
+- '99051'
+- '99202'
+- '99203'
+- '99204'
+- '99205'
+- '99211'
+- '99212'
+- '99213'
+- '99214'
+- '99215'
+- S9083
+- S9088
 sources:
   brigham_mrf:
     source_kind: hospital_mrf
     publisher: Brigham and Women's Hospital
     source_file: 188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip
     source_sha256: 188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce
+    source_date: '2026-03-27'
     last_updated: '2026-03-27'
     fetched_at: '2026-10-24'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  cms_pfs_rvu26a:
+    source_kind: medicare_pfs
+    publisher: CMS (Medicare, Boston 2026)
+    source_file: PPRRVU2026_Jan_nonQPP.csv
+    source_sha256: 9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de
+    source_date: '2026-01-01'
+    last_updated: '2026-01-01'
+    fetched_at: '2026-05-02'
+    source_rule: fee_schedule_annual
+    our_rule: fee_schedule_per_release
+    expected_by: '2027-01-01'
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
   mtauburn_mrf:
     source_kind: hospital_mrf
     publisher: Mount Auburn Hospital
     source_file: a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json
     source_sha256: a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c
+    source_date: '2026-04-01'
     last_updated: '2026-04-01'
     fetched_at: '2026-10-24'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  tic_bcbs_ma_bce_fi:
+    source_kind: insurer_tic
+    publisher: Blue Cross Blue Shield of Massachusetts · Blue Care Elect PPO (fully
+      insured)
+    source_file: 2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_Blue-Care-Elect-Fully-Insured_in-network-rates.json.gz
+    source_sha256: 137ccdc9686576b8c04e5086f0687d42d14a392721f0213dee04518f115e48fd
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: BCBS_MA
+    product: PPO
+    network_label: Blue Care Elect PPO (fully insured)
+    line_of_business: commercial
+  tic_bcbs_ma_bce_si:
+    source_kind: insurer_tic
+    publisher: Blue Cross Blue Shield of Massachusetts · Blue Care Elect PPO (self
+      insured)
+    source_file: 2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_Blue-Care-Elect-Self-Insured_in-network-rates.json.gz
+    source_sha256: 123ae106d2bac18aa360276c6b5e9403c73a2b8a72df6a8e560c6d8b3c66dbc3
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: BCBS_MA
+    product: PPO
+    network_label: Blue Care Elect PPO (self insured)
+    line_of_business: commercial
+  tic_bcbs_ma_bhp:
+    source_kind: insurer_tic
+    publisher: Blue Cross Blue Shield of Massachusetts · Blue High Performance Network
+    source_file: 2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_Blue-High-Performance_in-network-rates.json.gz
+    source_sha256: 87967f85335f02e25a2cfbdd42ed42a977738b2dacebfc2a72026b0ac94e364e
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: BCBS_MA
+    product: PPO
+    network_label: Blue High Performance Network
+    line_of_business: commercial
   tic_bcbs_ma_hmo_blue_fi:
     source_kind: insurer_tic
-    publisher: "Blue Cross Blue Shield of Massachusetts \xB7 HMO Blue (fully insured)"
+    publisher: Blue Cross Blue Shield of Massachusetts · HMO Blue (fully insured)
     source_file: 2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz
     source_sha256: 123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e
+    source_date: '2026-10-01'
     last_updated: '2026-10-01'
     fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: BCBS_MA
+    product: HMO
+    network_label: HMO Blue (fully insured)
+    line_of_business: commercial
   tic_bcbs_ma_hmo_blue_si:
     source_kind: insurer_tic
-    publisher: "Blue Cross Blue Shield of Massachusetts \xB7 HMO Blue (self insured)"
+    publisher: Blue Cross Blue Shield of Massachusetts · HMO Blue (self insured)
     source_file: 2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_in-network-rates.json.gz
     source_sha256: 261f02c8d69c2e468493f92bf2d3636b31355013db271b3c42271f720ac65f23
+    source_date: '2026-10-01'
     last_updated: '2026-10-01'
     fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: BCBS_MA
+    product: HMO
+    network_label: HMO Blue (self insured)
+    line_of_business: commercial
+  tic_bcbs_ma_nemc_fi:
+    source_kind: insurer_tic
+    publisher: Blue Cross Blue Shield of Massachusetts · New England Managed Care
+      (fully insured)
+    source_file: 2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_New-England-Managed-Care-Fully-Insured_in-network-rates.json.gz
+    source_sha256: 3c7e3f2b6e6b3852d67bb3da06d0ba1d328397876b978b03551389041b1ca7ba
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: BCBS_MA
+    product: HMO
+    network_label: New England Managed Care (fully insured)
+    line_of_business: commercial
+  tic_bcbs_ma_nemc_si:
+    source_kind: insurer_tic
+    publisher: Blue Cross Blue Shield of Massachusetts · New England Managed Care
+      (self insured)
+    source_file: 2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_New-England-Managed-Care-Self-Insured_in-network-rates.json.gz
+    source_sha256: ccefc7ab3ea37e80e10781db1f384db4804e8379e687777cf0ca92cf6f1543c8
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: BCBS_MA
+    product: HMO
+    network_label: New England Managed Care (self insured)
+    line_of_business: commercial
   tufts_mrf:
     source_kind: hospital_mrf
     publisher: Tufts Medical Center
     source_file: d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip
     source_sha256: d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971
+    source_date: '2026-04-01'
     last_updated: '2026-04-01'
     fetched_at: '2026-10-24'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''

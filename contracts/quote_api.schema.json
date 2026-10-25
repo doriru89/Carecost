@@ -904,7 +904,20 @@
           "type": "number"
         },
         "prov": {
-          "$ref": "#/$defs/Provenance"
+          "$ref": "#/$defs/Provenance",
+          "description": "The row the low end comes from"
+        },
+        "prov_high": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Provenance"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The row the high end comes from. Required on a range (low < high), absent on a point, so both ends of every range are cited (P1 problem 2). May name another file of the same kind (BCBS publishes HMO Blue as a fully- and a self-insured file)."
         }
       },
       "required": [
@@ -912,7 +925,8 @@
         "low",
         "high",
         "basis",
-        "prov"
+        "prov",
+        "prov_high"
       ],
       "title": "Money",
       "type": "object"
@@ -1361,6 +1375,20 @@
           "description": "Whose rate this is (payer_aliases.yaml id) for payer-specific rows (hospital MRF payer rows, TiC); None for fee schedules, cash and chargemaster prices. Lets the quote check that a BCBS receipt only sums BCBS rates.",
           "title": "Payer Id"
         },
+        "row_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{16}:[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RateRow.row_id (<nk_hash>:<nk_ordinal>), unique per build. Required on insurer TiC numbers: one TiC price row (one row_ref) is shared by every provider group listed with it, so only row_id says which group's number this is (P1 problem 1).",
+          "title": "Row Id"
+        },
         "row_ref": {
           "description": "<source_id>:<sha256[:12]>:<staged row ordinal>",
           "title": "Row Ref",
@@ -1406,7 +1434,8 @@
         "source_date",
         "method",
         "row_ref",
-        "payer_id"
+        "payer_id",
+        "row_id"
       ],
       "title": "Provenance",
       "type": "object"
@@ -1529,6 +1558,18 @@
             }
           ]
         },
+        "copy_keys": {
+          "description": "D33: a quote reached from a care path carries both fixed lines (common causes, not a diagnosis; when to see a doctor); a manual pick carries none (P1 problem 13)",
+          "items": {
+            "enum": [
+              "copy.not_a_diagnosis",
+              "copy.when_to_see_a_doctor"
+            ],
+            "type": "string"
+          },
+          "title": "Copy Keys",
+          "type": "array"
+        },
         "data_version": {
           "$ref": "#/$defs/DataVersion"
         },
@@ -1623,6 +1664,7 @@
         "sources",
         "sites",
         "sites_without_service",
+        "copy_keys",
         "notices"
       ],
       "title": "QuoteResponse",
@@ -1656,6 +1698,16 @@
           "default": false,
           "title": "Ai Suggested",
           "type": "boolean"
+        },
+        "at": {
+          "default": "this_site",
+          "description": "Where this part of the care happens. your_primary_care: an HMO referral visit happens at the person's own primary care office, not at this site; the price is a range over the primary care groups we have, never this site's (P1 problem 15)",
+          "enum": [
+            "this_site",
+            "your_primary_care"
+          ],
+          "title": "At",
+          "type": "string"
         },
         "availability": {
           "default": "offered",
@@ -1900,7 +1952,8 @@
         "ai_suggested",
         "in_total",
         "elsewhere",
-        "learn_more"
+        "learn_more",
+        "at"
       ],
       "title": "ReceiptLine",
       "type": "object"
@@ -2040,10 +2093,17 @@
           "type": "string"
         },
         "price_source_id": {
-          "description": "The site's own price source (its hospital MRF or posted page); its freshness is QuoteResponse.sources[price_source_id]",
-          "pattern": "^[a-z0-9][a-z0-9_]*$",
-          "title": "Price Source Id",
-          "type": "string"
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The site's own price source (its hospital MRF or posted page); its freshness is QuoteResponse.sources[price_source_id]. None = the site has its own price source but we do not read it yet (e.g. a clinic's self-pay page): its lines are not_loaded (P1 problem 9)",
+          "title": "Price Source Id"
         },
         "service_areas": {
           "items": {
