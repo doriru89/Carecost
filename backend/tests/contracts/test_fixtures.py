@@ -485,7 +485,10 @@ def _tic_candidates(rows, ln, site_id, payment, billing_class) -> list[dict]:
         billing = "asc" if site["site_type"] == "ambulatory_surgery_center" else (
             ENGINE_RULES["unknown_billing_priced_as"])  # fmt: skip
     pos = set(ENGINE_RULES["place_of_service"][billing])
-    if billing == "office_visit" and site["site_type"] not in ENGINE_RULES["urgent_care_site_types"]:
+    if (
+        billing == "office_visit"
+        and site["site_type"] not in ENGINE_RULES["urgent_care_site_types"]
+    ):
         pos = set(ENGINE_RULES["place_of_service"]["office_kind"])  # O F3a
     nets = _networks(payment)
     own = (
@@ -565,8 +568,7 @@ def _check_money(rows, m, ln, sq, payment, where):
         per_unit = float(base["base_units"][ln.codes[0]])
     lo = _cited(rows, m.prov, round(m.low / per_unit, 2), m.basis.value, ln.codes, ln.modifier)
     if m.prov_high is not None:
-        _cited(rows, m.prov_high, round(m.high / per_unit, 2), m.basis.value, ln.codes,
-               ln.modifier)
+        _cited(rows, m.prov_high, round(m.high / per_unit, 2), m.basis.value, ln.codes, ln.modifier)
     want_payer = (lo["payer_id"] or None) if m.basis.value == "negotiated" else None
     assert m.prov.payer_id == want_payer, where
     assert m.prov.source_sha256.startswith(m.prov.row_ref.split(":")[1]), where
@@ -584,8 +586,12 @@ def _check_money(rows, m, ln, sq, payment, where):
         aside = {(p.row_ref, p.row_id) for sa in un.set_aside for p in sa.provs()}
         lo_sa = min(sa.low for sa in un.set_aside)
         hi_sa = max(sa.high for sa in un.set_aside)
-        cands = [x for x in cands if (x["row_ref"], x["row_id"] or None) not in aside
-                 and not (lo_sa <= _num(x[col]) <= hi_sa and not m.low <= _num(x[col]) <= m.high)]
+        cands = [
+            x
+            for x in cands
+            if (x["row_ref"], x["row_id"] or None) not in aside
+            and not (lo_sa <= _num(x[col]) <= hi_sa and not m.low <= _num(x[col]) <= m.high)
+        ]
     assert any(x["row_ref"] == m.prov.row_ref for x in cands), where
     if m.prov.method.value == "per_unit_x_base_units":  # O: a per-unit anesthesia rate
         base = yaml.safe_load((REPO / "data" / "quote" / "anesthesia_time.yaml").read_text())

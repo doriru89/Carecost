@@ -262,6 +262,7 @@ class Engine:
         # caches over data that never changes after startup (no request state, P1 #20)
         self._code_offer: dict[tuple[str, str], bool] = {}
         self._stats: dict[tuple, dict] = {}
+        self._peer_cache: dict[tuple, tuple[list, str]] = {}
         self._admitted_cache: dict[tuple, list[str]] = {}
         self._universe: dict[tuple, Json] = {}
         # fee schedules: every loaded file of a kind (Medicare PFS = RVU file + anesthesia file;
@@ -1321,7 +1322,17 @@ class Engine:
         groups are left out and one source kind is kept (a Money cites one kind). ``network``
         (O audit): only rows of that network file (``hospital_file`` for hospital files), so
         networks of one payer with different price levels are never pooled. A children-only site
-        is its own peer kind (O F4)."""
+        is its own peer kind (O F4). Cached: it depends on the data and the payment only."""
+        ck = (site.id, code, comp, pmod, self._paykey(q), estimate, network)
+        hit = self._peer_cache.get(ck)
+        if hit is not None:
+            return hit
+        out = self._peers_uncached(site, code, comp, pmod, q, estimate=estimate, network=network)
+        self._peer_cache[ck] = out
+        return out
+
+    def _peers_uncached(self, site: Site, code: str, comp: str, pmod: str, q: Req, *,
+                        estimate: bool, network: str | None) -> tuple[list, str]:  # fmt: skip
         stats = self._line_stats(code, q)
         mine = {g for _, g, _ in stats.get(site.id, {}).get((comp, pmod), [])}
         kind, bill = self._kind(site), self._billing(site)
