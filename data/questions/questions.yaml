@@ -71,6 +71,12 @@ questions:
           - "card:screening_under_45"
           - "card:screening_76_85"
           - "card:screening_over_85"
+      - value: belly_pain
+        label: {en: "Stomach ache or belly pain", zh: "肚子疼或腹痛"}
+        routes_to: ["path:stomach_ache_v1"]
+      - value: rash
+        label: {en: "A rash", zh: "起疹子（皮疹）"}
+        routes_to: ["path:rash_v1"]
       - value: other
         label: {en: "Something else", zh: "其他"}
         routes_to: ["card:not_covered_yet"]
@@ -313,7 +319,7 @@ questions:
         label: {en: "MassHealth", zh: "MassHealth"}
         routes_to: ["layer0:on"]
       - value: cash
-        label: {en: "No insurance / paying cash", zh: "没有保险 / 自费"}
+        label: {en: "Self-pay (no insurance)", zh: "自费（无保险）"}
         routes_to: ["layer0:off"]
       - value: unsure
         label: {en: "Not sure", zh: "不确定"}

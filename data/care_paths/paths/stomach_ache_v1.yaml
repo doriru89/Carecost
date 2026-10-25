@@ -1,0 +1,351 @@
+# AI-drafted care path. NOT publishable until two non-AI reviewers sign off (review.status).
+# Plain text is our own words; quotes are <=15 words and verified against data/care_paths/sources.yaml.
+# CPT codes appear only under `cpts` (price layer). Edit freely, then run backend tests.
+# R19 / P12 (2026-10-25): "stomach ache" / "belly pain" / 肚子疼 as a person says it. First visit at urgent care or
+# a primary-care office, then likely / possible tests. Routes out to the heartburn and bowel paths (exits).
+id: stomach_ache_v1
+version: 1.0.0
+title:
+  en: Stomach ache or belly pain without warning signs
+  zh: 没有报警症状的肚子疼（腹痛）
+intro: Most stomach aches are not serious and settle on their own. If yours doesn't, a first visit at urgent care
+  or a primary care office starts with questions and a gentle press on your belly. A urine test is common; blood
+  tests or a picture of the belly come only sometimes.
+scope:
+  area: gi_abdomen
+  acuity: acute
+  severity_band:
+  - minor
+  - moderate
+entry:
+  all_of:
+    Q1:
+    - belly_pain
+red_flags:
+- rf_cardiac
+- rf_chest_pain_alone
+- rf_suicide_self_harm
+- rf_overdose
+- rf_breathing
+- rf_breathing_mild
+- rf_stroke
+- rf_thunderclap_headache
+- rf_unresponsive_seizure
+- rf_head_injury_serious
+- rf_head_injury_vomiting
+- rf_palpitations_faint
+- rf_child_limp
+- rf_allergic_airway
+- rf_non_blanching_rash
+- rf_gi_bleed_heavy
+- rf_gi_bleed_dark_stool
+- rf_gi_bleed_dizzy
+- rf_abdomen_severe
+- rf_abdomen_rigid_or_pregnant
+- rf_abdomen_fever_or_moving
+glossary: []
+intro_citations:
+- doc: medlineplus_abdominal_pain
+  year: 2026
+  section: Considerations
+  url: https://medlineplus.gov/ency/article/003120.htm
+  quote: Most of the time, it is not serious.
+  claim_field: intro
+- doc: medlineplus_abdominal_pain
+  year: 2026
+  section: What to Expect at Your Office Visit
+  url: https://medlineplus.gov/ency/article/003120.htm
+  quote: Your provider will perform a physical exam and ask about your symptoms and medical history.
+  claim_field: intro
+- doc: medlineplus_abdominal_pain
+  year: 2026
+  section: What to Expect at Your Office Visit
+  url: https://medlineplus.gov/ency/article/003120.htm
+  quote: Blood, urine, and stool tests
+  claim_field: intro
+steps:
+- id: visit
+  layer: 1
+  kind: visit
+  appropriateness:
+    rating: standard_of_care
+    note: History and a belly exam are the first step for belly pain; the visit itself is not rated.
+  likelihood_tier: certain
+  plain:
+    name: First visit about the belly pain
+    technical_name: Urgent-care or primary-care office visit
+    what: A clinician asks where it hurts, how it started and what makes it better or worse, then presses gently on
+      your belly.
+    why: Where the pain is and how it behaves point to the likely cause and decide whether any test is needed.
+    when_skipped: Pain that is mild and clearly getting better often settles at home without a visit.
+  when_skipped_basis: clinical
+  citations:
+  - doc: medlineplus_abdominal_pain
+    year: 2026
+    section: What to Expect at Your Office Visit
+    url: https://medlineplus.gov/ency/article/003120.htm
+    quote: the location of pain and when it occurs will help your provider detect the cause
+    claim_field: why
+  - doc: medlineplus_abdominal_pain
+    year: 2026
+    section: What to Expect at Your Office Visit
+    url: https://medlineplus.gov/ency/article/003120.htm
+    quote: Your provider will perform a physical exam and ask about your symptoms and medical history.
+    claim_field: what
+  - doc: medlineplus_abdominal_pain
+    year: 2026
+    section: When to Contact a Medical Professional
+    url: https://medlineplus.gov/ency/article/003120.htm
+    quote: Abdominal pain that does not improve in 24 to 48 hours
+    claim_field: when_skipped
+  cpts:
+  - code: '99203'
+    role: primary
+    mapping: confirmed_pfs
+  - code: '99213'
+    role: alternative
+    mapping: asserted
+    note: Established patient. Some urgent cares bill one flat visit code instead; not priced here.
+- id: urine_test
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: lab
+  appropriateness:
+    rating: standard_of_care
+    note: Urine testing is among the first tests listed for belly pain (MedlinePlus, NHS).
+  likelihood_tier: likely
+  plain:
+    name: Urine test
+    technical_name: Urinalysis (dipstick, automated)
+    what: You give a small urine sample that is checked for signs of infection, blood or other changes.
+    why: A bladder or kidney problem can feel like belly pain, and a urine test is a quick way to check.
+    when_skipped: The exam already points clearly to a cause that needs no test.
+  when_skipped_basis: logic
+  reviewer_note: '[我判断] Tier likely, not certain: a quick, common first test at urgent care; sources only say it
+    "may be done".'
+  citations:
+  - doc: medlineplus_abdominal_pain
+    year: 2026
+    section: What to Expect at Your Office Visit
+    url: https://medlineplus.gov/ency/article/003120.htm
+    quote: Blood, urine, and stool tests
+    claim_field: why
+  - doc: nhs_appendicitis
+    year: 2024
+    section: How appendicitis is diagnosed
+    url: https://www.nhs.uk/conditions/appendicitis/
+    quote: testing a sample of your pee
+    claim_field: what
+  cpts:
+  - code: '81003'
+    role: primary
+    mapping: asserted
+    note: Clinical lab fee schedule code (PFS status X).
+- id: pregnancy_test
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: lab
+  appropriateness:
+    rating: standard_of_care
+    note: Checked when pregnancy is possible (NHS appendicitis diagnosis section).
+  likelihood_tier: possible
+  plain:
+    name: Pregnancy test
+    technical_name: Urine pregnancy test
+    what: The same urine sample can be checked for pregnancy.
+    why: If there is any chance of pregnancy, doctors check, because it changes which causes and tests come next.
+    when_skipped: There is no chance you could be pregnant.
+  when_skipped_basis: logic
+  reviewer_note: Not asked in the questions (no sex or age question on this path), so it stays possible for everyone.
+  citations:
+  - doc: nhs_appendicitis
+    year: 2024
+    section: How appendicitis is diagnosed
+    url: https://www.nhs.uk/conditions/appendicitis/
+    quote: a pregnancy test if there's a chance you could be pregnant
+    claim_field: why
+  cpts:
+  - code: '81025'
+    role: primary
+    mapping: asserted
+    note: Clinical lab fee schedule code (PFS status X).
+- id: blood_tests
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: lab
+  appropriateness:
+    rating: standard_of_care
+    note: Blood tests are listed among the tests that may be done for belly pain.
+  likelihood_tier: possible
+  plain:
+    name: Blood tests
+    technical_name: Complete blood count and metabolic panel
+    what: A small blood sample is checked for signs of infection or inflammation and for how your liver and kidneys
+      are working.
+    why: When the exam doesn't explain the pain, blood tests help rule causes in or out.
+    when_skipped: The exam and urine test already explain the pain.
+  when_skipped_basis: logic
+  reviewer_note: Two common panels priced as two lines (the second as an add-on line, one line per code); a lipase test for upper-belly pain is not modeled.
+  citations:
+  - doc: medlineplus_abdominal_pain
+    year: 2026
+    section: What to Expect at Your Office Visit
+    url: https://medlineplus.gov/ency/article/003120.htm
+    quote: Blood, urine, and stool tests
+    claim_field: why
+  - doc: nhs_appendicitis
+    year: 2024
+    section: How appendicitis is diagnosed
+    url: https://www.nhs.uk/conditions/appendicitis/
+    quote: Tests you may have include
+    claim_field: what
+  cpts:
+  - code: '85025'
+    role: primary
+    mapping: asserted
+    note: Complete blood count. Clinical lab fee schedule (PFS status X).
+  - code: '80053'
+    role: add_on
+    mapping: asserted
+    note: Comprehensive metabolic panel. Clinical lab fee schedule (PFS status X).
+- id: belly_ultrasound
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: imaging
+  appropriateness:
+    rating: standard_of_care
+    note: Listed among the tests for belly pain; no ACR variant was snapshotted for this path.
+  likelihood_tier: possible
+  plain:
+    name: Sound-wave picture of the belly
+    technical_name: Abdominal ultrasound
+    what: Gel and a handheld probe on your belly make pictures of organs such as the gallbladder, liver and kidneys.
+      No radiation.
+    why: If the exam points to a specific organ, a picture helps check it.
+    when_skipped: The exam and simple tests already explain the pain.
+  when_skipped_basis: logic
+  reviewer_note: Usually done at a hospital or imaging center, not at urgent care.
+  citations:
+  - doc: medlineplus_abdominal_pain
+    year: 2026
+    section: What to Expect at Your Office Visit
+    url: https://medlineplus.gov/ency/article/003120.htm
+    quote: Ultrasound of the abdomen
+    claim_field: why
+  - doc: nhs_appendicitis
+    year: 2024
+    section: How appendicitis is diagnosed
+    url: https://www.nhs.uk/conditions/appendicitis/
+    quote: scans such as an ultrasound scan or CT scan to check for swelling
+    claim_field: why
+  cpts:
+  - code: '76700'
+    role: primary
+    mapping: asserted
+    note: Complete abdominal study
+  - code: '76705'
+    role: alternative
+    mapping: asserted
+    note: Limited study (one organ or area)
+  glossary:
+  - ultrasound
+- id: belly_ct
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: imaging
+  appropriateness:
+    rating: standard_of_care
+    note: Listed among the tests for belly pain; no ACR variant was snapshotted for this path.
+  likelihood_tier: possible
+  plain:
+    name: Detailed scan of the belly
+    technical_name: CT of the abdomen and pelvis with contrast
+    what: You lie on a table that slides through a ring-shaped scanner. Dye through a vein often helps the organs
+      show up.
+    why: When the cause is still unclear after the exam and tests, a detailed scan can show what an exam can't.
+    when_skipped: The exam, simple tests or a sound-wave picture already explain the pain.
+  when_skipped_basis: logic
+  reviewer_note: '[我判断] Possible, not rare: common when belly pain stays unexplained, but done at a hospital or
+    imaging center.'
+  citations:
+  - doc: nhs_appendicitis
+    year: 2024
+    section: How appendicitis is diagnosed
+    url: https://www.nhs.uk/conditions/appendicitis/
+    quote: scans such as an ultrasound scan or CT scan to check for swelling
+    claim_field: why
+  cpts:
+  - code: '74177'
+    role: primary
+    mapping: asserted
+    note: CT abdomen and pelvis with contrast
+exits:
+- when: The pain is mainly burning in the upper belly or chest after meals
+  text: That fits the heartburn path better. Answer again and choose heartburn or upper-belly pain.
+  citations:
+  - doc: nhs_stomach_ache
+    year: 2026
+    section: Common causes of stomach ache
+    url: https://www.nhs.uk/conditions/stomach-ache/
+    quote: Feeling full and bloated after eating, heartburn, feeling sick
+    claim_field: intro
+- when: The pain comes with changes in your bowel habits or blood in your stool
+  text: Answer again and choose bowel changes or blood in stool. That path covers the colon check.
+  citations:
+  - doc: nhs_stomach_ache
+    year: 2026
+    section: Common causes of stomach ache
+    url: https://www.nhs.uk/conditions/stomach-ache/
+    quote: Finding it hard to poo, or not pooing as often
+    claim_field: intro
+- when: The doctor finds a cause that needs a hospital or a specialist
+  text: This tool stops here. Treatment in a hospital or by a specialist is priced differently.
+golden_cases:
+- name: Belly ache since yesterday
+  answers:
+    Q0: []
+    Q1: belly_pain
+  expect: stomach_ache_v1
+  expect_tiers:
+    visit: certain
+    urine_test: likely
+    belly_ct: possible
+- name: 'Red flag: vomiting blood'
+  answers:
+    Q0:
+    - rf_gi_bleed_heavy
+    Q1: belly_pain
+  expect: call_911
+- name: 'Red flag: belly pain and could be pregnant'
+  answers:
+    Q0:
+    - rf_abdomen_rigid_or_pregnant
+    Q1: belly_pain
+  expect: er_today
+- name: 'Red flag: pain moved to the lower right'
+  answers:
+    Q0:
+    - rf_abdomen_fever_or_moving
+    Q1: belly_pain
+  expect: seen_today
+clinical_uncertainties:
+- Test tiers (urine likely; pregnancy, blood, ultrasound and CT possible) are judgment from MedlinePlus/NHS lists, not
+  a rated guideline. No ACR variant for nonlocalized or right-lower-quadrant pain was snapshotted.
+- No question separates upper, lower or one-sided pain, so every possible test applies to everyone.
+- Stool tests and a lipase blood test are not modeled.
+- Urgent cares that bill one flat visit code (for example S9083) are not modeled on this path.
+review:
+  status: pending_austin
+  drafted_by: ai:claude-opus-5.5
+  drafted_at: '2026-10-25'
+  reviewers: []

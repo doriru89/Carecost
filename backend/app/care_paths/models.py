@@ -285,7 +285,15 @@ class Title(_Strict):
 
 class Scope(_Strict):
     area: Literal[
-        "msk_shoulder", "msk_knee", "msk_back", "msk_ankle", "skin", "gi_upper", "gi_lower"
+        "msk_shoulder",
+        "msk_knee",
+        "msk_back",
+        "msk_ankle",
+        "skin",
+        "skin_rash",
+        "gi_upper",
+        "gi_lower",
+        "gi_abdomen",
     ]
     acuity: Literal["acute", "chronic", "preventive", "subacute"]
     severity_band: list[Literal["minor", "moderate"]]
@@ -386,6 +394,11 @@ class RedFlag(_Strict):
     disposition: Literal["call_911", "crisis_988", "er_today", "seen_today", "routine"]
     checklist: BiText
     in_checklist: bool = True
+    checklist_areas: list[str] = Field(
+        default_factory=list,
+        description="red-flag areas whose Q0 checklist shows this flag even when in_checklist is "
+        "false (e.g. a non-fading rash: free text everywhere, a checklist item only for rashes)",
+    )
     patterns: list[list[list[str]]] = Field(
         description="any pattern matches; a pattern is a list of term groups that must all appear; "
         "a group matches if any of its terms appears (not negated)"

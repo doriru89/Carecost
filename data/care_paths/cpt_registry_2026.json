@@ -131,6 +131,18 @@
       "status": "A",
       "has_professional_technical_split": true
     },
+    "74177": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "76700": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
+    "76705": {
+      "status": "A",
+      "has_professional_technical_split": true
+    },
     "76881": {
       "status": "A",
       "has_professional_technical_split": true
@@ -142,6 +154,26 @@
     "77002": {
       "status": "A",
       "has_professional_technical_split": true
+    },
+    "80053": {
+      "status": "X",
+      "has_professional_technical_split": false
+    },
+    "81003": {
+      "status": "X",
+      "has_professional_technical_split": false
+    },
+    "81025": {
+      "status": "X",
+      "has_professional_technical_split": false
+    },
+    "85025": {
+      "status": "X",
+      "has_professional_technical_split": false
+    },
+    "87220": {
+      "status": "X",
+      "has_professional_technical_split": false
     },
     "88305": {
       "status": "A",

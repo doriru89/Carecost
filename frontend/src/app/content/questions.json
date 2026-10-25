@@ -19,6 +19,8 @@
     "heartburn_upper": "Heartburn or upper-belly pain",
     "bowel": "Bowel changes or blood in stool",
     "screening": "No symptoms, I want a colon cancer screening",
+    "belly_pain": "Stomach ache or belly pain",
+    "rash": "A rash",
     "other": "Something else"
    }
   },
@@ -127,7 +129,7 @@
     "ppo": "PPO / no referral needed",
     "medicare": "Medicare",
     "masshealth": "MassHealth",
-    "cash": "No insurance / paying cash",
+    "cash": "Self-pay (no insurance)",
     "unsure": "Not sure"
    }
   }

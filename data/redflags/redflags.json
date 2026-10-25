@@ -1,6 +1,6 @@
 {
-  "version": "0.3.0",
-  "doc": "Q0 red flags. Any match stops the price flow. Dispositions are a 4-step ladder borrowed in shape (not content) from nurse-triage protocols. NHS pages are UK; their 'call 999 / go to A&E / urgent GP / 111' advice is mapped to US settings by us (mapping_note) and needs a US clinician's confirmation. Free-text patterns are a backstop for the chat; the checklist is the primary screen. v0.2.0: adversarial phrase set (data/redflags/adversarial.json) drives the free-text patterns; term syntax ('~N' proximity, '*' prefix, '|' alternatives, '!' never negated) is documented in backend/app/care_paths/redflags.py. crisis_988 has the same rank as call_911; on a tie call_911 wins because it is listed first (see crisis_988 rank_note).",
+  "version": "0.4.0",
+  "doc": "Q0 red flags. Any match stops the price flow. Dispositions are a 4-step ladder borrowed in shape (not content) from nurse-triage protocols. NHS pages are UK; their 'call 999 / go to A&E / urgent GP / 111' advice is mapped to US settings by us (mapping_note) and needs a US clinician's confirmation. Free-text patterns are a backstop for the chat; the checklist is the primary screen. v0.2.0: adversarial phrase set (data/redflags/adversarial.json) drives the free-text patterns; term syntax ('~N' proximity, '*' prefix, '|' alternatives, '!' never negated) is documented in backend/app/care_paths/redflags.py. crisis_988 has the same rank as call_911; on a tie call_911 wins because it is listed first (see crisis_988 rank_note). v0.4.0 (2026-10-25, stomach ache + rash paths): areas 'abdomen' and 'rash' hold flags only those paths need; 'checklist_areas' shows a free-text-only flag in one area's checklist.",
   "review": {
     "status": "pending_austin",
     "drafted_by": "ai:claude-opus-5.5",
@@ -15,7 +15,9 @@
     "back",
     "ankle",
     "skin",
-    "gi"
+    "gi",
+    "abdomen",
+    "rash"
   ],
   "path_areas": {
     "msk_shoulder": [
@@ -48,6 +50,16 @@
     "gi_lower": [
       "global",
       "gi"
+    ],
+    "gi_abdomen": [
+      "global",
+      "gi",
+      "abdomen"
+    ],
+    "skin_rash": [
+      "global",
+      "skin",
+      "rash"
     ]
   },
   "dispositions": [
@@ -922,9 +934,13 @@
         ]
       ],
       "sources": [
-        "nhs_stomach_ache"
+        "nhs_stomach_ache",
+        "medlineplus_rash"
       ],
-      "mapping_note": "NHS stomach-ache page: call 999 or go to A&E. We map to 911 because a non-fading rash can signal a fast-moving infection [clinician to confirm]."
+      "mapping_note": "NHS stomach-ache page: call 999 or go to A&E. We map to 911 because a non-fading rash can signal a fast-moving infection [clinician to confirm].",
+      "checklist_areas": [
+        "rash"
+      ]
     },
     {
       "id": "rf_gi_bleed_heavy",
@@ -1670,6 +1686,372 @@
         "nhs_cellulitis"
       ],
       "mapping_note": "NHS cellulitis 'call 999 or A&E' list (possible sepsis) -> US 911."
+    },
+    {
+      "id": "rf_abdomen_rigid_or_pregnant",
+      "areas": [
+        "abdomen"
+      ],
+      "disposition": "er_today",
+      "checklist": {
+        "en": "Belly pain and you are or could be pregnant, or your belly is hard and rigid to the touch",
+        "zh": "腹痛且你已怀孕或可能怀孕，或者肚子摸起来又硬又紧"
+      },
+      "patterns": [
+        [
+          [
+            "pregnant",
+            "pregnancy",
+            "怀孕",
+            "怀上"
+          ],
+          [
+            "belly",
+            "stomach",
+            "abdomen",
+            "abdominal",
+            "tummy",
+            "stomachache",
+            "bellyache",
+            "肚子",
+            "腹",
+            "胃"
+          ],
+          [
+            "pain*",
+            "hurt*",
+            "ache*",
+            "aching",
+            "cramp*",
+            "sore",
+            "疼",
+            "痛"
+          ]
+        ],
+        [
+          [
+            "rigid",
+            "board like",
+            "hard as a board",
+            "belly|stomach|tummy|abdomen ~3 hard|rigid",
+            "肚子很硬",
+            "肚子发硬",
+            "肚子变硬",
+            "腹部僵硬",
+            "板状"
+          ],
+          [
+            "belly",
+            "stomach",
+            "abdomen",
+            "abdominal",
+            "tummy",
+            "stomachache",
+            "bellyache",
+            "肚子",
+            "腹",
+            "胃"
+          ]
+        ]
+      ],
+      "sources": [
+        "medlineplus_abdominal_pain"
+      ],
+      "mapping_note": "MedlinePlus: get medical help right away or call 911 for a rigid belly or pain in pregnancy -> US 'ER now'. A pregnancy test belongs to the path for everyone else [clinician to confirm]."
+    },
+    {
+      "id": "rf_abdomen_fever_or_moving",
+      "areas": [
+        "abdomen"
+      ],
+      "disposition": "seen_today",
+      "checklist": {
+        "en": "Belly pain with a fever, pain that has moved to the lower right side, or pain that is quickly getting worse",
+        "zh": "腹痛伴发烧、疼痛转移到右下腹，或疼痛很快加重"
+      },
+      "patterns": [
+        [
+          [
+            "fever*",
+            "feverish",
+            "high temperature",
+            "chills",
+            "发烧",
+            "发热"
+          ],
+          [
+            "belly",
+            "stomach",
+            "abdomen",
+            "abdominal",
+            "tummy",
+            "stomachache",
+            "bellyache",
+            "肚子",
+            "腹",
+            "胃"
+          ],
+          [
+            "pain*",
+            "hurt*",
+            "ache*",
+            "aching",
+            "cramp*",
+            "sore",
+            "疼",
+            "痛"
+          ]
+        ],
+        [
+          [
+            "moved to the lower right",
+            "moved to my lower right",
+            "moving to the lower right",
+            "moves to the lower right",
+            "转移到右下"
+          ]
+        ],
+        [
+          [
+            "lower right",
+            "right lower",
+            "右下腹"
+          ],
+          [
+            "belly",
+            "stomach",
+            "abdomen",
+            "abdominal",
+            "tummy",
+            "stomachache",
+            "bellyache",
+            "肚子",
+            "腹",
+            "胃"
+          ]
+        ],
+        [
+          [
+            "getting worse",
+            "gets worse",
+            "got worse",
+            "worse and worse",
+            "worsening",
+            "much worse",
+            "越来越疼",
+            "越来越痛",
+            "加重"
+          ],
+          [
+            "belly",
+            "stomach",
+            "abdomen",
+            "abdominal",
+            "tummy",
+            "stomachache",
+            "bellyache",
+            "肚子",
+            "腹",
+            "胃"
+          ],
+          [
+            "pain*",
+            "hurt*",
+            "ache*",
+            "aching",
+            "cramp*",
+            "sore",
+            "疼",
+            "痛"
+          ]
+        ]
+      ],
+      "sources": [
+        "medlineplus_abdominal_pain",
+        "nhs_appendicitis",
+        "nhs_stomach_ache"
+      ],
+      "mapping_note": "NHS 'urgent GP appointment / 111' (pain moving to the lower right; pain that suddenly gets much worse) and MedlinePlus 'contact your provider' (fever with pain) -> US 'get seen today'."
+    },
+    {
+      "id": "rf_rash_blistering",
+      "areas": [
+        "rash"
+      ],
+      "disposition": "er_today",
+      "checklist": {
+        "en": "A rash that blisters or peels, spreads fast across your body, or comes with a sore or swollen mouth or eyes",
+        "zh": "皮疹起水疱或脱皮、很快蔓延全身，或伴口腔、眼睛疼痛或肿胀"
+      },
+      "patterns": [
+        [
+          [
+            "rash*",
+            "hives",
+            "spots",
+            "疹",
+            "红点"
+          ],
+          [
+            "blister*",
+            "peeling",
+            "peel*",
+            "skin coming off",
+            "skin is coming off",
+            "水疱",
+            "水泡",
+            "起泡",
+            "脱皮",
+            "掉皮"
+          ]
+        ],
+        [
+          [
+            "rash*",
+            "hives",
+            "spots",
+            "疹",
+            "红点"
+          ],
+          [
+            "spreading fast",
+            "spreading quickly",
+            "spread fast",
+            "spread quickly",
+            "spreads fast",
+            "spreading across my body",
+            "spreading over my body",
+            "迅速蔓延",
+            "蔓延很快",
+            "扩散很快",
+            "蔓延全身",
+            "一下子全身"
+          ]
+        ],
+        [
+          [
+            "rash*",
+            "hives",
+            "spots",
+            "疹",
+            "红点"
+          ],
+          [
+            "mouth sores",
+            "sores in my mouth",
+            "sore mouth",
+            "swollen mouth",
+            "mouth is swollen",
+            "sore eyes",
+            "swollen eyes",
+            "eyes are swollen",
+            "eye pain",
+            "eyes hurt",
+            "red eyes",
+            "口腔溃疡",
+            "嘴里起泡",
+            "嘴巴肿",
+            "眼睛疼",
+            "眼睛痛",
+            "眼睛肿",
+            "眼睛红"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_sjs"
+      ],
+      "mapping_note": "NHS Stevens-Johnson page: call 999 or go to A&E -> US 'ER now'. Broad on purpose: a blistering poison-ivy rash also screens positive [clinician to confirm]."
+    },
+    {
+      "id": "rf_rash_fever",
+      "areas": [
+        "rash"
+      ],
+      "disposition": "seen_today",
+      "checklist": {
+        "en": "A rash with a fever, joint pain or a sore throat",
+        "zh": "皮疹伴发烧、关节痛或喉咙痛"
+      },
+      "patterns": [
+        [
+          [
+            "rash*",
+            "hives",
+            "spots",
+            "疹",
+            "红点"
+          ],
+          [
+            "fever*",
+            "feverish",
+            "high temperature",
+            "chills",
+            "发烧",
+            "发热"
+          ]
+        ],
+        [
+          [
+            "rash*",
+            "hives",
+            "spots",
+            "疹",
+            "红点"
+          ],
+          [
+            "joint pain",
+            "joints hurt",
+            "joints ache",
+            "sore throat",
+            "关节痛",
+            "关节疼",
+            "喉咙痛",
+            "嗓子疼"
+          ]
+        ]
+      ],
+      "sources": [
+        "medlineplus_rash"
+      ],
+      "mapping_note": "MedlinePlus 'contact your health care provider' -> US 'get seen today'."
+    },
+    {
+      "id": "rf_rash_face_swelling",
+      "areas": [
+        "rash"
+      ],
+      "disposition": "call_911",
+      "in_checklist": false,
+      "checklist": {
+        "en": "A rash with a swollen face",
+        "zh": "皮疹伴脸部肿胀"
+      },
+      "patterns": [
+        [
+          [
+            "rash*",
+            "hives",
+            "spots",
+            "疹",
+            "红点"
+          ],
+          [
+            "face is swollen",
+            "swollen face",
+            "face swelling",
+            "face swollen",
+            "face is puffy",
+            "脸肿",
+            "面部肿",
+            "脸也肿"
+          ]
+        ]
+      ],
+      "sources": [
+        "medlineplus_rash"
+      ],
+      "mapping_note": "MedlinePlus: call 911 if your face is swollen. Free text only: the checklist already has lips, tongue or throat swelling (rf_allergic_airway)."
     }
   ]
 }

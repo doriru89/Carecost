@@ -835,6 +835,10 @@ sources:
     - you cannot pee at all
     - spots or a rash that does not fade when you press it
     - you're struggling to breathe
+    - it suddenly gets much worse
+    - Pain in the lower right side of your tummy
+    - Feeling full and bloated after eating, heartburn, feeling sick
+    - Finding it hard to poo, or not pooing as often
   nhs_rectal_bleeding:
     title: 'NHS: Bleeding from the bottom'
     publisher: NHS website (England)
@@ -1066,3 +1070,83 @@ sources:
     fetched_text_sha256: f112cd120e278256451416ceaca1718380ad752f1aad9bb238d67d382ed11bfd
     excerpts:
     - is not responding like they normally do, is not feeding, is difficult to wake
+  medlineplus_abdominal_pain:
+    title: 'MedlinePlus Medical Encyclopedia: Abdominal pain'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2026
+    url: https://medlineplus.gov/ency/article/003120.htm
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-25'
+    recheck_after_days: 365
+    fetched_text_sha256: 122b8c2d48350920df68fc68f121ecac4075bac7cea3b138be0e91dee1ff2284
+    excerpts:
+    - Abdominal pain is pain that you feel anywhere between your chest and groin.
+    - Almost everyone has pain in the abdomen at some point.
+    - Most of the time, it is not serious.
+    - Get medical help right away or call 911 or the local emergency number if you
+    - Have tenderness in your belly, or your belly is rigid and hard to the touch
+    - Are pregnant or could be pregnant
+    - Fever, over 100°F (37.7°C) for adults or 100.4°F (38°C) for children, with pain
+    - Abdominal pain that does not improve in 24 to 48 hours
+    - Your provider will perform a physical exam and ask about your symptoms and medical history.
+    - the location of pain and when it occurs will help your provider detect the cause
+    - Blood, urine, and stool tests
+    - Ultrasound of the abdomen
+    - Colonoscopy or sigmoidoscopy (tube through the rectum into the colon)
+  nhs_appendicitis:
+    title: 'NHS: Appendicitis'
+    publisher: NHS website (England)
+    year: 2024
+    url: https://www.nhs.uk/conditions/appendicitis/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-25'
+    recheck_after_days: 365
+    fetched_text_sha256: 587c7bb5558d28eb31c89669b524c37acbc2e2081cd34907683a70a5b1eb95f4
+    excerpts:
+    - the pain usually moves to the lower right side of your abdomen, and gets worse
+    - is gradually getting worse or does not go away
+    - moves to the lower right side of your abdomen
+    - Tests you may have include
+    - testing a sample of your pee
+    - scans such as an ultrasound scan or CT scan to check for swelling
+    - a pregnancy test if there's a chance you could be pregnant
+  medlineplus_rash:
+    title: 'MedlinePlus Medical Encyclopedia: Rashes'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2024
+    url: https://medlineplus.gov/ency/article/003220.htm
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-25'
+    recheck_after_days: 365
+    fetched_text_sha256: af782e92360ab2ce3330a45f9e8e0509ff9a15ae3340f144fe916f8117c2cba7
+    excerpts:
+    - Rashes involve changes in the color, feeling or texture of your skin.
+    - the cause of a rash can be determined from how it looks
+    - Skin testing, such as a scraping, culture, or biopsy, may also be used
+    - Many simple rashes will improve with gentle skin care and by avoiding irritating substances.
+    - Many primary care providers are comfortable dealing with common rashes.
+    - For more complicated skin disorders, you may need a referral to a dermatologist.
+    - You are short of breath, your throat is tight, or your face is swollen.
+    - You have joint pain, fever, or a sore throat.
+    - Your child has a purple rash that looks like a bruise.
+    - Home treatment doesn't work, or your symptoms get worse.
+  nhs_sjs:
+    title: 'NHS: Stevens-Johnson syndrome'
+    publisher: NHS website (England)
+    year: 2026
+    url: https://www.nhs.uk/conditions/stevens-johnson-syndrome/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-25'
+    recheck_after_days: 365
+    fetched_text_sha256: e691914b4074a2dd90644b7d9d83b4ec1d5ab246688b30b7d99f2f22452dcaf9
+    excerpts:
+    - have a rash spreading across the body
+    - have a rash and the skin is itchy or painful, red, swollen, blistered or peeling
+    - have a swollen or sore mouth, face, lips, tongue, throat or eyes
+    - It needs to be treated immediately in hospital.

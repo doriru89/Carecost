@@ -1,0 +1,285 @@
+# AI-drafted care path. NOT publishable until two non-AI reviewers sign off (review.status).
+# Plain text is our own words; quotes are <=15 words and verified against data/care_paths/sources.yaml.
+# CPT codes appear only under `cpts` (price layer). Edit freely, then run backend tests.
+# R19 / P12 (2026-10-25): "rash" / 起疹子 as a person says it. First visit at urgent care, a primary-care office or
+# a skin doctor; possible scraping, sample and specialist visit. Routes out to the mole path (exit).
+id: rash_v1
+version: 1.0.0
+title:
+  en: A rash without warning signs
+  zh: 没有报警症状的皮疹（起疹子）
+intro: Many rashes clear up with gentle skin care and by avoiding whatever irritates the skin. If yours doesn't, a
+  first visit at urgent care, a primary care office or a skin doctor usually works out the cause from how it looks.
+  A skin scraping or a small skin sample is taken only sometimes.
+scope:
+  area: skin_rash
+  acuity: acute
+  severity_band:
+  - minor
+  - moderate
+entry:
+  all_of:
+    Q1:
+    - rash
+red_flags:
+- rf_cardiac
+- rf_chest_pain_alone
+- rf_suicide_self_harm
+- rf_overdose
+- rf_breathing
+- rf_breathing_mild
+- rf_stroke
+- rf_thunderclap_headache
+- rf_unresponsive_seizure
+- rf_head_injury_serious
+- rf_head_injury_vomiting
+- rf_palpitations_faint
+- rf_child_limp
+- rf_allergic_airway
+- rf_non_blanching_rash
+- rf_skin_infection
+- rf_skin_sepsis
+- rf_rash_blistering
+- rf_rash_fever
+- rf_rash_face_swelling
+glossary: []
+intro_citations:
+- doc: medlineplus_rash
+  year: 2024
+  section: Home Care
+  url: https://medlineplus.gov/ency/article/003220.htm
+  quote: Many simple rashes will improve with gentle skin care and by avoiding irritating substances.
+  claim_field: intro
+- doc: medlineplus_rash
+  year: 2024
+  section: Considerations
+  url: https://medlineplus.gov/ency/article/003220.htm
+  quote: the cause of a rash can be determined from how it looks
+  claim_field: intro
+- doc: medlineplus_rash
+  year: 2024
+  section: Considerations
+  url: https://medlineplus.gov/ency/article/003220.htm
+  quote: Skin testing, such as a scraping, culture, or biopsy, may also be used
+  claim_field: intro
+steps:
+- id: visit
+  layer: 1
+  kind: visit
+  appropriateness:
+    rating: standard_of_care
+    note: Looking at the rash and asking about its history is the first step; the visit itself is not rated.
+  likelihood_tier: certain
+  plain:
+    name: First visit about the rash
+    technical_name: Urgent-care, primary-care or dermatology office visit
+    what: A clinician looks at the rash and asks when it started, what touched your skin and whether you started a
+      new medicine.
+    why: How a rash looks, where it is and what came before it usually show the cause.
+    when_skipped: A mild rash that is fading with gentle skin care often needs no visit.
+  when_skipped_basis: clinical
+  citations:
+  - doc: medlineplus_rash
+    year: 2024
+    section: Considerations
+    url: https://medlineplus.gov/ency/article/003220.htm
+    quote: the cause of a rash can be determined from how it looks
+    claim_field: why
+  - doc: medlineplus_rash
+    year: 2024
+    section: When to Contact a Medical Professional
+    url: https://medlineplus.gov/ency/article/003220.htm
+    quote: Many primary care providers are comfortable dealing with common rashes.
+    claim_field: what
+  - doc: medlineplus_rash
+    year: 2024
+    section: Home Care
+    url: https://medlineplus.gov/ency/article/003220.htm
+    quote: Many simple rashes will improve with gentle skin care and by avoiding irritating substances.
+    claim_field: when_skipped
+  cpts:
+  - code: '99203'
+    role: primary
+    mapping: confirmed_pfs
+  - code: '99213'
+    role: alternative
+    mapping: asserted
+    note: Established patient. Some urgent cares bill one flat visit code instead; not priced here.
+- id: skin_scraping
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: lab
+  appropriateness:
+    rating: standard_of_care
+    note: Skin scrapings are listed among the tests for a rash.
+  likelihood_tier: possible
+  plain:
+    name: Skin scraping check
+    technical_name: Skin scraping for fungus (KOH prep)
+    what: The clinician gently scrapes a few skin flakes onto a slide and looks at them under a microscope.
+    why: A scaly rash can be caused by a fungus, and a scraping tells it apart from other rashes.
+    when_skipped: The rash clearly looks like a cause that needs no test.
+  when_skipped_basis: logic
+  reviewer_note: '[我判断] Possible: done for scaly rashes, often in the same visit.'
+  citations:
+  - doc: medlineplus_rash
+    year: 2024
+    section: Considerations
+    url: https://medlineplus.gov/ency/article/003220.htm
+    quote: Skin testing, such as a scraping, culture, or biopsy, may also be used
+    claim_field: why
+  cpts:
+  - code: '87220'
+    role: primary
+    mapping: asserted
+    note: Clinical lab fee schedule code (PFS status X).
+- id: skin_sample
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: procedure
+  appropriateness:
+    rating: standard_of_care
+    note: A biopsy is listed among the tests for a rash whose cause is unclear.
+  likelihood_tier: possible
+  plain:
+    name: Small skin sample
+    technical_name: Skin biopsy (punch)
+    what: After a numbing shot, a tiny round piece of skin is removed and sent to a lab. It may need a stitch.
+    why: When the cause is still unclear, or the rash doesn't respond to treatment, a sample can settle it.
+    when_skipped: The cause is clear from how the rash looks, or it clears with treatment.
+  when_skipped_basis: logic
+  reviewer_note: '[我判断] Possible, mostly at a skin doctor; a shave sample may be used instead.'
+  citations:
+  - doc: medlineplus_rash
+    year: 2024
+    section: Considerations
+    url: https://medlineplus.gov/ency/article/003220.htm
+    quote: Skin testing, such as a scraping, culture, or biopsy, may also be used
+    claim_field: why
+  - doc: medlineplus_skin_biopsy
+    year: 2025
+    section: Overview
+    url: https://medlineplus.gov/lab-tests/skin-biopsy/
+    quote: Most skin biopsies can be done in a health care provider's office
+    claim_field: what
+  cpts:
+  - code: '11104'
+    role: primary
+    mapping: asserted
+    note: Punch sample, one spot
+  - code: '11102'
+    role: alternative
+    mapping: asserted
+    note: Shave sample, one spot
+  glossary:
+  - biopsy
+- id: pathology
+  layer: 2
+  parent: visit
+  after:
+  - skin_sample
+  travels_with: skin_sample
+  kind: lab
+  appropriateness:
+    rating: implied_by_parent
+    note: Billed only when a skin sample is taken.
+  likelihood_tier: possible
+  plain:
+    name: Lab check of the sample
+    technical_name: Surgical pathology (tissue exam)
+    what: A pathologist looks at the skin sample under a microscope.
+    why: That is how the sample gives an answer. It's a separate bill.
+    when_skipped: No sample is taken.
+  when_skipped_basis: logic
+  reviewer_note: Travels with skin_sample.
+  citations:
+  - doc: medlineplus_biopsy
+    year: 2025
+    section: Overview
+    url: https://medlineplus.gov/biopsy.html
+    quote: A doctor called a pathologist looks at the cells or tissue under a microscope
+    claim_field: why
+  cpts:
+  - code: '88305'
+    role: primary
+    mapping: confirmed_pfs
+  glossary:
+  - pathology
+- id: skin_doctor_visit
+  layer: 2
+  parent: visit
+  after:
+  - visit
+  kind: visit
+  appropriateness:
+    rating: standard_of_care
+    note: A dermatologist visit when the rash is harder to sort out.
+  likelihood_tier: possible
+  plain:
+    name: Visit with a skin doctor
+    technical_name: Dermatologist visit (new patient)
+    what: A skin specialist looks at a rash that is hard to pin down or hasn't improved.
+    why: For more complicated skin problems, the first doctor may send you to a skin specialist.
+    when_skipped: Your first visit was already with a skin doctor, or the rash cleared up.
+  when_skipped_basis: logic
+  reviewer_note: Some plans need the first doctor's order before this visit; the first visit fills that role here.
+  citations:
+  - doc: medlineplus_rash
+    year: 2024
+    section: When to Contact a Medical Professional
+    url: https://medlineplus.gov/ency/article/003220.htm
+    quote: For more complicated skin disorders, you may need a referral to a dermatologist.
+    claim_field: why
+  cpts:
+  - code: '99203'
+    role: primary
+    mapping: confirmed_pfs
+  - code: '99204'
+    role: alternative
+    mapping: asserted
+    note: Longer new-patient visit
+exits:
+- when: It is one spot or mole that is new or changing
+  text: Answer again and choose a spot or mole on the skin. That path covers a mole check and a sample.
+- when: The skin doctor finds a condition that needs ongoing treatment
+  text: This tool stops here. Long-term treatment is priced differently.
+golden_cases:
+- name: Itchy rash on the arm for a week
+  answers:
+    Q0: []
+    Q1: rash
+  expect: rash_v1
+  expect_tiers:
+    visit: certain
+    skin_sample: possible
+- name: 'Red flag: rash that does not fade when pressed'
+  answers:
+    Q0:
+    - rf_non_blanching_rash
+    Q1: rash
+  expect: call_911
+- name: 'Red flag: blistering rash'
+  answers:
+    Q0:
+    - rf_rash_blistering
+    Q1: rash
+  expect: er_today
+- name: 'Red flag: rash with fever'
+  answers:
+    Q0:
+    - rf_rash_fever
+    Q1: rash
+  expect: seen_today
+clinical_uncertainties:
+- Test tiers (scraping, sample, skin doctor all possible) are judgment from a MedlinePlus list, not a rated guideline.
+- Allergy patch testing and blood tests are not modeled.
+- A blistering poison-ivy rash screens positive for the blistering red flag; a clinician should confirm that scope.
+review:
+  status: pending_austin
+  drafted_by: ai:claude-opus-5.5
+  drafted_at: '2026-10-25'
+  reviewers: []
