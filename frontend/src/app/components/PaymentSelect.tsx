@@ -37,7 +37,6 @@ export function PaymentSelect({
         {PAYMENT_CHOICES.filter((c) => c.group === "insurance").map((c) => (
           <option key={c.id} value={c.id}>
             {c.label}
-            {c.note ? ` (${c.note})` : ""}
           </option>
         ))}
       </optgroup>

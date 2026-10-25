@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowLeftRight, Columns2, Rows2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +24,28 @@ function useIsPhone(): boolean {
 }
 
 /**
+ * Phone tabs share the window's scroll. Remember each tab's scroll position and put it back when the
+ * person returns to that tab, so going to Chat and back does not lose their place in the prices.
+ */
+function usePhoneTabScroll(phone: boolean, tab: "chat" | "prices") {
+  const pos = useRef<Record<string, number>>({});
+  const cur = useRef(tab);
+  useEffect(() => {
+    if (!phone) return;
+    const onScroll = () => {
+      pos.current[cur.current] = window.scrollY;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [phone]);
+  useLayoutEffect(() => {
+    if (!phone || cur.current === tab) return;
+    cur.current = tab;
+    window.scrollTo(0, pos.current[tab] ?? 0);
+  }, [phone, tab]);
+}
+
+/**
  * D9: two panes like an iPad split. Side by side or stacked, either pane first ("swap" / "flip").
  * On a phone the panes become two tabs.
  */
@@ -43,11 +65,12 @@ export function SplitView({
   onPhoneTab: (t: "chat" | "prices") => void;
 }) {
   const phone = useIsPhone();
+  usePhoneTabScroll(phone, phoneTab);
 
   if (phone) {
     return (
       <div className="flex flex-col" data-testid="split-view" data-layout="tabs">
-        <div className="sticky top-0 z-20 grid grid-cols-2 border-b border-border bg-background" role="tablist">
+        <div className="sticky top-[var(--header-h,0px)] z-20 grid grid-cols-2 border-b border-border bg-background" role="tablist">
           {(["chat", "prices"] as const).map((tab) => (
             <button
               key={tab}
@@ -63,7 +86,15 @@ export function SplitView({
             </button>
           ))}
         </div>
-        <div className="px-4 py-3">{phoneTab === "chat" ? <div className="h-[calc(100vh-9rem)]">{chat}</div> : prices}</div>
+        {/* Both panes stay mounted (a hidden one keeps its state: map, picks, typed ZIP); only one shows. */}
+        <div className="px-4 py-3">
+          <div className="h-[calc(100vh-9rem)]" hidden={phoneTab !== "chat"} data-pane="chat">
+            {chat}
+          </div>
+          <div hidden={phoneTab !== "prices"} data-pane="prices">
+            {prices}
+          </div>
+        </div>
       </div>
     );
   }

@@ -19,6 +19,8 @@ export { ApiError, NoMockData } from "./errors";
 export interface QuoteOptions {
   /** The person's ZIP centroid or device location; null = no location given */
   location?: LatLon | null;
+  /** R15: CareApp aborts a request it no longer wants (the person changed the choice) or that took too long */
+  signal?: AbortSignal;
 }
 
 export interface CareCostApi {
@@ -86,7 +88,7 @@ export function httpApi(base = "", fetchImpl: typeof fetch = (...a) => fetch(...
   }
   return {
     mode: "api",
-    quote: (req, opts) => call<QuoteResponse>("/api/quote", { method: "POST", body: quoteBody(req, opts) }),
+    quote: (req, opts) => call<QuoteResponse>("/api/quote", { method: "POST", body: quoteBody(req, opts), signal: opts?.signal }),
     chat: (req) => call<ChatResponse>("/api/chat", { method: "POST", body: JSON.stringify(req) }),
     catalog: () => call<Catalog>(CATALOG_PATH),
     catalogPaths: () => call<CatalogPath[]>(`${CATALOG_PATH}/paths`),
