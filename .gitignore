@@ -27,3 +27,6 @@ data/intermediate/
 
 # ETL build outputs (python -m app.etl build); shipped by CI, never committed
 data/build/
+
+# Site facts page cache (python -m app.site_facts fetch); the manifest of URLs + hashes is committed
+data/sites/site_facts/cache/

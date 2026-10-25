@@ -1,0 +1,43 @@
+# Hand-checked own pages (and "no own page" decisions) that win over the census column and the
+# finders. source: hand_checked (read from the operator's own finder / sitemap candidates) or
+# web_search (query in `query`). Third-party directories (WebMD, Sharecare, Solv, NPI viewers)
+# are never a site's own page.
+version: 1
+sites:
+  newton_wellesley_hospital:
+    source: hand_checked  # finder:mgb candidate, the hospital's own location page
+    pages:
+    - {url: 'https://www.massgeneralbrigham.org/en/locations/newton-ma/newtonwellesley-hospital-loc0000246998', role: location}
+  harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0182:
+    source: web_search
+    query: BIDMC Needham 148 Chestnut Street gastroenterology orthopedics location
+    pages:
+    - {url: 'https://bidneedham.org/services/orthopedics', role: services}
+    - {url: 'https://bidneedham.org/contact', role: location}
+  krauss_dermatology_pc_wellesley:
+    source: web_search
+    query: Krauss Dermatology Wellesley MA 1 Washington St
+    pages:
+    - {url: 'https://www.kraussdermatology.com/our-practice/contact-us/', role: location}
+    - {url: 'https://www.kraussdermatology.com/our-practice/our-location/', role: location}
+  boston_endoscopy_center_wellesley_hills:
+    no_own_page: 'web_search "Boston Endoscopy Center 175 Worcester St Wellesley Hills": only WebMD / Yellow Pages / Beckers'
+  boston_orthopaedic_and_spine_llc_brighton:
+    no_own_page: 'web_search x2 ("Boston Orthopaedic and Spine 20 Guest St Brighton", "... official site locations Brighton"): only Sharecare / NPI / Exactech directories'
+  lexington_waltham_dermatology_group_inc_lexington:
+    no_own_page: 'web_search "Lexington-Waltham Dermatology 57 Bedford St Lexington": only directories'
+  # finder matches checked by hand and rejected (wrong place)
+  winchester_hospital_endoscopy_cente_woburn:
+    no_own_page: 'finder:bilh matched winchester-hospital-urgent-care-woburn (an urgent care, not the endoscopy center); not found yet'
+  mount_auburn_hospital:
+    source: hand_checked
+    pages:
+    - {url: 'https://mountauburnhospital.org/locations/mount-auburn-hospital', role: location}
+  cha_cambridge_hospital:
+    source: hand_checked
+    pages:
+    - {url: 'https://www.challiance.org/locations/cambridge/cha-cambridge-hospital', role: location}
+  beth_israel_deaconess_medical_center:
+    source: hand_checked
+    pages:
+    - {url: 'https://bidmc.org/locations/beth-israel-deaconess-medical-center', role: location}
