@@ -3,13 +3,14 @@ import { NOTICE_KEY, YOU_PAY_KEY } from "@/contracts/exhaustive";
 import type { QuoteResponse, SiteQuote } from "@/generated/contracts/quote_api";
 import { cn } from "@/lib/utils";
 import { ExternalLink } from "lucide-react";
-import { range } from "../lib/format";
+import { isoDate, range } from "../lib/format";
 import { milesText, type UserLocation } from "../lib/geo";
 import type { OpenStatus } from "../lib/hours";
-import { freshnessDetail, freshnessLabel, freshnessState, sections, siteSourceIds, sourceHover } from "../lib/receipt";
+import { dataNoticeKey, freshnessDetail, freshnessLabel, freshnessState, sections, siteSourceIds, sourceHover } from "../lib/receipt";
 import { Booking } from "./Booking";
 import { GLOSSARY_CREDIT } from "../lib/glossary";
 import { ReceiptLineView } from "./ReceiptLineView";
+import { ChildrenOnlyBadge } from "./SiteList";
 
 function Total({ sq, where }: { sq: SiteQuote; where: "top" | "bottom" }) {
   const { totals } = sq.receipt;
@@ -64,6 +65,25 @@ export function Receipt({
           {distance != null && <> · {milesText(distance)}</>} · {open.text}
         </p>
         <p className="text-xs">{t(`billing.${site.billing_type}`)}</p>
+        {site.children_only && (
+          <p>
+            <ChildrenOnlyBadge />
+          </p>
+        )}
+        {site.data_notices.length > 0 && (
+          <ul className="space-y-1 pt-1">
+            {site.data_notices.map((n) => (
+              <li key={n.id} className="rounded-md border border-amber-300 bg-amber-50 px-2 py-1 text-[11px]" data-testid="data-notice">
+                <p className="font-medium text-amber-900">{t(dataNoticeKey(n.kind))}</p>
+                <details className="text-muted-foreground">
+                  <summary className="cursor-pointer">{t("data_notice.details", { date: isoDate(n.observed) })}</summary>
+                  <p className="mt-1">{n.detail}</p>
+                  {n.effect && <p className="mt-1">{n.effect}</p>}
+                </details>
+              </li>
+            ))}
+          </ul>
+        )}
         {site.price_source_id == null && (
           <p className="text-[11px] text-warn" data-testid="price-source-not-read">
             {t("receipt.price_source_not_read")}

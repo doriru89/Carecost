@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Hours, ReceiptLine, SourceInfo } from "@/generated/contracts/quote_api";
+import type { Hours, Money, ReceiptLine, SourceInfo } from "@/generated/contracts/quote_api";
 import { miles, zipToLocation } from "../lib/geo";
 import { bostonNow, openStatus } from "../lib/hours";
 import {
@@ -30,13 +30,18 @@ describe("receipt sections (D8)", () => {
 });
 
 describe("cash discount check (P1 problem 16)", () => {
-  it("flags Mount Auburn's cash price that equals its gross charge, not Tufts' discounted one", () => {
+  // Data change (C2 fixtures, 9c54616): the 12 sites nearest Harvard Square have no Tufts, and every
+  // cash price in quote_cash_shoulder.json equals its gross charge (CHA and Mount Auburn alike), so the
+  // "discounted" case is Mount Auburn's own X-ray line with its cash cell moved below the list price.
+  it("flags Mount Auburn's cash price that equals its gross charge, not a discounted one", () => {
     const ma = CASH.sites.find((s) => s.site.site_id === "mount_auburn_hospital")!;
-    const tufts = CASH.sites.find((s) => s.site.site_id === "tufts_medical_center")!;
-    const xray = (sq: typeof ma) => sq.receipt.lines.find((l) => l.line_id === "xray_facility")!;
-    expect(noCashDiscount(xray(ma), CASH.payment)).toBe(true);
-    expect(noCashDiscount(xray(tufts), CASH.payment)).toBe(false);
-    expect(noCashDiscount(xray(ma), BCBS.payment)).toBe(false);
+    const xray = ma.receipt.lines.find((l) => l.line_id === "xray_facility")!;
+    expect(xray.cell).toMatchObject({ kind: "money", low: 527, high: 527 });
+    expect(xray.list_price).toMatchObject({ low: 527, high: 527 });
+    expect(noCashDiscount(xray, CASH.payment)).toBe(true);
+    const discounted = { ...xray, cell: { ...(xray.cell as Money), low: 316.2, high: 316.2 } };
+    expect(noCashDiscount(discounted, CASH.payment)).toBe(false);
+    expect(noCashDiscount(xray, BCBS.payment)).toBe(false);
   });
 });
 
@@ -105,11 +110,13 @@ describe("hours in Boston time", () => {
 });
 
 describe("distance in the browser (§4.3)", () => {
+  // Data change (C2): AFC Watertown is not among the 12 sites nearest Harvard Square; Mount Auburn
+  // Hospital (42.3738, -71.1284 in quote_bcbs_hmo_shoulder.json) is 2.3 mi from the 02135 centroid.
   it("looks up a typed MA ZIP and computes miles", () => {
     const allston = zipToLocation("02135")!;
     expect(allston.kind).toBe("zip");
-    const afc = BCBS.sites.find((s) => s.site.site_id === "afc_watertown")!.site.coords;
-    const d = miles(allston, afc);
+    const mta = BCBS.sites.find((s) => s.site.site_id === "mount_auburn_hospital")!.site.coords;
+    const d = miles(allston, mta);
     expect(d).toBeGreaterThan(0.3);
     expect(d).toBeLessThan(3);
     expect(zipToLocation("10001")).toBeNull(); // not MA
@@ -119,19 +126,36 @@ describe("distance in the browser (§4.3)", () => {
 
 describe("site sorting (I7 respected)", () => {
   const now = { day: "sat" as const, minutes: 600 };
+  // Data change (C2): from 02138 (Harvard Square) Mount Auburn Hospital is nearest at 0.26 mi, next
+  // Mount Auburn Professional Services at 0.40 mi (was Watertown -> AFC Watertown).
   it("price keeps the engine's I7 order; nearest uses distance; open-today puts open sites first", () => {
-    const loc = zipToLocation("02472")!; // Watertown
+    const loc = zipToLocation("02138")!;
     const views = siteViews(BCBS.sites, loc, now);
     expect(sortSites(views, "price").map((v) => v.sq.site.site_id)).toEqual(BCBS.sites.map((s) => s.site.site_id));
-    expect(sortSites(views, "nearest")[0].sq.site.site_id).toBe("afc_watertown");
-    const open = sortSites(views, "open_today");
+    expect(sortSites(views, "nearest")[0].sq.site.site_id).toBe("mount_auburn_hospital");
+    // Data change (C2): no site in the 12-site fixture carries hours (all null), so open-today keeps the
+    // I7 order; give the I7-last site Saturday hours and it moves to the front, the rest in I7 order.
+    expect(BCBS.sites.every((s) => s.site.hours == null)).toBe(true);
+    expect(sortSites(views, "open_today").map((v) => v.rank)).toEqual(views.map((v) => v.rank));
+    const satHours: Hours = {
+      source: "manual",
+      source_url: null,
+      checked_at: "2026-10-24",
+      weekly: [{ days: ["sat"], opens: "09:00", closes: "17:00" }],
+      may_close_early: false,
+    };
+    const last = BCBS.sites[BCBS.sites.length - 1];
+    const withHours = [...BCBS.sites.slice(0, -1), { ...last, site: { ...last.site, hours: satHours } }];
+    const open = sortSites(siteViews(withHours, loc, now), "open_today");
     expect(open[0].open.openToday).toBe(true);
+    expect(open[0].sq.site.site_id).toBe(last.site.site_id);
+    expect(open.slice(1).map((v) => v.rank)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   });
   it("nearest without a location falls back to I7 order", () => {
     const views = siteViews(BCBS.sites, null, now);
-    // data change: the fixture now has 6 sites (was 3)
-    expect(BCBS.sites.length).toBe(6);
-    expect(sortSites(views, "nearest").map((v) => v.rank)).toEqual([0, 1, 2, 3, 4, 5]);
+    // data change: the fixture now has 12 sites (C2 max_sites default; was 6)
+    expect(BCBS.sites.length).toBe(12);
+    expect(sortSites(views, "nearest").map((v) => v.rank)).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
   });
 });
 

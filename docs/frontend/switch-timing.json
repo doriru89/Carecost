@@ -3,20 +3,20 @@
   "width": 375,
   "switches": [
    {
-    "ms": 16.19999998807907,
-    "key": "cash|shoulder_chronic_clicking_v1|person"
+    "ms": 16.400000005960464,
+    "key": "cash|shoulder_chronic_clicking_v1|person|"
    },
    {
-    "ms": 10.799999982118607,
-    "key": "medicare|shoulder_chronic_clicking_v1|person"
+    "ms": 13.400000005960464,
+    "key": "medicare|shoulder_chronic_clicking_v1|person|"
    },
    {
-    "ms": 8.400000005960464,
-    "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person"
+    "ms": 9.800000011920929,
+    "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person|"
    },
    {
-    "ms": 5,
-    "key": "cash|shoulder_chronic_clicking_v1|person"
+    "ms": 11.099999994039536,
+    "key": "cash|shoulder_chronic_clicking_v1|person|"
    }
   ]
  },
@@ -24,20 +24,20 @@
   "width": 1280,
   "switches": [
    {
-    "ms": 12.800000011920929,
-    "key": "cash|shoulder_chronic_clicking_v1|person"
+    "ms": 15.699999988079071,
+    "key": "cash|shoulder_chronic_clicking_v1|person|"
    },
    {
-    "ms": 10.400000005960464,
-    "key": "medicare|shoulder_chronic_clicking_v1|person"
+    "ms": 11.700000017881393,
+    "key": "medicare|shoulder_chronic_clicking_v1|person|"
    },
    {
-    "ms": 8.800000011920929,
-    "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person"
+    "ms": 10,
+    "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person|"
    },
    {
-    "ms": 5.4000000059604645,
-    "key": "cash|shoulder_chronic_clicking_v1|person"
+    "ms": 9.5,
+    "key": "cash|shoulder_chronic_clicking_v1|person|"
    }
   ]
  }

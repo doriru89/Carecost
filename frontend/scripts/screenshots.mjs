@@ -10,10 +10,10 @@
  * Mock mode writes docs/frontend/<screen>-<width>.png and switch-timing.json; api mode writes
  * <screen>-api-<width>.png and switch-timing-api.json.
  *
- * Api mode, chat: the merged backend has no POST /api/chat yet (the Chat branch is not merged), so
- * "chat-404-api" is the real 404 state. "chat-paused-api" answers /api/chat in the browser with the
- * reply the Chat service builds without a provider key (_paused("provider_unavailable", None)); the
- * quote and catalog calls still go to the real server. It is a stand-in until Chat merges.
+ * Api mode (D3, wave2/base 9c54616: C2's contract, Chat merged): the shoulder path with BCBS HMO and no
+ * location ("best value overall"), then ZIP 02138 ("nearest"), Medicare near ZIP 02115 at Brigham
+ * (price_notes on the OPPS facility lines, G0463; unknown availability) and BIDMC (a data notice),
+ * and chat without a provider key (the real server's ai_paused reply).
  */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -70,7 +70,17 @@ async function openReceiptByBrowse(page, mode, width, pathTitle, payment = "BCBS
 }
 
 async function pickSite(page, name) {
-  await page.getByLabel("Pick a place").getByRole("button", { name }).click();
+  await page.getByLabel("Pick a place").getByRole("button", { name, exact: true }).first().click();
+  await page.getByTestId("receipt").getByRole("heading", { name, exact: true }).waitFor();
+}
+
+const ZIPS = JSON.parse(readFileSync(resolve(here, "../src/app/content/ma_zips.json"), "utf8")).zips;
+
+/** Api mode: type a ZIP and wait for the quote whose request key carries that ZIP's `near` point. */
+async function setZip(page, zip) {
+  const [lat, lon] = ZIPS[zip];
+  await page.getByTestId("zip-input").fill(zip);
+  await page.locator(`[data-testid="results-pane"][data-quote-key$="|${lat},${lon}"]`).waitFor();
 }
 
 const browser = await chromium.launch();
@@ -87,8 +97,10 @@ try {
       page.on("console", (m) => m.type() === "error" && !/404/.test(m.text()) && errors.push(`${width} console ${m.text()}`));
       const shot = async (name, opts = {}) => {
         const path = resolve(out, `${name}${sfx}-${width}.png`);
+        const before = await page.locator('[data-testid="receipt"] h2').first().textContent({ timeout: 200 }).catch(() => null);
         await page.screenshot({ path, fullPage: opts.fullPage ?? true });
-        console.log("wrote", path);
+        const after = await page.locator('[data-testid="receipt"] h2').first().textContent({ timeout: 200 }).catch(() => null);
+        console.log("wrote", path, before ? `(receipt: ${before}${after !== before ? ` -> ${after}` : ""})` : "");
       };
 
       await page.goto(`${BASE}/start?data=${mode}`);
@@ -99,14 +111,21 @@ try {
       else await openReceiptByBrowse(page, mode, width, "Shoulder pain that came on gradually");
       await shot("receipt-bcbs");
 
+      if (mode === "api") {
+        // no location: the server's 12 best-ranked sites, labelled "best value overall"
+        await page.getByRole("tab", { name: "List" }).click();
+        await page.getByTestId("site-list").waitFor();
+        await shot("list-overall");
+        await page.getByRole("tab", { name: "Receipt" }).click();
+        await setZip(page, "02138");
+      }
+
       // a hospital receipt with ranges: both ends cited (prov / prov_high)
-      await pickSite(page, "Tufts Medical Center");
-      await page.getByTestId("receipt").getByText("Tufts Medical Center").first().waitFor();
-      await shot("receipt-bcbs-tufts");
-      await pickSite(page, "AFC Urgent Care Watertown");
+      await pickSite(page, "Mount Auburn Hospital");
+      await shot("receipt-bcbs-mta");
 
       // insurance switch. Mock: the three fixtures, then two cached. Api: five payments the server
-      // has not been asked yet, then two cached.
+      // has not been asked yet (near 02138), then two cached.
       const seq =
         mode === "mock"
           ? ["cash", "medicare", "BCBS_MA:HMO", "cash"]
@@ -122,40 +141,34 @@ try {
 
       await page.locator("#payment-switch").selectOption("BCBS_MA:HMO");
       await waitQuote(page);
-      await page.getByTestId("zip-input").fill("02135");
+      if (mode === "mock") await page.getByTestId("zip-input").fill("02138");
       await page.getByRole("tab", { name: "List" }).click();
       await page.getByTestId("site-list").waitFor();
       await page.getByRole("radio", { name: "Nearest" }).click();
       await shot("list");
 
       if (mode === "api") {
-        // a manual pick with MassHealth: the doctor's reading is rung 7 (Medicare as a reference, not summed),
-        // and a manual pick carries no D33 lines
-        await page.getByRole("tab", { name: "Browse" }).click();
-        await page.getByLabel("Search services").fill("73221");
-        await page.getByTestId("browse-picker").getByRole("button", { name: /Shoulder MRI/ }).last().click();
-        await page.locator("#payment-switch").selectOption("masshealth");
+        // Medicare near Longwood: Brigham's facility lines are OPPS national rates (price_notes), its
+        // visit looks up G0463, and several lines have no evidence either way (availability unknown)
+        await page.getByRole("tab", { name: "Receipt" }).click();
+        await page.locator("#payment-switch").selectOption("medicare");
         await waitQuote(page);
-        await pickSite(page, "Tufts Medical Center");
-        await page.getByTestId("receipt").getByText("Tufts Medical Center").first().waitFor();
-        await shot("receipt-masshealth-mri");
+        await setZip(page, "02115");
+        await pickSite(page, "Brigham and Women's Hospital");
+        await page.getByTestId("price-note").first().waitFor();
+        await page.getByTestId("availability-unknown").first().waitFor();
+        await shot("receipt-medicare-brigham");
+        await page.getByRole("tab", { name: "List" }).click();
+        await page.getByTestId("site-list").waitFor();
+        await shot("list-medicare-02115");
+        await page.getByRole("tab", { name: "Receipt" }).click();
+        await pickSite(page, "Beth Israel Deaconess Medical Center");
+        await shot("receipt-medicare-bidmc");
 
-        // chat on the merged base: no /api/chat route yet -> 404 -> a plain error, browse stays open
-        await startChat(page, mode, "My shoulder clicks when I lift my arm");
-        await page.getByTestId("chat-error").waitFor();
-        await shot("chat-404", { fullPage: false });
-
-        // chat without a provider key (stand-in for the Chat service, see the header)
-        const paused = JSON.parse(readFileSync(resolve(here, "../../contracts/fixtures/chat_ai_paused.json"), "utf8"));
-        delete paused._fixture;
-        delete paused._schema;
-        paused.llm_called = false;
-        paused.reply = { kind: "ai_paused", reason: "provider_unavailable", message_key: "ai.paused_provider", resumes_at: null, browse_prices_available: true };
-        await page.route("**/api/chat", (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ...paused, conversation_turn: 1 }) }));
+        // chat without a provider key: the merged Chat service answers ai_paused(provider_unavailable)
         await startChat(page, mode, "My shoulder clicks when I lift my arm");
         await page.getByText("isn't available right now").waitFor();
         await shot("chat-paused", { fullPage: false });
-        await page.unroute("**/api/chat");
       } else {
         await page.getByRole("tab", { name: "Map" }).click();
         await page.getByTestId("map-pin").first().waitFor();

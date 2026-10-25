@@ -5,19 +5,25 @@ import type { Payment, QuoteResponse } from "@/generated/contracts/quote_api";
 import { cn } from "@/lib/utils";
 import { zipToLocation, type UserLocation } from "../lib/geo";
 import { bostonNow } from "../lib/hours";
-import { siteViews, sortSites, type SortMode } from "../lib/sites";
+import { siteViews, sortSites, type SiteScope, type SortMode } from "../lib/sites";
 import { BrowsePicker } from "./BrowsePicker";
 import { PaymentSelect } from "./PaymentSelect";
 import { Receipt } from "./Receipt";
-import { SiteList } from "./SiteList";
+import { ScopeNote, SiteList } from "./SiteList";
 // MapLibre is ~1 MB: loaded only when the Map tab opens
 const SiteMap = lazy(() => import("./SiteMap").then((m) => ({ default: m.SiteMap })));
 
 export type QuoteState =
   | { status: "idle" }
   | { status: "loading"; key: string }
-  | { status: "ok"; key: string; quote: QuoteResponse }
+  | { status: "ok"; key: string; quote: QuoteResponse; scope: SiteScope }
   | { status: "nomock" | "error"; key: string; message: string };
+
+/** The person's sort and chosen site; owned by CareApp so it survives a remount of this pane. */
+export interface SitePick {
+  sort: SortMode;
+  selected: string | null;
+}
 
 export type ResultsView = "receipt" | "list" | "map" | "browse";
 
@@ -34,6 +40,8 @@ export function ResultsPane({
   onPickService,
   location,
   onLocation,
+  pick,
+  onPick,
 }: {
   payment: Payment;
   onPayment: (p: Payment) => void;
@@ -47,10 +55,15 @@ export function ResultsPane({
   onPickService: (s: CatalogService) => void;
   location: UserLocation | null;
   onLocation: (l: UserLocation | null) => void;
+  /** Kept by the parent so a layout change (SplitView re-parents this pane across 768 px) keeps the pick. */
+  pick: SitePick;
+  onPick: (p: SitePick) => void;
 }) {
-  const [sort, setSort] = useState<SortMode>("price");
-  const [selected, setSelected] = useState<string | null>(null);
+  const { sort, selected } = pick;
+  const setSort = (s: SortMode) => onPick({ ...pick, sort: s });
+  const setSelected = (id: string | null) => onPick({ ...pick, selected: id });
   const quote = state.status === "ok" ? state.quote : null;
+  const scope = state.status === "ok" ? state.scope : null;
   const now = useMemo(() => bostonNow(), [quote]); // eslint-disable-line react-hooks/exhaustive-deps
   const views = useMemo(() => (quote ? siteViews(quote.sites, location, now) : []), [quote, location, now]);
   const sorted = useMemo(() => sortSites(views, sort), [views, sort]);
@@ -106,6 +119,7 @@ export function ResultsPane({
       ) : quote && current ? (
         view === "receipt" ? (
           <div className="space-y-2">
+            {scope && <ScopeNote scope={scope} count={sorted.length} />}
             {sorted.length > 1 && (
               <div className="flex gap-1 overflow-x-auto pb-1 text-xs" aria-label="Pick a place">
                 {sorted.map((v) => (
@@ -126,7 +140,7 @@ export function ResultsPane({
             <Receipt quote={quote} sq={current.sq} distance={current.distance} open={current.open} location={location} />
           </div>
         ) : view === "list" ? (
-          <SiteList views={sorted} sort={sort} onSort={setSort} selectedId={current.sq.site.site_id} onOpen={open} hasLocation={!!location} />
+          <SiteList views={sorted} sort={sort} onSort={setSort} selectedId={current.sq.site.site_id} onOpen={open} hasLocation={!!location} scope={scope} />
         ) : (
           <Suspense fallback={<p className="p-6 text-center text-sm text-muted-foreground">Loading map…</p>}>
             <SiteMap views={sorted} selectedId={current.sq.site.site_id} onOpen={open} location={location} />
@@ -140,7 +154,8 @@ export function ResultsPane({
 }
 
 function LocationInput({ location, onLocation }: { location: UserLocation | null; onLocation: (l: UserLocation | null) => void }) {
-  const [zip, setZip] = useState("");
+  // starts from the location the parent holds, so a remounted pane still shows the typed ZIP
+  const [zip, setZip] = useState(location?.kind === "zip" ? location.label.replace(/^ZIP /, "") : "");
   const [err, setErr] = useState<string | null>(null);
   return (
     <div className="flex items-center gap-1">
@@ -164,7 +179,7 @@ function LocationInput({ location, onLocation }: { location: UserLocation | null
       />
       <button
         type="button"
-        title="Use my location (stays in this browser)"
+        title="Use my location (sent rounded, to find places near you)"
         aria-label="Use my location"
         className="rounded-lg border border-border bg-card p-1.5"
         onClick={() =>

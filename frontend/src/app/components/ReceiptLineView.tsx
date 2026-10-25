@@ -48,6 +48,15 @@ export function ReceiptLineView({
       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
         <div className="min-w-[11rem] flex-1">
           <p className={cn("text-sm leading-snug", NAME_CLASS[line.tier])}>{line.plain_name}</p>
+          {line.availability === "unknown" && (
+            // C2: no positive evidence either way. Not "offered", and never "not offered".
+            <p
+              className="mt-0.5 inline-block rounded border border-dashed border-muted-foreground/60 px-1.5 py-0.5 text-[11px] text-muted-foreground"
+              data-testid="availability-unknown"
+            >
+              {t("receipt.availability_unknown")}
+            </p>
+          )}
           {line.at === "your_primary_care" && (
             <p className="mt-0.5 text-[11px] font-medium text-ink" data-testid="at-primary-care">
               {t("receipt.at_your_primary_care")}
@@ -76,6 +85,11 @@ export function ReceiptLineView({
           ) : (
             <span className="text-sm text-muted-foreground">{t("receipt.not_offered")}</span>
           )}
+          {line.price_notes.map((k) => (
+            <p key={k} className="text-[11px] text-muted-foreground" data-testid="price-note" data-note={k}>
+              {t(k)}
+            </p>
+          ))}
           {line.unit !== "once" && (
             <p className="text-[11px] text-muted-foreground">
               {t(line.unit === "per_15_minutes" ? "receipt.per_15_minutes" : "receipt.per_visit")}

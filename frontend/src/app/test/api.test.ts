@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import type { ChatRequest } from "@/generated/contracts/chat_api";
 import type { QuoteRequest } from "@/generated/contracts/quote_api";
-import { NoMockData, dataMode, httpApi } from "../api/client";
+import { MAX_SITES, NoMockData, dataMode, httpApi, nearFor, quoteBody } from "../api/client";
+import { zipToLocation } from "../lib/geo";
 import { mockApi, mockChatKind } from "../api/mock";
 
 const quoteReq = (payment: QuoteRequest["payment"], care_path_id: string | null = "shoulder_chronic_clicking_v1"): QuoteRequest =>
@@ -96,8 +97,27 @@ describe("http client", () => {
     ]);
     const body = JSON.parse(String(calls[0][1]?.body));
     expect(body.payment).toEqual({ kind: "cash" });
-    // near / max_sites are not sent until the contract has them (C2)
-    expect(Object.keys(body).sort()).toEqual(["answers", "care_path_id", "payment", "picked_by", "service_codes", "site_ids"]);
+    // C2: max_sites always; no location -> no near (the server returns the best value overall)
+    expect(Object.keys(body).sort()).toEqual(["answers", "care_path_id", "max_sites", "payment", "picked_by", "service_codes", "site_ids"]);
+    expect(body.max_sites).toBe(MAX_SITES);
+    expect(MAX_SITES).toBe(12);
+  });
+
+  it("sends near from a typed ZIP or a rounded device fix, and never outside the server's scope guard", () => {
+    const req = quoteReq({ kind: "cash" });
+    const zip = zipToLocation("02138")!;
+    expect(JSON.parse(quoteBody(req, { location: zip })).near).toEqual({ lat: 42.377, lon: -71.1256 });
+    const device = { lat: 42.373612, lon: -71.118954, label: "My location", kind: "device" as const };
+    expect(JSON.parse(quoteBody(req, { location: device })).near).toEqual({ lat: 42.37, lon: -71.12 });
+    // Springfield (01103, lon -72.59) is outside lon >= -72.5: omitted, not a 422
+    const west = zipToLocation("01103")!;
+    expect("near" in JSON.parse(quoteBody(req, { location: west }))).toBe(false);
+    expect("near" in JSON.parse(quoteBody(req, { location: null }))).toBe(false);
+    // a caller-set near / max_sites is never passed through: quoteBody owns both
+    const body = JSON.parse(quoteBody({ ...req, near: { lat: 42.0, lon: -71.0 }, max_sites: 50 }));
+    expect("near" in body).toBe(false);
+    expect(body.max_sites).toBe(12);
+    expect(nearFor(device)).toEqual({ lat: 42.37, lon: -71.12 });
   });
 
   it("turns a non-2xx into an error", async () => {

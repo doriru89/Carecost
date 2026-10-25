@@ -4,7 +4,8 @@ import { MemoryRouter } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Receipt } from "../components/Receipt";
 import CareApp from "../pages/CareApp";
-import { BCBS, CASH, MASSHEALTH } from "./fixtures";
+import { ScopeNote, SiteCard } from "../components/SiteList";
+import { BCBS, CASH, MASSHEALTH, MEDICARE } from "./fixtures";
 
 const closed = { known: true, openNow: false, openToday: false, text: "Closed" };
 
@@ -37,7 +38,9 @@ describe("gradient receipt (D8, §4.2)", () => {
   });
 
   it("a range cites both ends: a low chip and a high chip from prov / prov_high (P1 problem 2)", () => {
-    const sq = BCBS.sites.find((s) => s.site.site_id === "tufts_medical_center")!;
+    // Data change (C2): no Tufts in the 12 nearest Harvard Square; Mount Auburn has 3 ranged lines
+    // (visit_doctor, xray_reading, steroid_injection_doctor).
+    const sq = MTA;
     const ranged = sq.receipt.lines.filter((l) => l.cell?.kind === "money" && l.cell.prov_high && l.cell.low < l.cell.high);
     expect(ranged.length).toBeGreaterThan(0);
     render(<TooltipProvider><Receipt quote={BCBS} sq={sq} distance={null} open={closed} location={null} /></TooltipProvider>);
@@ -73,14 +76,18 @@ describe("gradient receipt (D8, §4.2)", () => {
     expect(screen.getAllByTestId("estimate-tag").length).toBe(est);
     expect(screen.getByTestId("total-top").parentElement?.textContent).toMatch(/Includes an estimate/);
     unmount();
-    const tufts = MASSHEALTH.sites.find((s) => s.site.site_id === "tufts_medical_center")!;
-    const ref = tufts.receipt.lines.filter((l) => l.doctor_fee?.rung === 7);
+    // Data change (C2): rung 7 moved from MassHealth at Tufts (not in the fixture any more) to BCBS at
+    // Cambridge Health Alliance's hospital: visit_doctor ($75.54) and steroid_injection_doctor ($42.20).
+    const cha = BCBS.sites.find((s) => s.site.site_id === "cha_cambridge_hospital")!;
+    const ref = cha.receipt.lines.filter((l) => l.doctor_fee?.rung === 7);
     expect(ref.length).toBe(2);
     expect(ref.every((l) => !l.in_total)).toBe(true);
-    render(<TooltipProvider><Receipt quote={MASSHEALTH} sq={tufts} distance={null} open={closed} location={null} /></TooltipProvider>);
+    render(<TooltipProvider><Receipt quote={BCBS} sq={cha} distance={null} open={closed} location={null} /></TooltipProvider>);
     expect(screen.getAllByTestId("reference-tag").length).toBe(2);
-    // the total is the two facility lines only: 333 + 1631
-    expect(screen.getByTestId("total-top").textContent).toContain("1,964.00");
+    // the total is the four in-total lines only: 30.92 + 71.24 + (12.04-17.33) + 294.35, no rung-7 amount
+    const top = screen.getByTestId("total-top").textContent;
+    expect(top).toContain("408.55");
+    expect(top).toContain("413.84");
   });
 
   it("a site whose own price source we do not read says so (price_source_id null, P1 problem 9)", () => {
@@ -93,6 +100,74 @@ describe("gradient receipt (D8, §4.2)", () => {
     const sq = CASH.sites.find((s) => s.site.site_id === "mount_auburn_hospital")!;
     render(<TooltipProvider><Receipt quote={CASH} sq={sq} distance={null} open={closed} location={null} /></TooltipProvider>);
     expect(screen.getAllByTestId("no-cash-discount").length).toBeGreaterThan(0);
+  });
+});
+
+describe("C2 fields on the receipt and the site card", () => {
+  it("price_notes: Medicare at Brigham says the facility fee is the national rate, not adjusted for Boston", () => {
+    const sq = MEDICARE.sites.find((s) => s.site.site_id === "brigham_and_womens_hospital")!;
+    const noted = sq.receipt.lines.filter((l) => l.price_notes.includes("price.national_unadjusted"));
+    // visit_facility (G0463), xray_facility, tendon_scan_mri_facility, mr_arthrogram_facility
+    expect(noted.map((l) => l.line_id)).toEqual(["visit_facility", "xray_facility", "tendon_scan_mri_facility", "mr_arthrogram_facility"]);
+    expect(noted[0].codes).toContain("G0463");
+    render(<TooltipProvider><Receipt quote={MEDICARE} sq={sq} distance={null} open={closed} location={null} /></TooltipProvider>);
+    const notes = screen.getAllByTestId("price-note");
+    expect(notes.length).toBe(4);
+    for (const n of notes) expect(n.textContent).toBe("Medicare's national rate, not adjusted for Boston");
+  });
+
+  it("availability unknown has its own label; offered lines carry none", () => {
+    const sq = MEDICARE.sites[0];
+    const unknown = sq.receipt.lines.filter((l) => l.availability === "unknown").length;
+    expect(unknown).toBe(5);
+    render(<TooltipProvider><Receipt quote={MEDICARE} sq={sq} distance={null} open={closed} location={null} /></TooltipProvider>);
+    const labels = screen.getAllByTestId("availability-unknown");
+    expect(labels.length).toBe(unknown);
+    expect(labels[0].textContent).toBe("Not known whether this place offers it");
+    // every line that shows the label is an unknown one
+    for (const el of labels) {
+      const row = el.closest("[data-testid=receipt-line]")!;
+      expect(within(row as HTMLElement).queryByTestId("availability-unknown")).toBe(el);
+    }
+  });
+
+  it("children_only shows a badge; data_notices show on the card and the receipt", () => {
+    // No site in the committed fixtures is children-only or carries a notice (BIDMC's notice is not
+    // among the 12 nearest Harvard Square), so this takes a fixture site and sets the two fields.
+    const base = BCBS.sites[0];
+    const notice = {
+      id: "bidmc_content_changed_date_unchanged",
+      kind: "content_changed_date_unchanged",
+      source_id: "bidmc_mrf",
+      observed: "2026-10-24",
+      detail: "BIDMC's price file changed content between our 2026-05 copy and the 2026-10-24 download.",
+      effect: null,
+    };
+    const sq = { ...base, site: { ...base.site, children_only: true, data_notices: [notice] } };
+    const { unmount } = render(<TooltipProvider><Receipt quote={BCBS} sq={sq} distance={null} open={closed} location={null} /></TooltipProvider>);
+    expect(screen.getByTestId("children-only").textContent).toBe("Children only");
+    expect(screen.getByTestId("data-notice").textContent).toMatch(/changed, but the date on it did not/);
+    expect(screen.getByTestId("data-notice").textContent).toContain("2026-10-24 download");
+    unmount();
+    const view = { sq, rank: 0, distance: null, open: closed };
+    const { unmount: u2 } = render(<SiteCard v={view} onOpen={() => {}} />);
+    expect(screen.getByTestId("children-only")).toBeTruthy();
+    expect(screen.getByTestId("data-notice").textContent).toMatch(/changed, but the date on it did not/);
+    u2();
+    render(<SiteCard v={{ ...view, sq: base }} onOpen={() => {}} />);
+    expect(screen.queryByTestId("children-only")).toBeNull();
+    expect(screen.queryByTestId("data-notice")).toBeNull();
+  });
+});
+
+describe("which sites the list holds (C2 near / max_sites)", () => {
+  it("says nearest only when a location was sent, best value overall otherwise", () => {
+    const { unmount } = render(<ScopeNote scope={{ kind: "overall" }} count={12} />);
+    expect(screen.getByTestId("site-scope").textContent).toMatch(/^The 12 best-value places overall/);
+    expect(screen.getByTestId("site-scope").textContent).not.toMatch(/^The 12 places nearest/);
+    unmount();
+    render(<ScopeNote scope={{ kind: "near", label: "ZIP 02138" }} count={12} />);
+    expect(screen.getByTestId("site-scope").textContent).toBe("The 12 places nearest ZIP 02138");
   });
 });
 
