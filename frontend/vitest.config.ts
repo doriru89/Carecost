@@ -16,15 +16,9 @@ export default defineConfig({
       reporter: ["text", "json-summary"],
       reportsDirectory: "./coverage",
       include: [
-        "src/context/AuthContext.tsx",
-        "src/components/RequireAuth.tsx",
-        "src/lib/crtPersistence.ts",
-        "src/lib/estimateFallback.ts",
-        "src/lib/fairHealth.ts",
-        "src/lib/mapEstimate.ts",
-        "src/lib/oopRules.ts",
-        "src/lib/payerPrice.ts",
-        "src/lib/profileComplete.ts",
+        "src/contracts/copy.ts",
+        "src/app/lib/**/*.ts",
+        "src/app/api/**/*.ts",
       ],
       thresholds: {
         // Strict by default in CI; RELAXED_COVERAGE=1 disables hard gate locally.

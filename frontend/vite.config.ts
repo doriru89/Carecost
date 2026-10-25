@@ -6,8 +6,12 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    host: true,
-    port: 8080,
+    // Stream D runs on 5180 (8080 is the legacy dev server). VITE_PORT overrides.
+    host: "127.0.0.1",
+    port: Number(process.env.VITE_PORT || 5180),
+    strictPort: true,
+    // mock mode imports contracts/fixtures and data/redflags from the repo root
+    fs: { allow: [path.resolve(__dirname, "..")] },
     hmr: {
       overlay: true,
     },
@@ -18,6 +22,10 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
+  // maplibre-gl 6 starts its worker from ./maplibre-gl-worker.mjs next to its own module; the dep
+  // pre-bundler moves the module and breaks that path, so serve it from node_modules as is.
+  optimizeDeps: { exclude: ["maplibre-gl"] },
+  worker: { format: "es" },
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {

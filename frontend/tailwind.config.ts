@@ -22,6 +22,8 @@ export default {
       },
       colors: {
         border: "hsl(var(--border))",
+        ink: "hsl(var(--tier-ink) / <alpha-value>)",
+        warn: "hsl(var(--tier-warn) / <alpha-value>)",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",

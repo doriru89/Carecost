@@ -47,7 +47,7 @@ const Index = () => (
           See what you'll actually pay — every bill, every component, every source — before you walk in.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center max-w-md mx-auto sm:max-w-none">
-          <Link to="/signup" className="w-full sm:w-auto touch-manipulation">
+          <Link to="/start" className="w-full sm:w-auto touch-manipulation">
             <Button size="lg" className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary-hover px-8 min-h-12 h-12 text-base rounded-full">
               See real prices
             </Button>

@@ -1,0 +1,44 @@
+[
+ {
+  "width": 375,
+  "switches": [
+   {
+    "ms": 14.300000011920929,
+    "key": "cash|shoulder_chronic_clicking_v1|person"
+   },
+   {
+    "ms": 13,
+    "key": "medicare|shoulder_chronic_clicking_v1|person"
+   },
+   {
+    "ms": 9,
+    "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person"
+   },
+   {
+    "ms": 6.5,
+    "key": "cash|shoulder_chronic_clicking_v1|person"
+   }
+  ]
+ },
+ {
+  "width": 1280,
+  "switches": [
+   {
+    "ms": 13.200000017881393,
+    "key": "cash|shoulder_chronic_clicking_v1|person"
+   },
+   {
+    "ms": 10.5,
+    "key": "medicare|shoulder_chronic_clicking_v1|person"
+   },
+   {
+    "ms": 8.800000011920929,
+    "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person"
+   },
+   {
+    "ms": 6.5,
+    "key": "cash|shoulder_chronic_clicking_v1|person"
+   }
+  ]
+ }
+]
