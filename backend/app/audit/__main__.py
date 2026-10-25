@@ -132,7 +132,7 @@ def run(pack: Path, out: Path, raw: Path, staging: Path, tic: Path,
             "source_quote", "trace", "cause", "cause_detail", "fix", "fix_owner", "fix_rule",
             "outlier_after_fixes"]  # fmt: skip
     with (out / "outliers.csv").open("w", newline="") as fh:
-        w = csv.writer(fh)
+        w = csv.writer(fh, lineterminator="\n")
         w.writerow(cols)
         for i, (m, v, (val, r), tr) in enumerate(zip(outl, verdicts, prim, traces), start=1):
             ln = m.line
