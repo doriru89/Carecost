@@ -1077,6 +1077,16 @@
       "additionalProperties": false,
       "description": "C4b item 1 (Austin 2026-10-25): what seeing a doctor for this probably costs here. The range\ncovers the certain and likely steps only: low = the sum of their lows, high = the sum of their\nhighs (this site's own price, or the elsewhere range where it does not do the step). Possible\nsteps are not in it: they are listed in ``may_also_order``. Three subtotals for the breakdown:\nvisit_only (the first visit with all its bills), with_likely (= this range), with_possible\n(+ possible steps; of one exclusive_group only the dearest member counts).",
       "properties": {
+        "basis": {
+          "description": "completeness of this figure (see HeadlineBasis)",
+          "enum": [
+            "complete",
+            "includes_estimate",
+            "partial"
+          ],
+          "title": "Basis",
+          "type": "string"
+        },
         "from_only": {
           "description": "C4b 3b: the visit's doctor fee has no public source (self-pay at a hospital clinic): show 'from $low', with note_keys",
           "title": "From Only",
@@ -1138,6 +1148,7 @@
         "low",
         "high",
         "includes",
+        "basis",
         "from_only",
         "note_keys",
         "visit_step_keys",
@@ -2168,6 +2179,24 @@
       "additionalProperties": false,
       "description": "C4b (D-UI-3): where to go first, option A or B (e.g. urgent care vs a skin doctor), each\nwith its own range. ``priced: false`` = listed but not priced yet (no sites).",
       "properties": {
+        "cheapest_basis": {
+          "anyOf": [
+            {
+              "enum": [
+                "complete",
+                "includes_estimate",
+                "partial"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "the basis of that site's figure: 'complete' = its own published prices; 'partial' = only partial prices are available in this option",
+          "title": "Cheapest Basis"
+        },
         "cheapest_site_id": {
           "anyOf": [
             {
@@ -2178,7 +2207,7 @@
               "type": "null"
             }
           ],
-          "description": "Austin 2026-10-25: the site with the lowest headline low (ties: nearest)",
+          "description": "Austin 2026-10-25: the site with the lowest headline low within the best completeness basis present (ties: nearest)",
           "title": "Cheapest Site Id"
         },
         "high": {
@@ -2311,7 +2340,8 @@
         "visit_only",
         "with_likely",
         "with_possible",
-        "cheapest_site_id"
+        "cheapest_site_id",
+        "cheapest_basis"
       ],
       "title": "QuoteOption",
       "type": "object"

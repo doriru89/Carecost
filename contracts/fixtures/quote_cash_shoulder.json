@@ -1751,6 +1751,7 @@
         "includes": [
           "Guided exercise program for the shoulder"
         ],
+        "basis": "partial",
         "from_only": true,
         "note_keys": [
           "headline.doctor_bills_separately"
@@ -4298,6 +4299,7 @@
         "includes": [
           "Guided exercise program for the shoulder"
         ],
+        "basis": "partial",
         "from_only": true,
         "note_keys": [
           "headline.doctor_bills_separately"
@@ -6843,6 +6845,7 @@
         "includes": [
           "Guided exercise program for the shoulder"
         ],
+        "basis": "partial",
         "from_only": true,
         "note_keys": [
           "headline.doctor_bills_separately"
@@ -9366,6 +9369,7 @@
         "includes": [
           "Guided exercise program for the shoulder"
         ],
+        "basis": "partial",
         "from_only": true,
         "note_keys": [
           "headline.doctor_bills_separately"
@@ -11920,6 +11924,7 @@
         "includes": [
           "Guided exercise program for the shoulder"
         ],
+        "basis": "partial",
         "from_only": true,
         "note_keys": [
           "headline.doctor_bills_separately"
@@ -13946,6 +13951,7 @@
         "includes": [
           "Guided exercise program for the shoulder"
         ],
+        "basis": "partial",
         "from_only": true,
         "note_keys": [
           "headline.doctor_bills_separately"
@@ -15972,6 +15978,7 @@
         "includes": [
           "Guided exercise program for the shoulder"
         ],
+        "basis": "partial",
         "from_only": true,
         "note_keys": [
           "headline.doctor_bills_separately"
@@ -18789,6 +18796,7 @@
         "includes": [
           "Guided exercise program for the shoulder"
         ],
+        "basis": "partial",
         "from_only": true,
         "note_keys": [
           "headline.doctor_bills_separately"

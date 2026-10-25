@@ -134,6 +134,7 @@
         "includes": [
           "Quick picture of the shoulder bones"
         ],
+        "basis": "partial",
         "from_only": false,
         "note_keys": [],
         "visit_step_keys": [

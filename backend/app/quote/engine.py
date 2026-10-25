@@ -63,6 +63,7 @@ from app.quote.facts import SiteFacts, load_site_facts
 from app.quote.pctc import NO_PROFESSIONAL_FEE, READING, load_pctc
 from app.quote.tin_roles import effective_billing, load_roles
 from app.quote.contracts import (
+    BASIS_RANK,
     KIND_ORDER,
     CashPayment,
     InsurancePayment,
@@ -70,6 +71,7 @@ from app.quote.contracts import (
     MedicarePayment,
     QuoteRequest,
     QuoteResponse,
+    headline_basis,
     tier_basis_for_rating,
 )
 from app.quote.registry import Registry, posted_source
@@ -2100,8 +2102,13 @@ class Engine:
 
             def order(sq: Json) -> tuple:
                 head = (opt_index[sq["option_id"]],)
-                if by == "price":
-                    return head + rank(sq)
+                if by == "price":  # completeness basis first: a partial figure never leads
+                    hr = sq["headline_range"]
+                    return (
+                        head
+                        + ((BASIS_RANK[hr["basis"]], hr["low"]) if hr else (3, math.inf))
+                        + (sq["distance_km"], sq["site"]["name"], sq["site"]["site_id"])
+                    )
                 return head + (sq["distance_km"], sq["site"]["name"], sq["site"]["site_id"])
         elif req.near is not None or named:
             ordering = "rank"
@@ -2311,6 +2318,7 @@ class Engine:
         with_possible = tier(likely + possible, exclusive=True)
         return {
             "low": with_likely["low"], "high": with_likely["high"],
+            "basis": headline_basis(from_only, with_likely),
             "includes": list(with_likely["includes"]),
             "from_only": from_only,
             "note_keys": ["headline.doctor_bills_separately"] if from_only else [],
@@ -2342,7 +2350,10 @@ class Engine:
             return {"low": min(v["low"] for v in vals), "high": max(v["high"] for v in vals),
                     "includes": names}  # fmt: skip
 
-        cheapest = min(ranged, key=lambda sq: (sq["headline_range"]["low"], sq["distance_km"],
+        # main 2026-10-25: never let a partial (or borrowed) figure win "cheapest": the best
+        # completeness basis present first, then the lowest low, then the nearest
+        cheapest = min(ranged, key=lambda sq: (BASIS_RANK[sq["headline_range"]["basis"]],
+                                               sq["headline_range"]["low"], sq["distance_km"],
                                                sq["site"]["site_id"]), default=None)  # fmt: skip
         head = span("with_likely")
         return {
@@ -2354,6 +2365,7 @@ class Engine:
             "visit_only": span("visit_only"), "with_likely": head,
             "with_possible": span("with_possible"),
             "cheapest_site_id": cheapest["site"]["site_id"] if cheapest else None,
+            "cheapest_basis": cheapest["headline_range"]["basis"] if cheapest else None,
         }  # fmt: skip
 
     # ------------------------------------------------------------------ ER reference (C4b 7)

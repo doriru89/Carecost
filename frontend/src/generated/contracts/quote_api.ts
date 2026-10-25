@@ -282,6 +282,10 @@ export interface HeadlineRange {
    */
   includes: string[];
   /**
+   * completeness of this figure (see HeadlineBasis)
+   */
+  basis: "complete" | "includes_estimate" | "partial";
+  /**
    * C4b 3b: the visit's doctor fee has no public source (self-pay at a hospital clinic): show 'from $low', with note_keys
    */
   from_only: boolean;
@@ -637,9 +641,13 @@ export interface QuoteOption {
   with_likely: OptionSpan | null;
   with_possible: OptionSpan | null;
   /**
-   * Austin 2026-10-25: the site with the lowest headline low (ties: nearest)
+   * Austin 2026-10-25: the site with the lowest headline low within the best completeness basis present (ties: nearest)
    */
   cheapest_site_id: string | null;
+  /**
+   * the basis of that site's figure: 'complete' = its own published prices; 'partial' = only partial prices are available in this option
+   */
+  cheapest_basis: "complete" | "includes_estimate" | "partial" | null;
 }
 
 export interface QuoteRequest {

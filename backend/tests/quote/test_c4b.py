@@ -401,3 +401,61 @@ def test_step_plain_name_and_chain_name(engine):
     sq = _site(r, AFC_ARL)
     assert sq.site.chain_name == "AFC Urgent Care"
     assert {st.key: st.plain_name for st in sq.steps}["urine_test"] == "Urine test"
+
+
+# --------------------------------------------------------------------------- completeness basis
+
+
+def _fake(sid, low, basis, km):
+    sub = {"low": low, "high": low + 50, "includes": ["Urine test"]}
+    return {"option_id": "a", "distance_km": km, "site": {"site_id": sid},
+            "headline_range": {"low": low, "high": low + 50, "basis": basis, "visit_only": sub,
+                               "with_likely": sub, "with_possible": sub}}  # fmt: skip
+
+
+def test_cheapest_prefers_a_complete_price_over_a_cheaper_partial_one(engine):
+    """main 2026-10-25: AFC's complete $179 (provider fee included) beats CHA's partial $149
+    (facility fee, the doctor bills separately); an estimate sits between the two."""
+    a = engine.reg.paths[STOMACH].entry_options[0]
+    afc, cha = _fake("afc_x", 179.0, "complete", 5.0), _fake("cha_x", 149.0, "partial", 1.0)
+    est = _fake("est_x", 160.0, "includes_estimate", 2.0)
+    o = engine._option_summary(a, [cha, afc])
+    assert (o["cheapest_site_id"], o["cheapest_basis"]) == ("afc_x", "complete")
+    o = engine._option_summary(a, [cha, est])
+    assert (o["cheapest_site_id"], o["cheapest_basis"]) == ("est_x", "includes_estimate")
+    o = engine._option_summary(a, [cha])
+    assert (o["cheapest_site_id"], o["cheapest_basis"]) == ("cha_x", "partial")
+
+
+def test_headline_basis_is_derived_and_cheapest_uses_the_best_basis(engine):
+    r = _q(engine, CASH)  # self-pay stomach: today every priced site is a 'from' figure
+    a = r.options[0]
+    for sq in r.sites:
+        hr = sq.headline_range
+        if hr is not None:
+            want = "partial" if hr.from_only or hr.with_likely.not_priced else (
+                "includes_estimate" if hr.with_likely.estimated else "complete")  # fmt: skip
+            assert hr.basis == want
+    assert a.cheapest_basis == _site(r, a.cheapest_site_id).headline_range.basis
+    doc = _json(_q(engine, path=RASH))
+    sq = next(s for s in doc["sites"] if s["headline_range"])
+    sq["headline_range"]["basis"] = "partial" if sq["headline_range"]["basis"] != "partial" else (
+        "complete")  # fmt: skip
+    with pytest.raises(ValidationError, match="basis is derived"):
+        QuoteResponse.model_validate(doc)
+
+
+def test_price_ordering_never_puts_a_partial_figure_above_a_complete_one(engine):
+    from app.quote.contracts import BASIS_RANK
+
+    r = _q(engine, path=RASH, order_by="price")
+    for oid in ("a", "b"):
+        mine = [sq for sq in r.sites if sq.option_id == oid]
+        ranks = [BASIS_RANK[sq.headline_range.basis] if sq.headline_range else 3 for sq in mine]
+        assert ranks == sorted(ranks)
+    doc = _json(r)
+    idx = [i for i, s in enumerate(doc["sites"]) if s["option_id"] == "a"]
+    first, last = idx[0], idx[-1]  # the last of option A (worst basis or dearest) moved first
+    doc["sites"][first], doc["sites"][last] = doc["sites"][last], doc["sites"][first]
+    with pytest.raises(ValidationError, match="option_then_price"):
+        QuoteResponse.model_validate(doc)

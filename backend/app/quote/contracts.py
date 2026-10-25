@@ -933,6 +933,22 @@ class MayAlsoOrder(_Strict):
     exclusive_group: str | None = None
 
 
+HeadlineBasis = Literal["complete", "includes_estimate", "partial"]
+"""How complete a headline figure is (main 2026-10-25). complete: every certain / likely step has
+this site's own figure, nothing borrowed. includes_estimate: a step is a peer estimate or the
+elsewhere range, nothing missing. partial: the visit is 'from' (a bill with no public price) or a
+certain / likely step has no figure. "Cheapest" and price ordering compare within the best basis
+first, so a partial figure never beats a complete one."""
+
+BASIS_RANK: dict[str, int] = {"complete": 0, "includes_estimate": 1, "partial": 2}
+
+
+def headline_basis(from_only: bool, with_likely: dict) -> str:
+    if from_only or with_likely["not_priced"]:
+        return "partial"
+    return "includes_estimate" if with_likely["estimated"] else "complete"
+
+
 class HeadlineRange(_Strict):
     """C4b item 1 (Austin 2026-10-25): what seeing a doctor for this probably costs here. The range
     covers the certain and likely steps only: low = the sum of their lows, high = the sum of their
@@ -944,6 +960,7 @@ class HeadlineRange(_Strict):
     low: float = Field(ge=0)
     high: float = Field(ge=0)
     includes: list[str] = Field(description="= with_likely.includes")
+    basis: HeadlineBasis = Field(description="completeness of this figure (see HeadlineBasis)")
     from_only: bool = Field(
         description="C4b 3b: the visit's doctor fee has no public source (self-pay at a hospital "
         "clinic): show 'from $low', with note_keys"
@@ -966,6 +983,8 @@ class HeadlineRange(_Strict):
             raise ValueError("visit_only <= with_likely <= with_possible")
         if self.from_only != bool(self.note_keys):
             raise ValueError("from_only <=> the doctor-bills-separately note")
+        if self.basis != headline_basis(self.from_only, lk.model_dump()):
+            raise ValueError("headline basis is derived: partial / includes_estimate / complete")
         return self
 
 
@@ -1176,6 +1195,12 @@ def rank_key(sq: SiteQuote) -> tuple[int, float]:
     return (h.missing, h.comparable if h.comparable is not None else math.inf)
 
 
+def price_key(sq: SiteQuote) -> tuple[int, float]:
+    """C4b option_then_price: completeness basis, then the headline low (no range: last)."""
+    hr = sq.headline_range
+    return (BASIS_RANK[hr.basis], hr.low) if hr is not None else (3, math.inf)
+
+
 def kind_distance_key(sq: SiteQuote) -> tuple[int, float]:
     """P7: no location -> grouped by kind of site, then distance from Boston City Hall."""
     return (KIND_ORDER[sq.site.kind], sq.distance_km if sq.distance_km is not None else math.inf)
@@ -1248,7 +1273,13 @@ class QuoteOption(_Strict):
     with_possible: OptionSpan | None
     cheapest_site_id: str | None = Field(
         pattern=ID_RE,
-        description="Austin 2026-10-25: the site with the lowest headline low (ties: nearest)",
+        description="Austin 2026-10-25: the site with the lowest headline low within the best "
+        "completeness basis present (ties: nearest)",
+    )
+    cheapest_basis: HeadlineBasis | None = Field(
+        default=None,
+        description="the basis of that site's figure: 'complete' = its own published prices; "
+        "'partial' = only partial prices are available in this option",
     )
 
 
@@ -1418,10 +1449,14 @@ class QuoteResponse(_Strict):
             highs = [sq.headline_range.high for sq in ranged]  # type: ignore[union-attr]
             if (o.low, o.high) != (min(lows), max(highs)):
                 raise ValueError(f"option {o.id}: range is min low .. max high over its sites")
-            best = min(ranged, key=lambda sq: (sq.headline_range.low,  # type: ignore[union-attr]
-                                               sq.distance_km or 0.0, sq.site.site_id))  # fmt: skip
+            best = min(ranged, key=lambda sq: (
+                BASIS_RANK[sq.headline_range.basis], sq.headline_range.low,  # type: ignore[union-attr]
+                sq.distance_km or 0.0, sq.site.site_id))  # fmt: skip
             if o.cheapest_site_id != best.site.site_id:
-                raise ValueError(f"option {o.id}: cheapest_site_id is the lowest headline low")
+                raise ValueError(f"option {o.id}: cheapest_site_id is the lowest headline low "
+                                 "within the best basis")  # fmt: skip
+            if o.cheapest_basis != best.headline_range.basis:  # type: ignore[union-attr]
+                raise ValueError(f"option {o.id}: cheapest_basis is that site's basis")
         if self.ordering.startswith("option_then_"):
             if not self.options:
                 raise ValueError("option ordering needs options")
@@ -1430,8 +1465,8 @@ class QuoteResponse(_Strict):
                 raise ValueError("sites are grouped by option, A first")
             for oid in ids:
                 mine = [sq for sq in self.sites if sq.option_id == oid]
-                keys = ([rank_key(sq) for sq in mine] if self.ordering == "option_then_price"
-                        else [sq.distance_km or 0.0 for sq in mine])  # fmt: skip
+                keys = ([price_key(sq) for sq in mine] if self.ordering == "option_then_price"
+                        else [(0, sq.distance_km or 0.0) for sq in mine])  # fmt: skip
                 if keys != sorted(keys):
                     raise ValueError(f"option {oid}: sites out of {self.ordering} order")
         elif self.options:
