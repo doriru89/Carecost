@@ -8,6 +8,7 @@
     python -m app.etl ...                             report    [--build ID] [--out DIR]
     python -m app.etl ...                             tic       discover|run|verify|normalize|report|release|probe
     python -m app.etl ...                             gov       fetch|build|show   (fee schedules)
+    python -m app.etl ...                             codes     sync|check [--data]  (care-path codes, R9)
 
 Every subcommand exits non-zero when anything failed, after finishing the other sources.
 """
@@ -28,7 +29,9 @@ from app.etl import report as report_mod
 from app.etl import stage as stage_mod
 from app.etl.config import Paths, SourcesFile, SourceSpec, load_codes, load_sources, load_yaml
 from app.etl.payers import PayerResolver
+from app.etl.refresh import RefreshRun, with_retry
 from app.etl.gov import cli as gov_cli
+from app.etl import path_codes as path_codes_mod
 from app.etl.tic import cli as tic_cli
 
 
@@ -48,33 +51,59 @@ def _rate_row_specs(sources: SourcesFile, which: str | None) -> list[SourceSpec]
 
 
 def cmd_fetch(a: argparse.Namespace, paths: Paths) -> int:
+    """Download each source (one retry, P11). A source that still fails keeps its last good
+    copy in the store (the build uses it, stale on our side), is written to
+    intermediate/refresh_status.json and alerted (app.etl.alert); the command exits 1."""
     sources = load_sources(a.config_dir)
     errors = 0
+    run = RefreshRun(paths, "hospital price files (fetch)")
     for spec in sources.select(a.source):
         if spec.access != "download":
             _log(f"SKIP   {spec.source_id}: access={spec.access} is read by its own pipeline")
             continue
-        try:
-            if a.import_dir:
+        if a.import_dir:
+            try:
                 rec = fetch_mod.import_local(spec, Path(a.import_dir), paths)
-                if rec is None:
-                    _log(f"SKIP   {spec.source_id}: {spec.legacy_filename} not in {a.import_dir}")
-                    continue
-            else:
-                if not spec.url:
-                    _log(
-                        f"FAIL   {spec.source_id}: no url in sources.yaml (discovery: {spec.discovery})"
-                    )
-                    errors += 1
-                    continue
-                rec = fetch_mod.fetch_source(spec, sources.fetch, paths)
-            _log(
-                f"{rec.status.upper():6} {spec.source_id}: {rec.sha256[:12]} {rec.bytes:,} bytes ({rec.method})"
+            except fetch_mod.FetchError as e:
+                _log(f"FAIL   {e}")
+                errors += 1
+                continue
+            if rec is None:
+                _log(f"SKIP   {spec.source_id}: {spec.legacy_filename} not in {a.import_dir}")
+                continue
+        else:
+            if not spec.url:
+                msg = f"no url in sources.yaml (discovery: {spec.discovery})"
+                run.failed(spec.source_id, [msg], last_good_store(paths, spec.source_id))
+                _log(f"FAIL   {spec.source_id}: {msg}")
+                errors += 1
+                continue
+            got, errs = with_retry(
+                lambda spec=spec: fetch_mod.fetch_source(spec, sources.fetch, paths),
+                spec.source_id,
+                log=_log,
             )
-        except fetch_mod.FetchError as e:
-            _log(f"FAIL   {e}")
-            errors += 1
+            if got is None:
+                e = run.failed(spec.source_id, errs, last_good_store(paths, spec.source_id))
+                _log(f"FAIL   {spec.source_id}: {e['reason']} -> {e['status']}")
+                errors += 1
+                continue
+            rec = got
+            run.ok(spec.source_id, sha256=rec.sha256, fetched_at=rec.fetched_at)
+        _log(
+            f"{rec.status.upper():6} {spec.source_id}: {rec.sha256[:12]} {rec.bytes:,} bytes ({rec.method})"
+        )
+    if run.outcomes and not run.finish(log=_log):
+        errors = max(errors, 1)
     return 1 if errors else 0
+
+
+def last_good_store(paths: Paths, source_id: str) -> dict[str, str | None] | None:
+    """The copy a failed source keeps: its newest stored file (raw/store manifest)."""
+    prev = fetch_mod.current(paths, source_id)
+    if prev is None or not prev.path.exists():
+        return None
+    return {"sha256": prev.sha256, "fetched_at": prev.fetched_at or prev.imported_at}
 
 
 def _bytes(rec: fetch_mod.FetchRecord) -> int | None:
@@ -153,9 +182,13 @@ def cmd_normalize(a: argparse.Namespace, paths: Paths) -> int:
             errors += 1
             continue
         out = paths.normalized / spec.source_id / f"{rec.sha256}.parquet"  # type: ignore[union-attr]
-        if out.exists() and out.with_suffix(".stats.json").exists() and not a.force:
-            _log(f"SKIP   {spec.source_id}: already normalized")
-            continue
+        st_file = out.with_suffix(".stats.json")
+        if out.exists() and st_file.exists() and not a.force:
+            cut = json.loads(st_file.read_text()).get("target_codes")
+            if cut is not None and codes.codes <= set(cut):
+                _log(f"SKIP   {spec.source_id}: already normalized")
+                continue
+            _log(f"RENORM {spec.source_id}: cut for an older code list (R9)")
         meta = json.loads(staged.with_suffix(".meta.json").read_text())
         try:
             res = normalize_mod.normalize_file(spec, staged, meta, out, codes, resolver)
@@ -261,6 +294,7 @@ def parser() -> argparse.ArgumentParser:
     r.add_argument("--out", default=None)
     tic_cli.add_parser(sub)
     gov_cli.add_parser(sub)
+    path_codes_mod.add_parser(sub)
     return p
 
 
@@ -272,6 +306,7 @@ COMMANDS = {
     "report": cmd_report,
     "tic": tic_cli.cmd,
     "gov": gov_cli.cmd,
+    "codes": path_codes_mod.cmd_codes,
 }
 
 
