@@ -120,13 +120,16 @@ sites:
 - id: newton_wellesley_outpatient_surgery_center_wellesley
   census_id: GB0016
   name: Newton-Wellesley Outpatient Surgery Center
-  site_type: ambulatory_surgery_center
+  site_type: hospital_outpatient
   operator: Mass General Brigham
   system_id: mgb
-  billing_type: unknown
-  billing_type_source: 'HPC RPO 2024: provider-based status YES (Newton-Wellesley Outpatient Surgery Center, license
-    2075 Acute Hospital - Satellite) ; DPH Hospital Satellite license 2ZNC (NEWTON-WELLESLEY OUTPATIENT SURG CT)
-    at this address, Sept 2026 list'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_satellite+hpc_rpo+nppes_hospital_npi: DPH Hospital Satellite licence 2ZNC (NEWTON-WELLESLEY
+    OUTPATIENT SURG CT) at 25 WASHINGTON STREET, 02481 (list dated 2026-09-08, sha 163b969767c5) ; HPC RPO 2024
+    (via clinic-census row): provider-based YES for ''Newton-Wellesley Outpatient Surgery Center, license 2075 Acute
+    Hospital - Satellite'' ; NPPES 1992737761 NEWTON-WELLESLEY HOSPITAL taxonomy 282N00000X (General Acute Care
+    Hospital) at 2014 WASHINGTON ST 02462'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: Newton-Wellesley Hospital (MGB)
   address:
@@ -153,7 +156,8 @@ sites:
     checked_at: '2026-10-24'
   listing_status: web_verified
   listing_checked_at: '2026-10-24'
-  notes: 'registries: web, dph_facility, hpc_rpo; flags: rpo_provider_based'
+  notes: 'registries: web, dph_facility, hpc_rpo; flags: rpo_provider_based; site_type from billing_structure (hospital
+    licence)'
 - id: boston_endoscopy_center_wellesley_hills
   census_id: GB0017
   name: BOSTON ENDOSCOPY CENTER
@@ -260,9 +264,12 @@ sites:
   operator: Mass General Brigham
   system_id: mgb
   hospital_entity_id: brigham
-  billing_type: unknown
-  billing_type_source: 'HPC RPO 2024: provider-based status YES (50 Staniford Street MGH Imaging, license 2168 Acute
-    Hospital - Satellite)'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_satellite+hpc_rpo: DPH Hospital Satellite licence 2ZDJ (50 STANIFORD STREET
+    MGH IMAGING) at 50 STANIFORD ST, 10TH FLOOR, 02114 (list dated 2026-09-08, sha 163b969767c5) ; HPC RPO 2024
+    (via clinic-census row): provider-based YES for ''50 Staniford Street MGH Imaging, license 2168 Acute Hospital
+    - Satellite'''
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: BWH (MGB)
   address:
@@ -798,9 +805,11 @@ sites:
   operator: MGH / MGB
   system_id: mgb
   hospital_entity_id: mgh
-  billing_type: unknown
-  billing_type_source: 'HPC RPO 2024: provider-based status YES (MGH Broadway Primary Care- Revere, license 2168
-    Acute Hospital - Satellite)'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_satellite+hpc_rpo: DPH Hospital Satellite licence 2H1B (MGH BROADWAY PRIMARY
+    CARE-REVERE) at 385 BROADWAY, 02151 (list dated 2026-09-08, sha 163b969767c5) ; HPC RPO 2024 (via clinic-census
+    row): provider-based YES for ''MGH Broadway Primary Care- Revere, license 2168 Acute Hospital - Satellite'''
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: MGH / MGB
   address:
@@ -1837,8 +1846,10 @@ sites:
   site_type: specialist_office
   operator: MelroseWakefield (Tufts Medicine)
   system_id: tufts_medicine
-  billing_type: unknown
-  billing_type_source: 'clinic-census.csv GB0128: billing_type unknown_hospital_owned'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2058 (MELROSEWKFLD HLTHCRE MELROSE-WKFLD)
+    at 585 LEBANON STREET, 02176 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: MelroseWakefield (Tufts Medicine)
   address:
@@ -2174,8 +2185,10 @@ sites:
   operator: BWH (MGB)
   system_id: mgb
   hospital_entity_id: brigham
-  billing_type: unknown
-  billing_type_source: 'clinic-census.csv GB0148: billing_type unknown_hospital_owned'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2341 (BRIGHAM AND WOMEN''S HOSPITAL) at
+    75 FRANCIS STREET, 02115 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: BWH (MGB)
   address:
@@ -2216,8 +2229,10 @@ sites:
   operator: Children's
   system_id: boston_childrens
   hospital_entity_id: childrens
-  billing_type: unknown
-  billing_type_source: 'HPC RPO 2024: provider-based status NO (Boston Children''s Hospital)'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2139 (BOSTON CHILDREN''S HOSPITAL) at 300
+    LONGWOOD AVENUE, 02115 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: Children's
   children_only: true
@@ -2264,10 +2279,13 @@ sites:
   site_type: specialist_office
   operator: Dana-Farber
   system_id: dana_farber
-  billing_type: unknown
-  billing_type_source: 'HPC RPO 2024: provider-based status YES (Dana-Farber Cancer Institute, license 2335 Acute
-    Hospital - Main Site; Acute Hospital - Satellite) ; HPC RPO 2024: provider-based status YES (Dana-Farber Cancer
-    Institute Mobile Mammography Service, license 2335 Acute Hospital - Satellite)'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus+hpc_rpo: DPH Acute Hospital licence 2335 (DANA-FARBER CANCER INSTITUTE)
+    at 450 BROOKLINE AVENUE, 02215 (list dated 2026-09-08, sha 163b969767c5) ; HPC RPO 2024 (via clinic-census row):
+    provider-based YES for ''Dana-Farber Cancer Institute, license 2335 Acute Hospital - Main Site; Acute Hospital
+    - Satellite'' ; HPC RPO 2024 (via clinic-census row): provider-based YES for ''Dana-Farber Cancer Institute
+    Mobile Mammography Service, license 2335 Acute Hospital - Satellite'''
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: Dana-Farber
   address:
@@ -2343,8 +2361,10 @@ sites:
   operator: BIDMC (BILH)
   system_id: bilh
   hospital_entity_id: bidmc
-  billing_type: unknown
-  billing_type_source: 'clinic-census.csv GB0152: billing_type unknown_hospital_owned'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2069 (BETH ISRAEL DEACONESS MED CTR/EAST)
+    at 330 BROOKLINE AVENUE, 02215 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: BIDMC (BILH)
   address:
@@ -2391,8 +2411,10 @@ sites:
   operator: BIDMC (BILH)
   system_id: bilh
   hospital_entity_id: bidmc
-  billing_type: unknown
-  billing_type_source: 'clinic-census.csv GB0153: billing_type unknown_hospital_owned'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2092 (BETH ISRAEL DEACONESS MED CTR/WEST)
+    at ONE DEACONESS ROAD, 02215 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: BIDMC (BILH)
   address:
@@ -2427,8 +2449,10 @@ sites:
   site_type: specialist_office
   operator: Mass General Brigham
   system_id: mgb
-  billing_type: unknown
-  billing_type_source: 'clinic-census.csv GB0154: billing_type unknown_hospital_owned'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2167 (MASSACHUSETTS EYE AND EAR INFIRMARY
+    -) at 243 CHARLES STREET, 02114 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: Mass Eye and Ear (MGB)
   address:
@@ -2467,9 +2491,10 @@ sites:
   operator: Mass General Brigham
   system_id: mgb
   hospital_entity_id: brigham
-  billing_type: unknown
-  billing_type_source: 'HPC RPO 2024: provider-based status NO (Boston Health Care for the Homeless at Mass General
-    Hospital)'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2168 (MASSACHUSETTS GENERAL HOSPITAL) at
+    55 FRUIT STREET, 02114 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: BWH (MGB)
   children_only: true
@@ -2647,10 +2672,10 @@ sites:
   operator: BMC
   system_id: bmc
   hospital_entity_id: bmc
-  billing_type: unknown
-  billing_type_source: 'HPC RPO 2024: provider-based status YES (Dana-Farber Cancer Institute; Dana-Farber Cancer
-    Institute at St. Elizabeth''s Medical Center; Dana-Farber Cancer Institute in Brighton, MA, license 2335 Acute
-    Hospital - Satellite)'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2085 (BOSTON MEDICAL CENTER-BRIGHTON) at
+    736 CAMBRIDGE STREET, 02135 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: BMC
   address:
@@ -2821,8 +2846,10 @@ sites:
   operator: CHA
   system_id: cha
   hospital_entity_id: cha
-  billing_type: unknown
-  billing_type_source: 'clinic-census.csv GB0163: billing_type unknown_hospital_owned'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2108 (CHA CAMBRIDGE HOSPITAL) at 1493 CAMBRIDGE
+    STREET, 02139 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: CHA
   address:
@@ -2948,9 +2975,11 @@ sites:
   operator: Mass General Brigham
   system_id: mgb
   hospital_entity_id: brigham
-  billing_type: unknown
-  billing_type_source: 'DPH Hospital Satellite license 26AN (MGH HEALTH CTR CHELSEA) at this address, Sept 2026
-    list ; HPC RPO 2024: provider-based status YES (MGH Health Center Chelsea, license 2168 Acute Hospital - Satellite)'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_satellite+hpc_rpo: DPH Hospital Satellite licence 26AN (MGH HEALTH CTR CHELSEA)
+    at 100 EVERETT AVENUE 1ST FLOOR 16C, 02150 (list dated 2026-09-08, sha 163b969767c5) ; HPC RPO 2024 (via clinic-census
+    row): provider-based YES for ''MGH Health Center Chelsea, license 2168 Acute Hospital - Satellite'''
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: BWH (MGB)
   address:
@@ -3146,8 +3175,10 @@ sites:
   operator: CHA
   system_id: cha
   hospital_entity_id: cha
-  billing_type: unknown
-  billing_type_source: 'clinic-census.csv GB0174: billing_type unknown_hospital_owned'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2046 (CHA EVERETT HOSPITAL) at 103 GARLAND
+    ST 3RD FL, LEVEL C, 02149 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: CHA
   address:
@@ -3386,8 +3417,10 @@ sites:
   operator: BIDMC (BILH)
   system_id: bilh
   hospital_entity_id: bidmc
-  billing_type: unknown
-  billing_type_source: 'clinic-census.csv GB0180: billing_type unknown_hospital_owned'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2227 (BETH ISRAEL DEACONESS HOSPITAL-MILTON
+    INC) at 199 REEDSDALE ROAD, 02186 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: BIDMC (BILH)
   address:
@@ -3426,9 +3459,13 @@ sites:
   operator: BIDMC (BILH)
   system_id: bilh
   hospital_entity_id: bidmc
-  billing_type: unknown
-  billing_type_source: 'HPC RPO 2024: provider-based status YES (The Cancer Center at Beth Israel Deaconess Medical
-    Center - Needham, license VL42 Acute Hospital - Satellite)'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus+dph_hospital_satellite+hpc_rpo: DPH Acute Hospital licence 2054 (BETH
+    ISRAEL DEACONESS HOSPITAL - NEEDHAM) at 148 CHESTNUT STREET, 02492 (list dated 2026-09-08, sha 163b969767c5)
+    ; DPH Hospital Satellite licence 2UKT (CANCER CENTER @ BIDMC-NEEDHAM) at 148 CHESTNUT STREET, 02492 (list dated
+    2026-09-08, sha 163b969767c5) ; HPC RPO 2024 (via clinic-census row): provider-based YES for ''The Cancer Center
+    at Beth Israel Deaconess Medical Center - Needham, license VL42 Acute Hospital - Satellite'''
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: BIDMC (BILH)
   address:
@@ -3601,9 +3638,10 @@ sites:
   operator: Mass General Brigham
   system_id: mgb
   hospital_entity_id: brigham
-  billing_type: unknown
-  billing_type_source: 'HPC RPO 2024: provider-based status YES (MGH Radiation Oncology at Newton-Wellesley Hospital,
-    license 2168 Acute Hospital - Satellite)'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2075 (NEWTON-WELLESLEY HOSPITAL) at 2014
+    WASHINGTON STREET, 02462 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: BWH (MGB)
   children_only: true
@@ -4810,8 +4848,10 @@ sites:
   site_type: specialist_office
   operator: NEBH (BILH)
   system_id: bilh
-  billing_type: unknown
-  billing_type_source: 'clinic-census.csv GB0254: billing_type unknown_hospital_owned'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_campus: DPH Acute Hospital licence 2059 (NEW ENGLAND BAPTIST HOSPITAL) at 125
+    PARKER HILL AVENUE, 02120 (list dated 2026-09-08, sha 163b969767c5)'
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: NEBH (BILH)
   address:
@@ -4866,9 +4906,12 @@ sites:
   operator: CHA
   system_id: cha
   hospital_entity_id: cha
-  billing_type: unknown
-  billing_type_source: 'HPC RPO 2024: provider-based status YES (CHA Assembly Square Care Center, license VVA5 Acute
-    Hospital - Satellite)'
+  billing_type: hospital_outpatient
+  billing_type_source: 'dph_hospital_satellite+hpc_rpo: DPH Hospital Satellite licence 2ZFA (CHA ASSEMBLY SQUARE
+    CARE CENTER) at 5 MIDDLESEX AVENUE 1ST FL, 02145 (list dated 2026-09-08, sha 163b969767c5) ; HPC RPO 2024 (via
+    clinic-census row): provider-based YES for ''CHA Assembly Square Care Center, license VVA5 Acute Hospital -
+    Satellite'''
+  billing_type_confidence: likely
   ownership: hospital_system
   ownership_detail: CHA
   address:

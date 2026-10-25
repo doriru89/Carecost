@@ -11,7 +11,7 @@ import yaml
 from app.etl.config import load_sources
 from app.registries import all_hospitals
 from app.sites import build
-from app.sites.contracts import SitesFile, normalize_tin
+from app.sites.contracts import SitesFile, ToVerifyFile, normalize_tin
 
 SITES = build.SITES_DIR
 
@@ -27,7 +27,7 @@ def sites() -> SitesFile:
 
 @pytest.fixture(scope="module")
 def todo() -> SitesFile:
-    return _load("to_verify.yaml")
+    return ToVerifyFile.model_validate(yaml.safe_load((SITES / "to_verify.yaml").read_text()))
 
 
 @pytest.fixture(scope="module")

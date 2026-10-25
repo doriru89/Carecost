@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import os
+from collections import Counter
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
@@ -24,6 +25,8 @@ from typing import Any
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from app.etl.npi import clean_npis
+from app.etl.npi import count as count_npis
 from app.etl.tic.scan import ScanResult, TargetItem
 
 ITEM_KEYS = {
@@ -107,7 +110,12 @@ def inline_ref_id(item_ordinal: int, rg_ordinal: int) -> int:
 
 
 def _group_rows(
-    ref_id: int, ref: dict[str, Any], sid: str, sha: str, inline: bool
+    ref_id: int,
+    ref: dict[str, Any],
+    sid: str,
+    sha: str,
+    inline: bool,
+    dropped_npis: Counter[str] | None = None,
 ) -> list[dict[str, Any]]:
     rows = []
     groups = ref.get("provider_groups")
@@ -124,8 +132,12 @@ def _group_rows(
         return rows
     for gi, g in enumerate(groups):
         tin = g.get("tin") or {}
-        npis = _strs(g.get("npi"))
-        ex = {}
+        npis, bad = clean_npis(_strs(g.get("npi")))  # R10: placeholders ("0") never staged as NPIs
+        ex: dict[str, Any] = {}
+        if bad:
+            ex["dropped_npis"] = bad
+            if dropped_npis is not None:
+                dropped_npis.update(count_npis(bad))
         if g.keys() - GROUP_KEYS:
             ex["group"] = {k: v for k, v in g.items() if k not in GROUP_KEYS}
         if isinstance(tin, dict) and tin.keys() - TIN_KEYS:
@@ -195,19 +207,23 @@ class StageStats:
     remote_refs: int = 0
     provider_references: int = 0
     codes: dict[str, int] = field(default_factory=dict)
+    npi_placeholders_dropped: dict[str, int] = field(default_factory=dict)  # R10, per value
 
 
 class Stager:
     """Feed it the scan stream (target items, then the ScanResult)."""
 
-    def __init__(self, out_dir: Path, source_id: str, sha: str) -> None:
+    def __init__(self, out_dir: Path, source_id: str, sha: str, stage_row_start: int = 0) -> None:
+        """``stage_row_start``: ``tic extend`` numbers new rows after the existing ones, so every
+        row reference already cited keeps pointing at the same row."""
         self.sid, self.sha = source_id, sha
         self.out_dir = out_dir
         self.prices = _Writer(out_dir / "prices.parquet", PRICE_SCHEMA)
         self.items = _Writer(out_dir / "items.parquet", ITEMS_SCHEMA)
         self.inline: list[dict[str, Any]] = []
         self.stats = StageStats(source_id, sha)
-        self.stage_row = 0
+        self.stage_row = self.stage_row_start = stage_row_start
+        self.dropped_npis: Counter[str] = Counter()
 
     def add_item(self, t: TargetItem) -> None:
         o, st = t.obj, self.stats
@@ -224,7 +240,9 @@ class Stager:
             if rg.get("provider_groups"):
                 rid = inline_ref_id(t.ref.ordinal, gi)
                 refs.append(rid)
-                self.inline += _group_rows(rid, rg, self.sid, self.sha, inline=True)
+                self.inline += _group_rows(
+                    rid, rg, self.sid, self.sha, inline=True, dropped_npis=self.dropped_npis
+                )
             rg_extra = _extra(rg, RG_KEYS)
             prices = rg.get("negotiated_prices") or []
             if not prices:
@@ -275,7 +293,9 @@ class Stager:
         try:
             for ref in res.provider_references:
                 rid = int(ref.get("provider_group_id", -0))
-                rows = _group_rows(rid, ref, self.sid, self.sha, inline=False)
+                rows = _group_rows(
+                    rid, ref, self.sid, self.sha, inline=False, dropped_npis=self.dropped_npis
+                )
                 st.remote_refs += int(bool(ref.get("location")) and not ref.get("provider_groups"))
                 for r in rows:
                     groups.add(r)
@@ -287,7 +307,8 @@ class Stager:
                 st.inline_group_rows += 1
             st.provider_references = len(res.provider_references)
             st.independent_groups = res.independent_groups
-            st.price_rows = self.stage_row
+            st.price_rows = self.stage_row - self.stage_row_start
+            st.npi_placeholders_dropped = dict(sorted(self.dropped_npis.items()))
             if st.prices_parsed != st.independent_prices:
                 raise TicStageError(
                     f"{self.sid}: prices parsed {st.prices_parsed} != independent count "

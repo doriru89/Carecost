@@ -30,6 +30,8 @@ import pyarrow.parquet as pq
 
 from app.etl.config import CodeList, SourceSpec, load_codes
 from app.etl.contracts import RateRow
+from app.etl.npi import clean_npis
+from app.etl.npi import count as count_npis
 from app.etl.payers import PayerResolver
 from app.etl.stage import StageResult
 
@@ -130,6 +132,10 @@ class NormalizeResult:
     ambiguous_rows: int = 0
     above_gross_rows: int = 0
     payer_plan_mismatch_rows: int = 0
+    npi_placeholders_dropped: dict[str, int] = field(default_factory=dict)  # R10, file type-2 NPIs
+    target_codes: list[str] = field(
+        default_factory=list
+    )  # the code list this file was cut for (R9)
     seconds: float = 0.0
 
 
@@ -194,7 +200,8 @@ def normalize_file(
         else stage_res["source_sha256"]
     )
     source_date = meta.get("last_updated_on")
-    npis = "|".join(meta.get("type_2_npis") or [])
+    kept_npis, bad_npis = clean_npis(str(n) for n in meta.get("type_2_npis") or [])
+    npis = "|".join(kept_npis)
     targets = code_list.codes
     types = set(code_list.code_types)
 
@@ -211,6 +218,8 @@ def normalize_file(
                 gross_idx[(c["code"], canonical_setting(lf["setting"]))].add(g)
 
     res = NormalizeResult(source_id=spec.source_id, source_sha256=sha)
+    res.target_codes = sorted(targets)
+    res.npi_placeholders_dropped = count_npis(bad_npis)
     rows: list[dict[str, Any]] = []
     nk_count: Counter[str] = Counter()
     nk_amounts: dict[str, set[float | None]] = defaultdict(set)

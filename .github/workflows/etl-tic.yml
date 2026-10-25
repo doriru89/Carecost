@@ -119,9 +119,16 @@ jobs:
       - name: Previous release manifest (baseline for the size-drop gate)
         continue-on-error: true
         run: gh release download "tic-${{ needs.plan.outputs.prev }}" --pattern manifest.json --dir ../prev
-      - name: Stream, index, stage, normalize (no raw file on disk)
+      - name: Stream, index, stage, normalize (no raw file on disk; one retry, alert on failure)
         id: run
         continue-on-error: true
+        env:  # P11 alert e-mail; recipient + SMTP only from repo secrets, never committed
+          CARECOST_ALERT_EMAIL: ${{ secrets.CARECOST_ALERT_EMAIL }}
+          CARECOST_SMTP_HOST: ${{ secrets.CARECOST_SMTP_HOST }}
+          CARECOST_SMTP_PORT: ${{ secrets.CARECOST_SMTP_PORT }}
+          CARECOST_SMTP_USER: ${{ secrets.CARECOST_SMTP_USER }}
+          CARECOST_SMTP_PASSWORD: ${{ secrets.CARECOST_SMTP_PASSWORD }}
+          CARECOST_SMTP_FROM: ${{ secrets.CARECOST_SMTP_FROM }}
         run: |
           D=""; [ -f ../discover.json ] && D="--discovered ../discover.json"
           python -m app.etl tic run --network "${{ matrix.source_id }}" $D --previous-release ../prev

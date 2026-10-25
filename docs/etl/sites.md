@@ -97,3 +97,18 @@ diff for review; nothing is committed by CI).
 | 6 diff | DPH new / gone ids; `git diff` of the regenerated files in the workflow artifact | NPPES / operator-page closure detection |
 | 7 checks | DPH counts ±15%, DPH 2ED8, NPPES 1164772299 active in Watertown, AFC TIN 460903626 | DAC ±15%, RPO provider-based check, HTTP 206 checks (A2 owns TiC) |
 | 8 output | sites.yaml (approved rows only), to_verify.yaml, build_report.json, dph_check.json | census-YYYY-MM.csv re-harvest |
+
+## Billing type through system structure (A5, R7 / P9)
+
+`python -m app.sites.billing` resolves `billing_type: unknown` from public structure and writes
+`data/sites/billing_structure.yaml` (committed; `app.sites.build` reads only that file). Rules
+(each recorded as the site's `billing_type_source`): a DPH **Acute Hospital** licence of the
+site's own system at its address (on-campus department) → `hospital_outpatient`; a DPH
+**Hospital Satellite** licence of its system where the site is named as that hospital's own
+department → `hospital_outpatient`; the HPC RPO 2024 provider-based status (YES/NO) for the
+site's own location; an NPPES type-2 NPI of the site that is a hospital (282N) of its system.
+Another organisation's licence in the same building never decides; disagreeing rules leave the
+site `unknown`. 2026-10-25: 43 unknown → 20 resolved, 23 listed under `billing_to_verify` in
+`to_verify.yaml` (still quoted; the engine prices them as hospital outpatient + a facility-fee
+gap). One ASC on a hospital satellite licence (Newton-Wellesley Outpatient Surgery Center)
+becomes `site_type: hospital_outpatient`.

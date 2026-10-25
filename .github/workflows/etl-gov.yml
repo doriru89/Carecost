@@ -34,9 +34,16 @@ jobs:
         run: |
           $RUN python -m playwright install --with-deps chromium
           sudo apt-get install -y xvfb poppler-utils
-      - name: Fetch
+      - name: Fetch (one retry per source; a failure keeps the last good copy and alerts, P11)
         id: fetch
         continue-on-error: true
+        env:  # P11 alert e-mail; recipient + SMTP only from repo secrets, never committed
+          CARECOST_ALERT_EMAIL: ${{ secrets.CARECOST_ALERT_EMAIL }}
+          CARECOST_SMTP_HOST: ${{ secrets.CARECOST_SMTP_HOST }}
+          CARECOST_SMTP_PORT: ${{ secrets.CARECOST_SMTP_PORT }}
+          CARECOST_SMTP_USER: ${{ secrets.CARECOST_SMTP_USER }}
+          CARECOST_SMTP_PASSWORD: ${{ secrets.CARECOST_SMTP_PASSWORD }}
+          CARECOST_SMTP_FROM: ${{ secrets.CARECOST_SMTP_FROM }}
         run: xvfb-run -a $RUN python -m app.etl gov fetch
       - name: Build (anchor gate per source)
         run: $RUN python -m app.etl gov build

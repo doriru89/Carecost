@@ -1,7 +1,7 @@
 # Target code list for normalize/build/report. Staging is lossless (every code); only
 # normalize filters to these, so adding a code = re-run normalize, not a re-parse.
 # Source: etl-audit 2026-10-24 §3/§4 target set (ortho / derm / GI / urgent care).
-# A later phase derives this list from data/care_paths/** instead.
+# Every care-path code is added from data/etl/path_codes.yaml (generated; `codes sync`, R9).
 
 version: 1
 domains:
@@ -66,3 +66,15 @@ code_types: ["CPT", "HCPCS", ""]
 # facility line. Rows without an RC fall back to the file's billing_class, else "unknown".
 rev_code_components:
   professional: ["0960-0989"]
+
+# Care-path area (data/care_paths/paths/*.yaml scope.area) -> the domain above whose sites
+# can do it. `python -m app.etl codes sync` derives data/etl/path_codes.yaml through this map;
+# a new area with no entry fails sync (and the check) loudly.
+path_area_domains:
+  msk_shoulder: ortho
+  msk_knee: ortho
+  msk_back: ortho
+  msk_ankle: ortho
+  skin: derm
+  gi_lower: gi
+  gi_upper: gi

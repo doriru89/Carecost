@@ -219,7 +219,9 @@ class SourceSpec(BaseModel):
             raise ValueError(f"{sid}: access download needs url")
         if self.format in GOV_FORMATS and not self.effective_date:
             raise ValueError(f"{sid}: a fee schedule needs effective_date")
-        if self.manual_filename and ("/" in self.manual_filename or self.manual_filename.startswith(".")):
+        if self.manual_filename and (
+            "/" in self.manual_filename or self.manual_filename.startswith(".")
+        ):
             raise ValueError(f"{sid}: manual_filename must be a bare file name")
         return self
 
@@ -332,6 +334,10 @@ class CodeList(BaseModel):
     domains: dict[str, dict[str, str]]
     code_types: list[str]
     rev_code_components: dict[str, list[str]] = {}
+    # care-path area -> domain above (R9: path_codes.yaml is derived through this map)
+    path_area_domains: dict[str, str] = {}
+    # code -> domains, generated from the care paths (path_codes.yaml; app.etl.path_codes)
+    path_codes: dict[str, list[str]] = {}
 
     def component_for_rc(self, rc: str) -> str:
         if not rc.isdigit():
@@ -346,10 +352,12 @@ class CodeList(BaseModel):
 
     @property
     def codes(self) -> set[str]:
-        return {c for d in self.domains.values() for c in d}
+        """Hand-written codes.yaml list + every care-path code (path_codes.yaml, R9)."""
+        return {c for d in self.domains.values() for c in d} | set(self.path_codes)
 
     def domains_for(self, code: str) -> list[str]:
-        return [name for name, codes in self.domains.items() if code in codes]
+        out = [name for name, codes in self.domains.items() if code in codes]
+        return out + [d for d in self.path_codes.get(code, []) if d not in out]
 
     def description(self, code: str) -> str:
         for codes in self.domains.values():
@@ -360,7 +368,12 @@ class CodeList(BaseModel):
 
 @functools.lru_cache(maxsize=4)
 def load_codes(config_dir: Path | None = None) -> CodeList:
-    return CodeList(**_yaml("codes.yaml", config_dir))
+    d = _yaml("codes.yaml", config_dir)
+    pc = (config_dir or CONFIG_DIR) / "path_codes.yaml"
+    if pc.exists():
+        gen = yaml.safe_load(pc.read_text()) or {}
+        d["path_codes"] = {c: e["domains"] for c, e in (gen.get("codes") or {}).items()}
+    return CodeList(**d)
 
 
 def load_yaml(name: str, config_dir: Path | None = None) -> dict[str, Any]:
