@@ -124,6 +124,19 @@ def yaml_load(path: Any) -> Any:
     return yaml.safe_load(path.read_text())
 
 
+_TABLES: dict[tuple, Any] = {}
+
+
+def _contract_table(path: Any) -> dict[str, dict[str, float]]:
+    """data/quote/contract_levels.yaml, parsed once per file version (1.9 MB of YAML)."""
+    if not path.exists():
+        return {}
+    key = (str(path), path.stat().st_mtime_ns)
+    if key not in _TABLES:
+        _TABLES[key] = (yaml_load(path) or {}).get("groups") or {}
+    return _TABLES[key]
+
+
 def _slug(text: str) -> str:
     return "_".join(re.findall(r"[a-z0-9]+", text.lower()))[:60] or "chain"
 
@@ -265,9 +278,7 @@ class Engine:
         self._stats: dict[tuple, dict] = {}
         self._peer_cache: dict[tuple, tuple[list, str]] = {}
         cl = REPO_ROOT / cfg["contract_levels_file"]
-        self.contract_levels: dict[str, dict[str, float]] = (
-            (yaml_load(cl) or {}).get("groups") or {} if cl.exists() else {}
-        )
+        self.contract_levels: dict[str, dict[str, float]] = _contract_table(cl)
         self._admitted_cache: dict[tuple, list[str]] = {}
         self._universe: dict[tuple, Json] = {}
         # fee schedules: every loaded file of a kind (Medicare PFS = RVU file + anesthesia file;

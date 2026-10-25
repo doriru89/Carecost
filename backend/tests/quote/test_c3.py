@@ -536,7 +536,7 @@ def _with_level(engine, ratios, **outl):
     return eng
 
 
-FIVE_LOW = {f"{c}--facility": 0.45 for c in ("99203", "73030", "88305", "45380", "45385")}
+FIVE_LOW = {f"{c}--facility": 0.5 for c in ("99203", "73030", "88305", "45380", "45385")}
 
 
 def test_a_group_consistently_low_on_five_other_codes_is_summed_with_a_note(engine):
@@ -581,3 +581,17 @@ def test_contract_levels_table_is_well_formed(engine):
         site, group, kind, _, _ = key.split("|")
         assert site in engine.reg.sites and group.startswith(("tin:", "file:"))
         assert kind in ("insurance", "cash", "medicare", "masshealth") and len(ratios) >= 3
+
+
+def test_contract_level_high_side_at_exactly_two_x(engine):
+    """>= 2x on >= 5 other codes is a contract level (the boundary itself counts)."""
+    high = {k: 2.0 for k in FIVE_LOW}
+    eng = _with_level(engine, high)
+    q = eng._context(QuoteRequest.model_validate({
+        "payment": {"kind": "medicare"}, "care_path_id": "colon_diagnostic_v1", "answers": {},
+        "service_codes": [], "picked_by": "person", "site_ids": None}), AS_OF)  # fmt: skip
+    site = eng.reg.sites[CHA]
+    assert eng._contract_level(site, "file:cha_mrf", "45378", q, "high")
+    assert not eng._contract_level(site, "file:cha_mrf", "45378", q, "low")
+    eng2 = _with_level(engine, {k: 1.99 for k in FIVE_LOW})
+    assert not eng2._contract_level(site, "file:cha_mrf", "45378", q, "high")
