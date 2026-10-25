@@ -137,7 +137,7 @@
         "children_only": false,
         "data_notices": []
       },
-      "option_id": null,
+      "option_id": "a",
       "headline": {
         "likely_low": 310.22,
         "likely_high": 310.22,
@@ -222,7 +222,8 @@
             "low": 392.72,
             "high": 392.72,
             "figure": "own",
-            "exclusive_group": null
+            "exclusive_group": null,
+            "from_only": false
           },
           {
             "step_key": "tendon_scan_ultrasound",
@@ -231,7 +232,8 @@
             "low": 172.41,
             "high": 172.41,
             "figure": "own",
-            "exclusive_group": null
+            "exclusive_group": null,
+            "from_only": false
           },
           {
             "step_key": "tendon_scan_mri",
@@ -240,7 +242,8 @@
             "low": 311.69,
             "high": 311.69,
             "figure": "own",
-            "exclusive_group": null
+            "exclusive_group": null,
+            "from_only": false
           },
           {
             "step_key": "mr_arthrogram",
@@ -249,7 +252,8 @@
             "low": null,
             "high": null,
             "figure": "none",
-            "exclusive_group": null
+            "exclusive_group": null,
+            "from_only": false
           }
         ]
       },
@@ -273,7 +277,8 @@
             "visit_doctor"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "xray",
@@ -294,7 +299,8 @@
             "xray_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "physical_therapy",
@@ -315,7 +321,8 @@
             "physical_therapy_sessions_facility"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "steroid_injection",
@@ -337,7 +344,8 @@
             "steroid_injection_drug_ai"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "tendon_scan_ultrasound",
@@ -358,7 +366,8 @@
             "tendon_scan_ultrasound_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "tendon_scan_mri",
@@ -379,7 +388,8 @@
             "tendon_scan_mri_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "mr_arthrogram",
@@ -404,7 +414,8 @@
             "mr_arthrogram_77002_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 4.83,
@@ -420,7 +431,7 @@
               "G0463"
             ],
             "modifier": null,
-            "plain_name": "Visit with a bone & joint doctor: the hospital's fee",
+            "plain_name": "Visit with a bone & joint doctor: the hospital's bill",
             "technical_name": "New-patient orthopedic or sports-medicine visit (facility fee)",
             "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
             "glossary_keys": [
@@ -474,7 +485,7 @@
               "99203"
             ],
             "modifier": null,
-            "plain_name": "Visit with a bone & joint doctor: the doctor's fee",
+            "plain_name": "Visit with a bone & joint doctor: the doctor's bill",
             "technical_name": "New-patient orthopedic or sports-medicine visit (professional fee)",
             "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
             "glossary_keys": [],
@@ -532,7 +543,7 @@
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's bill",
             "technical_name": "Shoulder X-ray (facility fee)",
             "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while. It shows arthritis, bone spurs and calcium in the tendons, which changes what comes next.",
             "glossary_keys": [
@@ -682,7 +693,7 @@
               "97161"
             ],
             "modifier": null,
-            "plain_name": "Guided exercise program for the shoulder: the hospital's fee",
+            "plain_name": "Guided exercise program for the shoulder: the hospital's bill",
             "technical_name": "Physical therapy evaluation and visits (facility fee)",
             "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
             "glossary_keys": [
@@ -696,7 +707,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_published",
-              "what": "Medicare's rate for the facility's own fee for this item",
+              "what": "Medicare's rate for the place's own bill for this item",
               "ask": "Ask the billing office what Medicare pays here.",
               "searched": {
                 "source_id": "cms_opps_addb_2026q4",
@@ -743,7 +754,7 @@
               "97110"
             ],
             "modifier": null,
-            "plain_name": "Later exercise sessions (each 15 minutes): the hospital's fee",
+            "plain_name": "Later exercise sessions (each 15 minutes): the hospital's bill",
             "technical_name": "Therapeutic exercise (facility fee)",
             "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
             "glossary_keys": [
@@ -757,7 +768,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_published",
-              "what": "Medicare's rate for the facility's own fee for this item",
+              "what": "Medicare's rate for the place's own bill for this item",
               "ask": "Ask the billing office what Medicare pays here.",
               "searched": {
                 "source_id": "cms_opps_addb_2026q4",
@@ -804,7 +815,7 @@
               "20610"
             ],
             "modifier": null,
-            "plain_name": "Shot of anti-inflammatory and numbing medicine: the hospital's fee",
+            "plain_name": "Shot of anti-inflammatory and numbing medicine: the hospital's bill",
             "technical_name": "Corticosteroid shoulder injection (facility fee)",
             "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
             "glossary_keys": [
@@ -875,7 +886,7 @@
               "20610"
             ],
             "modifier": null,
-            "plain_name": "Shot of anti-inflammatory and numbing medicine: the doctor's fee",
+            "plain_name": "Shot of anti-inflammatory and numbing medicine: the doctor's bill",
             "technical_name": "Corticosteroid shoulder injection (professional fee)",
             "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
             "glossary_keys": [
@@ -950,7 +961,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_published",
-              "what": "Medicare's rate for the facility's own fee for this item",
+              "what": "Medicare's rate for the place's own bill for this item",
               "ask": "Ask the billing office what Medicare pays here.",
               "searched": {
                 "source_id": "cms_opps_addb_2026q4",
@@ -980,7 +991,7 @@
               "76881"
             ],
             "modifier": null,
-            "plain_name": "Live sound-wave picture of the tendons: the hospital's fee",
+            "plain_name": "Live sound-wave picture of the tendons: the hospital's bill",
             "technical_name": "Shoulder ultrasound (facility fee)",
             "why": "If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear is.",
             "glossary_keys": [
@@ -1130,7 +1141,7 @@
               "73221"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's bill",
             "technical_name": "Shoulder MRI (no contrast) (facility fee)",
             "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
             "glossary_keys": [
@@ -1282,7 +1293,7 @@
               "73222"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan with dye in the joint: the hospital's fee",
+            "plain_name": "Detailed scan with dye in the joint: the hospital's bill",
             "technical_name": "Shoulder MR arthrogram (facility fee)",
             "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
             "glossary_keys": [
@@ -1428,7 +1439,7 @@
               "23350"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan with dye in the joint: an extra part (Injection for shoulder arthrography): the hospital's fee",
+            "plain_name": "Detailed scan with dye in the joint: an extra part (Injection for shoulder arthrography): the hospital's bill",
             "technical_name": "Injection for shoulder arthrography (facility fee)",
             "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
             "glossary_keys": [
@@ -1444,7 +1455,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_published",
-              "what": "Medicare's rate for the facility's own fee for this item",
+              "what": "Medicare's rate for the place's own bill for this item",
               "ask": "Ask the billing office what Medicare pays here.",
               "searched": {
                 "source_id": "cms_opps_addb_2026q4",
@@ -1479,7 +1490,7 @@
               "23350"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan with dye in the joint: an extra part (Injection for shoulder arthrography): the doctor's fee",
+            "plain_name": "Detailed scan with dye in the joint: an extra part (Injection for shoulder arthrography): the doctor's bill",
             "technical_name": "Injection for shoulder arthrography (professional fee)",
             "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
             "glossary_keys": [
@@ -1546,7 +1557,7 @@
               "77002"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan with dye in the joint: an extra part (Fluoroscopic needle guidance): the hospital's fee",
+            "plain_name": "Detailed scan with dye in the joint: an extra part (Fluoroscopic needle guidance): the hospital's bill",
             "technical_name": "Fluoroscopic needle guidance (facility fee)",
             "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
             "glossary_keys": [
@@ -1562,7 +1573,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_published",
-              "what": "Medicare's rate for the facility's own fee for this item",
+              "what": "Medicare's rate for the place's own bill for this item",
               "ask": "Ask the billing office what Medicare pays here.",
               "searched": {
                 "source_id": "cms_opps_addb_2026q4",
@@ -2522,7 +2533,56 @@
     "care_path_draft",
     "medicare_advantage_is_insurance"
   ],
-  "options": [],
+  "options": [
+    {
+      "id": "a",
+      "label": {
+        "en": "Shoulder pain that came on gradually, often with painful clicking",
+        "zh": "\u6162\u6162\u51fa\u73b0\u7684\u80a9\u75db\uff0c\u5e38\u4f34\u6709\u75bc\u75db\u7684\u5494\u54d2\u58f0"
+      },
+      "visit_step": "visit",
+      "specialist": false,
+      "priced": true,
+      "missing_reason": null,
+      "site_count": 1,
+      "sites_with_range": 1,
+      "low": 310.22,
+      "high": 310.22,
+      "includes": [
+        "Quick picture of the shoulder bones"
+      ],
+      "visit_only": {
+        "low": 211.56,
+        "high": 211.56,
+        "includes": []
+      },
+      "with_likely": {
+        "low": 310.22,
+        "high": 310.22,
+        "includes": [
+          "Quick picture of the shoulder bones"
+        ]
+      },
+      "with_possible": {
+        "low": 1187.04,
+        "high": 1187.04,
+        "includes": [
+          "Quick picture of the shoulder bones",
+          "Shot of anti-inflammatory and numbing medicine",
+          "Live sound-wave picture of the tendons",
+          "Detailed scan of tendons & cartilage"
+        ]
+      },
+      "cheapest_site_id": "brigham_and_womens_hospital",
+      "cheapest_basis": "partial",
+      "basis": "partial",
+      "sites_by_basis": {
+        "partial": 1
+      },
+      "partial_site_count": 1,
+      "implicit": true
+    }
+  ],
   "er_reference": {
     "status": "priced",
     "note_key": "er.visit_alone_costs_more",

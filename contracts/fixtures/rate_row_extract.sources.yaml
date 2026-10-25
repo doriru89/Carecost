@@ -1290,6 +1290,23 @@ sources:
     product: PPO
     network_label: HPHC House Account Access (A001, self funded)
     line_of_business: commercial
+  tic_mgb_hp_allies_hmo:
+    source_kind: insurer_tic
+    publisher: Mass General Brigham Health Plan (formerly AllWays) · MGB Health Plan
+      Allies HMO
+    source_file: INN_ALLIES_HMO_2026-09-27.json.gz
+    source_sha256: 229ac7d81adebea885283b28952e2d264c160aa692125252ba4253aff3b5e14f
+    source_date: '2026-09-27'
+    last_updated: '2026-09-27'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: MGB_HP
+    product: HMO
+    network_label: MGB Health Plan Allies HMO
+    line_of_business: commercial
   tic_mgb_hp_commercial_hmo:
     source_kind: insurer_tic
     publisher: Mass General Brigham Health Plan (formerly AllWays) · MGB Health Plan

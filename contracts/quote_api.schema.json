@@ -1118,8 +1118,12 @@
           "type": "array"
         },
         "note_keys": {
+          "description": "doctor_bills_separately: the doctor's bill has no public source (self-pay); doctor_bill_not_published (C4c): the insurer's file has no rate for it",
           "items": {
-            "const": "headline.doctor_bills_separately",
+            "enum": [
+              "headline.doctor_bills_separately",
+              "headline.doctor_bill_not_published"
+            ],
             "type": "string"
           },
           "title": "Note Keys",
@@ -1402,6 +1406,12 @@
           "title": "Figure",
           "type": "string"
         },
+        "from_only": {
+          "default": false,
+          "description": "C4c: 'from $low', the doctor bills apart",
+          "title": "From Only",
+          "type": "boolean"
+        },
         "high": {
           "anyOf": [
             {
@@ -1454,7 +1464,8 @@
         "low",
         "high",
         "figure",
-        "exclusive_group"
+        "exclusive_group",
+        "from_only"
       ],
       "title": "MayAlsoOrder",
       "type": "object"
@@ -1989,7 +2000,8 @@
           "description": "same_system: the site's own health system's groups",
           "enum": [
             "same_kind",
-            "same_system"
+            "same_system",
+            "payer_network"
           ],
           "title": "Scope",
           "type": "string"
@@ -2180,6 +2192,24 @@
       "additionalProperties": false,
       "description": "C4b (D-UI-3): where to go first, option A or B (e.g. urgent care vs a skin doctor), each\nwith its own range. ``priced: false`` = listed but not priced yet (no sites).",
       "properties": {
+        "basis": {
+          "anyOf": [
+            {
+              "enum": [
+                "complete",
+                "includes_estimate",
+                "partial"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C4c: the best basis present; low / high / the spans come from those sites only",
+          "title": "Basis"
+        },
         "cheapest_basis": {
           "anyOf": [
             {
@@ -2229,6 +2259,12 @@
           "title": "Id",
           "type": "string"
         },
+        "implicit": {
+          "default": false,
+          "description": "C4c: a path without entry options gets one implicit option (all its sites), so cheapest_site_id exists; the list keeps its rank / kind_then_distance ordering",
+          "title": "Implicit",
+          "type": "boolean"
+        },
         "includes": {
           "items": {
             "type": "string"
@@ -2263,6 +2299,13 @@
           ],
           "title": "Missing Reason"
         },
+        "partial_site_count": {
+          "default": 0,
+          "description": "C4c: sites with only partial prices ('plus N places ...')",
+          "minimum": 0,
+          "title": "Partial Site Count",
+          "type": "integer"
+        },
         "priced": {
           "title": "Priced",
           "type": "boolean"
@@ -2272,6 +2315,21 @@
           "minimum": 0,
           "title": "Site Count",
           "type": "integer"
+        },
+        "sites_by_basis": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "description": "C4c: sites with a range, per basis",
+          "propertyNames": {
+            "enum": [
+              "complete",
+              "includes_estimate",
+              "partial"
+            ]
+          },
+          "title": "Sites By Basis",
+          "type": "object"
         },
         "sites_with_range": {
           "description": "of them, with a headline_range",
@@ -2342,7 +2400,11 @@
         "with_likely",
         "with_possible",
         "cheapest_site_id",
-        "cheapest_basis"
+        "cheapest_basis",
+        "basis",
+        "sites_by_basis",
+        "partial_site_count",
+        "implicit"
       ],
       "title": "QuoteOption",
       "type": "object"
@@ -2951,7 +3013,8 @@
               "price.group_consistently_higher",
               "price.group_consistently_lower",
               "price.flat_visit_rate",
-              "price.several_rates_same_doctors"
+              "price.several_rates_same_doctors",
+              "price.anesthesia_typical_time"
             ],
             "type": "string"
           },
@@ -3255,10 +3318,12 @@
           ]
         },
         "hours_label": {
+          "description": "site_page_hours (C4c): hours read from the site's own web page (site facts, agreed by two independent reads or reviewed by Austin)",
           "enum": [
             "live_by_operator",
             "posted_hours",
             "may_close_early",
+            "site_page_hours",
             "unknown"
           ],
           "title": "Hours Label",
@@ -3495,6 +3560,12 @@
           "title": "Flat Visit Rate",
           "type": "boolean"
         },
+        "from_only": {
+          "default": false,
+          "description": "C4c: 'from $low': the hospital's bill is priced, the doctor's bill has no number (no public source / not published). Still counted in `missing`, never in the ranking figure",
+          "title": "From Only",
+          "type": "boolean"
+        },
         "high": {
           "anyOf": [
             {
@@ -3605,7 +3676,8 @@
         "missing",
         "line_ids",
         "elsewhere",
-        "flat_visit_rate"
+        "flat_visit_rate",
+        "from_only"
       ],
       "title": "StepSummary",
       "type": "object"

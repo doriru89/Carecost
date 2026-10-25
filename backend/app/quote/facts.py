@@ -26,6 +26,8 @@ class SiteFacts:
     """site id -> {(path id, step id): "offered" | "not_offered"} (evidence only)."""
 
     steps: dict[str, dict[tuple[str, str], str]] = field(default_factory=dict)
+    hours: dict[str, dict] = field(default_factory=dict)
+    """C4c: site id -> {weekly: [{days, opens, closes}], url, checked_at} (evidence claims only)."""
 
     def step(self, site_id: str, path_id: str, step_id: str) -> str | None:
         return self.steps.get(site_id, {}).get((path_id, step_id))
@@ -63,4 +65,30 @@ def load_site_facts(root: Path = FACTS_DIR) -> SiteFacts:
                 # "offered" by any capability wins over another capability's "not_offered"
                 if steps.get(key) != "offered":
                     steps[key] = value
-    return SiteFacts(out)
+    hours: dict[str, dict] = {}
+    for sid, rec in (facts.get("sites") or {}).items():
+        h = (rec or {}).get("hours") or {}
+        if h.get("status") not in EVIDENCE or not isinstance(h.get("value"), list):
+            continue
+        weekly = []
+        for span in h["value"]:
+            if not isinstance(span, dict) or not span.get("days"):
+                continue
+            o, c = _hhmm(span.get("open")), _hhmm(span.get("close"))
+            if o and c:
+                weekly.append({"days": list(span["days"]), "opens": o, "closes": c})
+        ev = (h.get("evidence") or [{}])[0]
+        if weekly and ev.get("url"):
+            hours[sid] = {"weekly": weekly, "url": ev["url"],
+                          "checked_at": str(ev.get("fetched_at", ""))[:10]}  # fmt: skip
+    return SiteFacts(out, hours)
+
+
+def _hhmm(v: object) -> str | None:
+    """'07:20' -> '07:20'. Unquoted 07:20 in YAML 1.1 is a base-60 integer (440): read it back."""
+    if isinstance(v, int) and 0 <= v <= 24 * 60:
+        return f"{v // 60:02d}:{v % 60:02d}"
+    if isinstance(v, str) and len(v) in (4, 5) and ":" in v:
+        h, m = v.split(":")
+        return f"{int(h):02d}:{m}" if h.isdigit() and m.isdigit() else None
+    return None

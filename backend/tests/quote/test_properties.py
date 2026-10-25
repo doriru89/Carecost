@@ -189,8 +189,10 @@ def test_i7_missing_data_never_makes_a_site_look_cheaper(store, registry, quotes
             req.model_copy(update={"site_ids": [site_id], "near": None}), AS_OF).sites)  # fmt: skip
         st_b = next(st for st in before.steps if st.step_id == ln.step_id)
         st_a = next(st for st in after.steps if st.step_id == ln.step_id)
-        if st_b.figure == "none":
-            continue  # the step was already without a figure: nothing to lose
+        if st_b.figure == "none" or st_b.from_only:
+            # the step was already without a (full) figure: nothing to lose. C4c: a 'from $X'
+            # step (doctor's bill without a number) already counts in missing, never in rank
+            continue
         if after.headline.missing > before.headline.missing:
             checked += 1
             continue

@@ -301,7 +301,10 @@ def test_visit_facility_fee_g0463_is_not_loaded_without_opps(engine, store, regi
                                if m.source_kind != "medicare_opps"})  # fmt: skip
     r = _quote(Engine(bare, registry), {"kind": "medicare"}, sites=[BWH])
     ln = _line(r, BWH, "visit_facility")
-    assert ln.cell.kind == "not_loaded" and "G0463" in ln.cell.what
+    # C4c (Austin: no "facility fee" words on the surface): the gap's text is plain; the code
+    # the number was looked up under stays on the line
+    assert ln.cell.kind == "not_loaded" and "hospital" in ln.cell.what
+    assert "facility fee" not in ln.cell.what and "G0463" not in ln.cell.what
 
 
 def test_freshness_is_computed_per_request(engine):

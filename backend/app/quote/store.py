@@ -529,7 +529,16 @@ def load_pack(
         want = sorted({inv[t] for t in tins if t in inv})
         db.execute("create temp table want (tin integer primary key)")
         db.executemany("insert into temp.want values (?)", [(t,) for t in want])
-        sql += f" where source_kind != {tic} or tin in (select tin from temp.want)"
+        # C4c: anesthesia rows (008xx / 01xxx) of every group: an anesthesia group is rarely a
+        # site's own TIN, and its per-unit rate is what the anesthesia estimate is built from
+        anes = sorted(
+            i for v, i in inv.items() if len(v) == 5 and v.isdigit() and v[:2] in ("00", "01")
+        )
+        anes_in = ",".join(str(i) for i in anes) or "-1"
+        sql += (
+            f" where source_kind != {tic} or tin in (select tin from temp.want)"
+            f" or code in ({anes_in})"
+        )
     db.row_factory = None
     rows: list[Row] = []
     ip = ROW_COLUMNS.index("payer_id")
