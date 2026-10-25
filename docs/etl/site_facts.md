@@ -129,11 +129,12 @@ more, the decision is listed as stale instead of applied.
 ## State after the S0 pilot (2026-10-25)
 
 - `pages.yaml`: an own page for **98 / 208** sites (urgent care 49/65, hospital outpatient 26/40,
-  specialist office 21/97, ASC 2/6). Sources: census website column 55, operators' sitemaps 24
+  specialist office 21/97, ASC 2/6). Sources: census website column 55, operators' sitemaps 22
   (unchecked matches; check them before trusting), hand-checked 13, web search 8 (23 searches
   used). Every other site has a `no_own_page` reason; 8 are census address clusters
-  ("Clinicians at ...") with no single operator; 13 were searched and only third-party listings
-  exist. The rest were not searched yet; their reason says so.
+  ("Clinicians at ...") with no single operator; 16 were searched and only third-party listings
+  exist; 3 finder matches were rejected by hand. The other 83 were not searched yet ("not found
+  yet").
 - Cache: 170 URLs fetched for those 98 sites, 166 ok, 4 manual (codman.org robots disallow;
   tuftsmedicalcenter.org redirects to another domain; franciscanchildrens.org serves an
   incomplete TLS chain; one thin Carbon Health page). No 403/429 or bot-check page was hit.
