@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "doc": "Q0 red flags. Any match stops the price flow. Dispositions are a 4-step ladder borrowed in shape (not content) from nurse-triage protocols. NHS pages are UK; their 'call 999 / go to A&E / urgent GP / 111' advice is mapped to US settings by us (mapping_note) and needs a US clinician's confirmation. Free-text patterns are a backstop for the chat; the checklist is the primary screen. v0.2.0: adversarial phrase set (data/redflags/adversarial.json) drives the free-text patterns; term syntax ('~N' proximity, '*' prefix, '|' alternatives, '!' never negated) is documented in backend/app/care_paths/redflags.py. crisis_988 has the same rank as call_911; on a tie call_911 wins because it is listed first (see crisis_988 rank_note).",
   "review": {
     "status": "pending_austin",
@@ -241,6 +241,87 @@
             "出冷汗",
             "冒冷汗"
           ]
+        ],
+        [
+          [
+            "left arm",
+            "both arms",
+            "both my arms",
+            "左臂",
+            "左手臂",
+            "左胳膊",
+            "两条胳膊",
+            "双臂"
+          ],
+          [
+            "jaw",
+            "neck",
+            "back",
+            "下巴",
+            "下颌",
+            "脖子",
+            "后背",
+            "背部",
+            "背疼",
+            "背痛"
+          ]
+        ],
+        [
+          [
+            "arm ~3 numb|numbness|tingl*|heavy|heaviness",
+            "numb|heavy ~3 arm",
+            "胳膊 ~3 麻",
+            "手臂 ~3 麻",
+            "左臂 ~3 麻"
+          ],
+          [
+            "sweat*",
+            "clammy",
+            "nause*",
+            "cold sweat",
+            "sick to my stomach",
+            "throw* up",
+            "出汗",
+            "冷汗",
+            "恶心",
+            "想吐"
+          ]
+        ],
+        [
+          [
+            "burn* ~4 chest",
+            "chest ~3 burn*|on fire",
+            "烧心",
+            "胸口 ~3 烧|灼"
+          ],
+          [
+            "left arm",
+            "both arms",
+            "jaw",
+            "neck",
+            "sweat*",
+            "clammy",
+            "cold sweat",
+            "short of breath",
+            "shortness of breath",
+            "cant breathe",
+            "hard to breathe",
+            "lightheaded",
+            "light headed",
+            "dizzy",
+            "faint*",
+            "左臂",
+            "左胳膊",
+            "左手臂",
+            "下巴",
+            "出冷汗",
+            "冒冷汗",
+            "出汗",
+            "气短",
+            "喘不上气",
+            "喘不过气",
+            "头晕"
+          ]
         ]
       ],
       "sources": [
@@ -248,7 +329,7 @@
         "medlineplus_heart_attack",
         "medlineplus_gerd"
       ],
-      "mapping_note": "NHS 'call 999' -> US 911. MedlinePlus says call 911 even when unsure it is a heart attack."
+      "mapping_note": "NHS 'call 999' -> US 911. MedlinePlus says call 911 even when unsure it is a heart attack. v0.3.0: left/both arm + jaw/neck/back, or numb/heavy arm + sweating/nausea, also fire without the word chest (MedlinePlus heart attack: pain in one or both arms, the back, neck, jaw). D31 (Austin): burning in the chest alone stays on the GI path; burning + arm/jaw/neck, sweating, breathlessness or dizziness escalates here. Nausea is not a companion, so 'heartburn and nausea' stays on GI."
     },
     {
       "id": "rf_chest_pain_alone",
@@ -265,7 +346,7 @@
         [
           [
             "chest ~4 hurt*|hurst|pain*|pian|ache|aches|aching|achy|tight*|pressure|heavy|heaviness|squeez*|crush*|killing|sore|discomfort|weight|pounding",
-            "clutch*|grabbing|holding|hurt*|hurst|pain*|pian|ache|aching|tight|tightness|pressure|heaviness|heavy feeling|squeez*|crush*|discomfort|weight|sitting ~3 chest",
+            "clutch*|grabbing|holding|hurt*|hurst|pain*|pian|ache|aching|tight|tightness|pressure|heaviness|heavy feeling|squeez*|crush*|discomfort|weight|sitting ~4 chest",
             "heart ~3 hurt*|pain*|ache*|aching",
             "pain* ~3 heart",
             "heart attack",
@@ -448,7 +529,7 @@
             "sudden* ~3 numb|numbness|weak|weakness|paraly*|confus*|blind",
             "one side ~4 numb|numbness|weak|weakness|paraly*|droop*|limp",
             "numb|numbness|weak|weakness|paraly* ~4 one side|half of my body|half my body",
-            "left side|right side ~3 numb|numbness|weak|weakness|paraly*",
+            "left side|right side ~5 numb|numbness|weak|weakness|paraly*|droop*",
             "stroke",
             "lost vision in one eye|cant see out of one eye|suddenly cant see",
             "嘴歪|口歪|脸歪|口角歪|口齿不清|说话不清|说话含糊|说不出话|讲不出话|中风|脑梗|脑卒中|脑溢血|脑出血|突然看不见",
@@ -459,13 +540,29 @@
             "words ~3 jumbled|garbled|wrong|slurred|mixed up",
             "numb and weak|weak and numb"
           ]
+        ],
+        [
+          [
+            "left|right ~2 arm|leg|hand|foot|side|face",
+            "左边|右边|左手|右手|左腿|右腿|左胳膊|右胳膊|左侧|右侧|半边|左脸|右脸"
+          ],
+          [
+            "cant move|cant lift|cant feel|no strength|numb|numbness|weak|weakness|paraly*|went dead",
+            "没力气|没力|无力|动不了|不能动|麻|没知觉|没感觉|抬不起来"
+          ],
+          [
+            "sudden*",
+            "all of a sudden",
+            "out of nowhere",
+            "突然"
+          ]
         ]
       ],
       "sources": [
         "medlineplus_stroke",
         "nhs_stroke_symptoms"
       ],
-      "mapping_note": "MedlinePlus: if you think someone is having a stroke, call 911 right away. NHS FAST (face, arms, speech, time to call 999)."
+      "mapping_note": "MedlinePlus: if you think someone is having a stroke, call 911 right away. NHS FAST (face, arms, speech, time to call 999). v0.3.0: one side (left/right arm, leg, hand, face) + weakness/numbness + sudden -> 911; without 'sudden' a one-sided limb stays off this flag so post-surgery or rotator-cuff weakness is not routed to 911."
     },
     {
       "id": "rf_thunderclap_headache",
@@ -560,6 +657,182 @@
         "medlineplus_seizures"
       ],
       "mapping_note": "NHS fainting: call 999 if someone is not breathing or cannot be woken within 1 minute. MedlinePlus: a seizure over 5 minutes is an emergency; we do not ask how long."
+    },
+    {
+      "id": "rf_head_injury_serious",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Hit their head and now confused, hard to keep awake, passed out, or having a seizure",
+        "zh": "头部受伤后意识模糊、昏昏欲睡、晕倒或抽搐"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "head ~3 hit|hits|banged|bumped|struck|smacked|injury|injured|trauma",
+            "hit|banged|bumped|struck|smacked ~3 head",
+            "fell ~4 head",
+            "concussion",
+            "头 ~3 撞|磕|摔|碰|受伤",
+            "撞|磕|摔|碰 ~2 头",
+            "头部受伤",
+            "脑震荡"
+          ],
+          [
+            "confus*",
+            "not making sense",
+            "passed out",
+            "pass out",
+            "knocked out",
+            "blacked out",
+            "black out",
+            "cant stay awake",
+            "drowsy",
+            "wont wake",
+            "unconscious",
+            "seizure*",
+            "slurr*",
+            "numb",
+            "weak",
+            "迷糊",
+            "糊涂",
+            "意识不清",
+            "晕倒",
+            "晕过去",
+            "昏过去",
+            "昏迷",
+            "犯困",
+            "叫不醒",
+            "抽搐",
+            "说话不清"
+          ]
+        ],
+        [
+          [
+            "knocked out"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_head_injury"
+      ],
+      "mapping_note": "NHS head injury: call 999 if knocked out and not woken, cannot stay awake, a fit, or problems with understanding or speaking. Mapped to US 911."
+    },
+    {
+      "id": "rf_head_injury_vomiting",
+      "areas": [
+        "global"
+      ],
+      "disposition": "er_today",
+      "checklist": {
+        "en": "Hit their head and keep vomiting",
+        "zh": "头部受伤后反复呕吐"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "head ~3 hit|hits|banged|bumped|struck|smacked|injury|injured|trauma",
+            "hit|banged|bumped|struck|smacked ~3 head",
+            "fell ~4 head",
+            "concussion",
+            "头 ~3 撞|磕|摔|碰|受伤",
+            "撞|磕|摔|碰 ~2 头",
+            "头部受伤",
+            "脑震荡"
+          ],
+          [
+            "vomit*",
+            "throw* up",
+            "threw up",
+            "being sick",
+            "吐"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_head_injury"
+      ],
+      "mapping_note": "[断言] NHS says 111 (urgent advice) for vomiting after a head injury, which our ladder would map to 'seen today'. We escalate to 'ER now' on purpose (fail toward escalation: vomiting after a head injury can mean bleeding). Austin + clinician to confirm."
+    },
+    {
+      "id": "rf_palpitations_faint",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "Racing or pounding heart with feeling faint, dizzy, or passing out",
+        "zh": "心跳很快或心慌，同时头晕、快晕倒或晕倒"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "heart ~3 racing|races|pounding|fluttering|beating fast|irregular|skipping",
+            "racing heart|pounding heart|palpitation*",
+            "心慌",
+            "心悸",
+            "心跳 ~3 很快|好快|加速|乱|不规律|特别快"
+          ],
+          [
+            "faint*",
+            "dizzy",
+            "lightheaded",
+            "light headed",
+            "passed out",
+            "pass out",
+            "passing out",
+            "black out",
+            "blacked out",
+            "头晕",
+            "晕",
+            "发黑"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_fainting",
+        "medlineplus_heart_attack"
+      ],
+      "mapping_note": "NHS fainting: call 999 if someone has a pounding, fluttering or irregular heartbeat. MedlinePlus lists palpitations and lightheadedness with heart attack. Mapped to US 911."
+    },
+    {
+      "id": "rf_child_limp",
+      "areas": [
+        "global"
+      ],
+      "disposition": "call_911",
+      "checklist": {
+        "en": "A baby or child who is limp, floppy, or very hard to wake",
+        "zh": "宝宝或孩子软绵绵、没反应或很难叫醒"
+      },
+      "in_checklist": false,
+      "patterns": [
+        [
+          [
+            "baby|babys|infant|newborn|toddler|child|childs|kid|kids|son|daughter",
+            "宝宝|婴儿|孩子|小孩|儿子|女儿|新生儿"
+          ],
+          [
+            "is limp|went limp|gone limp|limp and|is floppy|floppy",
+            "hard to wake|difficult to wake|wont wake|cant wake|not waking",
+            "not responding|unresponsive",
+            "软绵绵",
+            "很难叫醒",
+            "叫不醒",
+            "没反应"
+          ]
+        ]
+      ],
+      "sources": [
+        "nhs_sepsis",
+        "nhs_fainting"
+      ],
+      "mapping_note": "NHS sepsis: call 999 or go to A&E if a baby or child is not responding like they normally do or is difficult to wake. 'Limp / floppy' is our reading of 'not responding like they normally do' [断言]. With or without fever."
     },
     {
       "id": "rf_allergic_airway",

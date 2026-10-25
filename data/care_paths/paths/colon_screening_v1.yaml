@@ -36,6 +36,10 @@ red_flags:
 - rf_stroke
 - rf_thunderclap_headache
 - rf_unresponsive_seizure
+- rf_head_injury_serious
+- rf_head_injury_vomiting
+- rf_palpitations_faint
+- rf_child_limp
 - rf_allergic_airway
 - rf_non_blanching_rash
 - rf_gi_bleed_heavy

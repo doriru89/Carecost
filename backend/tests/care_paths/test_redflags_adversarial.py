@@ -71,7 +71,7 @@ def test_phrase_set_shape():
         "typo",
         "mixed",
     } <= cats
-    assert {"crisis_direct", "crisis_indirect", "verified_miss"} <= cats
+    assert {"crisis_direct", "crisis_indirect", "verified_miss", "main_probe"} <= cats
     assert {c["lang"] for c in ADV} == {"en", "zh", "mixed"}
     assert len(ADV) >= 200 and len(HOLD) >= 150
 
@@ -91,6 +91,11 @@ def test_every_free_text_flag_fires_somewhere(bundle):
         "rf_unresponsive_seizure",
         "rf_chest_pain_alone",
         "rf_cauda_equina",
+        "rf_head_injury_serious",
+        "rf_head_injury_vomiting",
+        "rf_palpitations_faint",
+        "rf_child_limp",
+        "rf_cardiac",
     }
     assert new <= fired, new - fired
 
@@ -253,3 +258,24 @@ def test_unknown_llm_values_are_ignored_and_logged(bundle, bad, caplog):
 def test_unknown_llm_value_cannot_clear_a_code_flag(bundle):
     code = _code(bundle, "my chest hurts")
     assert R.combine(code, "clear", bundle.redflags).disposition == "call_911"
+
+
+# --------------------------------------------------------------------------- policy D31
+
+
+@pytest.mark.parametrize(
+    ("text", "fires"),
+    [
+        ("burning in my chest", False),
+        ("my chest is on fire after eating", False),
+        ("烧心", False),
+        ("heartburn and nausea after dinner", False),
+        ("burning in my chest and my left arm hurts", True),
+        ("burning chest with sweating and short of breath", True),
+    ],
+)
+def test_d31_burning_chest_stays_gi_unless_combined(bundle, text, fires):
+    """Austin D31: burning in the chest alone stays on the GI path; with cardiac companions it is
+    call_911."""
+    r = R.screen_text(text, bundle.redflags)
+    assert (r.disposition == "call_911") is fires and (fires or r.disposition is None), (text, r)

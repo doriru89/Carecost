@@ -1407,6 +1407,425 @@
    "lang": "zh",
    "text": "这些表格让我头大",
    "expect": null
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "theres an elephant sitting on my chest",
+   "expect": "call_911"
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "my left arm is numb and my jaw hurts",
+   "expect": "call_911"
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "i cant catch my breath walking to the car",
+   "expect": "call_911"
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "my face is drooping on one side",
+   "expect": "call_911"
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "my words are coming out wrong suddenly",
+   "expect": "call_911"
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "i swallowed a whole bottle of tylenol",
+   "expect": "call_911"
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "she passed out and wont wake up",
+   "expect": "call_911"
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "im throwing up blood",
+   "expect": "call_911"
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "i have been thinking about ending my life",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "main_probe",
+   "lang": "zh",
+   "text": "我不想活了",
+   "expect": "crisis_988"
+  },
+  {
+   "category": "main_probe",
+   "lang": "zh",
+   "text": "胸口像压了块石头",
+   "expect": "call_911"
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "lost control of my bladder and my back is killing me",
+   "expect": "er_today"
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "my shoulder makes a clicking sound when i rotate my arm",
+   "expect": null
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "i have a mole that changed color",
+   "expect": null
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "how much is a colonoscopy with blue cross",
+   "expect": null
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "acne on my back for months",
+   "expect": null
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "my knee hurts after running",
+   "expect": null
+  },
+  {
+   "category": "main_probe",
+   "lang": "en",
+   "text": "heartburn after spicy food",
+   "expect": null
+  },
+  {
+   "category": "cardiac_referred",
+   "lang": "en",
+   "text": "pain in my left arm and neck",
+   "expect": "call_911"
+  },
+  {
+   "category": "cardiac_referred",
+   "lang": "en",
+   "text": "both arms ache and my jaw hurts",
+   "expect": "call_911"
+  },
+  {
+   "category": "cardiac_referred",
+   "lang": "en",
+   "text": "left arm pain going into my back",
+   "expect": "call_911"
+  },
+  {
+   "category": "cardiac_referred",
+   "lang": "en",
+   "text": "my arm is numb and im sweating",
+   "expect": "call_911"
+  },
+  {
+   "category": "cardiac_referred",
+   "lang": "en",
+   "text": "arm feels heavy and numb and i feel nauseous",
+   "expect": "call_911"
+  },
+  {
+   "category": "cardiac_referred",
+   "lang": "zh",
+   "text": "左胳膊麻，下巴也疼",
+   "expect": "call_911"
+  },
+  {
+   "category": "cardiac_referred",
+   "lang": "zh",
+   "text": "左臂疼到脖子",
+   "expect": "call_911"
+  },
+  {
+   "category": "cardiac_referred",
+   "lang": "zh",
+   "text": "手臂发麻还出冷汗",
+   "expect": "call_911"
+  },
+  {
+   "category": "one_sided",
+   "lang": "en",
+   "text": "left side of my body went numb",
+   "expect": "call_911"
+  },
+  {
+   "category": "one_sided",
+   "lang": "en",
+   "text": "can't move my right arm suddenly",
+   "expect": "call_911"
+  },
+  {
+   "category": "one_sided",
+   "lang": "en",
+   "text": "all of a sudden my left leg is weak",
+   "expect": "call_911"
+  },
+  {
+   "category": "one_sided",
+   "lang": "en",
+   "text": "right side of my face and arm went numb",
+   "expect": "call_911"
+  },
+  {
+   "category": "one_sided",
+   "lang": "zh",
+   "text": "左边身体突然动不了",
+   "expect": "call_911"
+  },
+  {
+   "category": "one_sided",
+   "lang": "zh",
+   "text": "右手突然没力气",
+   "expect": "call_911"
+  },
+  {
+   "category": "head_injury",
+   "lang": "en",
+   "text": "head hit the floor and now hes confused",
+   "expect": "call_911"
+  },
+  {
+   "category": "head_injury",
+   "lang": "en",
+   "text": "she hit her head and passed out",
+   "expect": "call_911"
+  },
+  {
+   "category": "head_injury",
+   "lang": "en",
+   "text": "banged my head and cant stay awake",
+   "expect": "call_911"
+  },
+  {
+   "category": "head_injury",
+   "lang": "zh",
+   "text": "孩子头撞了以后迷迷糊糊的",
+   "expect": "call_911"
+  },
+  {
+   "category": "head_injury",
+   "lang": "zh",
+   "text": "摔到头以后晕过去了",
+   "expect": "call_911"
+  },
+  {
+   "category": "head_injury",
+   "lang": "en",
+   "text": "hit my head yesterday and keep throwing up",
+   "expect": "er_today"
+  },
+  {
+   "category": "head_injury",
+   "lang": "zh",
+   "text": "头撞了以后一直吐",
+   "expect": "er_today"
+  },
+  {
+   "category": "palpitations",
+   "lang": "en",
+   "text": "heart is racing and i feel faint",
+   "expect": "call_911"
+  },
+  {
+   "category": "palpitations",
+   "lang": "en",
+   "text": "my heart is pounding and im dizzy",
+   "expect": "call_911"
+  },
+  {
+   "category": "palpitations",
+   "lang": "en",
+   "text": "heart racing and i almost passed out",
+   "expect": "call_911"
+  },
+  {
+   "category": "palpitations",
+   "lang": "zh",
+   "text": "心慌头晕，快晕倒了",
+   "expect": "call_911"
+  },
+  {
+   "category": "palpitations",
+   "lang": "zh",
+   "text": "心跳很快，眼前发黑",
+   "expect": "call_911"
+  },
+  {
+   "category": "child_limp",
+   "lang": "en",
+   "text": "my baby is limp",
+   "expect": "call_911"
+  },
+  {
+   "category": "child_limp",
+   "lang": "en",
+   "text": "my baby is floppy and has a fever",
+   "expect": "call_911"
+  },
+  {
+   "category": "child_limp",
+   "lang": "en",
+   "text": "toddler is very hard to wake",
+   "expect": "call_911"
+  },
+  {
+   "category": "child_limp",
+   "lang": "en",
+   "text": "my infant is not responding like usual",
+   "expect": "call_911"
+  },
+  {
+   "category": "child_limp",
+   "lang": "zh",
+   "text": "宝宝软绵绵的叫不醒",
+   "expect": "call_911"
+  },
+  {
+   "category": "child_limp",
+   "lang": "zh",
+   "text": "孩子发烧，很难叫醒",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "pain in my shoulder and chest",
+   "expect": "call_911"
+  },
+  {
+   "category": "chest",
+   "lang": "en",
+   "text": "pain across my upper chest",
+   "expect": "call_911"
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "my daughter has a limp after soccer",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "my son is limping after practice",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "hit my head on a cabinet, small bump, feel fine",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "pain in my shoulder when i bench",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "my heart races when i drink coffee",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "my knee and shoulder hurt",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "shoulder pain spreading to my upper arm",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "my left arm is sore after the vaccine",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "back and shoulder pain from my desk job",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "pain in my shoulder and upper back",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "en",
+   "text": "right arm weak after shoulder surgery",
+   "expect": null
+  },
+  {
+   "category": "msk",
+   "lang": "zh",
+   "text": "左肩膀疼，胳膊抬不起来",
+   "expect": null
+  },
+  {
+   "category": "policy_gi_heartburn",
+   "lang": "en",
+   "text": "burning in my chest",
+   "expect": null,
+   "note": "D31"
+  },
+  {
+   "category": "policy_gi_heartburn",
+   "lang": "en",
+   "text": "my chest is on fire after eating",
+   "expect": null,
+   "note": "D31"
+  },
+  {
+   "category": "policy_gi_heartburn",
+   "lang": "zh",
+   "text": "烧心",
+   "expect": null,
+   "note": "D31"
+  },
+  {
+   "category": "policy_gi_heartburn",
+   "lang": "en",
+   "text": "burning in my chest and my left arm hurts",
+   "expect": "call_911",
+   "note": "D31: burning alone stays GI; with arm / sweating / breathing it escalates"
+  },
+  {
+   "category": "policy_gi_heartburn",
+   "lang": "en",
+   "text": "burning chest with sweating and short of breath",
+   "expect": "call_911",
+   "note": "D31: burning alone stays GI; with arm / sweating / breathing it escalates"
   }
  ]
 }
