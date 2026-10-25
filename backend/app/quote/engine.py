@@ -117,6 +117,12 @@ def _lower_median(vals: list[float]) -> float:
     return v[(len(v) - 1) // 2]
 
 
+def yaml_load(path: Any) -> Any:
+    import yaml
+
+    return yaml.safe_load(path.read_text())
+
+
 def _slug(text: str) -> str:
     return "_".join(re.findall(r"[a-z0-9]+", text.lower()))[:60] or "chain"
 
@@ -243,6 +249,11 @@ class Engine:
         self.role_rule: dict[str, str] = cfg["tin_role_by_billing"]
         self.roles = load_roles(REPO_ROOT / cfg["tin_roles_file"])
         self.facts: SiteFacts = load_site_facts()
+        bdoc = REPO_ROOT / cfg["anesthesia_time_file"]
+        self.anes_base: dict[str, float] = {
+            str(k).zfill(5): float(v)
+            for k, v in ((yaml_load(bdoc) or {}).get("base_units") or {}).items()
+        } if bdoc.exists() else {}  # fmt: skip
         self.anes_time = self._load_anesthesia_time(
             REPO_ROOT / cfg["physician_time_file"], REPO_ROOT / cfg["anesthesia_time_file"]
         )
@@ -349,6 +360,14 @@ class Engine:
     def _billing(self, site: Site) -> str:
         """How the engine prices the site (P9: unknown -> hospital clinic, ASC site -> asc)."""
         return effective_billing(site, self.unknown_as)
+
+    def _pos(self, site: Site) -> frozenset[str]:
+        """Place-of-service codes a site's own professional rows must list. O F3a: an office reads
+        POS 11 rows only (a POS-20 urgent-care rate or a facility rate is not its price)."""
+        billing = self._billing(site)
+        if billing == "office_visit" and self._kind(site) == "office":
+            return self.pos["office_kind"]
+        return self.pos[billing]
 
     def _kind(self, site: Site) -> str:
         """X2: urgent care by site type, every other kind by the effective billing type."""
@@ -616,9 +635,13 @@ class Engine:
                                "conversion factor; not loaded yet)"), None  # fmt: skip
         return _not_loaded(f"{label}'s physician fee schedule (not loaded yet)"), None
 
-    def _group_rate(self, rows: list[Row]) -> tuple[Json, Json] | None:
+    def _group_rate(self, rows: list[Row], code: str = "") -> tuple[Json, Json] | None:
         dollars = [r for r in rows if r.amount is not None and r.negotiated_type != "percentage"]
-        money = self._money(dollars, lambda r: r.amount, PriceBasis.negotiated)
+        value: Callable[[Row], float | None] = lambda r: r.amount  # noqa: E731
+        method = None
+        if code_class(code) == "anesthesia":
+            dollars, value, method = self._anesthesia_units(dollars, code)
+        money = self._money(dollars, value, PriceBasis.negotiated, method)
         if money is None:
             return None
         names = {r.business_name for r in dollars}
@@ -630,11 +653,40 @@ class Engine:
             "group_name": next(iter(names)) if len(names) == 1 and names != {""} else None,
             "group_tin": f"{tin[:2]}-{tin[2:]}" if tin and len(tin) == 9 else None,
         }
-        by_npi = self._by_npi(dollars)
+        by_npi = self._by_npi(dollars) if method is None else None
         if by_npi:
             fee["by_npi"] = by_npi
             fee["npi_count"] = len(by_npi)
         return money, fee
+
+    def _anesthesia_units(self, rows: list[Row], code: str):
+        """O audit: MGB and Fallon list an anesthesia group's 008xx codes at one per-unit rate
+        (the same amount on codes with different CMS base units). Such a row is a conversion
+        factor, not a fee: for an anesthesia group it prices the base units (rate x base units,
+        method per_unit_x_base_units); for any other group (dermatology, health centers,
+        surgicalists at a $20-30 default) it is not a fee and is left out."""
+        bases = self.anes_base
+        mine = bases.get(code)
+        full, units = [], []
+        for r in rows:
+            twin = None
+            for other, b in bases.items():
+                if other == code or b == mine:
+                    continue
+                twin = next((x for x in self.store.tic.get((r.source_id, r.tin, other), ())
+                             if x.amount == r.amount), None)  # fmt: skip
+                if twin:
+                    break
+            if twin is None:
+                full.append(r)
+                continue
+            if self.store.recorder is not None:
+                self.store.recorder.add([twin])
+            if mine and "ANESTH" in r.business_name.upper():
+                units.append(r)
+        if full or not units:
+            return full, (lambda r: r.amount), None
+        return units, (lambda r: round(r.amount * mine, 2)), Method.per_unit_x_base_units
 
     def _by_npi(self, dollars: list[Row]) -> list[Json] | None:
         """D6: per doctor, when the NPIs of every priced provider group are known and prices
@@ -661,7 +713,7 @@ class Engine:
         """-> (cell, doctor_fee or None, codes shown on the line)."""
         billing = self._billing(site)
         setting = self.fs_setting[billing]
-        pos = self.pos[billing]
+        pos = self._pos(site)
         if q.kind == "cash":
             posted = q.posted.get(site.id)
             if not hospital_line and site.hospital_entity_id is None:
@@ -723,10 +775,10 @@ class Engine:
         got = None
         if rad:
             rows = self._tic_rows(q, rad, codes, mod, pos, "professional", any_pos=True)
-            got = self._group_rate(rows)
+            got = self._group_rate(rows, code)
         if got is None:
             rows = self._site_tic(q, site, codes, mod, pos, "professional", any_pos=(mod == "26"))
-            got = self._group_rate(rows)
+            got = self._group_rate(rows, code)
         if got:
             return got[0], got[1], codes
         src = self._site_hospital_source(site)
@@ -1015,7 +1067,8 @@ class Engine:
                     ln["cell"] = None
             cell = ln["cell"]
             if cell is not None and code_class(ln["codes"][0]) == "anesthesia" and (
-                self._fs_money(cell)
+                self._fs_money(cell) or (cell["kind"] == "money" and cell["prov"]["method"]
+                                         == Method.per_unit_x_base_units.value)
             ):  # fmt: skip
                 ln["price_notes"].append("price.anesthesia_base_units_only")
             if cell is not None and cell["kind"] == "money" and cell["prov"]["source_id"] in (
@@ -1217,7 +1270,7 @@ class Engine:
     def _group(r: Row) -> str:
         """X2: peers are counted by distinct billing group: the TiC billing TIN, or the file."""
         if r.source_kind == "insurer_tic":
-            return f"tin:{r.tin}"
+            return f"tin:{r.tin}@{r.source_id}"  # one group per TIN per network file
         if r.source_kind in FEE_SCHEDULE_KINDS:
             return f"fs:{r.source_id}"
         return f"file:{r.source_id}"
@@ -1247,7 +1300,7 @@ class Engine:
                       learn=[])  # fmt: skip
             out: dict[str, dict[tuple[str, str], list]] = {}
             for s in self.reg.sites.values():
-                if s.listing_status == "registry_only" or s.children_only:
+                if s.listing_status == "registry_only":
                     continue
                 per: dict[tuple[str, str], list] = {}
                 for ln in self._site_lines(s, [it], q):
@@ -1259,13 +1312,16 @@ class Engine:
             self._stats[key] = out
         return self._stats[key]
 
-    def _peers(self, site: Site, code: str, comp: str, pmod: str, q: Req, *,
-               estimate: bool) -> tuple[list[tuple[float, Any]], str]:  # fmt: skip
+    def _peers(self, site: Site, code: str, comp: str, pmod: str, q: Req, *, estimate: bool,
+               network: str | None = None) -> tuple[list[tuple[float, Any]], str]:  # fmt: skip
         """X2 peer set for one line at one site: same code, modifier, component, payer and plan
         product (the request's network files), sites of the same kind (and billing type, unless
         engine.yaml turns it off) that offer the code; one value per distinct billing group (the
         group's lower-median row), the site's own groups left out. ``estimate``: fee-schedule
-        groups are left out and one source kind is kept (a Money cites one kind)."""
+        groups are left out and one source kind is kept (a Money cites one kind). ``network``
+        (O audit): only rows of that network file (``hospital_file`` for hospital files), so
+        networks of one payer with different price levels are never pooled. A children-only site
+        is its own peer kind (O F4)."""
         stats = self._line_stats(code, q)
         mine = {g for _, g, _ in stats.get(site.id, {}).get((comp, pmod), [])}
         kind, bill = self._kind(site), self._billing(site)
@@ -1277,7 +1333,11 @@ class Engine:
             s = self.reg.sites[sid]
             if self._kind(s) != kind or (same_bill and self._billing(s) != bill):
                 continue
+            if s.children_only != site.children_only:
+                continue
             ents = stats[sid].get((comp, pmod))
+            if ents and network is not None:
+                ents = [e for e in ents if self._net(e[2]) == network]
             if ents and self.offers_code(s, code):
                 cands.append((s, ents))
 
@@ -1310,6 +1370,13 @@ class Engine:
         return sorted(vals, key=lambda t: (t[0], self._ref_id(t[1]))), scope
 
     @staticmethod
+    def _net(ref: Any) -> str:
+        """The network a price belongs to: its TiC file, or the hospital file / posted page."""
+        if isinstance(ref, Row):
+            return ref.source_id if ref.source_kind == "insurer_tic" else "hospital_file"
+        return "posted"
+
+    @staticmethod
     def _ref_kind(ref: Any) -> str:
         return ref.source_kind if isinstance(ref, Row) else ref["source_kind"]
 
@@ -1328,39 +1395,51 @@ class Engine:
         return p
 
     def _gate(self, site: Site, ln: Json, q: Req) -> None:
-        """P8: rows outside [low, high] x the peer median are set aside (cited, never summed);
-        every row outside -> the whole line is unusual."""
+        """P8: each row is compared with the peer median of its own network (O audit: never a
+        pooled median); rows outside [low, high] x that median are set aside (cited, never
+        summed); every row outside -> the whole line is unusual."""
         cell = ln["cell"]
         if cell is None or cell["kind"] != "money" or cell["basis"] in ("fee_schedule", "estimate"):
             return
         if ln["at"] != "this_site" or not self._entries(ln):
             return
-        peers, _ = self._peers(site, ln["codes"][0], ln["component"], self._pmod(ln), q,
-                               estimate=False)  # fmt: skip
-        if len(peers) < self.out_cfg["min_groups"]:
-            return
-        med = _lower_median([v for v, _ in peers])
-        if med <= 0:
-            return
-        lo, hi = float(self.out_cfg["low"]) * med, float(self.out_cfg["high"]) * med
+        lo_x, hi_x = float(self.out_cfg["low"]), float(self.out_cfg["high"])
+        meds: dict[str, tuple[float, int] | None] = {}
+
+        def median_for(net: str) -> tuple[float, int] | None:
+            if net not in meds:
+                peers, _ = self._peers(site, ln["codes"][0], ln["component"], self._pmod(ln), q,
+                                       estimate=False, network=net)  # fmt: skip
+                m = _lower_median([v for v, _ in peers]) if peers else 0.0
+                ok = len(peers) >= self.out_cfg["min_groups"] and m > 0
+                meds[net] = (m, len(peers)) if ok else None
+            return meds[net]
+
         if "_posted" in cell:
-            v = cell["_posted"][0]
-            if not lo <= v <= hi:
-                ln["unusual"] = {"peer_median": med, "n_groups": len(peers), "whole_line": True,
+            v, _, ref = cell["_posted"]
+            got = median_for(self._net(ref))
+            if got and not lo_x * got[0] <= v <= hi_x * got[0]:
+                ln["unusual"] = {"peer_median": got[0], "n_groups": got[1], "whole_line": True,
                                  "set_aside": []}  # fmt: skip
             return
         rows, value, basis, method = cell["_m"]
-        kept = [r for v, r in rows if lo <= v <= hi]
-        if len(kept) == len(rows):
+        kept, out, first = [], [], None
+        for v, r in rows:
+            got = median_for(self._net(r))
+            if got and not lo_x * got[0] <= v <= hi_x * got[0]:
+                out.append(r)
+                first = first or got
+            else:
+                kept.append(r)
+        if not out:
             return
         if not kept:
-            ln["unusual"] = {"peer_median": med, "n_groups": len(peers), "whole_line": True,
+            ln["unusual"] = {"peer_median": first[0], "n_groups": first[1], "whole_line": True,
                              "set_aside": []}  # fmt: skip
             return
-        out = [r for v, r in rows if not lo <= v <= hi]
         ln["cell"] = self._money(kept, value, basis, method)
         ln["unusual"] = {
-            "peer_median": med, "n_groups": len(peers), "whole_line": False,
+            "peer_median": first[0], "n_groups": first[1], "whole_line": False,
             "set_aside": [self._money(out, value, basis, method)],
         }  # fmt: skip
 
@@ -1377,14 +1456,32 @@ class Engine:
         reference = cell["kind"] == "money" and fee is not None and (fee["rung"] or 0) >= 7
         if cell["kind"] not in NO_NUMBER and not reference:
             return
-        peers, scope = self._peers(site, ln["codes"][0], ln["component"], self._pmod(ln), q,
-                                   estimate=True)  # fmt: skip
-        n = len(peers)
-        if n < self.peer_cfg["min_groups"]:
+        # O audit: per network, never pooled. Each network with >= min_groups groups gives its
+        # p25-p75; with no network named, the estimate spans them (low = the lowest p25, high = the
+        # highest p75, median = the median of the network medians), so a plan that pays a third
+        # of another never hides inside a pooled median. Insurer files first; a hospital-file
+        # range only when no insurer network has enough groups (one source kind per Money).
+        nets: list[str | None] = [*q.networks, "hospital_file"] if q.kind == "insurance" else [None]
+        per: list[tuple[tuple, tuple, float, int, str]] = []
+        for net in nets:
+            peers, scope = self._peers(site, ln["codes"][0], ln["component"], self._pmod(ln), q,
+                                       estimate=True, network=net)  # fmt: skip
+            n = len(peers)
+            if n < self.peer_cfg["min_groups"]:
+                continue
+            per.append((peers[_rank_pos(n, self.peer_cfg["low_percentile"])],
+                        peers[_rank_pos(n, self.peer_cfg["high_percentile"])],
+                        peers[(n - 1) // 2][0], n, scope))  # fmt: skip
+        if any(self._net(p[0][1]) != "hospital_file" for p in per):
+            per = [p for p in per if self._net(p[0][1]) != "hospital_file"]
+        kinds = {self._ref_kind(p[0][1]) for p in per} | {self._ref_kind(p[1][1]) for p in per}
+        if not per or len(kinds) > 1:
             return
-        lo = peers[_rank_pos(n, self.peer_cfg["low_percentile"])]
-        hi = peers[_rank_pos(n, self.peer_cfg["high_percentile"])]
-        med = peers[(n - 1) // 2][0]
+        lo = min((p[0] for p in per), key=lambda t: (t[0], self._ref_id(t[1])))
+        hi = max((p[1] for p in per), key=lambda t: (t[0], self._ref_id(t[1])))
+        med = _lower_median([p[2] for p in per])
+        n = sum(p[3] for p in per)
+        scope = per[0][4]
         money: Json = {"kind": "money", "low": lo[0], "high": hi[0], "basis": "estimate",
                        "prov": self._est_prov(lo[1], q)}  # fmt: skip
         if hi[0] > lo[0]:

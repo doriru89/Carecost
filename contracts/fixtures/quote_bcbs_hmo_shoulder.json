@@ -531,15 +531,15 @@
               "high": 161.35,
               "basis": "estimate",
               "prov": {
-                "source_id": "tic_bcbs_ma_hmo_blue_si",
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
                 "source_kind": "insurer_tic",
-                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_in-network-rates.json.gz",
-                "source_sha256": "261f02c8d69c2e468493f92bf2d3636b31355013db271b3c42271f720ac65f23",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
                 "source_date": "2026-10-01",
                 "method": "estimate_peer_range",
-                "row_ref": "tic_bcbs_ma_hmo_blue_si:261f02c8d69c:11516",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:11541",
                 "payer_id": "BCBS_MA",
-                "row_id": "5d667632c0276ae3:0"
+                "row_id": "57164bf99d339023:0"
               },
               "prov_high": {
                 "source_id": "tic_bcbs_ma_nemc_si",
@@ -550,7 +550,7 @@
                 "method": "estimate_peer_range",
                 "row_ref": "tic_bcbs_ma_nemc_si:ccefc7ab3ea3:11280",
                 "payer_id": "BCBS_MA",
-                "row_id": "597f3d786c26e1e4:0"
+                "row_id": "d7ca565f3b0d2fe5:0"
               }
             },
             "list_price": null,
@@ -573,7 +573,7 @@
               "low": 135.61,
               "high": 161.35,
               "median": 135.61,
-              "n_groups": 20,
+              "n_groups": 80,
               "kind": "urgent_care",
               "scope": "same_kind",
               "payer_id": "BCBS_MA"
@@ -609,15 +609,15 @@
               "high": 43.15,
               "basis": "estimate",
               "prov": {
-                "source_id": "tic_bcbs_ma_hmo_blue_si",
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
                 "source_kind": "insurer_tic",
-                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_in-network-rates.json.gz",
-                "source_sha256": "261f02c8d69c2e468493f92bf2d3636b31355013db271b3c42271f720ac65f23",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
                 "source_date": "2026-10-01",
                 "method": "estimate_peer_range",
-                "row_ref": "tic_bcbs_ma_hmo_blue_si:261f02c8d69c:8861",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:8875",
                 "payer_id": "BCBS_MA",
-                "row_id": "4d260238d8a7057a:0"
+                "row_id": "5f00de5851dfd296:0"
               },
               "prov_high": null
             },
@@ -650,7 +650,7 @@
               "low": 43.15,
               "high": 43.15,
               "median": 43.15,
-              "n_groups": 12,
+              "n_groups": 48,
               "kind": "urgent_care",
               "scope": "same_kind",
               "payer_id": "BCBS_MA"
@@ -4039,15 +4039,15 @@
               "high": 161.35,
               "basis": "estimate",
               "prov": {
-                "source_id": "tic_bcbs_ma_hmo_blue_si",
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
                 "source_kind": "insurer_tic",
-                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_in-network-rates.json.gz",
-                "source_sha256": "261f02c8d69c2e468493f92bf2d3636b31355013db271b3c42271f720ac65f23",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
                 "source_date": "2026-10-01",
                 "method": "estimate_peer_range",
-                "row_ref": "tic_bcbs_ma_hmo_blue_si:261f02c8d69c:11516",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:11541",
                 "payer_id": "BCBS_MA",
-                "row_id": "5d667632c0276ae3:0"
+                "row_id": "57164bf99d339023:0"
               },
               "prov_high": {
                 "source_id": "tic_bcbs_ma_nemc_si",
@@ -4058,7 +4058,7 @@
                 "method": "estimate_peer_range",
                 "row_ref": "tic_bcbs_ma_nemc_si:ccefc7ab3ea3:11280",
                 "payer_id": "BCBS_MA",
-                "row_id": "597f3d786c26e1e4:0"
+                "row_id": "d7ca565f3b0d2fe5:0"
               }
             },
             "list_price": null,
@@ -4081,7 +4081,7 @@
               "low": 135.61,
               "high": 161.35,
               "median": 135.61,
-              "n_groups": 20,
+              "n_groups": 80,
               "kind": "urgent_care",
               "scope": "same_kind",
               "payer_id": "BCBS_MA"
@@ -14122,7 +14122,7 @@
           "high": null,
           "rank_value": null,
           "estimated": false,
-          "unusual": false,
+          "unusual": true,
           "in_total": false,
           "missing": false,
           "line_ids": [
@@ -14860,7 +14860,7 @@
             "cell": {
               "kind": "money",
               "low": 0.84,
-              "high": 4.2,
+              "high": 0.84,
               "basis": "negotiated",
               "prov": {
                 "source_id": "cha_mrf",
@@ -14873,17 +14873,7 @@
                 "payer_id": "BCBS_MA",
                 "row_id": null
               },
-              "prov_high": {
-                "source_id": "cha_mrf",
-                "source_kind": "hospital_mrf",
-                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                "source_date": "2026-03-20",
-                "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:476100",
-                "payer_id": "BCBS_MA",
-                "row_id": null
-              }
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -14894,7 +14884,41 @@
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
-            "unusual": null,
+            "unusual": {
+              "peer_median": 0.74,
+              "n_groups": 6,
+              "whole_line": false,
+              "set_aside": [
+                {
+                  "kind": "money",
+                  "low": 3.36,
+                  "high": 4.2,
+                  "basis": "negotiated",
+                  "prov": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:430265",
+                    "payer_id": "BCBS_MA",
+                    "row_id": null
+                  },
+                  "prov_high": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:476100",
+                    "payer_id": "BCBS_MA",
+                    "row_id": null
+                  }
+                }
+              ]
+            },
             "anesthesia_time": null,
             "chain_price_from": null,
             "at": "this_site"
@@ -16809,9 +16833,9 @@
         "data_notices": []
       },
       "headline": {
-        "likely_low": 467.7,
-        "likely_high": 561.9,
-        "includes_estimate": true,
+        "likely_low": 377.63,
+        "likely_high": 382.92,
+        "includes_estimate": false,
         "complete": false,
         "missing": 1,
         "comparable": 377.63,
@@ -16855,7 +16879,7 @@
           "low": null,
           "high": null,
           "rank_value": null,
-          "estimated": true,
+          "estimated": false,
           "unusual": true,
           "in_total": false,
           "missing": true,
@@ -16913,7 +16937,7 @@
           "high": 677.6,
           "rank_value": null,
           "estimated": true,
-          "unusual": false,
+          "unusual": true,
           "in_total": false,
           "missing": false,
           "line_ids": [
@@ -17093,8 +17117,8 @@
             "price_notes": [],
             "estimate": null,
             "unusual": {
-              "peer_median": 174.94,
-              "n_groups": 15,
+              "peer_median": 171.39,
+              "n_groups": 7,
               "whole_line": true,
               "set_aside": []
             },
@@ -17122,37 +17146,27 @@
             "availability_reason": null,
             "cell": {
               "kind": "money",
-              "low": 90.07,
-              "high": 178.98,
-              "basis": "estimate",
+              "low": 75.54,
+              "high": 75.54,
+              "basis": "fee_schedule",
               "prov": {
-                "source_id": "tic_bcbs_ma_hmo_blue_si",
-                "source_kind": "insurer_tic",
-                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_in-network-rates.json.gz",
-                "source_sha256": "261f02c8d69c2e468493f92bf2d3636b31355013db271b3c42271f720ac65f23",
+                "source_id": "cms_pfs_rvu26d",
+                "source_kind": "medicare_pfs",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
                 "source_date": "2026-10-01",
-                "method": "estimate_peer_range",
-                "row_ref": "tic_bcbs_ma_hmo_blue_si:261f02c8d69c:12061",
-                "payer_id": "BCBS_MA",
-                "row_id": "f9cfdd236e0a1961:0"
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13010:facility:01",
+                "payer_id": null,
+                "row_id": null
               },
-              "prov_high": {
-                "source_id": "tic_bcbs_ma_hmo_blue_si",
-                "source_kind": "insurer_tic",
-                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_in-network-rates.json.gz",
-                "source_sha256": "261f02c8d69c2e468493f92bf2d3636b31355013db271b3c42271f720ac65f23",
-                "source_date": "2026-10-01",
-                "method": "estimate_peer_range",
-                "row_ref": "tic_bcbs_ma_hmo_blue_si:261f02c8d69c:11658",
-                "payer_id": "BCBS_MA",
-                "row_id": "024f73773ecad4a0:0"
-              }
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "our_judgment",
             "doctor_fee": {
-              "rung": 6,
-              "explanation_key": "fee.rung_6_estimate",
+              "rung": 7,
+              "explanation_key": "fee.rung_7_medicare_reference",
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
@@ -17160,19 +17174,11 @@
               "by_npi": null
             },
             "ai_suggested": false,
-            "in_total": true,
+            "in_total": false,
             "elsewhere": [],
             "learn_more": [],
             "price_notes": [],
-            "estimate": {
-              "low": 90.07,
-              "high": 178.98,
-              "median": 122.08,
-              "n_groups": 63,
-              "kind": "hospital_outpatient",
-              "scope": "same_kind",
-              "payer_id": "BCBS_MA"
-            },
+            "estimate": null,
             "unusual": null,
             "anesthesia_time": null,
             "chain_price_from": null,
@@ -17523,26 +17529,26 @@
               "high": 99.98,
               "basis": "estimate",
               "prov": {
-                "source_id": "tic_bcbs_ma_hmo_blue_si",
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
                 "source_kind": "insurer_tic",
-                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_in-network-rates.json.gz",
-                "source_sha256": "261f02c8d69c2e468493f92bf2d3636b31355013db271b3c42271f720ac65f23",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
                 "source_date": "2026-10-01",
                 "method": "estimate_peer_range",
-                "row_ref": "tic_bcbs_ma_hmo_blue_si:261f02c8d69c:5519",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:5531",
                 "payer_id": "BCBS_MA",
-                "row_id": "099ccd9da611895a:0"
+                "row_id": "24f0f5202383d4d5:0"
               },
               "prov_high": {
-                "source_id": "tic_bcbs_ma_hmo_blue_si",
+                "source_id": "tic_bcbs_ma_nemc_si",
                 "source_kind": "insurer_tic",
-                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_in-network-rates.json.gz",
-                "source_sha256": "261f02c8d69c2e468493f92bf2d3636b31355013db271b3c42271f720ac65f23",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_New-England-Managed-Care-Self-Insured_in-network-rates.json.gz",
+                "source_sha256": "ccefc7ab3ea37e80e10781db1f384db4804e8379e687777cf0ca92cf6f1543c8",
                 "source_date": "2026-10-01",
                 "method": "estimate_peer_range",
-                "row_ref": "tic_bcbs_ma_hmo_blue_si:261f02c8d69c:5838",
+                "row_ref": "tic_bcbs_ma_nemc_si:ccefc7ab3ea3:5467",
                 "payer_id": "BCBS_MA",
-                "row_id": "ad25fe3001f9cd85:0"
+                "row_id": "c26a07d03125ca67:0"
               }
             },
             "list_price": null,
@@ -17565,7 +17571,7 @@
               "low": 52.15,
               "high": 99.98,
               "median": 52.15,
-              "n_groups": 30,
+              "n_groups": 120,
               "kind": "hospital_outpatient",
               "scope": "same_kind",
               "payer_id": "BCBS_MA"
@@ -17599,7 +17605,7 @@
             "cell": {
               "kind": "money",
               "low": 0.84,
-              "high": 4.2,
+              "high": 0.84,
               "basis": "negotiated",
               "prov": {
                 "source_id": "cha_mrf",
@@ -17612,17 +17618,7 @@
                 "payer_id": "BCBS_MA",
                 "row_id": null
               },
-              "prov_high": {
-                "source_id": "cha_mrf",
-                "source_kind": "hospital_mrf",
-                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                "source_date": "2026-03-20",
-                "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:476100",
-                "payer_id": "BCBS_MA",
-                "row_id": null
-              }
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -17633,7 +17629,41 @@
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
-            "unusual": null,
+            "unusual": {
+              "peer_median": 0.74,
+              "n_groups": 6,
+              "whole_line": false,
+              "set_aside": [
+                {
+                  "kind": "money",
+                  "low": 3.36,
+                  "high": 4.2,
+                  "basis": "negotiated",
+                  "prov": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:430265",
+                    "payer_id": "BCBS_MA",
+                    "row_id": null
+                  },
+                  "prov_high": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:476100",
+                    "payer_id": "BCBS_MA",
+                    "row_id": null
+                  }
+                }
+              ]
+            },
             "anesthesia_time": null,
             "chain_price_from": null,
             "at": "this_site"
@@ -18187,26 +18217,26 @@
               "high": 68.14,
               "basis": "estimate",
               "prov": {
-                "source_id": "tic_bcbs_ma_hmo_blue_si",
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
                 "source_kind": "insurer_tic",
-                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_in-network-rates.json.gz",
-                "source_sha256": "261f02c8d69c2e468493f92bf2d3636b31355013db271b3c42271f720ac65f23",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
                 "source_date": "2026-10-01",
                 "method": "estimate_peer_range",
-                "row_ref": "tic_bcbs_ma_hmo_blue_si:261f02c8d69c:19901",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:19944",
                 "payer_id": "BCBS_MA",
-                "row_id": "d3eda549fddd3b15:0"
+                "row_id": "0ee93d1b3a95528e:0"
               },
               "prov_high": {
-                "source_id": "tic_bcbs_ma_hmo_blue_si",
+                "source_id": "tic_bcbs_ma_nemc_si",
                 "source_kind": "insurer_tic",
-                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_in-network-rates.json.gz",
-                "source_sha256": "261f02c8d69c2e468493f92bf2d3636b31355013db271b3c42271f720ac65f23",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_New-England-Managed-Care-Self-Insured_in-network-rates.json.gz",
+                "source_sha256": "ccefc7ab3ea37e80e10781db1f384db4804e8379e687777cf0ca92cf6f1543c8",
                 "source_date": "2026-10-01",
                 "method": "estimate_peer_range",
-                "row_ref": "tic_bcbs_ma_hmo_blue_si:261f02c8d69c:19962",
+                "row_ref": "tic_bcbs_ma_nemc_si:ccefc7ab3ea3:20226",
                 "payer_id": "BCBS_MA",
-                "row_id": "a29dc02300cd9554:0"
+                "row_id": "9c8123d79b1b9e05:0"
               }
             },
             "list_price": null,
@@ -18234,7 +18264,7 @@
               "low": 54.78,
               "high": 68.14,
               "median": 54.78,
-              "n_groups": 18,
+              "n_groups": 72,
               "kind": "hospital_outpatient",
               "scope": "same_kind",
               "payer_id": "BCBS_MA"
@@ -18401,15 +18431,14 @@
         ],
         "totals": {
           "likely": {
-            "low": 467.7,
-            "high": 561.9,
+            "low": 377.63,
+            "high": 382.92,
             "line_ids": [
-              "visit_doctor",
               "xray_facility",
               "xray_reading",
               "physical_therapy_facility"
             ],
-            "includes_estimate": true,
+            "includes_estimate": false,
             "includes_late_source": false,
             "includes_stale_source": false
           },
@@ -18423,6 +18452,10 @@
             {
               "line_id": "visit_facility",
               "reason": "unusual"
+            },
+            {
+              "line_id": "visit_doctor",
+              "reason": "reference_only"
             },
             {
               "line_id": "physical_therapy_sessions_facility",
@@ -22426,7 +22459,7 @@
           "high": null,
           "rank_value": null,
           "estimated": false,
-          "unusual": false,
+          "unusual": true,
           "in_total": false,
           "missing": false,
           "line_ids": [
@@ -23164,7 +23197,7 @@
             "cell": {
               "kind": "money",
               "low": 0.84,
-              "high": 4.2,
+              "high": 0.84,
               "basis": "negotiated",
               "prov": {
                 "source_id": "cha_mrf",
@@ -23177,17 +23210,7 @@
                 "payer_id": "BCBS_MA",
                 "row_id": null
               },
-              "prov_high": {
-                "source_id": "cha_mrf",
-                "source_kind": "hospital_mrf",
-                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                "source_date": "2026-03-20",
-                "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:476100",
-                "payer_id": "BCBS_MA",
-                "row_id": null
-              }
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -23198,7 +23221,41 @@
             "learn_more": [],
             "price_notes": [],
             "estimate": null,
-            "unusual": null,
+            "unusual": {
+              "peer_median": 0.74,
+              "n_groups": 6,
+              "whole_line": false,
+              "set_aside": [
+                {
+                  "kind": "money",
+                  "low": 3.36,
+                  "high": 4.2,
+                  "basis": "negotiated",
+                  "prov": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:430265",
+                    "payer_id": "BCBS_MA",
+                    "row_id": null
+                  },
+                  "prov_high": {
+                    "source_id": "cha_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                    "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                    "source_date": "2026-03-20",
+                    "method": "stated",
+                    "row_ref": "cha_mrf:2efdf1cef584:476100",
+                    "payer_id": "BCBS_MA",
+                    "row_id": null
+                  }
+                }
+              ]
+            },
             "anesthesia_time": null,
             "chain_price_from": null,
             "at": "this_site"

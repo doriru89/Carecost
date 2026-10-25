@@ -30,6 +30,7 @@
         "stated",
         "derived_pct_x_gross",
         "computed_fee_schedule",
+        "per_unit_x_base_units",
         "estimate_peer_range"
       ],
       "title": "Method",

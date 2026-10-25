@@ -16,7 +16,7 @@ from app.quote.contracts import QuoteRequest
 from app.quote.engine import Engine
 from app.quote.facts import load_site_facts
 from app.quote.fixtures_gen import AETNA_PPO, KEY_SITES, MILTON, NEAR, TUFTS_HMO
-from app.quote.store import valid_npi
+from app.quote.store import RateStore, valid_npi
 from tests.quote.conftest import AS_OF
 
 BCBS_HMO = {"kind": "insurance", "payer_id": "BCBS_MA", "product": "HMO", "network": None}
@@ -176,17 +176,19 @@ def test_estimates_come_from_the_same_kind_and_payer_with_five_groups(engine, re
                 assert ln.estimate.kind == sq.site.kind and ln.estimate.n_groups >= 5
                 assert ln.estimate.payer_id == "BCBS_MA"
                 site = registry.sites[sq.site.site_id]
-                pmod = "26" if ln.modifier == "26" else ""
-                peers, _ = engine._peers(site, ln.codes[0], ln.component, pmod,
-                                         engine._context(QuoteRequest.model_validate({
-                                             "payment": BCBS_HMO, "care_path_id": path,
-                                             "answers": {}, "service_codes": [],
-                                             "picked_by": "person", "site_ids": None}), AS_OF),
-                                         estimate=True)  # fmt: skip
-                assert len(peers) == ln.estimate.n_groups
                 own = set(registry.site_tins(site))
-                for _, ref in peers:  # never this site's own group, never another kind
-                    assert getattr(ref, "tin", None) not in own
+                for p in ln.cell.provs():  # cited rows: this payer's network files, not own TINs
+                    row = next(
+                        r
+                        for r in engine.store.rows
+                        if r.source_id == p.source_id
+                        and r.row_id == (p.row_id or r.row_id)
+                        and engine.store.sources[r.source_id].row_ref(r) == p.row_ref
+                    )
+                    if row.source_kind == "insurer_tic":
+                        assert row.payer_id == "BCBS_MA" or row.source_id.startswith(
+                            "tic_bcbs_ma")  # fmt: skip
+                        assert row.tin not in own
     assert seen > 0
 
 
@@ -447,3 +449,69 @@ def test_real_pack_no_location_shoulder_quotes(registry):  # pragma: no cover
                       census_ids=registry.census_ids)  # fmt: skip
     r = _q(Engine(store, registry))
     assert r.ordering == "kind_then_distance" and len(r.sites) > 100
+
+
+# --------------------------------------------------------------------------- O audit follow-ups
+
+
+def test_o_children_only_sites_are_their_own_peer_kind(engine, registry):
+    """O F4: Boston Children's contracts run 2-3.5x adult peers: a children-only site is
+    compared with children-only sites only, and an adult site never with them."""
+    q = engine._context(QuoteRequest.model_validate({
+        "payment": BCBS_HMO, "care_path_id": SHOULDER, "answers": {}, "service_codes": [],
+        "picked_by": "person", "site_ids": None}), AS_OF)  # fmt: skip
+    stats = engine._line_stats("73030", q)
+    kids = {sid for sid in stats if registry.sites[sid].children_only}
+    adult = registry.sites["mount_auburn_hospital"]
+    peers, _ = engine._peers(adult, "73030", "facility", "", q, estimate=False)
+    assert kids and peers
+    for _, ref in peers:  # every peer value is in the set because an adult site has it
+        owners = [sid for sid, per in stats.items()
+                  if any(r is ref for ents in per.values() for _, _, r in ents)]  # fmt: skip
+        assert any(not registry.sites[sid].children_only for sid in owners)
+    kid = registry.sites[sorted(kids)[0]]
+    kpeers, _ = engine._peers(kid, "73030", "facility", "", q, estimate=False)
+    for _, ref in kpeers:
+        owners = [sid for sid, per in stats.items()
+                  if any(r is ref for ents in per.values() for _, _, r in ents)]  # fmt: skip
+        assert any(registry.sites[sid].children_only for sid in owners)
+
+
+def test_o_offices_read_pos_11_only(engine, registry):
+    """O F3a: an office never prices from a POS-20 (urgent care) or facility row."""
+    office = next(s for s in registry.sites.values() if s.site_type == "specialist_office"
+                  and s.billing_type == "office_visit")  # fmt: skip
+    uc = registry.sites["afc_watertown"]
+    assert engine._pos(office) == frozenset({"11"})
+    assert engine._pos(uc) == frozenset({"11", "20"})
+
+
+def test_o_peers_are_per_network(engine, registry):
+    """O: a TIN counts once per network file; the gate compares a row with its own network."""
+    r = next(x for x in engine.store.rows if x.source_kind == "insurer_tic")
+    assert engine._group(r) == f"tin:{r.tin}@{r.source_id}" and engine._net(r) == r.source_id
+
+
+def test_o_anesthesia_per_unit_rate_is_multiplied_by_base_units(engine, store):
+    """O: the same amount on 00811 and 00812 (4 and 3 base units) is a per-unit rate. For an
+    anesthesia group it prices rate x base units; for any other group it is not a fee."""
+    from dataclasses import replace
+
+    base = next(x for x in store.rows if x.source_kind == "insurer_tic")
+    mk = lambda code, name, tin: replace(  # noqa: E731
+        base, code=code, amount=20.98, business_name=name, tin=tin, row_id=f"{'a' * 16}:{code}",
+        modifiers="", negotiated_type="negotiated")  # fmt: skip
+    extra = [mk("00811", "BOSTON ANESTHESIA LLC", "999999991"),
+             mk("00812", "BOSTON ANESTHESIA LLC", "999999991"),
+             mk("00811", "SKIN CLINIC PC", "999999992"),
+             mk("00812", "SKIN CLINIC PC", "999999992")]  # fmt: skip
+    st = RateStore(rows=[*store.rows, *extra], sources=store.sources, version=store.version,
+                   codes=store.codes, npi_sets=store.npi_sets, census_tins=store.census_tins)  # fmt: skip
+    eng = Engine(st, engine.reg)
+    anes = [x for x in st.rows if x.tin == "999999991" and x.code == "00812"]
+    rows, value, method = eng._anesthesia_units(anes, "00812")
+    assert rows == anes and value(rows[0]) == round(20.98 * 3, 2)
+    assert method.value == "per_unit_x_base_units"
+    other = [x for x in st.rows if x.tin == "999999992" and x.code == "00812"]
+    rows, _, method = eng._anesthesia_units(other, "00812")
+    assert rows == [] and method is None  # a non-anesthesia group's unit rate is not a fee

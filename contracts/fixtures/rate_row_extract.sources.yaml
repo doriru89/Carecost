@@ -276,6 +276,12 @@ census_tins:
   GB0148:
   - 042312909
   - '043466314'
+  GB0149:
+  - '042774441'
+  - 042864081
+  - 042943146
+  - 042970129
+  - '431987409'
   GB0150:
   - '042263040'
   - '043466314'
@@ -660,6 +666,8 @@ census_tins:
   - '454478857'
   - '460903626'
   - '472237031'
+  GB0370:
+  - '821363644'
   GB0372:
   - '043320571'
   GB0376:
@@ -699,6 +707,8 @@ census_tins:
   GB0395:
   - 042807148
   - '471683619'
+  GB0397:
+  - '821363644'
 sources:
   bid_milton_mrf:
     source_kind: hospital_mrf
@@ -819,6 +829,22 @@ sources:
     source_sha256: 2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233
     source_date: '2026-03-20'
     last_updated: '2026-03-20'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  childrens_mrf:
+    source_kind: hospital_mrf
+    publisher: Boston Children's Hospital
+    source_file: d989bdd477aabac960d371c851124d6cbfbd434a87b8388501ab70b2b7f0831f.json
+    source_sha256: d989bdd477aabac960d371c851124d6cbfbd434a87b8388501ab70b2b7f0831f
+    source_date: '2026-04-01'
+    last_updated: '2026-04-01'
     fetched_at: '2026-10-25'
     source_rule: hospital_mrf_365_days
     our_rule: hospital_monthly

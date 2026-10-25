@@ -307,7 +307,7 @@ export interface MedicarePayment {
 /**
  * How the number in a ``Money`` was obtained.
  */
-export type Method = "stated" | "derived_pct_x_gross" | "computed_fee_schedule" | "estimate_peer_range";
+export type Method = "stated" | "derived_pct_x_gross" | "computed_fee_schedule" | "per_unit_x_base_units" | "estimate_peer_range";
 
 export interface MightAdd {
   low: number;

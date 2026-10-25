@@ -10,6 +10,7 @@ version: 1
 place_of_service:
   hospital_outpatient: ["22", "19"]
   office_visit: ["11", "20"]
+  office_kind: ["11"]  # O F3a: an office (not an urgent care) reads POS 11 rows only
   asc: ["24"]
   unknown: ["11", "20"]
 
@@ -69,7 +70,7 @@ unknown_billing_priced_as: hospital_outpatient
 # key_includes_billing: also require the same billing type (an office's global fee is not a
 # hospital doctor's fee even at the same kind of site); O can turn it off.
 peers:
-  mode: same_kind
+  mode: same_system_then_kind  # O backtest: office MdAPE 15.1% -> 12.7%, hospital 18.2% -> 16.1%
   min_groups: 5
   system_min_groups: 3
   key_includes_billing: true

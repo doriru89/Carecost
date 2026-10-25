@@ -72,6 +72,7 @@ class Method(StrEnum):
     stated = "stated"  # copied as published
     derived_pct_x_gross = "derived_pct_x_gross"  # negotiated % x the same line's gross charge
     computed_fee_schedule = "computed_fee_schedule"  # e.g. RVU x GPCI x CF (Medicare PFS)
+    per_unit_x_base_units = "per_unit_x_base_units"  # anesthesia: a per-unit rate x CMS base units
     estimate_peer_range = "estimate_peer_range"  # C3 ladder step 6: p25-p75 of peer sites' prices
 
 

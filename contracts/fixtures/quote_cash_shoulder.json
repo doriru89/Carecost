@@ -18423,7 +18423,7 @@
           "high": null,
           "rank_value": null,
           "estimated": false,
-          "unusual": true,
+          "unusual": false,
           "in_total": false,
           "missing": false,
           "line_ids": [
@@ -19609,12 +19609,7 @@
             ],
             "price_notes": [],
             "estimate": null,
-            "unusual": {
-              "peer_median": 252.0,
-              "n_groups": 14,
-              "whole_line": true,
-              "set_aside": []
-            },
+            "unusual": null,
             "anesthesia_time": null,
             "chain_price_from": null,
             "at": "this_site"
@@ -19748,7 +19743,7 @@
             },
             {
               "line_id": "mr_arthrogram_77002_facility",
-              "reason": "unusual"
+              "reason": "possible_tier"
             },
             {
               "line_id": "mr_arthrogram_77002_reading",
