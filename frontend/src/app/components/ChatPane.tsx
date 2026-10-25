@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Send } from "lucide-react";
 import { t } from "@/contracts/copy";
-import { PAUSE_REASON_KEY, assertNever } from "@/contracts/exhaustive";
-import type { CandidatePath, ChatResponse, ChipQuestion, ServiceRef } from "@/generated/contracts/chat_api";
+import { PAUSE_REASON_KEY } from "@/contracts/exhaustive";
+import type { CandidatePath, ChatReply, ChatResponse, ChipQuestion, ServiceRef } from "@/generated/contracts/chat_api";
 import { cn } from "@/lib/utils";
 import cardsJson from "../content/cards.json";
 import questionsJson from "../content/questions.json";
@@ -261,77 +261,80 @@ function AssistantTurn({
   activePathId: string | null;
 }) {
   const r = res.reply;
-  switch (r.kind) {
-    case "red_flag":
-      return (
-        <Bubble>
-          <p className="font-semibold">{r.headline.en}</p>
-          <p>{r.text.en}</p>
-        </Bubble>
-      );
-    case "clarify":
-      return (
-        <Bubble>
-          {r.lead_in && <p>{r.lead_in}</p>}
-          <Understood items={r.understood} />
-          <Questions questions={r.questions} answers={answers} actions={actions} enabled={latest} />
-          <Candidates list={r.candidates} actions={actions} activePathId={activePathId} />
-          <Cards ids={r.card_ids} />
-          <CopyKeys keys={r.copy_keys} />
-        </Bubble>
-      );
-    case "care_paths":
-      return (
-        <Bubble>
-          <p>{r.text}</p>
-          <Understood items={r.understood} />
-          <Candidates list={r.candidates} actions={actions} activePathId={activePathId} />
-          <Cards ids={r.card_ids} />
-          <CopyKeys keys={r.copy_keys} />
-        </Bubble>
-      );
-    case "text":
-      return (
-        <Bubble>
-          <p>{r.text}</p>
-          {r.services.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {r.services.map((s) => (
-                <button
-                  key={s.service_id}
-                  type="button"
-                  onClick={() => actions.pickService(s)}
-                  className="rounded-full border border-dashed border-ink px-3 py-1 text-xs"
-                  title="Suggested by the AI: shown, never added to a total"
-                >
-                  ✦ Price: {s.plain_name}
-                </button>
-              ))}
-            </div>
-          )}
-          <GlossaryChips keys={r.glossary_keys} />
-          <Cards ids={r.card_ids} />
-        </Bubble>
-      );
-    case "llm_invalid":
-      return (
-        <Bubble>
-          <p>{t(r.message_key)}</p>
-          <BrowseButton onClick={actions.browse} />
-        </Bubble>
-      );
-    case "ai_paused":
-      return (
-        <Bubble>
-          <p>{t(PAUSE_REASON_KEY[r.reason])}</p>
-          {r.resumes_at && <p className="text-xs text-muted-foreground">Back after {new Date(r.resumes_at).toLocaleString()}</p>}
-          <BrowseButton onClick={actions.browse} />
-        </Bubble>
-      );
-    default:
-      return assertNever(r);
-  }
+  const render = REPLY_RENDER[r.kind] as (r: ChatReply, ctx: TurnCtx) => ReactNode;
+  return <>{render(r, { answers, actions, latest, activePathId })}</>;
 }
+
+interface TurnCtx {
+  answers: Record<string, string[]>;
+  actions: ChatActions;
+  latest: boolean;
+  activePathId: string | null;
+}
+
+/** One renderer per reply kind, typed against ChatReply["kind"]: a new kind fails to compile. */
+const REPLY_RENDER = {
+  red_flag: (r) => (
+    <Bubble>
+      <p className="font-semibold">{r.headline.en}</p>
+      <p>{r.text.en}</p>
+    </Bubble>
+  ),
+  clarify: (r, { answers, actions, latest, activePathId }) => (
+    <Bubble>
+      {r.lead_in && <p>{r.lead_in}</p>}
+      <Understood items={r.understood} />
+      <Questions questions={r.questions} answers={answers} actions={actions} enabled={latest} />
+      <Candidates list={r.candidates} actions={actions} activePathId={activePathId} />
+      <Cards ids={r.card_ids} />
+      <CopyKeys keys={r.copy_keys} />
+    </Bubble>
+  ),
+  care_paths: (r, { actions, activePathId }) => (
+    <Bubble>
+      <p>{r.text}</p>
+      <Understood items={r.understood} />
+      <Candidates list={r.candidates} actions={actions} activePathId={activePathId} />
+      <Cards ids={r.card_ids} />
+      <CopyKeys keys={r.copy_keys} />
+    </Bubble>
+  ),
+  text: (r, { actions }) => (
+    <Bubble>
+      <p>{r.text}</p>
+      {r.services.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {r.services.map((s) => (
+            <button
+              key={s.service_id}
+              type="button"
+              onClick={() => actions.pickService(s)}
+              className="rounded-full border border-dashed border-ink px-3 py-1 text-xs"
+              title="Suggested by the AI: shown, never added to a total"
+            >
+              ✦ Price: {s.plain_name}
+            </button>
+          ))}
+        </div>
+      )}
+      <GlossaryChips keys={r.glossary_keys} />
+      <Cards ids={r.card_ids} />
+    </Bubble>
+  ),
+  llm_invalid: (r, { actions }) => (
+    <Bubble>
+      <p>{t(r.message_key)}</p>
+      <BrowseButton onClick={actions.browse} />
+    </Bubble>
+  ),
+  ai_paused: (r, { actions }) => (
+    <Bubble>
+      <p>{t(PAUSE_REASON_KEY[r.reason])}</p>
+      {r.resumes_at && <p className="text-xs text-muted-foreground">Back after {new Date(r.resumes_at).toLocaleString()}</p>}
+      <BrowseButton onClick={actions.browse} />
+    </Bubble>
+  ),
+} satisfies { [K in ChatReply["kind"]]: (r: Extract<ChatReply, { kind: K }>, ctx: TurnCtx) => ReactNode };
 
 function BrowseButton({ onClick }: { onClick: () => void }) {
   return (

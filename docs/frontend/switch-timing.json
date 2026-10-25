@@ -3,19 +3,19 @@
   "width": 375,
   "switches": [
    {
-    "ms": 13.599999994039536,
+    "ms": 14.300000011920929,
     "key": "cash|shoulder_chronic_clicking_v1|person"
    },
    {
-    "ms": 11,
+    "ms": 13,
     "key": "medicare|shoulder_chronic_clicking_v1|person"
    },
    {
-    "ms": 9.599999994039536,
+    "ms": 9,
     "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person"
    },
    {
-    "ms": 6.5999999940395355,
+    "ms": 6.5,
     "key": "cash|shoulder_chronic_clicking_v1|person"
    }
   ]
@@ -24,15 +24,15 @@
   "width": 1280,
   "switches": [
    {
-    "ms": 13.699999988079071,
+    "ms": 13.200000017881393,
     "key": "cash|shoulder_chronic_clicking_v1|person"
    },
    {
-    "ms": 7.700000017881393,
+    "ms": 10.5,
     "key": "medicare|shoulder_chronic_clicking_v1|person"
    },
    {
-    "ms": 10.199999988079071,
+    "ms": 8.800000011920929,
     "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person"
    },
    {
