@@ -44,3 +44,20 @@ run's `run.json` (`normalize.excluded`).
   only then from the CMS clinician counts at the address. `curated.yaml` makes
   `new_england_baptist_surgery_center_llc_dedham` orthopedic (nebh.org, 2023-06-28). A curated
   area change drops the census-category service it overrides (`endoscopy`).
+
+## Not excluded, on purpose
+
+* Epic-format files (Brigham, MGH, Faulkner, NWH, Tufts, BMC, CHA) write `Case rate ($225.91). The
+  procedures on the claim are sorted highest to lowest by case rate and reimbursed ... 1 procedures
+  at 100%` in `negotiated_algorithm` on rows whose methodology is `fee schedule` / `other`. That is
+  a per-procedure price with a multiple-procedure reduction, not a bundle: 2,000 such rows stay
+  prices (62 of them are outliers in O's audit, which reads the same text as "case rate").
+* CHA rows where amount == gross with no "No contract line matched" text (3,360 rows) stay: the
+  rule needs both tests.
+
+## Measured (A6 run, 2026-10-25, A5's data root cloned)
+
+Hospital normalize, rows excluded per source: bmc_brighton 320, bmc 580, bmc_south 325,
+cha 461 per-diem/case-rate + 33 not_dollars, childrens 248, faulkner 21, newton_wellesley 30,
+tufts 811 chargemaster_as_rate + 44 per-diem/case-rate (2,029 / 33 / 811 in all). TiC: 0 per-diem
+prices on our codes. Flags and their counts per network: each run's `run.json` `flags`.

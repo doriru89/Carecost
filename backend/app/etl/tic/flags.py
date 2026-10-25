@@ -14,7 +14,7 @@ sorted) and are counted in ``run.json`` ``flags``. The pack can join them on ``r
   (``data/etl/tic_npi_types.yaml``, ``tic npi-types``). A doctors' group's "institutional" rate is
   not a hospital facility fee (Tufts Direct "BOSTON SPECIALISTS - SOUTH SHO" $81.06 on 45378).
 * ``same_npi_pos_multi_rate``: two or more different amounts for the same TIN, the same NPI set,
-  code, modifiers, billing class, POS list and negotiated type, from different provider groups or
+  code, modifiers, billing class, setting, POS list and negotiated type, from different provider groups or
   rate groups (Aetna PPO 11102 "Metrowest Physician Services" $254.73 and $123.69). The source
   itself is ambiguous: these rows also get ``ambiguous_multi_rate = true`` in ``rate_row``.
 """
@@ -22,6 +22,7 @@ sorted) and are counted in ``run.json`` ``flags``. The pack can join them on ``r
 from __future__ import annotations
 
 import hashlib
+import re
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
@@ -46,9 +47,20 @@ def load_npi_types(config_dir: Path | None = None) -> dict[str, dict[str, Any]]:
     return (yaml.safe_load(f.read_text()) or {}).get("npis") or {}
 
 
+_FACILITY_NAME = re.compile(
+    r"SURGERY CENTER|SURGICAL CENTER|SURGICENTER|ENDOSCOPY|\bASC\b|HOSPITAL", re.I
+)
+
+
 def is_physician(rec: dict[str, Any] | None) -> bool:
-    """NPPES: a person, or an organisation whose primary taxonomy is a physician group."""
-    return bool(rec) and (rec.get("type") == "NPI-1" or bool(rec.get("physician_group")))
+    """NPPES: a person, or an organisation whose primary taxonomy is a physician group and
+    whose name does not say it is a facility ("MEDFORD SURGERY CENTER LLC" lists taxonomy
+    Surgery but bills an ASC facility fee)."""
+    if not rec:
+        return False
+    if rec.get("type") == "NPI-1":
+        return True
+    return bool(rec.get("physician_group")) and not _FACILITY_NAME.search(rec.get("name") or "")
 
 
 def _group_npis(d: Path) -> dict[tuple[int, int], tuple[str, ...]]:
@@ -68,7 +80,7 @@ def single_npi(r: dict[str, Any], gnpis: dict[tuple[int, int], tuple[str, ...]])
 
 
 _COLS = [
-    "row_id", "code", "modifiers", "billing_class", "amount", "tic_tin_value", "tic_tin_type",
+    "row_id", "code", "modifiers", "billing_class", "setting", "amount", "tic_tin_value", "tic_tin_type",
     "tic_provider_group_id", "tic_group_ordinal", "tic_rate_group_ordinal", "tic_service_codes",
     "tic_negotiated_type", "excluded",
 ]  # fmt: skip
@@ -109,7 +121,7 @@ def compute(
             continue  # NPIs unknown: "same NPIs" cannot be shown
         parts = [
             r["tic_tin_value"] or "", r["code"], r["modifiers"], r["billing_class"],
-            r["tic_service_codes"] or "", (r["tic_negotiated_type"] or "").lower(),
+            r["setting"] or "", r["tic_service_codes"] or "", (r["tic_negotiated_type"] or "").lower(),
             hashlib.sha1("|".join(npis).encode()).hexdigest(),
         ]  # fmt: skip
         k = "\x1f".join(parts)

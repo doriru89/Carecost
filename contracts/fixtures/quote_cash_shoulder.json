@@ -1884,7 +1884,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:28398",
+                "row_ref": "cha_mrf:2efdf1cef584:28399",
                 "payer_id": null,
                 "row_id": null
               },
@@ -1902,7 +1902,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:28398",
+                "row_ref": "cha_mrf:2efdf1cef584:28399",
                 "payer_id": null,
                 "row_id": null
               },
@@ -2145,7 +2145,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:6728",
+                "row_ref": "cha_mrf:2efdf1cef584:44115",
                 "payer_id": null,
                 "row_id": null
               }
@@ -2261,7 +2261,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:149281",
+                "row_ref": "cha_mrf:2efdf1cef584:156001",
                 "payer_id": null,
                 "row_id": null
               },
@@ -2597,7 +2597,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -2615,7 +2615,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -3192,39 +3192,6 @@
           "code": "99203",
           "points": [
             {
-              "payer_id": "BCBS_MA",
-              "label": "Blue Cross Blue Shield of Massachusetts",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 29.7,
-                "high": 30.92,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:28398",
-                  "payer_id": "BCBS_MA",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:684994",
-                  "payer_id": "BCBS_MA",
-                  "row_id": null
-                }
-              }
-            },
-            {
               "payer_id": "TUFTS_HP",
               "label": "Tufts Health Plan (Point32Health)",
               "product": null,
@@ -3248,39 +3215,6 @@
               }
             },
             {
-              "payer_id": "UHC",
-              "label": "UnitedHealthcare",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 66.0,
-                "high": 74.25,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:247836",
-                  "payer_id": "UHC",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:247434",
-                  "payer_id": "UHC",
-                  "row_id": null
-                }
-              }
-            },
-            {
               "payer_id": "HARVARD_PILGRIM",
               "label": "Harvard Pilgrim (Point32Health)",
               "product": null,
@@ -3298,6 +3232,29 @@
                   "method": "stated",
                   "row_ref": "cha_mrf:2efdf1cef584:864075",
                   "payer_id": "HARVARD_PILGRIM",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 74.25,
+                "high": 74.25,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:247434",
+                  "payer_id": "UHC",
                   "row_id": null
                 },
                 "prov_high": null
@@ -3325,29 +3282,6 @@
                 },
                 "prov_high": null
               }
-            },
-            {
-              "payer_id": "CIGNA",
-              "label": "Cigna",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 140.92,
-                "high": 140.92,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:495377",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                },
-                "prov_high": null
-              }
             }
           ],
           "cash": {
@@ -3362,7 +3296,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:28398",
+              "row_ref": "cha_mrf:2efdf1cef584:28399",
               "payer_id": null,
               "row_id": null
             },
@@ -3620,7 +3554,7 @@
               "money": {
                 "kind": "money",
                 "low": 107.25,
-                "high": 312.0,
+                "high": 107.25,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -3633,17 +3567,7 @@
                   "payer_id": "HARVARD_PILGRIM",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:609025",
-                  "payer_id": "HARVARD_PILGRIM",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -3653,7 +3577,7 @@
               "money": {
                 "kind": "money",
                 "low": 107.25,
-                "high": 312.0,
+                "high": 126.75,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -3673,7 +3597,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:518523",
+                  "row_ref": "cha_mrf:2efdf1cef584:279883",
                   "payer_id": "UHC",
                   "row_id": null
                 }
@@ -3901,7 +3825,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:6728",
+              "row_ref": "cha_mrf:2efdf1cef584:44115",
               "payer_id": null,
               "row_id": null
             }
@@ -3998,7 +3922,7 @@
               "money": {
                 "kind": "money",
                 "low": 68.75,
-                "high": 312.0,
+                "high": 68.75,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -4011,17 +3935,7 @@
                   "payer_id": "HARVARD_PILGRIM",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:529430",
-                  "payer_id": "HARVARD_PILGRIM",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -4031,7 +3945,7 @@
               "money": {
                 "kind": "money",
                 "low": 68.75,
-                "high": 312.0,
+                "high": 81.25,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -4051,7 +3965,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:319193",
+                  "row_ref": "cha_mrf:2efdf1cef584:392731",
                   "payer_id": "UHC",
                   "row_id": null
                 }
@@ -4064,7 +3978,7 @@
               "money": {
                 "kind": "money",
                 "low": 72.88,
-                "high": 183.88,
+                "high": 92.2,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -4084,7 +3998,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:522513",
+                  "row_ref": "cha_mrf:2efdf1cef584:251588",
                   "payer_id": "CIGNA",
                   "row_id": null
                 }
@@ -4406,7 +4320,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:28398",
+                "row_ref": "cha_mrf:2efdf1cef584:28399",
                 "payer_id": null,
                 "row_id": null
               },
@@ -4424,7 +4338,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:28398",
+                "row_ref": "cha_mrf:2efdf1cef584:28399",
                 "payer_id": null,
                 "row_id": null
               },
@@ -4667,7 +4581,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:6728",
+                "row_ref": "cha_mrf:2efdf1cef584:44115",
                 "payer_id": null,
                 "row_id": null
               }
@@ -4783,7 +4697,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:149281",
+                "row_ref": "cha_mrf:2efdf1cef584:156001",
                 "payer_id": null,
                 "row_id": null
               },
@@ -5119,7 +5033,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -5137,7 +5051,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -5714,39 +5628,6 @@
           "code": "99203",
           "points": [
             {
-              "payer_id": "BCBS_MA",
-              "label": "Blue Cross Blue Shield of Massachusetts",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 29.7,
-                "high": 30.92,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:28398",
-                  "payer_id": "BCBS_MA",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:684994",
-                  "payer_id": "BCBS_MA",
-                  "row_id": null
-                }
-              }
-            },
-            {
               "payer_id": "TUFTS_HP",
               "label": "Tufts Health Plan (Point32Health)",
               "product": null,
@@ -5770,39 +5651,6 @@
               }
             },
             {
-              "payer_id": "UHC",
-              "label": "UnitedHealthcare",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 66.0,
-                "high": 74.25,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:247836",
-                  "payer_id": "UHC",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:247434",
-                  "payer_id": "UHC",
-                  "row_id": null
-                }
-              }
-            },
-            {
               "payer_id": "HARVARD_PILGRIM",
               "label": "Harvard Pilgrim (Point32Health)",
               "product": null,
@@ -5820,6 +5668,29 @@
                   "method": "stated",
                   "row_ref": "cha_mrf:2efdf1cef584:864075",
                   "payer_id": "HARVARD_PILGRIM",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 74.25,
+                "high": 74.25,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:247434",
+                  "payer_id": "UHC",
                   "row_id": null
                 },
                 "prov_high": null
@@ -5847,29 +5718,6 @@
                 },
                 "prov_high": null
               }
-            },
-            {
-              "payer_id": "CIGNA",
-              "label": "Cigna",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 140.92,
-                "high": 140.92,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:495377",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                },
-                "prov_high": null
-              }
             }
           ],
           "cash": {
@@ -5884,7 +5732,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:28398",
+              "row_ref": "cha_mrf:2efdf1cef584:28399",
               "payer_id": null,
               "row_id": null
             },
@@ -6142,7 +5990,7 @@
               "money": {
                 "kind": "money",
                 "low": 107.25,
-                "high": 312.0,
+                "high": 107.25,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -6155,17 +6003,7 @@
                   "payer_id": "HARVARD_PILGRIM",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:609025",
-                  "payer_id": "HARVARD_PILGRIM",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -6175,7 +6013,7 @@
               "money": {
                 "kind": "money",
                 "low": 107.25,
-                "high": 312.0,
+                "high": 126.75,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -6195,7 +6033,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:518523",
+                  "row_ref": "cha_mrf:2efdf1cef584:279883",
                   "payer_id": "UHC",
                   "row_id": null
                 }
@@ -6423,7 +6261,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:6728",
+              "row_ref": "cha_mrf:2efdf1cef584:44115",
               "payer_id": null,
               "row_id": null
             }
@@ -6520,7 +6358,7 @@
               "money": {
                 "kind": "money",
                 "low": 68.75,
-                "high": 312.0,
+                "high": 68.75,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -6533,17 +6371,7 @@
                   "payer_id": "HARVARD_PILGRIM",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:529430",
-                  "payer_id": "HARVARD_PILGRIM",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -6553,7 +6381,7 @@
               "money": {
                 "kind": "money",
                 "low": 68.75,
-                "high": 312.0,
+                "high": 81.25,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -6573,7 +6401,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:319193",
+                  "row_ref": "cha_mrf:2efdf1cef584:392731",
                   "payer_id": "UHC",
                   "row_id": null
                 }
@@ -6586,7 +6414,7 @@
               "money": {
                 "kind": "money",
                 "low": 72.88,
-                "high": 183.88,
+                "high": 92.2,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -6606,7 +6434,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:522513",
+                  "row_ref": "cha_mrf:2efdf1cef584:251588",
                   "payer_id": "CIGNA",
                   "row_id": null
                 }
@@ -6926,7 +6754,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:28398",
+                "row_ref": "cha_mrf:2efdf1cef584:28399",
                 "payer_id": null,
                 "row_id": null
               },
@@ -6944,7 +6772,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:28398",
+                "row_ref": "cha_mrf:2efdf1cef584:28399",
                 "payer_id": null,
                 "row_id": null
               },
@@ -7187,7 +7015,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:6728",
+                "row_ref": "cha_mrf:2efdf1cef584:44115",
                 "payer_id": null,
                 "row_id": null
               }
@@ -7303,7 +7131,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:149281",
+                "row_ref": "cha_mrf:2efdf1cef584:156001",
                 "payer_id": null,
                 "row_id": null
               },
@@ -7615,7 +7443,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -7633,7 +7461,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -8210,39 +8038,6 @@
           "code": "99203",
           "points": [
             {
-              "payer_id": "BCBS_MA",
-              "label": "Blue Cross Blue Shield of Massachusetts",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 29.7,
-                "high": 30.92,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:28398",
-                  "payer_id": "BCBS_MA",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:684994",
-                  "payer_id": "BCBS_MA",
-                  "row_id": null
-                }
-              }
-            },
-            {
               "payer_id": "TUFTS_HP",
               "label": "Tufts Health Plan (Point32Health)",
               "product": null,
@@ -8266,39 +8061,6 @@
               }
             },
             {
-              "payer_id": "UHC",
-              "label": "UnitedHealthcare",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 66.0,
-                "high": 74.25,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:247836",
-                  "payer_id": "UHC",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:247434",
-                  "payer_id": "UHC",
-                  "row_id": null
-                }
-              }
-            },
-            {
               "payer_id": "HARVARD_PILGRIM",
               "label": "Harvard Pilgrim (Point32Health)",
               "product": null,
@@ -8316,6 +8078,29 @@
                   "method": "stated",
                   "row_ref": "cha_mrf:2efdf1cef584:864075",
                   "payer_id": "HARVARD_PILGRIM",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 74.25,
+                "high": 74.25,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:247434",
+                  "payer_id": "UHC",
                   "row_id": null
                 },
                 "prov_high": null
@@ -8343,29 +8128,6 @@
                 },
                 "prov_high": null
               }
-            },
-            {
-              "payer_id": "CIGNA",
-              "label": "Cigna",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 140.92,
-                "high": 140.92,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:495377",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                },
-                "prov_high": null
-              }
             }
           ],
           "cash": {
@@ -8380,7 +8142,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:28398",
+              "row_ref": "cha_mrf:2efdf1cef584:28399",
               "payer_id": null,
               "row_id": null
             },
@@ -8638,7 +8400,7 @@
               "money": {
                 "kind": "money",
                 "low": 107.25,
-                "high": 312.0,
+                "high": 107.25,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -8651,17 +8413,7 @@
                   "payer_id": "HARVARD_PILGRIM",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:609025",
-                  "payer_id": "HARVARD_PILGRIM",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -8671,7 +8423,7 @@
               "money": {
                 "kind": "money",
                 "low": 107.25,
-                "high": 312.0,
+                "high": 126.75,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -8691,7 +8443,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:518523",
+                  "row_ref": "cha_mrf:2efdf1cef584:279883",
                   "payer_id": "UHC",
                   "row_id": null
                 }
@@ -8919,7 +8671,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:6728",
+              "row_ref": "cha_mrf:2efdf1cef584:44115",
               "payer_id": null,
               "row_id": null
             }
@@ -9016,7 +8768,7 @@
               "money": {
                 "kind": "money",
                 "low": 68.75,
-                "high": 312.0,
+                "high": 68.75,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -9029,17 +8781,7 @@
                   "payer_id": "HARVARD_PILGRIM",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:529430",
-                  "payer_id": "HARVARD_PILGRIM",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -9049,7 +8791,7 @@
               "money": {
                 "kind": "money",
                 "low": 68.75,
-                "high": 312.0,
+                "high": 81.25,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -9069,7 +8811,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:319193",
+                  "row_ref": "cha_mrf:2efdf1cef584:392731",
                   "payer_id": "UHC",
                   "row_id": null
                 }
@@ -9082,7 +8824,7 @@
               "money": {
                 "kind": "money",
                 "low": 72.88,
-                "high": 183.88,
+                "high": 92.2,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -9102,7 +8844,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:522513",
+                  "row_ref": "cha_mrf:2efdf1cef584:251588",
                   "payer_id": "CIGNA",
                   "row_id": null
                 }
@@ -9424,7 +9166,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:28398",
+                "row_ref": "cha_mrf:2efdf1cef584:28399",
                 "payer_id": null,
                 "row_id": null
               },
@@ -9442,7 +9184,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:28398",
+                "row_ref": "cha_mrf:2efdf1cef584:28399",
                 "payer_id": null,
                 "row_id": null
               },
@@ -9685,7 +9427,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:6728",
+                "row_ref": "cha_mrf:2efdf1cef584:44115",
                 "payer_id": null,
                 "row_id": null
               }
@@ -9801,7 +9543,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:149281",
+                "row_ref": "cha_mrf:2efdf1cef584:156001",
                 "payer_id": null,
                 "row_id": null
               },
@@ -10137,7 +9879,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -10155,7 +9897,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -10732,39 +10474,6 @@
           "code": "99203",
           "points": [
             {
-              "payer_id": "BCBS_MA",
-              "label": "Blue Cross Blue Shield of Massachusetts",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 29.7,
-                "high": 30.92,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:28398",
-                  "payer_id": "BCBS_MA",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:684994",
-                  "payer_id": "BCBS_MA",
-                  "row_id": null
-                }
-              }
-            },
-            {
               "payer_id": "TUFTS_HP",
               "label": "Tufts Health Plan (Point32Health)",
               "product": null,
@@ -10788,39 +10497,6 @@
               }
             },
             {
-              "payer_id": "UHC",
-              "label": "UnitedHealthcare",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 66.0,
-                "high": 74.25,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:247836",
-                  "payer_id": "UHC",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:247434",
-                  "payer_id": "UHC",
-                  "row_id": null
-                }
-              }
-            },
-            {
               "payer_id": "HARVARD_PILGRIM",
               "label": "Harvard Pilgrim (Point32Health)",
               "product": null,
@@ -10838,6 +10514,29 @@
                   "method": "stated",
                   "row_ref": "cha_mrf:2efdf1cef584:864075",
                   "payer_id": "HARVARD_PILGRIM",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 74.25,
+                "high": 74.25,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:247434",
+                  "payer_id": "UHC",
                   "row_id": null
                 },
                 "prov_high": null
@@ -10865,29 +10564,6 @@
                 },
                 "prov_high": null
               }
-            },
-            {
-              "payer_id": "CIGNA",
-              "label": "Cigna",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 140.92,
-                "high": 140.92,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:495377",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                },
-                "prov_high": null
-              }
             }
           ],
           "cash": {
@@ -10902,7 +10578,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:28398",
+              "row_ref": "cha_mrf:2efdf1cef584:28399",
               "payer_id": null,
               "row_id": null
             },
@@ -11160,7 +10836,7 @@
               "money": {
                 "kind": "money",
                 "low": 107.25,
-                "high": 312.0,
+                "high": 107.25,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -11173,17 +10849,7 @@
                   "payer_id": "HARVARD_PILGRIM",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:609025",
-                  "payer_id": "HARVARD_PILGRIM",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -11193,7 +10859,7 @@
               "money": {
                 "kind": "money",
                 "low": 107.25,
-                "high": 312.0,
+                "high": 126.75,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -11213,7 +10879,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:518523",
+                  "row_ref": "cha_mrf:2efdf1cef584:279883",
                   "payer_id": "UHC",
                   "row_id": null
                 }
@@ -11441,7 +11107,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:6728",
+              "row_ref": "cha_mrf:2efdf1cef584:44115",
               "payer_id": null,
               "row_id": null
             }
@@ -11538,7 +11204,7 @@
               "money": {
                 "kind": "money",
                 "low": 68.75,
-                "high": 312.0,
+                "high": 68.75,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -11551,17 +11217,7 @@
                   "payer_id": "HARVARD_PILGRIM",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:529430",
-                  "payer_id": "HARVARD_PILGRIM",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -11571,7 +11227,7 @@
               "money": {
                 "kind": "money",
                 "low": 68.75,
-                "high": 312.0,
+                "high": 81.25,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -11591,7 +11247,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:319193",
+                  "row_ref": "cha_mrf:2efdf1cef584:392731",
                   "payer_id": "UHC",
                   "row_id": null
                 }
@@ -11604,7 +11260,7 @@
               "money": {
                 "kind": "money",
                 "low": 72.88,
-                "high": 183.88,
+                "high": 92.2,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -11624,7 +11280,7 @@
                   "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                   "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:522513",
+                  "row_ref": "cha_mrf:2efdf1cef584:251588",
                   "payer_id": "CIGNA",
                   "row_id": null
                 }
@@ -21356,9 +21012,11 @@
     "atrius_health_inc_wellesley",
     "atrius_health_inc_weymouth_gb0139",
     "barry_s_paul_m_d_arlington",
+    "boston_dermatology_and_laser_center_llc_boston",
     "boston_endoscopy_center_wellesley_hills",
     "boston_food_allergy_center_llc_bi_network_boston_gb0098",
     "boston_food_allergy_center_llc_bi_network_boston_gb0099",
+    "brigham_and_womens_faulkner_gastroenterology_clinic_jama",
     "brigham_and_womens_gastroenterology_clinic_boston",
     "brigham_dermatology_associates_chestnut_hill",
     "cambridge_public_health_commission_somerville_gb0067",
@@ -21382,7 +21040,9 @@
     "hallmark_health_medical_associates_inc_stoneham",
     "harbor_medical_associates_inc_south_weymouth",
     "id_of_quincy_llc_quincy",
+    "integrated_dermatology_of_brookline_llc_brookline",
     "krauss_dermatology_pc_wellesley",
+    "lexington_waltham_dermatology_group_inc_lexington",
     "maritime_mohs_pc_wellesley_hills",
     "mass_eye_and_ear_dermatology_clinic_boston",
     "mass_general_brigham_endoscopy_clinic_braintree",
@@ -21391,6 +21051,7 @@
     "massachusetts_general_dermatology_clinic_boston",
     "massachusetts_general_physicians_organization_inc_chelse",
     "mystic_valley_dermatology_associates_pc_somerville",
+    "mystic_valley_dermatology_associates_pc_stoneham",
     "mystic_valley_dermatology_associates_pc_winchester",
     "needham_gastroenterology_associates_pc_needham",
     "new_england_baptist_surgery_center_llc_dedham",
@@ -21398,6 +21059,7 @@
     "newton_wellesley_outpatient_surgery_center_wellesley",
     "northeast_ambulatory_center_inc_stoneham",
     "northeast_dermatology_associates_pc_brookline",
+    "pratt_med_surg_dermatology_associates_inc_boston",
     "premier_dermatology_pllc_wellesley",
     "robert_j_obrien_jr_md_and_assoc_pc_winchester",
     "skincare_physicians_inc_chestnut_hill",

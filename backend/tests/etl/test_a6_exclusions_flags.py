@@ -36,8 +36,13 @@ def test_not_dollars_cha_colonoscopy():
     assert source_exclusion(_hrow(amount=5.04, gross=3510.55)) == "not_dollars"
     assert source_exclusion(_hrow(amount=35.11, gross=3510.55)) == ""  # 1.0001% is a price
     # a % row turned into dollars is not a "stated dollar"; a joined gross is not the row's own
-    assert source_exclusion(_hrow(amount=5.04, gross=3510.55, amount_method="derived_pct_x_gross")) == ""
-    assert source_exclusion(_hrow(amount=5.04, gross=3510.55, gross_rule="joined_code_setting")) == ""
+    assert (
+        source_exclusion(_hrow(amount=5.04, gross=3510.55, amount_method="derived_pct_x_gross"))
+        == ""
+    )
+    assert (
+        source_exclusion(_hrow(amount=5.04, gross=3510.55, gross_rule="joined_code_setting")) == ""
+    )
 
 
 def test_chargemaster_as_rate_needs_both_tests():
@@ -73,7 +78,7 @@ def _tic(rid, code, amount, *, tin="111111111", grp=1, bc="professional", pos="1
     r = {f.name: None for f in TIC_RATE_ROW_SCHEMA}
     r.update(row_id=rid, code=code, modifiers="", billing_class=bc, amount=amount,
              tic_tin_value=tin, tic_tin_type=tt, tic_provider_group_id=grp, tic_group_ordinal=0,
-             tic_rate_group_ordinal=0, tic_service_codes=pos, tic_negotiated_type="negotiated",
+             tic_rate_group_ordinal=0, tic_service_codes=pos, tic_negotiated_type="negotiated", setting="both",
              excluded=False, ambiguous_multi_rate=False)  # fmt: skip
     return r
 
@@ -91,7 +96,10 @@ UNITS = {"00811": 4, "00812": 3, "00813": 5, "00731": 5}
 def test_anesthesia_per_unit_mgb_synergy(tmp_path):
     # MGB INN_COMMERCIAL_HMO in_network[572]: "20.9800" on 00811, 00812 and 00813
     rows = [_tic(f"a{c}", c, 20.98) for c in ("00811", "00812", "00813")]
-    rows += [_tic("b1", "00811", 900.0, tin="222222222"), _tic("b2", "00731", 900.0, tin="222222222")]
+    rows += [
+        _tic("b1", "00811", 900.0, tin="222222222"),
+        _tic("b2", "00731", 900.0, tin="222222222"),
+    ]
     d = _run(tmp_path, rows, {1: ["1111111112"]})
     got, counts, _ = flags_mod.compute(d, UNITS, {})
     # 00811 (4) and 00731 (5) differ too, so TIN 2's one amount on both is per unit as well
@@ -125,8 +133,17 @@ def test_same_npi_same_pos_duplicate_prices(tmp_path):
     st = flags_mod.apply(d, UNITS, {})
     assert flags_mod.load_flags(d) == {"r146": ["same_npi_pos_multi_rate"],
                                        "r147": ["same_npi_pos_multi_rate"]}  # fmt: skip
-    amb = {r["row_id"]: r["ambiguous_multi_rate"] for r in pq.read_table(d / "rate_row.parquet").to_pylist()}
-    assert amb == {"r146": True, "r147": True, "other_pos": False, "same_amt": False, "same_amt2": False}
+    amb = {
+        r["row_id"]: r["ambiguous_multi_rate"]
+        for r in pq.read_table(d / "rate_row.parquet").to_pylist()
+    }
+    assert amb == {
+        "r146": True,
+        "r147": True,
+        "other_pos": False,
+        "same_amt": False,
+        "same_amt2": False,
+    }
     assert st["by_flag"]["same_npi_pos_multi_rate"] == 2
 
 
@@ -171,7 +188,9 @@ def test_name_areas(name, areas):
 
 
 def test_registry_areas_follow_the_site_not_the_address():
-    sites = {s["id"]: s for s in yaml.safe_load((REPO / "data/sites/sites.yaml").read_text())["sites"]}
+    sites = {
+        s["id"]: s for s in yaml.safe_load((REPO / "data/sites/sites.yaml").read_text())["sites"]
+    }
     assert sites["boston_dermatology_and_laser_center_llc_boston"]["service_areas"] == ["skin"]
     nebh = sites["new_england_baptist_surgery_center_llc_dedham"]
     assert nebh["service_areas"] == ["ortho"]
