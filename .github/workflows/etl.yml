@@ -2,8 +2,8 @@ name: ETL (hospital price files)
 
 # Same commands as a local run: python -m app.etl fetch|stage|normalize|build|report.
 # Output is uploaded as an artifact; nothing is committed, published or deployed from here.
-# Known gap (2026-10-24): franciscans.childrenshospital.org serves no intermediate TLS
-# certificate, so Franciscan cannot be fetched; a cold cache fails source_present for it.
+# Franciscan (2026-10-24): franciscans.childrenshospital.org serves no intermediate TLS
+# certificate; data/etl/tls/ carries it (per-host CA), and A3 re-fetched it on 2026-10-25.
 # A source that fails a gate is built from its last good copy (pins.yaml, else the baseline
 # sha below if the cached store has it), so stage/normalize failures do not stop the build:
 # the build step decides. Row counts compare against data/etl/row_count_baseline.json.

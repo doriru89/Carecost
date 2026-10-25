@@ -40,7 +40,7 @@ dev = [
 etl = [
   "pyarrow>=17",
   # app.etl.gov.browser: plain headed Chromium for mass.gov (D28); `playwright install chromium`
-  "playwright>=1.60",
+  "playwright==1.60.0",  # pinned: its Chromium build (1223) is the one `playwright install` fetches
 ]
 
 [tool.setuptools.packages.find]

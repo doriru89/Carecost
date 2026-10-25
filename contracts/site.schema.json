@@ -229,6 +229,65 @@
       "title": "HoursSpan",
       "type": "object"
     },
+    "Offered": {
+      "additionalProperties": false,
+      "description": "P1 problem 14: evidence that a site offers a service. Only positive evidence is recorded;\nthe absence of an entry means \"not known\", never \"not offered\".",
+      "properties": {
+        "checked_at": {
+          "format": "date",
+          "title": "Checked At",
+          "type": "string"
+        },
+        "codes": {
+          "description": "CPT/HCPCS when the source names them",
+          "items": {
+            "type": "string"
+          },
+          "title": "Codes",
+          "type": "array"
+        },
+        "evidence": {
+          "enum": [
+            "posted_price",
+            "operator_page",
+            "dph_license",
+            "census_category"
+          ],
+          "title": "Evidence",
+          "type": "string"
+        },
+        "service": {
+          "enum": [
+            "visit",
+            "xray",
+            "mri",
+            "ct",
+            "ultrasound",
+            "imaging",
+            "joint_injection",
+            "physical_therapy",
+            "endoscopy",
+            "skin_biopsy",
+            "lab"
+          ],
+          "title": "Service",
+          "type": "string"
+        },
+        "source": {
+          "description": "URL or registry row the evidence came from",
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service",
+        "evidence",
+        "source",
+        "checked_at"
+      ],
+      "title": "Offered",
+      "type": "object"
+    },
     "PortalLink": {
       "additionalProperties": false,
       "description": "D7: the health system's patient portal (MyChart, MGB Patient Gateway). Link only.",
@@ -374,6 +433,16 @@
           "title": "Billing Type",
           "type": "string"
         },
+        "billing_type_confidence": {
+          "default": "unknown",
+          "enum": [
+            "stated",
+            "likely",
+            "unknown"
+          ],
+          "title": "Billing Type Confidence",
+          "type": "string"
+        },
         "billing_type_source": {
           "anyOf": [
             {
@@ -400,6 +469,26 @@
           },
           "title": "Cash Prices",
           "type": "array"
+        },
+        "census_id": {
+          "anyOf": [
+            {
+              "pattern": "^GB[0-9]{4}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "clinic-census row; TiC rows carry it in tic_site_ids (P1 problem 4)",
+          "title": "Census Id"
+        },
+        "children_only": {
+          "default": false,
+          "description": "Pediatric-only site: the UI shows 'children only' (D27)",
+          "title": "Children Only",
+          "type": "boolean"
         },
         "coords": {
           "$ref": "#/$defs/Coordinates"
@@ -464,10 +553,45 @@
           "default": null,
           "title": "Notes"
         },
+        "offered": {
+          "description": "P1 problem 14",
+          "items": {
+            "$ref": "#/$defs/Offered"
+          },
+          "title": "Offered",
+          "type": "array"
+        },
         "operator": {
           "description": "Who runs it, e.g. 'BILH', 'AFC franchise', 'Carbon Health'",
           "title": "Operator",
           "type": "string"
+        },
+        "ownership": {
+          "default": "unknown",
+          "enum": [
+            "hospital_system",
+            "independent_group",
+            "pe_backed_chain",
+            "franchise",
+            "payer_owned",
+            "community_health_center",
+            "retail",
+            "unknown"
+          ],
+          "title": "Ownership",
+          "type": "string"
+        },
+        "ownership_detail": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ownership Detail"
         },
         "phone": {
           "anyOf": [
@@ -528,6 +652,14 @@
           "default": null,
           "description": "Health system id (mgb, bilh, bmc ...) if any",
           "title": "System Id"
+        },
+        "tin_npis": {
+          "description": "TiC provider groups whose tin.type is 'npi' (a 10-digit NPI used as the TIN)",
+          "items": {
+            "type": "string"
+          },
+          "title": "Tin Npis",
+          "type": "array"
         },
         "tins": {
           "description": "Billing TINs (9 digits) that price this site in TiC files. Match by TIN, never by name: one AFC franchise bills under several TINs.",

@@ -1,0 +1,112 @@
+{
+ "active": 271,
+ "by_billing_type": {
+  "asc": 4,
+  "hospital_outpatient": 48,
+  "office_visit": 113,
+  "unknown": 43
+ },
+ "by_ownership": {
+  "community_health_center": 7,
+  "franchise": 17,
+  "hospital_system": 88,
+  "independent_group": 42,
+  "payer_owned": 17,
+  "pe_backed_chain": 28,
+  "retail": 8,
+  "unknown": 1
+ },
+ "by_site_type": {
+  "ambulatory_surgery_center": 6,
+  "hospital_outpatient": 40,
+  "specialist_office": 97,
+  "urgent_care": 65
+ },
+ "census": "clinic-census-2026-10-24.csv",
+ "census_rows": 398,
+ "children_only": [
+  "boston_childrens_hospital",
+  "childrens_hospital_pediatric_associates_inc_boston",
+  "franciscan_childrens",
+  "mass_general_brigham_for_children_gastroenterology_and_n_gb0117",
+  "mass_general_brigham_for_children_gastroenterology_and_n_gb0187",
+  "mass_general_brigham_for_children_gastroenterology_and_n_gb0198",
+  "mass_general_brigham_for_children_gastroenterology_clini",
+  "pm_pediatic_care_saugus_saugus",
+  "pm_pediatrics_at_dedham_dedham",
+  "pm_pediatrics_at_woburn_woburn"
+ ],
+ "hospital_sites": 17,
+ "no_coordinates_not_written": [
+  "GB0006",
+  "GB0010",
+  "GB0014",
+  "GB0028",
+  "GB0040",
+  "GB0053",
+  "GB0057",
+  "GB0060",
+  "GB0095",
+  "GB0114",
+  "GB0115",
+  "GB0120",
+  "GB0125",
+  "GB0134",
+  "GB0137",
+  "GB0225",
+  "GB0231",
+  "GB0249",
+  "GB0258",
+  "GB0267",
+  "GB0272",
+  "GB0322",
+  "GB0348",
+  "GB0349",
+  "GB0358",
+  "GB0386",
+  "GB0398",
+  "GB0013",
+  "GB0056",
+  "GB0062",
+  "GB0106",
+  "GB0123",
+  "GB0214",
+  "GB0257",
+  "GB0305",
+  "GB0338"
+ ],
+ "offered_by_evidence": {
+  "census_category": 191,
+  "dph_license": 79,
+  "posted_price": 1
+ },
+ "offered_by_service": {
+  "endoscopy": 6,
+  "imaging": 33,
+  "lab": 33,
+  "mri": 3,
+  "physical_therapy": 10,
+  "visit": 185,
+  "xray": 1
+ },
+ "registry_only_flagged_rows_in_queue": 96,
+ "restricted_left_out": [
+  "GB0022",
+  "GB0023",
+  "GB0024",
+  "GB0025",
+  "GB0164",
+  "GB0167",
+  "GB0229",
+  "GB0313",
+  "GB0316"
+ ],
+ "sites_yaml": 208,
+ "to_verify_reasons": {
+  "no_coordinates": 36,
+  "registry_only": 147
+ },
+ "to_verify_yaml": 131,
+ "with_tin_npis": 19,
+ "with_tins": 171
+}

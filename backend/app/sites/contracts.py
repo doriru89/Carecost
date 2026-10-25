@@ -196,6 +196,38 @@ ListingStatus = Literal["web_verified", "multi_registry", "registry_only"]
 confirmation) wait in the to-verify queue and are never quoted (D27 / census D7)."""
 
 TIN_RE = r"^[0-9]{9}$"  # EIN digits only, the form TiC provider groups join on
+CENSUS_ID_RE = r"^GB[0-9]{4}$"  # research-v3/clinic-census.csv site_id (also TiC tic_site_ids)
+
+
+def normalize_tin(raw: str) -> str:
+    """'04-3026897' / '043026897' / ' 04 3026897 ' -> '043026897' (P1 problem 4). A TiC file prints
+    an EIN with a dash; the census and Site.tins keep digits only. Not 9 digits -> ValueError."""
+    d = re.sub(r"[\s-]", "", raw or "")
+    if not re.fullmatch(r"[0-9]{9}", d):
+        raise ValueError(f"not an EIN: {raw!r}")
+    return d
+
+
+Ownership = Literal[
+    "hospital_system",
+    "independent_group",
+    "pe_backed_chain",
+    "franchise",  # one brand, franchisee-owned PCs (AFC)
+    "payer_owned",  # owned by an insurer's group (Atrius -> Optum / UnitedHealth)
+    "community_health_center",  # FQHC / community health center
+    "retail",  # pharmacy / retail clinic (MinuteClinic)
+    "unknown",
+]
+"""D27 / census D3. Name- and TIN-based; PE / payer backing is [unverified] unless a source says so."""
+
+BillingConfidence = Literal["stated", "likely", "unknown"]
+"""stated: an operator billing page or a hospital-satellite licence says so; likely: registry
+evidence (census ``*_likely``); unknown: not established."""
+
+OfferedService = Literal[
+    "visit", "xray", "mri", "ct", "ultrasound", "imaging", "joint_injection", "physical_therapy",
+    "endoscopy", "skin_biopsy", "lab",
+]  # fmt: skip
 
 
 def check_npi(n: str, *, placeholders_ok: bool = False) -> str:
@@ -335,8 +367,34 @@ class PostedCashPrice(_Strict):
         return v
 
 
+class Offered(_Strict):
+    """P1 problem 14: evidence that a site offers a service. Only positive evidence is recorded;
+    the absence of an entry means "not known", never "not offered"."""
+
+    service: OfferedService
+    codes: list[str] = Field(
+        default_factory=list, description="CPT/HCPCS when the source names them"
+    )
+    evidence: Literal["posted_price", "operator_page", "dph_license", "census_category"]
+    source: str = Field(description="URL or registry row the evidence came from")
+    checked_at: date
+
+    @field_validator("codes")
+    @classmethod
+    def _codes(cls, v: list[str]) -> list[str]:
+        for c in v:
+            if not re.match(CODE_RE, c):
+                raise ValueError(f"bad CPT/HCPCS code {c!r}")
+        return v
+
+
 class Site(_Strict):
     id: str = Field(pattern=ID_RE)
+    census_id: str | None = Field(
+        default=None,
+        pattern=CENSUS_ID_RE,
+        description="clinic-census row; TiC rows carry it in tic_site_ids (P1 problem 4)",
+    )
     name: str
     site_type: SiteType
     operator: str = Field(description="Who runs it, e.g. 'BILH', 'AFC franchise', 'Carbon Health'")
@@ -352,6 +410,12 @@ class Site(_Strict):
     billing_type: BillingType
     billing_type_source: str | None = Field(
         default=None, description="URL or note that established billing_type"
+    )
+    billing_type_confidence: BillingConfidence = "unknown"
+    ownership: Ownership = "unknown"
+    ownership_detail: str | None = None
+    children_only: bool = Field(
+        default=False, description="Pediatric-only site: the UI shows 'children only' (D27)"
     )
     address: Address
     coords: Coordinates
@@ -369,6 +433,11 @@ class Site(_Strict):
     tins_source: str | None = Field(
         default=None, description="Where the TINs came from (NPPES, TiC match, census row)"
     )
+    tin_npis: list[str] = Field(
+        default_factory=list,
+        description="TiC provider groups whose tin.type is 'npi' (a 10-digit NPI used as the TIN)",
+    )
+    offered: list[Offered] = Field(default_factory=list, description="P1 problem 14")
     listing_status: ListingStatus
     listing_checked_at: date
     cash_prices: list[PostedCashPrice] = Field(default_factory=list)
@@ -398,8 +467,10 @@ class Site(_Strict):
         if (self.billing_type == "asc") != (self.site_type == "ambulatory_surgery_center"):
             if self.billing_type == "asc" or self.billing_type != "unknown":
                 raise ValueError(f"{self.id}: billing_type asc <=> an ambulatory surgery center")
-        if self.tins and not self.tins_source:
+        if (self.tins or self.tin_npis) and not self.tins_source:
             raise ValueError(f"{self.id}: tins need tins_source")
+        for n in self.tin_npis:
+            check_npi(n)
         ids = [p.item_id for p in self.cash_prices]
         if len(ids) != len(set(ids)):
             raise ValueError(f"{self.id}: duplicate cash price item_id")

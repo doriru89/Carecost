@@ -1,0 +1,274 @@
+# Hand-checked site fields. `python -m app.sites.build` merges each entry over the entry it
+# derives from the census (match_census_id) or from hospitals.yaml (match_hospital_entity_id);
+# every field given here wins. Seeded 2026-10-24 from contracts/fixtures/sites.json (the P1
+# slice's checked entries: hours, booking links, AFC's posted self-pay prices).
+version: 1
+sites:
+- match_census_id: GB0378
+  id: afc_watertown
+  name: AFC Urgent Care Watertown
+  site_type: urgent_care
+  operator: AFC franchise
+  system_id: null
+  hospital_entity_id: null
+  billing_type: office_visit
+  billing_type_source: https://www.afcurgentcare.com/watertown/resources/self-pay
+  address:
+    street: 376 Arsenal St
+    city: Watertown
+    state: MA
+    zip: '02472'
+  coords:
+    lat: 42.3637
+    lon: -71.159
+    geocoded_by: manual
+    geocoded_at: '2026-10-24'
+  phone: 617-923-2273
+  hours:
+    source: operator_schema_org
+    source_url: https://www.afcurgentcare.com/watertown/
+    checked_at: '2026-10-24'
+    weekly:
+    - days:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      opens: 08:00
+      closes: '20:00'
+    - days:
+      - sat
+      - sun
+      opens: 08:00
+      closes: '17:00'
+  booking:
+  - kind: deep_link
+    provider: solv
+    label: Reserve a spot
+    url: https://www.solvhealth.com/book-online/AM731g
+  - kind: walk_in
+    provider: none
+    label: Walk in
+  - kind: call
+    provider: phone
+    label: Call
+    phone: 617-923-2273
+  service_areas:
+  - urgent_care
+  - ortho
+  tins:
+  - '460903626'
+  tins_source: 'research-v3/clinic-census.csv GB0378: org NPI 1164772299 -> ''DRX UC WATERTOWN PC DBA AFC URGENT
+    CARE'' in the BCBS TiC file (2026-10-24)'
+  listing_status: web_verified
+  listing_checked_at: '2026-10-24'
+  cash_prices:
+  - item_id: evaluation_consultation
+    label: Evaluation Consultation (provider)
+    codes: []
+    amount: 179.0
+    includes_provider_fee: true
+    source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
+  - item_id: xray_2_views
+    label: X-ray, 2 views
+    codes:
+    - '73030'
+    amount: 150.0
+    includes_provider_fee: null
+    source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
+  - item_id: sling
+    label: Sling
+    codes: []
+    amount: 32.0
+    includes_provider_fee: null
+    source_url: https://www.afcurgentcare.com/watertown/resources/self-pay
+    checked_at: '2026-10-24'
+  billing_type_confidence: stated
+- match_census_id: GB0380
+  id: bilh_urgent_care_watertown
+  name: BILH Urgent Care Watertown
+  site_type: urgent_care
+  operator: BILH
+  system_id: bilh
+  hospital_entity_id: null
+  billing_type: unknown
+  address:
+    street: 480 Pleasant St
+    city: Watertown
+    state: MA
+    zip: '02472'
+  coords:
+    lat: 42.3646
+    lon: -71.1972
+    geocoded_by: manual
+    geocoded_at: '2026-10-24'
+  phone: 857-760-7500
+  hours:
+    source: operator_html
+    source_url: null
+    checked_at: '2026-10-24'
+    weekly:
+    - days:
+      - mon
+      - tue
+      - wed
+      - thu
+      - fri
+      opens: 09:00
+      closes: '19:00'
+    - days:
+      - sat
+      - sun
+      opens: 09:00
+      closes: '17:00'
+    may_close_early: true
+  booking:
+  - kind: deep_link
+    provider: on_my_way
+    label: See live wait / reserve
+    url: https://mychart.bilh.org/MyChart-BILH/scheduling/onmyway/?selDepId=50050001&dispGroups=100
+  portal_links:
+  - kind: mychart
+    system_id: bilh
+    label: MyBILH Chart
+    url: https://mychart.bilh.org/MyChart-BILH/
+  service_areas:
+  - urgent_care
+  tins: []
+  tins_source: null
+  listing_status: web_verified
+  listing_checked_at: '2026-10-24'
+- match_hospital_entity_id: mtauburn
+  id: mount_auburn_hospital
+  name: Mount Auburn Hospital
+  site_type: hospital_outpatient
+  operator: BILH
+  system_id: bilh
+  hospital_entity_id: mtauburn
+  billing_type: hospital_outpatient
+  address:
+    street: 330 Mount Auburn St
+    city: Cambridge
+    state: MA
+    zip: 02138
+  coords:
+    lat: 42.3738
+    lon: -71.1284
+    geocoded_by: hospital_registry
+    geocoded_at: '2026-10-24'
+  portal_links:
+  - kind: mychart
+    system_id: bilh
+    label: MyBILH Chart
+    url: https://mychart.bilh.org/MyChart-BILH/
+  service_areas:
+  - ortho
+  - skin
+  - gi
+  type_2_npis:
+  - '1689670259'
+  tins:
+  - 043026897
+  - '820671467'
+  - '222768204'
+  tins_source: 'research-v3/clinic-census.csv GB0166 (330 Mount Auburn St) clinician_billing_tins_bcbs: TINs the
+    CMS-listed clinicians at this address bill under in BCBS TiC (Mt Auburn Professional Services, Boston Orthopaedic
+    and Spine, HMFP at BIDMC)'
+  listing_status: web_verified
+  listing_checked_at: '2026-10-24'
+- match_hospital_entity_id: brigham
+  id: brigham_and_womens_hospital
+  name: Brigham and Women's Hospital
+  site_type: hospital_outpatient
+  operator: MGB
+  system_id: mgb
+  hospital_entity_id: brigham
+  billing_type: hospital_outpatient
+  address:
+    street: 75 Francis St
+    city: Boston
+    state: MA
+    zip: '02115'
+  coords:
+    lat: 42.3358
+    lon: -71.1065
+    geocoded_by: hospital_registry
+    geocoded_at: '2026-10-24'
+  portal_links:
+  - kind: patient_gateway
+    system_id: mgb
+    label: MGB Patient Gateway
+    url: https://patientgateway.massgeneralbrigham.org/
+  service_areas:
+  - ortho
+  - skin
+  - gi
+  type_2_npis: []
+  tins: []
+  tins_source: null
+  listing_status: web_verified
+  listing_checked_at: '2026-10-24'
+- match_hospital_entity_id: franciscan
+  id: franciscan_childrens
+  name: Franciscan Children's
+  site_type: hospital_outpatient
+  operator: Franciscan Children's
+  system_id: null
+  hospital_entity_id: franciscan
+  billing_type: hospital_outpatient
+  address:
+    street: 30 Warren St
+    city: Brighton
+    state: MA
+    zip: '02135'
+  coords:
+    lat: 42.354
+    lon: -71.153
+    geocoded_by: hospital_registry
+    geocoded_at: '2026-10-24'
+  portal_links: []
+  service_areas:
+  - ortho
+  type_2_npis: []
+  tins: []
+  tins_source: null
+  listing_status: web_verified
+  listing_checked_at: '2026-10-24'
+- match_hospital_entity_id: tufts
+  id: tufts_medical_center
+  name: Tufts Medical Center
+  site_type: hospital_outpatient
+  operator: Tufts Medicine
+  system_id: tufts_medicine
+  hospital_entity_id: tufts
+  billing_type: hospital_outpatient
+  billing_type_source: Hospital-licensed outpatient departments bill a facility fee (tufts_mrf lists facility rates)
+  address:
+    street: 800 Washington St
+    city: Boston
+    state: MA
+    zip: '02111'
+  coords:
+    lat: 42.3495
+    lon: -71.0636
+    geocoded_by: hospital_registry
+    geocoded_at: '2026-10-24'
+  phone: null
+  hours: null
+  booking: []
+  portal_links: []
+  service_areas:
+  - ortho
+  - skin
+  - gi
+  type_2_npis:
+  - '1730132515'
+  tins:
+  - '043400617'
+  tins_source: The hospital's own EIN in its CMS price-file name (043400617_tuftsmedicalcenter_standardcharges.csv.zip,
+    tuftsmedicine.org/cms-hpt.txt)
+  listing_status: web_verified
+  listing_checked_at: '2026-10-24'

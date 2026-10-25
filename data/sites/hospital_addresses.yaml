@@ -1,0 +1,56 @@
+# Hospital campus addresses, copied from each price file's own hospital_address header
+# (CMS v3 field), read from the 2026-10-24/25 downloads. Used by `python -m app.sites.build`.
+# A file that lists several campuses (CHA) contributes its first address here.
+version: 1
+hospitals:
+  bid_milton:
+    address: {street: "199 Reedsdale Road", city: Milton, state: MA, zip: "02186"}
+    source: "bid_milton_mrf hospital_address '199 Reedsdale Road, Milton, MA 02186' (file sha e29c72cd9632)"
+  bid_needham:
+    address: {street: "148 Chestnut Street", city: Needham, state: MA, zip: "02492"}
+    source: "bid_needham_mrf hospital_address '148 Chestnut Street, Needham, MA 02492' (file sha a13270bcc367)"
+  bidmc:
+    address: {street: "330 Brookline Avenue", city: Boston, state: MA, zip: "02215"}
+    source: "bidmc_mrf hospital_address '330 Brookline Avenue, Boston, MA 02215' (file sha 7e4dd9074968)"
+  bmc_brighton:
+    address: {street: "736 Cambridge Street", city: Boston, state: MA, zip: "02135"}
+    source: "bmc_brighton_mrf hospital_address '736 Cambridge Street, Boston MA 02135' (file sha 82e4e827864c)"
+  bmc:
+    address: {street: "One Boston Medical Center Pl", city: Boston, state: MA, zip: "02118"}
+    source: "bmc_mrf hospital_address 'One Boston Medical Center Pl, Boston, MA 02118' (file sha 77660f57289a)"
+  bmc_south:
+    address: {street: "235 North Pearl Street", city: Brockton, state: MA, zip: "02301"}
+    source: "bmc_south_mrf hospital_address '235 North Pearl Street, Brockton MA 02301' (file sha 1fe332043966)"
+  brigham:
+    address: {street: "75 Francis St", city: Boston, state: MA, zip: "02115"}
+    source: "brigham_mrf hospital_address '75 Francis St Boston MA 02115-6110' (file sha 188337340e25)"
+  cha:
+    address: {street: "1493 Cambridge St", city: Cambridge, state: MA, zip: "02139"}
+    source: "cha_mrf hospital_address '1493 Cambridge St, Cambridge, MA 02139' (file sha 2efdf1cef584)"
+  childrens:
+    address: {street: "300 Longwood Avenue", city: Boston, state: MA, zip: "02115"}
+    source: "childrens_mrf hospital_address '300 Longwood Avenue Boston, MA 02115' (file sha d989bdd477aa)"
+  dana_farber:
+    address: {street: "450 Brookline Avenue", city: Boston, state: MA, zip: "02115"}
+    source: "dana_farber_mrf hospital_address '450 Brookline Avenue, Boston, MA 02115' (file sha ae1fb1fa761f)"
+  faulkner:
+    address: {street: "1153 Centre St", city: Boston, state: MA, zip: "02130"}
+    source: "faulkner_mrf hospital_address '1153 Centre St Boston MA 02130-3446' (file sha d66cc4a4b284)"
+  franciscan:
+    address: {street: "30 Warren Street", city: Brighton, state: MA, zip: "02135"}
+    source: "franciscan_mrf hospital_address '30 Warren Street, Brighton, MA 02135' (file sha f7d22355fb08)"
+  mgh:
+    address: {street: "55 Fruit St", city: Boston, state: MA, zip: "02114"}
+    source: "mgh_mrf hospital_address '55 Fruit St Boston MA 02114-2621' (file sha 5be51f8464a8)"
+  mtauburn:
+    address: {street: "330 Mount Auburn Street", city: Cambridge, state: MA, zip: "02138"}
+    source: "mtauburn_mrf hospital_address '330 Mount Auburn Street, Cambridge, MA 02138' (file sha a9e5ac64beef)"
+  nebh:
+    address: {street: "125 Parker Hill Avenue", city: Boston, state: MA, zip: "02120"}
+    source: "nebh_mrf hospital_address '125 Parker Hill Avenue, Boston, MA 02120' (file sha 47ade3a70856)"
+  newton_wellesley:
+    address: {street: "2014 Washington St", city: Newton, state: MA, zip: "02462"}
+    source: "newton_wellesley_mrf hospital_address '2014 Washington St Newton MA 02462-1607' (file sha aad204b63a2c)"
+  tufts:
+    address: {street: "800 Washington St", city: Boston, state: MA, zip: "02111"}
+    source: "tufts_mrf hospital_address '800 WASHINGTON ST, BOSTON, MA 02111' (file sha d16771049bc4)"

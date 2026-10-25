@@ -1,0 +1,596 @@
+{
+ "site_id": "afc_watertown",
+ "format": "afc_self_pay",
+ "source_url": "https://www.afcurgentcare.com/watertown/resources/self-pay/",
+ "final_url": "https://www.afcurgentcare.com/watertown/resources/self-pay/",
+ "robots": "allowed",
+ "checked_at": "2026-10-24",
+ "page_sha256": "c5d487513af191c07851a91a246e1994d18084221d7a374a08fdfc814752b7db",
+ "rows": 97,
+ "priced_rows": 86,
+ "items": [
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Vaccine consult (Book/Doc review only) / International",
+   "raw": "$130",
+   "amount": 130.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Travel Consultation Fee (One Time) (Provider's visit)",
+   "raw": "$130",
+   "amount": 130.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Flu Vaccine",
+   "raw": "$55",
+   "amount": 55.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "TB/PPD (including the read)",
+   "raw": "$110",
+   "amount": 110.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "PPD-related X-Ray 1view (Needs Documentation)",
+   "raw": "$80",
+   "amount": 80.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "PPD read when placed elsewhere",
+   "raw": "$69",
+   "amount": 69.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Hepatitis A \u2013 2 needed (6 months and up)",
+   "raw": "$130 (Each Dose)",
+   "amount": null
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Hepatitis B \u2013 3 needed (no age)",
+   "raw": "$130 (Each Dose)",
+   "amount": null
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Hepatitis B Immunoglobulin",
+   "raw": "$350",
+   "amount": 350.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Tdap/T etanus (11 yrs old \u2013 64 yrs old)",
+   "raw": "$85",
+   "amount": 85.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "TD (7 yrs old up)",
+   "raw": "$80",
+   "amount": 80.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Varicella (6 weeks and up)",
+   "raw": "$230 (Each Dose)",
+   "amount": null
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Pneumovax",
+   "raw": "$250",
+   "amount": 250.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Polio (6 weeks and up)",
+   "raw": "$100",
+   "amount": 100.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "MMR \u2013 1 or 2 needed (12 months up)",
+   "raw": "$155 (Each Dose)",
+   "amount": null
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Meningitis (9 months \u2013 55 yrs old)",
+   "raw": "$200",
+   "amount": 200.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Yellow Fever (9 month and up) NOT available",
+   "raw": "$300",
+   "amount": 300.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Typhoid Fever",
+   "raw": "$220",
+   "amount": 220.0
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Japanese Encephalitis \u2013 3 needed \u2013 SPECIAL ORDER",
+   "raw": "$500 (Each Dose)",
+   "amount": null
+  },
+  {
+   "section": "Immunization Vaccinations",
+   "label": "Rabies \u2013 3 needed \u2013 SPECIAL ORDER",
+   "raw": "$500 (Each Dose)",
+   "amount": null
+  },
+  {
+   "section": "Physicals",
+   "label": "Basic/school/sport camp physical using our paperwork",
+   "raw": "$120",
+   "amount": 120.0
+  },
+  {
+   "section": "Physicals",
+   "label": "DOT Physical / DOT (follow up 1-3 months) No Charge for UA",
+   "raw": "$130 / ($45-$75-$85)",
+   "amount": null
+  },
+  {
+   "section": "Physicals",
+   "label": "7D Physical",
+   "raw": "$125",
+   "amount": 125.0
+  },
+  {
+   "section": "Physicals",
+   "label": "Coast Guard Physical /with Drug Screen",
+   "raw": "$200/$300",
+   "amount": null
+  },
+  {
+   "section": "Physicals",
+   "label": "Pre-op Physical",
+   "raw": "$110",
+   "amount": 110.0
+  },
+  {
+   "section": "Physicals",
+   "label": "Respiratory Fit Test (N-95) plus nurse visit fee",
+   "raw": "$60",
+   "amount": 60.0
+  },
+  {
+   "section": "Physicals",
+   "label": "Lift Test",
+   "raw": "$60",
+   "amount": 60.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "Physician Counseling",
+   "raw": "$179",
+   "amount": 179.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "BV/Yeast/Trich",
+   "raw": "$350",
+   "amount": 350.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "Hepatitis B Core Ab IgM",
+   "raw": "$100",
+   "amount": 100.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "Hepatitis B Surface Ag W/Reflex",
+   "raw": "$100",
+   "amount": 100.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "RPR/syphilis (36126)",
+   "raw": "$50",
+   "amount": 50.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "Hepatitis C AB (8472)",
+   "raw": "$50",
+   "amount": 50.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "HIV 1/2 AG/AB 4th Generation w/ RFL",
+   "raw": "$100",
+   "amount": 100.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "GC/Chlamydia (send out to quest) and Rapid GC/NT",
+   "raw": "$155 / $120",
+   "amount": null
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "HSV 1/2 IGG",
+   "raw": "$70",
+   "amount": 70.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "HSV SureSwab",
+   "raw": "$280",
+   "amount": 280.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "HSV Culture w/ RFL to Typing",
+   "raw": "$120",
+   "amount": 120.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "HSV1/2 IGM, W/RFL",
+   "raw": "$250",
+   "amount": 250.0
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "***** Four Different STD Options *****",
+   "raw": "SEE STD BUNDLE PRICING",
+   "amount": null
+  },
+  {
+   "section": "STD Testing $179 plus the cost of the test",
+   "label": "Ceftriaxone 250mg & Azithromycin 250mg, 500mg",
+   "raw": "$35",
+   "amount": 35.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Evaluation Consultation (provider)",
+   "raw": "$179",
+   "amount": 179.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Aer/Ana/GS Wound Culture",
+   "raw": "$60",
+   "amount": 60.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "H. Pylori (helocobacter Pylori)-Antigen, FECAL",
+   "raw": "$150",
+   "amount": 150.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "BMP",
+   "raw": "$60",
+   "amount": 60.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "BV/Yeast/Trich",
+   "raw": "$350",
+   "amount": 350.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "CBC DIFF PLT",
+   "raw": "$60 / $60",
+   "amount": 60.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "CMP",
+   "raw": "$60 / $60",
+   "amount": 60.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Clostridaum Difficile",
+   "raw": "$260",
+   "amount": 260.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "TICK Panel",
+   "raw": "$400",
+   "amount": 400.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Ehrlichia Chaf AB",
+   "raw": "$100",
+   "amount": 100.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Lyme AB w/Refl to Blot",
+   "raw": "$400",
+   "amount": 400.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Culture, Aerobic Bacteria",
+   "raw": "$70",
+   "amount": 70.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Lead Blood",
+   "raw": "$150",
+   "amount": 150.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Lipid Panel",
+   "raw": "$190",
+   "amount": 190.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Sed Rate by Mod West",
+   "raw": "$60",
+   "amount": 60.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Stool Culture",
+   "raw": "$300",
+   "amount": 300.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Stool Ova Parasites w/ Giardia AG",
+   "raw": "$306",
+   "amount": 306.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Throat Culture",
+   "raw": "$60",
+   "amount": 60.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Uric Acid",
+   "raw": "$60",
+   "amount": 60.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "SARS-Cov-2 RT-PCR",
+   "raw": "$249",
+   "amount": 249.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Vitamin D (17306)",
+   "raw": "$200",
+   "amount": 200.0
+  },
+  {
+   "section": "Most Common Send Out Labs",
+   "label": "Urine analysis (UA)",
+   "raw": "$30",
+   "amount": 30.0
+  },
+  {
+   "section": "Viral Titers",
+   "label": "Hep A",
+   "raw": "$60 each",
+   "amount": null
+  },
+  {
+   "section": "Viral Titers",
+   "label": "Polio Titer",
+   "raw": "$85",
+   "amount": 85.0
+  },
+  {
+   "section": "Viral Titers",
+   "label": "Varicella Titer (chicken pox)",
+   "raw": "$85",
+   "amount": 85.0
+  },
+  {
+   "section": "Viral Titers",
+   "label": "MMR Titer (All Three)",
+   "raw": "$85",
+   "amount": 85.0
+  },
+  {
+   "section": "Viral Titers",
+   "label": "Rabies Titer",
+   "raw": "$150 / $85",
+   "amount": 150.0
+  },
+  {
+   "section": "Viral Titers",
+   "label": "Hep B Titer",
+   "raw": "$150 / $85",
+   "amount": 85.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "Replacement DOT Card",
+   "raw": "$25",
+   "amount": 25.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "Yellow Vaccination Card (WHO)",
+   "raw": "$20",
+   "amount": 20.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "Pulmonary Function Test / Spirometry",
+   "raw": "$60",
+   "amount": 60.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "Sickle Cell",
+   "raw": "$60",
+   "amount": 60.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "Rapid Urine analysis (UA)",
+   "raw": "$30",
+   "amount": 30.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "Hearing Test / Audiogram",
+   "raw": "$40",
+   "amount": 40.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "Venipuncture",
+   "raw": "$15",
+   "amount": 15.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "Vision Test",
+   "raw": "$30",
+   "amount": 30.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "Suture Removal",
+   "raw": "$119",
+   "amount": 119.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "Rapid Pregnancy test",
+   "raw": "$30",
+   "amount": 30.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "X-Ray 1 View",
+   "raw": "$80 / $150 / $225",
+   "amount": 80.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "X-Ray 2 views",
+   "raw": "$80 / $150 / $225",
+   "amount": 150.0
+  },
+  {
+   "section": "Miscellaneous",
+   "label": "X-Ray 3 views",
+   "raw": "$80 / $150 / $225",
+   "amount": 225.0
+  },
+  {
+   "section": "Substance Abuse Testing",
+   "label": "5 Panel non-DOT Urine Drug (Quest)",
+   "raw": "$100",
+   "amount": 100.0
+  },
+  {
+   "section": "Substance Abuse Testing",
+   "label": "Breath Alcohol Testing DOT",
+   "raw": "$60",
+   "amount": 60.0
+  },
+  {
+   "section": "Substance Abuse Testing",
+   "label": "Nicotine (send out to Lab)",
+   "raw": "$100",
+   "amount": 100.0
+  },
+  {
+   "section": "Substance Abuse Testing",
+   "label": "Observed Urine Collection",
+   "raw": "$25",
+   "amount": 25.0
+  },
+  {
+   "section": "Substance Abuse Testing",
+   "label": "Rapid 10-Panel Drug Screen",
+   "raw": "$110",
+   "amount": 110.0
+  },
+  {
+   "section": "Substance Abuse Testing",
+   "label": "DOT or Non-DOT Urine Drug Screen w/MRO (Quest)",
+   "raw": "$110",
+   "amount": 110.0
+  },
+  {
+   "section": "Substance Abuse Testing",
+   "label": "Hair Follicle Drug Testing (Quest)",
+   "raw": "$110",
+   "amount": 110.0
+  },
+  {
+   "section": "Substance Abuse Testing",
+   "label": "Drug Screen Urine or Hair Collection Only (Quest)",
+   "raw": "$45",
+   "amount": 45.0
+  },
+  {
+   "section": "Orthopedic Supplies (Retail Sales)",
+   "label": "Cane",
+   "raw": "$30",
+   "amount": 30.0
+  },
+  {
+   "section": "Orthopedic Supplies (Retail Sales)",
+   "label": "Splint (finger, wrist, ankle, etc)",
+   "raw": "$40",
+   "amount": 40.0
+  },
+  {
+   "section": "Orthopedic Supplies (Retail Sales)",
+   "label": "Surgical Shoes",
+   "raw": "$40",
+   "amount": 40.0
+  },
+  {
+   "section": "Orthopedic Supplies (Retail Sales)",
+   "label": "Walking Boot",
+   "raw": "$60",
+   "amount": 60.0
+  },
+  {
+   "section": "Orthopedic Supplies (Retail Sales)",
+   "label": "Long Knee Brace",
+   "raw": "$70",
+   "amount": 70.0
+  },
+  {
+   "section": "Orthopedic Supplies (Retail Sales)",
+   "label": "Arm Sling",
+   "raw": "$32",
+   "amount": 32.0
+  },
+  {
+   "section": "Orthopedic Supplies (Retail Sales)",
+   "label": "Hinged Knee Brace",
+   "raw": "$60",
+   "amount": 60.0
+  }
+ ],
+ "diff_vs_curated": []
+}
