@@ -4,6 +4,10 @@
   "payment": {
     "kind": "medicare"
   },
+  "payment_label": {
+    "en": "Medicare",
+    "zh": "Medicare\uff08\u8054\u90a6\u533b\u7597\u4fdd\u9669\uff09"
+  },
   "care_path": {
     "id": "shoulder_chronic_clicking_v1",
     "version": "1.0.0",
@@ -14,8 +18,8 @@
   "picked_by": "person",
   "as_of": "2026-10-25",
   "data_version": {
-    "build_id": "20261024-336340ed",
-    "build_date": "2026-10-24",
+    "build_id": "20261025-336340ed",
+    "build_date": "2026-10-25",
     "tic_release": "tic-2026-10",
     "sites_version": 1,
     "care_paths_version": "1.0.0"
@@ -99,9 +103,170 @@
           "skin",
           "gi"
         ],
+        "kind": "hospital_outpatient",
+        "chain_id": null,
         "children_only": false,
         "data_notices": []
       },
+      "headline": {
+        "likely_low": 310.22,
+        "likely_high": 310.22,
+        "includes_estimate": false,
+        "complete": false,
+        "missing": 1,
+        "comparable": 310.22,
+        "real_steps": 2,
+        "might_add": {
+          "low": 172.41,
+          "high": 876.82,
+          "step_keys": [
+            "steroid_injection",
+            "tendon_scan_ultrasound",
+            "tendon_scan_mri"
+          ]
+        }
+      },
+      "steps": [
+        {
+          "key": "visit",
+          "step_id": "visit",
+          "likelihood": "certain",
+          "availability": "offered",
+          "figure": "own",
+          "low": 211.56,
+          "high": 211.56,
+          "rank_value": 211.56,
+          "estimated": false,
+          "unusual": false,
+          "in_total": true,
+          "missing": false,
+          "line_ids": [
+            "visit_facility",
+            "visit_doctor"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "xray",
+          "step_id": "xray",
+          "likelihood": "likely",
+          "availability": "offered",
+          "figure": "own",
+          "low": 98.66,
+          "high": 98.66,
+          "rank_value": 98.66,
+          "estimated": false,
+          "unusual": false,
+          "in_total": true,
+          "missing": false,
+          "line_ids": [
+            "xray_facility",
+            "xray_reading"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "physical_therapy",
+          "step_id": "physical_therapy",
+          "likelihood": "likely",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "physical_therapy_facility",
+            "physical_therapy_sessions_facility"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "steroid_injection",
+          "step_id": "steroid_injection",
+          "likelihood": "possible",
+          "availability": "offered",
+          "figure": "own",
+          "low": 392.72,
+          "high": 392.72,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "steroid_injection_facility",
+            "steroid_injection_doctor",
+            "steroid_injection_drug_ai"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "tendon_scan_ultrasound",
+          "step_id": "tendon_scan_ultrasound",
+          "likelihood": "possible",
+          "availability": "offered",
+          "figure": "own",
+          "low": 172.41,
+          "high": 172.41,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "tendon_scan_ultrasound_facility",
+            "tendon_scan_ultrasound_reading"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "tendon_scan_mri",
+          "step_id": "tendon_scan_mri",
+          "likelihood": "possible",
+          "availability": "offered",
+          "figure": "own",
+          "low": 311.69,
+          "high": 311.69,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "tendon_scan_mri_facility",
+            "tendon_scan_mri_reading"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "mr_arthrogram",
+          "step_id": "mr_arthrogram",
+          "likelihood": "rare",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "mr_arthrogram_facility",
+            "mr_arthrogram_reading",
+            "mr_arthrogram_23350_facility",
+            "mr_arthrogram_23350_doctor",
+            "mr_arthrogram_77002_facility",
+            "mr_arthrogram_77002_reading"
+          ],
+          "elsewhere": null
+        }
+      ],
+      "distance_km": 4.83,
       "receipt": {
         "lines": [
           {
@@ -124,6 +289,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 136.02,
@@ -152,6 +318,10 @@
             "price_notes": [
               "price.national_unadjusted"
             ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -171,6 +341,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 75.54,
@@ -197,7 +368,6 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
@@ -206,6 +376,10 @@
             "elsewhere": [],
             "learn_more": [],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -228,6 +402,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 88.91,
@@ -282,6 +457,10 @@
             "price_notes": [
               "price.national_unadjusted"
             ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -303,6 +482,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 9.75,
@@ -329,7 +509,6 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
@@ -347,6 +526,10 @@
               }
             ],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -369,6 +552,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "not_published",
               "what": "Medicare's rate for the facility's own fee for this item",
@@ -403,6 +587,10 @@
             "elsewhere": [],
             "learn_more": [],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -425,6 +613,7 @@
             "component_confirmed": true,
             "unit": "per_15_minutes",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "not_published",
               "what": "Medicare's rate for the facility's own fee for this item",
@@ -459,6 +648,10 @@
             "elsewhere": [],
             "learn_more": [],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -482,6 +675,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 350.52,
@@ -525,6 +719,10 @@
             "elsewhere": [],
             "learn_more": [],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -547,6 +745,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 42.2,
@@ -573,7 +772,6 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
@@ -582,6 +780,10 @@
             "elsewhere": [],
             "learn_more": [],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -603,11 +805,16 @@
             "component": "drug",
             "component_confirmed": false,
             "unit": "once",
-            "availability": "unknown",
+            "availability": "offered",
+            "availability_reason": null,
             "cell": {
-              "kind": "not_loaded",
-              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
-              "eta": null
+              "kind": "not_published",
+              "what": "Medicare's rate for the facility's own fee for this item",
+              "ask": "Ask the billing office what Medicare pays here.",
+              "searched": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b"
+              }
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -617,6 +824,10 @@
             "elsewhere": [],
             "learn_more": [],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -640,6 +851,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 126.27,
@@ -692,6 +904,10 @@
               }
             ],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -714,6 +930,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 46.14,
@@ -740,7 +957,6 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
@@ -758,6 +974,10 @@
               }
             ],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -781,6 +1001,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 243.77,
@@ -835,6 +1056,10 @@
             "price_notes": [
               "price.national_unadjusted"
             ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -857,6 +1082,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 67.92,
@@ -883,7 +1109,6 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
@@ -901,6 +1126,10 @@
               }
             ],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -925,6 +1154,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 800.9,
@@ -975,6 +1205,10 @@
             "price_notes": [
               "price.national_unadjusted"
             ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -998,6 +1232,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 80.84,
@@ -1024,7 +1259,6 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
@@ -1038,6 +1272,10 @@
               }
             ],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -1061,7 +1299,8 @@
             "component": "facility",
             "component_confirmed": true,
             "unit": "once",
-            "availability": "unknown",
+            "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "not_published",
               "what": "Medicare's rate for the facility's own fee for this item",
@@ -1084,6 +1323,10 @@
               }
             ],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -1106,7 +1349,8 @@
             "component": "professional",
             "component_confirmed": true,
             "unit": "once",
-            "availability": "unknown",
+            "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 44.33,
@@ -1133,7 +1377,6 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
@@ -1147,6 +1390,10 @@
               }
             ],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -1170,7 +1417,8 @@
             "component": "facility",
             "component_confirmed": true,
             "unit": "once",
-            "availability": "unknown",
+            "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "not_published",
               "what": "Medicare's rate for the facility's own fee for this item",
@@ -1180,7 +1428,24 @@
                 "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b"
               }
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 1060.0,
+              "high": 1060.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "brigham_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "brigham_mrf:188337340e25:108904",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -1193,6 +1458,10 @@
               }
             ],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           },
           {
@@ -1215,7 +1484,8 @@
             "component": "professional",
             "component_confirmed": true,
             "unit": "once",
-            "availability": "unknown",
+            "availability": "offered",
+            "availability_reason": null,
             "cell": {
               "kind": "money",
               "low": 29.29,
@@ -1242,7 +1512,6 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
@@ -1256,6 +1525,10 @@
               }
             ],
             "price_notes": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
             "at": "this_site"
           }
         ],
@@ -1274,7 +1547,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 2,
+          "missing": 1,
           "excluded": [
             {
               "line_id": "physical_therapy_facility",
@@ -1342,6 +1615,17 @@
             "note_key": "youpay.medicare_20_percent",
             "portal_label": null,
             "portal_url": null
+          },
+          "comparable": 310.22,
+          "real_steps": 2,
+          "might_add": {
+            "low": 172.41,
+            "high": 876.82,
+            "step_keys": [
+              "steroid_injection",
+              "tendon_scan_ultrasound",
+              "tendon_scan_mri"
+            ]
           }
         }
       },
@@ -2082,6 +2366,12 @@
       ]
     }
   ],
+  "ordering": "rank",
+  "origin": {
+    "lat": 42.3603,
+    "lon": -71.058
+  },
+  "chain_spreads": [],
   "sites_without_service": [],
   "copy_keys": [
     "copy.not_a_diagnosis",

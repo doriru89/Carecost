@@ -47,6 +47,7 @@ from app.quote.store import (
     pack_from_extract,
     standard_ref,
     tin_digits,
+    valid_npi,
     write_pack,
 )
 from app.registries import all_hospitals
@@ -155,7 +156,12 @@ def tic_rows(
 
     npi_sets: dict[int, tuple[str, ...]] = {}
     census: dict[str, set[str]] = {}
-    stats = {"tic_rows_read": 0, "tic_rows_kept": 0, "tic_rows_packed": 0}
+    stats = {
+        "tic_rows_read": 0,
+        "tic_rows_kept": 0,
+        "tic_rows_packed": 0,
+        "tic_placeholder_npis_dropped": 0,
+    }
 
     def gen() -> Iterator[Row]:
         set_ids: dict[tuple[str, ...], int] = {}
@@ -186,7 +192,12 @@ def tic_rows(
             for rec in g.to_pylist():
                 k2 = (rec["provider_group_id"], rec["group_ordinal"])
                 ok = 0 < rec["n_npi"] <= MAX_GROUP_NPIS
-                gnpis[k2] = tuple(tin_digits(n) for n in rec["npis"]) if ok else None
+                got = tuple(tin_digits(n) for n in rec["npis"]) if ok else None
+                if got is not None:  # R10: "0" and other placeholders are "unknown", not an NPI
+                    keep = tuple(n for n in got if valid_npi(n))
+                    stats["tic_placeholder_npis_dropped"] += len(got) - len(keep)
+                    got = keep or None
+                gnpis[k2] = got
             for r, grps in sorted(bunch.values(), key=lambda b: (b[0].stage_row, b[0].row_id)):
                 npis: set[str] | None = set()
                 for grp in grps:
@@ -277,6 +288,23 @@ def gov_root_rows(gov_root: Path, codes: set[str]) -> tuple[list[Row], dict[str,
     return rows, sources
 
 
+def refresh_status(roots: list[Path | None]) -> dict[str, dict]:
+    """P11 / R11: the ETL's ``intermediate/refresh_status.json`` next to each input root (A5's
+    app.etl.refresh), merged, so the server can say on /health which sources failed to refresh
+    (``stale_on_our_side`` / ``no_good_copy``) instead of reading them as "no public price"."""
+    out: dict[str, dict] = {}
+    seen: set[Path] = set()
+    for root in roots:
+        if root is None:
+            continue
+        for cand in (root.parent / "refresh_status.json",
+                     root.parent.parent / "intermediate" / "refresh_status.json"):  # fmt: skip
+            if cand.exists() and cand.resolve() not in seen:
+                seen.add(cand.resolve())
+                out.update(json.loads(cand.read_text()).get("sources") or {})
+    return dict(sorted(out.items()))
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--hospital-build", type=Path)
@@ -315,8 +343,9 @@ def main() -> None:
         yield from trows
 
     loaded = target_codes()
+    status = refresh_status([a.hospital_build, a.tic_root, a.gov_root])
     n = write_pack(a.out, rows=all_rows(), sources=sources, version=version, codes=loaded,
-                   npi_sets=npi_sets, census_tins=census)  # fmt: skip
+                   npi_sets=npi_sets, census_tins=census, refresh_status=status)  # fmt: skip
     # (npi_sets / census are filled while write_pack streams the TiC rows, before it writes them)
     mb = a.out.stat().st_size / 1e6
     by_kind: dict[str, int] = {}

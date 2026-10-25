@@ -1,0 +1,12 @@
+# Item 12 + O audit: anesthesia base units per code (also turn a per-unit 008xx rate into a fee), for "with typical time, about $Y" (never summed):
+# $Y = the base-units fee x (base + typical minutes / 15) / base. Typical minutes: A5's
+# data/etl/physician_time.yaml (CMS CY2026 Physician Work Time, typical anesthesia time).
+# Base units: CMS anesthesia base units, checked against the pack: the PFS anesthesia row for
+# locality 01 divided by these base units gives one conversion factor (21.59) for all three
+# (00731 107.95 / 5, 00811 86.36 / 4, 00812 64.77 / 3).
+version: 1
+base_units:
+  "00731": 5
+  "00811": 4
+  "00812": 3
+  "00813": 5  # CMS CY2022 anesthesia base units file rows 102-104 (00811 4, 00812 3, 00813 5), per O

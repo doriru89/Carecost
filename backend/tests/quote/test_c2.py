@@ -6,7 +6,6 @@ catalog's per-path names. Runs on the committed extract and data/sites/sites.yam
 
 from __future__ import annotations
 
-import copy
 from dataclasses import replace
 
 import pytest
@@ -56,13 +55,25 @@ def test_default_max_sites_is_12_and_50_is_the_ceiling():
         _req(max_sites=0)
 
 
-def test_no_point_returns_the_best_ranked_sites(engine):
-    """Without `near`, every eligible site is priced and the best max_sites (I7) come back,
-    ranked again inside that set."""
-    small = engine.quote(_req(site_ids=KEY_SITES, max_sites=3), AS_OF)
-    full = engine.quote(_req(site_ids=KEY_SITES, max_sites=6), AS_OF)
-    assert len(small.sites) == 3
-    assert [s.site.site_id for s in small.sites] == [s.site.site_id for s in full.sites[:3]]
+def test_no_point_lists_every_admitted_site_by_kind_then_distance(engine):
+    """C3 P7 (R6): without `near` there is no "best N" trim: every admitted site, grouped by kind
+    of site, then by distance from Boston City Hall; receipts for the first full_receipts."""
+    r = engine.quote(_req(full_receipts=3), AS_OF)
+    assert r.ordering == "kind_then_distance"
+    assert (r.origin.lat, r.origin.lon) == (42.3603, -71.058)
+    shoulder = engine.reg.paths[SHOULDER]
+    admitted = engine._admitted(shoulder, engine.reg.path_areas(shoulder))
+    assert {sq.site.site_id for sq in r.sites} == set(admitted) and len(r.sites) > 50
+    from app.quote.contracts import kind_distance_key
+
+    keys = [kind_distance_key(sq) for sq in r.sites]
+    assert keys == sorted(keys)
+    assert [sq.receipt is not None for sq in r.sites] == [True] * 3 + [False] * (len(r.sites) - 3)
+    assert all(sq.steps and sq.headline for sq in r.sites)  # summaries for everyone
+    # the receipt of a site past N, on request by site_ids, has the same headline
+    late = r.sites[10]
+    one = engine.quote(_req(site_ids=[late.site.site_id]), AS_OF)
+    assert one.sites[0].receipt is not None and one.sites[0].headline == late.headline
 
 
 def test_children_only_sites_only_when_named(engine, registry):
@@ -141,31 +152,22 @@ def test_pfs_locality_follows_the_site_county(engine, registry):
 # --------------------------------------------------------------------------- I7 missing
 
 
-def test_missing_counts_expected_lines_without_a_number_that_counts(engine):
-    """`missing` = certain/likely, non-AI lines whose number does not count in the total (a gap,
-    a conflict, a repeating unit, or a rung-7 reference) + steps another site lists. A rung-7
-    reference line therefore counts as missing; a rung-4 MassHealth reading does not."""
-    from app.quote.contracts import missing_for
-
-    r = engine.quote(_req(payment={"kind": "masshealth"}, care_path_id=None,
-                          service_codes=["73030", "73221"], site_ids=KEY_SITES), AS_OF)  # fmt: skip
-    tufts = next(s for s in r.sites if s.site.site_id == "tufts_medical_center")
-    gaps = [ln.line_id for ln in tufts.receipt.lines if not ln.in_total]
-    assert gaps == ["svc_73030_facility", "svc_73221_facility"]
-    assert tufts.receipt.totals.missing == 2 and missing_for(tufts, set()) == 2
-    # make one reading a number that does not count (a repeating unit): missing goes up by one
-    doc = copy.deepcopy(r.model_dump(mode="json"))
-    sq = next(s for s in doc["sites"] if s["site"]["site_id"] == "tufts_medical_center")
-    ln = next(x for x in sq["receipt"]["lines"] if x["line_id"] == "svc_73030_reading")
-    ln["in_total"] = False
-    ln["unit"] = "per_15_minutes"
-    t = sq["receipt"]["totals"]
-    t["excluded"].append({"line_id": ln["line_id"], "reason": "repeats"})
-    t["likely"]["line_ids"].remove(ln["line_id"])
-    t["likely"]["low"] = round(t["likely"]["low"] - ln["cell"]["low"], 2)
-    t["likely"]["high"] = round(t["likely"]["high"] - ln["cell"]["high"], 2)
-    with pytest.raises(ValidationError, match="totals.missing must be 3"):
-        QuoteResponse.model_validate(doc)
+def test_missing_is_per_step_and_does_not_depend_on_the_response(engine):
+    """C3 I7: `missing` counts steps (a hospital step with two unpriced lines counts once) and is
+    computed over every admitted site, so the same site gets the same count whichever sites the
+    request shows (the old golden-vs-extract Mount Auburn 2 vs 1 came from counting over the
+    response)."""
+    mine = engine.quote(_req(site_ids=["mount_auburn_hospital"]), AS_OF).sites[0]
+    near = engine.quote(_req(near=NEAR, max_sites=12), AS_OF)
+    other = next(sq for sq in near.sites if sq.site.site_id == "mount_auburn_hospital")
+    assert mine.headline.missing == other.headline.missing
+    assert [st.model_dump() for st in mine.steps] == [st.model_dump() for st in other.steps]
+    for sq in near.sites:
+        lines = {ln.line_id: ln for ln in sq.receipt.lines}
+        for st in sq.steps:
+            if st.missing:
+                assert len([i for i in st.line_ids if not lines[i].in_total]) >= 1
+        assert sq.headline.missing == sum(1 for st in sq.steps if st.missing)
 
 
 # --------------------------------------------------------------------------- offered + notices
@@ -175,7 +177,7 @@ def test_availability_needs_positive_evidence(engine):
     r = engine.quote(_req(site_ids=KEY_SITES), AS_OF)
     afc = next(s for s in r.sites if s.site.site_id == "afc_watertown")
     by = {ln.line_id: ln.availability for ln in afc.receipt.lines}
-    assert by["xray"] == "offered"  # posted self-pay price + TiC rows
+    assert by["xray"] == "offered"  # its own posted self-pay price lists 73030
     assert by["mr_arthrogram_23350"] == "unknown"  # no row, no offered entry
     assert "not_offered" not in by.values()  # absence of evidence is never "not offered"
 

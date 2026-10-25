@@ -84,7 +84,9 @@
           "skin",
           "gi"
         ],
-        "listing_status": "web_verified"
+        "listing_status": "web_verified",
+        "kind": "hospital_outpatient",
+        "chain_id": null
       },
       "receipt": {
         "lines": [
@@ -120,7 +122,12 @@
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "visit_doctor",
@@ -163,14 +170,18 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
             "ai_suggested": false,
             "in_total": true,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "xray_facility",
@@ -215,7 +226,12 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "xray_reading",
@@ -260,7 +276,6 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
@@ -276,7 +291,12 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "steroid_injection",
@@ -320,7 +340,12 @@
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "injection_doctor",
@@ -385,14 +410,18 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           }
         ],
         "totals": {
@@ -432,10 +461,83 @@
             "note_key": "youpay.medicare_20_percent",
             "portal_label": "Check what you've paid toward your deductible at Medicare.gov",
             "portal_url": "https://www.medicare.gov/account/login"
-          }
+          },
+          "comparable": null,
+          "real_steps": 0,
+          "might_add": null
         }
       },
-      "other_payers": []
+      "other_payers": [],
+      "steps": [
+        {
+          "key": "visit",
+          "step_id": "visit",
+          "likelihood": "certain",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "visit_facility",
+            "visit_doctor"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "xray",
+          "step_id": "xray",
+          "likelihood": "likely",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "xray_facility",
+            "xray_reading"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "steroid_injection",
+          "step_id": "steroid_injection",
+          "likelihood": "possible",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "steroid_injection",
+            "injection_doctor"
+          ],
+          "elsewhere": null
+        }
+      ],
+      "distance_km": null,
+      "headline": {
+        "likely_low": 85.29,
+        "likely_high": 85.29,
+        "includes_estimate": false,
+        "complete": false,
+        "missing": 2,
+        "comparable": null,
+        "real_steps": 0,
+        "might_add": null
+      }
     }
   ],
   "sites_without_service": [],
@@ -445,5 +547,12 @@
   ],
   "notices": [
     "care_path_draft"
-  ]
+  ],
+  "payment_label": {
+    "en": "test",
+    "zh": "test"
+  },
+  "ordering": "rank",
+  "origin": null,
+  "chain_spreads": []
 }

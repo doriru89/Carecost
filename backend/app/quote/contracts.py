@@ -16,18 +16,24 @@ them and the frontend can trust the shape:
 
 * ``tier == not_in_public_data``  <=>  the cell is a "no number" Gap (not_published / not_loaded /
   no_source). percent_only and conflict carry information and stay in their likelihood tier.
-* ``in_total`` only for certain/likely, offered, Money, non-AI, one-off lines whose doctor-fee
-  rung (if any) is 1-6. Rungs 7-8 are reference only.
-* Doctor-fee rung 6 (estimate) must carry its multiple; ``by_npi`` (D6) needs >= 2 distinct prices.
+* ``in_total`` only for certain/likely, offered, Money, non-AI, one-off, not-unusual lines whose
+  doctor-fee rung (if any) is 1-6. Rungs 7-8 are reference only. A line whose availability is not
+  ``offered`` is never summed (C3 R2: a row in an insurer file is not evidence a site does it).
+* An estimate (basis ``estimate``, method ``estimate_peer_range``, doctor-fee rung 6) is the
+  p25-p75 of the same line's real prices at >= 5 billing groups of the same kind of site, same
+  payer; it carries its ``PeerRange``; ``by_npi`` (D6) needs >= 2 distinct prices.
 * ``Totals.likely`` is the exact sum of the lines listed in it; its ``includes_*`` flags and line
   counts are derived from those lines.
 * Payment <-> price type (``PRICE_MATRIX``): a BCBS receipt carries only BCBS negotiated rates
-  (or a rung-6 estimate), Medicare only Medicare, cash only cash prices. A gross charge is never a
+  (or an estimate built from BCBS rates), Medicare only Medicare, cash only self-pay prices. A gross charge is never a
   line price; it may only appear as ``list_price``, which is never summed.
 * Sources are stored once per response (``QuoteResponse.sources``). A number's chip is its
   ``prov.source_id``; freshness is computed on ``as_of`` for each request.
-* I7: sites are ordered by completeness first (fewest missing certain/likely lines), then price,
-  so missing data never makes a site look cheaper.
+* I7 (C3): with a point (``near``) or named sites, sites are ordered by ``missing`` (expected steps
+  with no figure) then the ``comparable`` figure, in which estimates and steps done elsewhere enter
+  as the neutral peer median, so missing data never makes a site look cheaper and more data never
+  makes it look dearer. With no point (P7) they are grouped by kind of site and ordered by distance
+  from Boston City Hall: no "best value" claim.
 
 ``python -m app.api_contracts`` regenerates ``contracts/quote_api.schema.json`` and
 ``contracts/catalog.schema.json``.
@@ -80,6 +86,7 @@ MAX_SERVICE_CODES = 40
 MAX_SITE_IDS = 500
 DEFAULT_MAX_SITES = 12
 MAX_SITES = 50
+DEFAULT_FULL_RECEIPTS = 12
 
 Answers = Annotated[
     dict[str, Annotated[list[str], Field(max_length=MAX_VALUES_PER_ANSWER)]],
@@ -169,14 +176,22 @@ class QuoteRequest(_Strict):
     )
     near: Near | None = Field(
         default=None,
-        description="C2: quote the max_sites sites closest to this point (straight-line distance). "
-        "None = the max_sites best-ranked sites (I7) of the whole set",
+        description="C2: quote the max_sites sites closest to this point (straight-line distance), "
+        "ranked (I7). None (P7) = every admitted site, grouped by kind of site and ordered by "
+        "distance from Boston City Hall",
     )
     max_sites: int = Field(
         default=DEFAULT_MAX_SITES,
         ge=1,
         le=MAX_SITES,
-        description="C2: at most this many sites in the response; I7 ranks inside the chosen set",
+        description="With `near`: at most this many (the closest) sites. Ignored without `near`",
+    )
+    full_receipts: int = Field(
+        default=DEFAULT_FULL_RECEIPTS,
+        ge=0,
+        le=MAX_SITES,
+        description="C3: without `near` and `site_ids`, the first N sites carry their full receipt; "
+        "the rest carry the summary (headline + steps) and are fetched by `site_ids`",
     )
 
     @model_validator(mode="after")
@@ -240,16 +255,39 @@ ExcludedReason = Literal[
     "not_offered_here",
     "repeats",  # per visit / per 15 minutes: count is unknown
     "reference_only",  # doctor-fee rung 7 or 8
+    "availability_unknown",  # C3 R2: no evidence this site does it (never summed)
+    "unusual",  # C3 P8: outside 1/3x-3x of the peer median (being checked)
 ]
 
 PriceNote = Literal[
     "price.national_unadjusted",
     "price.anesthesia_base_units_only",
+    "price.group_consistently_higher",
+    "price.group_consistently_lower",
 ]
 """Fixed explanation keys for how a line's number was made (copy lives with the glossary).
 national_unadjusted: a Medicare OPPS / ASC national rate; a Boston facility is paid this times a
 wage adjustment we have not loaded. anesthesia_base_units_only: the anesthesia fee's base units
-only; the time units depend on the case and are not included."""
+only; the time units depend on the case and are not included. group_consistently_higher /
+lower (Austin 2026-10-25, O contract_level): outside 1/3x-3x of its peers, but the same group is
+>= 2x (<= 0.5x) its peers on >= 5 other codes in the same network: its contract, summed, with
+"This group's prices are consistently higher (lower) than similar places here"."""
+
+SiteKind = Literal["urgent_care", "office", "hospital_outpatient", "ambulatory_surgery_center"]
+"""X2: the kind of site a peer set is drawn from (engine.yaml: urgent care by site_type, else by
+the effective billing type). An urgent care is never estimated from hospitals and vice versa (P5)."""
+
+KIND_ORDER: dict[str, int] = {
+    "urgent_care": 0, "office": 1, "hospital_outpatient": 2, "ambulatory_surgery_center": 3,
+}  # fmt: skip
+"""P7: the order of the kind groups in a no-location list."""
+
+PeerScope = Literal["same_kind", "same_system"]
+
+AvailabilityReason = Literal["insurer_lists_rate", "no_evidence", "site_says_not_offered"]
+"""Why a line is not ``offered`` (C3 R1, P6). insurer_lists_rate: "Your insurer lists a rate for
+this group, but this place doesn't say it offers this. Call to check." no_evidence: nothing says
+this place does it. site_says_not_offered: the site's own page says it does not (site facts)."""
 
 TierBasis = Literal["guideline", "plan_rule", "our_judgment", "picked"]
 """P11: what the line's likelihood rests on, so the gradient does not look like data.
@@ -324,13 +362,51 @@ class NpiPrice(_Strict):
     money: Money
 
 
-class Multiple(_Strict):
-    """Rung 6: Medicare x the same group's own typical multiple (>= 5 matched codes, D5)."""
+class PeerRange(_Strict):
+    """C3 (R4, P4, P5, X2): the same line's (or step's) real prices at other sites of the same
+    kind, under the same payer and plan product, one value per distinct billing group (TIN).
+    low / high = p25 / p75 (nearest rank, so each end is a real price); median = the neutral
+    figure ranking uses, so an estimate can neither help nor hurt a site."""
 
-    low: float = Field(gt=0)
-    high: float = Field(gt=0)
-    n_codes: int = Field(ge=5)
-    payer_id: str = Field(pattern=PAYER_ID_RE)
+    low: float = Field(ge=0)
+    high: float = Field(ge=0)
+    median: float = Field(ge=0)
+    n_groups: int = Field(ge=1, description="distinct billing groups (TINs / files) behind it")
+    kind: SiteKind | None = Field(description="kind of the peer sites; None = every kind (P4)")
+    scope: PeerScope = Field(description="same_system: the site's own health system's groups")
+    payer_id: str | None = Field(
+        pattern=PAYER_ID_RE, description="whose rates; None for self-pay / fee schedules"
+    )
+
+    @model_validator(mode="after")
+    def _order(self) -> PeerRange:
+        if not self.low <= self.median <= self.high:
+            raise ValueError("PeerRange needs low <= median <= high")
+        return self
+
+
+class UnusualPrice(_Strict):
+    """C3 P8: a price more than 3x or less than 1/3x the same line's peer median (same payer,
+    same kind of site). Rows outside the band are set aside (shown, never summed); when every row
+    is outside, the whole line is unusual and not summed: "price looks unusual, being checked"."""
+
+    peer_median: float = Field(gt=0)
+    n_groups: int = Field(ge=1)
+    whole_line: bool
+    set_aside: list[Money] = Field(
+        default_factory=list, description="the rows left out of the line's range (cited)"
+    )
+
+
+class AnesthesiaTime(_Strict):
+    """C3 item 12: 'with typical time, about $Y'. Anesthesia is paid (base units + minutes / 15)
+    x a conversion factor; the summed line has the base units only. Never summed."""
+
+    minutes: float = Field(gt=0)
+    base_units: float = Field(gt=0)
+    low: float = Field(ge=0)
+    high: float = Field(ge=0)
+    source: str = Field(description="the public CMS file the typical minutes come from")
 
 
 class ChiaBadge(_Strict):
@@ -349,7 +425,6 @@ class DoctorFee(_Strict):
     group_name: str | None = Field(default=None, description="Physician group, e.g. 'MGPO'")
     group_tin: str | None = Field(default=None, pattern=r"^[0-9]{2}-[0-9]{7}$")
     npi_count: int | None = Field(default=None, ge=1)
-    multiple: Multiple | None = None
     chia_badge: ChiaBadge | None = None
     by_npi: list[NpiPrice] | None = Field(
         default=None, description="D6: per doctor when the NPI is known and prices differ"
@@ -362,8 +437,6 @@ class DoctorFee(_Strict):
                 raise ValueError("rung None is only for fee.self_pay_no_source")
         elif self.explanation_key != RUNG_EXPLANATION[self.rung]:
             raise ValueError(f"rung {self.rung} needs {RUNG_EXPLANATION[self.rung]}")
-        if (self.rung == 6) != (self.multiple is not None):
-            raise ValueError("rung 6 (estimate) needs its multiple, and only rung 6 has one")
         if self.rung == 8 and self.chia_badge is None:
             raise ValueError("rung 8 needs chia_badge")
         if self.by_npi is not None:
@@ -405,6 +478,9 @@ class ReceiptLine(_Strict):
     )
     unit: Literal["once", "per_visit", "per_15_minutes"] = "once"
     availability: Literal["offered", "not_offered", "unknown"] = "offered"
+    availability_reason: AvailabilityReason | None = Field(
+        default=None, description="C3 P6: why the line is not offered; None exactly when offered"
+    )
     cell: Cell | None = Field(description="None only when availability == not_offered")
     list_price: Money | None = Field(
         default=None,
@@ -424,6 +500,23 @@ class ReceiptLine(_Strict):
         description="C2: fixed copy keys that explain how the line's number was made (e.g. a "
         "Medicare national rate not adjusted for Boston wages). Empty = nothing to add",
     )
+    estimate: PeerRange | None = Field(
+        default=None,
+        description="C3 (P5): the peer range behind an estimated cell (basis estimate); None "
+        "otherwise",
+    )
+    unusual: UnusualPrice | None = Field(
+        default=None, description="C3 (P8): rows outside 1/3x-3x of the peer median"
+    )
+    anesthesia_time: AnesthesiaTime | None = Field(
+        default=None, description="C3: the anesthesia fee with a typical time (never summed)"
+    )
+    chain_price_from: str | None = Field(
+        default=None,
+        pattern=ID_RE,
+        description="C3 R12: the price is the chain's posted self-pay price, published on this "
+        "site's page (it applies at every location of the chain)",
+    )
     at: Literal["this_site", "your_primary_care"] = Field(
         default="this_site",
         description="Where this part of the care happens. your_primary_care: an HMO referral visit "
@@ -434,9 +527,11 @@ class ReceiptLine(_Strict):
     @model_validator(mode="after")
     def _invariants(self) -> ReceiptLine:
         kind = None if self.cell is None else self.cell.kind
+        if (self.availability == "offered") != (self.availability_reason is None):
+            raise ValueError(f"{self.line_id}: availability_reason exactly when not offered")
         if self.availability == "not_offered":
-            if self.cell is not None or not self.elsewhere:
-                raise ValueError(f"{self.line_id}: not_offered needs cell=None and elsewhere")
+            if self.cell is not None:
+                raise ValueError(f"{self.line_id}: not_offered needs cell=None")
         elif self.cell is None:
             raise ValueError(f"{self.line_id}: every offered line needs a Cell (Money or Gap)")
         if self.cell is not None:
@@ -452,19 +547,28 @@ class ReceiptLine(_Strict):
         for m in _line_moneys(self):
             if m.basis == PriceBasis.gross:
                 raise ValueError(f"{self.line_id}: a gross charge is only ever list_price")
-            if (m.basis == PriceBasis.estimate) != (
-                m.prov.method == Method.estimate_medicare_multiple
-            ):
-                raise ValueError(f"{self.line_id}: basis estimate <=> estimate_medicare_multiple")
+            if (m.basis == PriceBasis.estimate) != (m.prov.method == Method.estimate_peer_range):
+                raise ValueError(f"{self.line_id}: basis estimate <=> estimate_peer_range")
         if self.list_price is not None and self.list_price.basis != PriceBasis.gross:
             raise ValueError(f"{self.line_id}: list_price is the gross charge")
         if (self.step_id is None) != (self.tier_basis == "picked"):
             raise ValueError(f"{self.line_id}: tier_basis picked <=> no care path step")
         if self.ai_suggested and self.in_total:
             raise ValueError(f"{self.line_id}: AI-suggested lines never count in a total")
+        estimated = isinstance(self.cell, Money) and self.cell.basis == PriceBasis.estimate
+        if estimated != (self.estimate is not None):
+            raise ValueError(f"{self.line_id}: an estimated cell <=> its PeerRange")
+        if self.estimate is not None and isinstance(self.cell, Money) and (
+            (self.cell.low, self.cell.high) != (self.estimate.low, self.estimate.high)
+        ):  # fmt: skip
+            raise ValueError(f"{self.line_id}: the estimate is the peer range's p25-p75")
         if self.in_total:
             if self.tier not in ("certain", "likely") or kind != "money" or self.unit != "once":
                 raise ValueError(f"{self.line_id}: in_total needs certain/likely + Money + once")
+            if self.availability != "offered":
+                raise ValueError(f"{self.line_id}: only an offered line is summed (R2)")
+            if self.unusual is not None and self.unusual.whole_line:
+                raise ValueError(f"{self.line_id}: an unusual price is never summed (P8)")
             if self.doctor_fee is not None and (self.doctor_fee.rung or 0) not in range(1, 7):
                 raise ValueError(f"{self.line_id}: doctor-fee rungs 7-8 are reference only")
         if "price.national_unadjusted" in self.price_notes and not (
@@ -472,17 +576,14 @@ class ReceiptLine(_Strict):
             and self.cell.prov.source_kind in (SourceKind.medicare_opps, SourceKind.medicare_asc)
         ):
             raise ValueError(f"{self.line_id}: national_unadjusted is a Medicare OPPS / ASC rate")
-        if self.doctor_fee is not None and self.doctor_fee.rung == 6:
-            if (
-                not isinstance(self.cell, Money)
-                or self.cell.prov.method != Method.estimate_medicare_multiple
-            ):
-                raise ValueError(f"{self.line_id}: rung 6 Money must be estimate_medicare_multiple")
+        if self.doctor_fee is not None and (self.doctor_fee.rung == 6) != estimated:
+            raise ValueError(f"{self.line_id}: doctor-fee rung 6 <=> an estimated cell")
         return self
 
 
 def _line_moneys(ln: ReceiptLine) -> Iterator[Money]:
-    """Every Money a line prices with (cell, both sides of a conflict, elsewhere cells)."""
+    """Every Money a line prices with (cell, both sides of a conflict, elsewhere cells, rows an
+    unusual check set aside)."""
     cells = [ln.cell, *(e.cell for e in ln.elsewhere)]
     for c in cells:
         if isinstance(c, Money):
@@ -490,6 +591,8 @@ def _line_moneys(ln: ReceiptLine) -> Iterator[Money]:
         elif isinstance(c, Conflict):
             yield c.a
             yield c.b
+    if ln.unusual is not None:
+        yield from ln.unusual.set_aside
 
 
 # --------------------------------------------------------------------------- totals
@@ -503,7 +606,7 @@ class SummedAmount(_Strict):
     high: float = Field(ge=0)
     line_ids: list[str] = Field(min_length=1)
     includes_estimate: bool = Field(
-        description="Derived: a rung-6 estimate (estimate_medicare_multiple) is in the sum"
+        description="Derived: a peer estimate (estimate_peer_range) is in the sum"
     )
     includes_late_source: bool = Field(
         description="Derived: a summed price's source is late to refresh (publisher side)"
@@ -511,6 +614,12 @@ class SummedAmount(_Strict):
     includes_stale_source: bool = Field(
         description="Derived: we are behind on refreshing a summed price's source (our side)"
     )
+
+
+class MightAdd(_Strict):
+    low: float = Field(ge=0)
+    high: float = Field(ge=0)
+    step_keys: list[str] = Field(min_length=1)
 
 
 class ExcludedLine(_Strict):
@@ -551,11 +660,27 @@ class Totals(_Strict):
     )
     missing: int = Field(
         ge=0,
-        description="Derived (I7): certain/likely, non-AI lines here that are not in the total, "
-        "plus certain/likely steps another site in this quote lists and this site does not",
+        description="Derived (I7, C3): expected (certain/likely, non-AI) steps with no figure here "
+        "(no own price, no estimate, no 'elsewhere' range) although some admitted site has a price "
+        "for that step: one per step, not per line. A step nobody has a price for is not counted "
+        "(it is the same everywhere). Counted over every admitted site, never over the response",
     )
     excluded: list[ExcludedLine]
     you_pay: YouPay
+    comparable: float | None = Field(
+        default=None,
+        description="C3 (P1, P4): the ranking figure: this site's real prices (each line's median "
+        "row) plus estimates and steps done elsewhere at their neutral peer median; steps with no "
+        "figure are left out (they count in `missing`). None when no step has a figure",
+    )
+    real_steps: int = Field(
+        default=0, ge=0, description="C3: expected steps priced from this site's own real prices"
+    )
+    might_add: MightAdd | None = Field(
+        default=None,
+        description="C3 (P9): possible steps this site offers, 'might add $X-$Y' (X = the "
+        "cheapest one, Y = all of them); never in `likely`",
+    )
 
 
 class Receipt(_Strict):
@@ -581,7 +706,7 @@ class Receipt(_Strict):
             high = round(sum(c.high for c in cells), 2)
             if (round(t.low, 2), round(t.high, 2)) != (low, high):
                 raise ValueError(f"totals.likely {t.low}-{t.high} != sum of lines {low}-{high}")
-            est = any(c.prov.method == Method.estimate_medicare_multiple for c in cells)
+            est = any(c.prov.method == Method.estimate_peer_range for c in cells)
             if t.includes_estimate != est:
                 raise ValueError(f"totals.likely.includes_estimate must be {est}")
 
@@ -668,6 +793,10 @@ class SiteSummary(_Strict):
         description="registry_only sites are never quoted (to-verify queue, D27)"
     )
     service_areas: list[ServiceArea]
+    kind: SiteKind = Field(description="X2 / P7: the kind of site (engine.yaml kind_by_billing)")
+    chain_id: str | None = Field(
+        default=None, pattern=ID_RE, description="C3 R12: the chain whose posted prices apply here"
+    )
     children_only: bool = Field(default=False, description="Pediatric-only site (D27)")
     data_notices: list[DataNotice] = Field(
         default_factory=list,
@@ -676,10 +805,110 @@ class SiteSummary(_Strict):
     )
 
 
+StepFigure = Literal["own", "estimate", "elsewhere", "none"]
+"""C3: what a step's figure on this site rests on. own: every line is this site's real price;
+estimate: at least one line is a peer estimate; elsewhere: this site has no evidence it does the
+step, the figure is the p25-p75 at sites that do (P4); none: no figure."""
+
+
+class StepSummary(_Strict):
+    """C3 (P3, item 10): one step at one site, so the map can show one selected service's price.
+    low / high: the step's summed lines here (own / estimate) or the elsewhere range."""
+
+    key: str = Field(description="care path step id, or the codes of a manual pick")
+    step_id: str | None = Field(default=None, pattern=ID_RE)
+    likelihood: Likelihood
+    availability: Literal["offered", "not_offered", "unknown"]
+    figure: StepFigure
+    low: float | None = Field(ge=0)
+    high: float | None = Field(ge=0)
+    rank_value: float | None = Field(
+        ge=0, description="the neutral figure in `comparable` (None: not counted)"
+    )
+    estimated: bool
+    unusual: bool = Field(description="a line of the step was set aside as unusual (P8)")
+    in_total: bool = Field(description="the step's lines are in totals.likely")
+    missing: bool = Field(description="counted in totals.missing")
+    line_ids: list[str]
+    elsewhere: PeerRange | None = Field(
+        default=None, description="P4: the step's price at sites that do it (same payer)"
+    )
+
+    @model_validator(mode="after")
+    def _shape(self) -> StepSummary:
+        if (self.low is None) != (self.high is None) or (
+            self.low is not None and self.high is not None and self.low > self.high
+        ):  # fmt: skip
+            raise ValueError(f"{self.key}: low <= high, both or neither")
+        if (self.figure == "none") != (self.low is None):
+            raise ValueError(f"{self.key}: a step has low/high exactly when it has a figure")
+        if (self.figure == "elsewhere") != (self.elsewhere is not None and self.low is not None
+                                            and self.availability != "offered"):  # fmt: skip
+            raise ValueError(f"{self.key}: an elsewhere figure is a not-offered step's range")
+        if self.missing and self.figure != "none":
+            raise ValueError(f"{self.key}: a step with a figure is not missing")
+        if self.in_total and self.availability != "offered":
+            raise ValueError(f"{self.key}: only an offered step is summed")
+        return self
+
+
+class Headline(_Strict):
+    """C3 (item 9): what a list row shows without the full receipt (receipt.totals when it is
+    present, copied)."""
+
+    likely_low: float | None = Field(ge=0)
+    likely_high: float | None = Field(ge=0)
+    includes_estimate: bool
+    complete: bool
+    missing: int = Field(ge=0)
+    comparable: float | None = Field(ge=0)
+    real_steps: int = Field(ge=0)
+    might_add: MightAdd | None = None
+
+
 class SiteQuote(_Strict):
     site: SiteSummary
-    receipt: Receipt
+    headline: Headline
+    steps: list[StepSummary] = Field(
+        default_factory=list, description="C3 (P3): one per step of the quote, in path order"
+    )
+    distance_km: float | None = Field(
+        default=None,
+        ge=0,
+        description="From the request's point, or from Boston City Hall when there is none (P7)",
+    )
+    receipt: Receipt | None = Field(
+        description="C3: None for a site past `full_receipts` in a no-location list; ask for it "
+        "with `site_ids`"
+    )
     other_payers: list[OtherPayerRange] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _headline(self) -> SiteQuote:
+        keys = [st.key for st in self.steps]
+        if len(keys) != len(set(keys)):
+            raise ValueError(f"{self.site.site_id}: duplicate step key")
+        if self.headline.missing != sum(1 for st in self.steps if st.missing):
+            raise ValueError(f"{self.site.site_id}: headline.missing = the missing steps")
+        if self.receipt is None:
+            if self.other_payers:
+                raise ValueError(f"{self.site.site_id}: other_payers come with the receipt")
+            return self
+        t = self.receipt.totals
+        want = Headline(
+            likely_low=t.likely.low if t.likely else None,
+            likely_high=t.likely.high if t.likely else None,
+            includes_estimate=bool(t.likely and t.likely.includes_estimate),
+            complete=t.complete, missing=t.missing, comparable=t.comparable,
+            real_steps=t.real_steps, might_add=t.might_add,
+        )  # fmt: skip
+        if self.headline != want:
+            raise ValueError(f"{self.site.site_id}: headline must copy receipt.totals")
+        ids = {ln.line_id for ln in self.receipt.lines}
+        for st in self.steps:
+            if not set(st.line_ids) <= ids:
+                raise ValueError(f"{self.site.site_id}: step {st.key} names an unknown line")
+        return self
 
 
 class OurDataResponse(_Strict):
@@ -719,7 +948,8 @@ PRICE_MATRIX: dict[str, frozenset[tuple[str, str]]] = {
         {
             ("hospital_mrf", "negotiated"),
             ("insurer_tic", "negotiated"),
-            ("medicare_pfs", "estimate"),  # rung 6: Medicare x the same payer's own multiple
+            ("insurer_tic", "estimate"),  # C3 rung 6: the same payer's rates at peer sites
+            ("hospital_mrf", "estimate"),
         }
     ),
     "medicare": frozenset(
@@ -731,8 +961,11 @@ PRICE_MATRIX: dict[str, frozenset[tuple[str, str]]] = {
         }
     ),
     "masshealth": frozenset({("masshealth_fs", "fee_schedule"), ("hospital_mrf", "negotiated")}),
-    "cash": frozenset({("hospital_mrf", "discounted_cash"), ("clinic_posted", "posted_self_pay")}),
-}
+    "cash": frozenset({
+        ("hospital_mrf", "discounted_cash"), ("clinic_posted", "posted_self_pay"),
+        ("hospital_mrf", "estimate"), ("clinic_posted", "estimate"),  # peers' self-pay prices
+    }),
+}  # fmt: skip
 """Payment -> the (source_kind, basis) pairs a line may be priced with (challenger F1). Rung 7
 (Medicare reference) is checked separately: it is shown, never summed."""
 
@@ -740,7 +973,7 @@ RUNGS_BY_PAYMENT: dict[str, set[int | None]] = {
     "insurance": {1, 2, 3, 6, 7, 8},
     "medicare": {5},
     "masshealth": {4, 7, 8},
-    "cash": {None},
+    "cash": {None, 6},
 }
 REFERENCE_PAIR = ("medicare_pfs", "fee_schedule")  # rung 7
 
@@ -754,6 +987,8 @@ def _payer_of(
 
 
 def _all_moneys(sq: SiteQuote) -> Iterator[Money]:
+    if sq.receipt is None:
+        return
     for ln in sq.receipt.lines:
         yield from _line_moneys(ln)
         if ln.list_price is not None:
@@ -767,17 +1002,23 @@ def _all_moneys(sq: SiteQuote) -> Iterator[Money]:
 
 
 def _searched(sq: SiteQuote) -> Iterator[str]:
-    for ln in sq.receipt.lines:
+    for ln in sq.receipt.lines if sq.receipt else []:
         for c in [ln.cell, *(e.cell for e in ln.elsewhere)]:
             if isinstance(c, (NotPublished, PercentOnly)):
                 yield c.searched.source_id
 
 
 def rank_key(sq: SiteQuote) -> tuple[int, float]:
-    """I7: completeness band first (missing certain/likely lines), then price. A site that is
-    missing a number never sorts above an otherwise identical site that has it."""
-    t = sq.receipt.totals
-    return (t.missing, t.likely.low if t.likely else math.inf)
+    """I7 (C3): missing steps first, then the comparable figure (own real prices + estimates and
+    elsewhere steps at the neutral peer median). A site missing a step never sorts above an
+    otherwise identical site that has it."""
+    h = sq.headline
+    return (h.missing, h.comparable if h.comparable is not None else math.inf)
+
+
+def kind_distance_key(sq: SiteQuote) -> tuple[int, float]:
+    """P7: no location -> grouped by kind of site, then distance from Boston City Hall."""
+    return (KIND_ORDER[sq.site.kind], sq.distance_km if sq.distance_km is not None else math.inf)
 
 
 def _expected(ln: ReceiptLine) -> bool:
@@ -793,18 +1034,37 @@ def _step_key(ln: ReceiptLine) -> str:
     return ln.step_id or ",".join(ln.codes)
 
 
-def missing_for(sq: SiteQuote, expected_steps: set[str]) -> int:
-    """I7 ``missing``: expected lines (``_expected``) with no number that counts in the total
-    (a Gap, a conflict, a repeating unit, or a rung-7/8 reference-only number), plus expected
-    steps another site in the quote lists and this one does not."""
-    lines = sq.receipt.lines
-    unpriced = sum(1 for ln in lines if _expected(ln) and not ln.in_total)
-    absent = expected_steps - {_step_key(ln) for ln in lines}
-    return unpriced + len(absent)
+def missing_for(sq: SiteQuote) -> int:
+    """I7 ``missing`` (C3): the expected steps flagged missing (one per step, not per line)."""
+    return sum(1 for st in sq.steps if st.missing)
+
+
+Ordering = Literal["rank", "kind_then_distance"]
+
+
+class ChainSpread(_Strict):
+    """C3 R12: within one chain, the same line under the same payer differs by more than the
+    engine.yaml limit (1.5x): flagged for review, both ends named."""
+
+    chain_id: str = Field(pattern=ID_RE)
+    key: str = Field(description="step key / component / code / modifier")
+    low_site_id: str = Field(pattern=ID_RE)
+    low: float = Field(ge=0)
+    high_site_id: str = Field(pattern=ID_RE)
+    high: float = Field(ge=0)
+    ratio: float = Field(gt=1)
+
+
+class LocalLabel(_Strict):
+    en: str
+    zh: str
 
 
 class QuoteResponse(_Strict):
     payment: Payment
+    payment_label: LocalLabel = Field(
+        description="P2: how the payment is named to a person; cash is 'Self-pay (no insurance)'"
+    )
     care_path: CarePathRef | None
     service_codes: list[str]
     picked_by: PickedBy
@@ -814,7 +1074,18 @@ class QuoteResponse(_Strict):
         description="Every source behind a number or a 'not published' claim in this response, "
         "stored once (P2); lines point here by prov.source_id / searched.source_id"
     )
-    sites: list[SiteQuote] = Field(description="Ordered by rank_key (I7)")
+    sites: list[SiteQuote] = Field(
+        description="ordering rank: by rank_key (I7); kind_then_distance: by kind_distance_key (P7)"
+    )
+    ordering: Ordering = Field(
+        default="rank", description="C3 P7: rank with a point or named sites, else by kind"
+    )
+    origin: Near | None = Field(
+        default=None, description="where distance_km is measured from (the point, or City Hall)"
+    )
+    chain_spreads: list[ChainSpread] = Field(
+        default_factory=list, description="C3 R12: same chain, same line, prices > 1.5x apart"
+    )
     sites_without_service: list[str] = Field(
         default_factory=list, description="Sites filtered out because they offer none of it"
     )
@@ -831,6 +1102,7 @@ class QuoteResponse(_Strict):
             "stale_on_our_side_sources",
             "masshealth_aco_may_differ",
             "medicare_advantage_is_insurance",
+            "chain_price_spread",
         ]
     ] = Field(default_factory=list)
 
@@ -857,10 +1129,13 @@ class QuoteResponse(_Strict):
         want_copy = ["copy.not_a_diagnosis", "copy.when_to_see_a_doctor"] if self.care_path else []
         if self.copy_keys != want_copy:
             raise ValueError(f"copy_keys must be {want_copy} (D33)")
+        if bool(self.chain_spreads) != ("chain_price_spread" in self.notices):
+            raise ValueError("notice chain_price_spread <=> chain_spreads")
         if self.picked_by == "assistant":
             if self.care_path is not None:
                 raise ValueError("assistant picks are catalog services, never a care path")
-            if not all(ln.ai_suggested for sq in self.sites for ln in sq.receipt.lines):
+            if not all(ln.ai_suggested for sq in self.sites if sq.receipt
+                       for ln in sq.receipt.lines):  # fmt: skip
                 raise ValueError("every line the assistant picked is ai_suggested")
         return self
 
@@ -869,6 +1144,8 @@ class QuoteResponse(_Strict):
         for sq in self.sites:
             if sq.site.price_source_id is not None:
                 used.add(sq.site.price_source_id)
+            if sq.receipt is None:
+                continue
             used.update(_searched(sq))
             for m in _all_moneys(sq):
                 for p in m.provs():
@@ -892,6 +1169,8 @@ class QuoteResponse(_Strict):
         payer = _payer_of(self.payment)
         allowed = PRICE_MATRIX[kind]
         for sq in self.sites:
+            if sq.receipt is None:
+                continue
             if sq.receipt.totals.you_pay.kind not in YOU_PAY_BY_PAYMENT[kind]:
                 raise ValueError(
                     f"{sq.site.site_id}: you_pay {sq.receipt.totals.you_pay.kind} is not for {kind}"
@@ -901,8 +1180,10 @@ class QuoteResponse(_Strict):
                 rung = fee.rung if fee else None
                 if fee is not None and rung not in RUNGS_BY_PAYMENT[kind]:
                     raise ValueError(f"{ln.line_id}: doctor-fee rung {rung} is not for {kind}")
-                if fee and fee.multiple and fee.multiple.payer_id != payer:
-                    raise ValueError(f"{ln.line_id}: rung 6 multiple must be {payer}'s own")
+                if ln.estimate is not None and ln.estimate.payer_id != payer:
+                    raise ValueError(
+                        f"{ln.line_id}: an estimate must be built from {payer}'s rates"
+                    )
                 for m in _line_moneys(ln):
                     pair = (m.prov.source_kind.value, m.basis.value)
                     if rung == 7:
@@ -912,14 +1193,16 @@ class QuoteResponse(_Strict):
                     if pair not in allowed:
                         raise ValueError(f"{ln.line_id}: {pair} is not a {kind} price")
                     for p in m.provs():
-                        if m.basis == PriceBasis.negotiated and p.payer_id != payer:
+                        if m.basis in (PriceBasis.negotiated, PriceBasis.estimate) and (
+                            p.payer_id != payer
+                        ):  # fmt: skip
                             raise ValueError(
                                 f"{ln.line_id}: {p.row_ref} is {p.payer_id}'s rate, not {payer}'s"
                             )
 
     def _check_totals_flags(self) -> None:
         for sq in self.sites:
-            t = sq.receipt.totals.likely
+            t = sq.receipt.totals.likely if sq.receipt else None
             if t is None:
                 continue
             fresh = [
@@ -937,17 +1220,28 @@ class QuoteResponse(_Strict):
                 )
 
     def _check_ranking(self) -> None:
-        steps = {_step_key(ln) for sq in self.sites for ln in sq.receipt.lines if _expected(ln)}
         for sq in self.sites:
-            want = missing_for(sq, steps)
-            if sq.receipt.totals.missing != want:
+            want = missing_for(sq)
+            if sq.headline.missing != want:
                 raise ValueError(
-                    f"{sq.site.site_id}: totals.missing must be {want} (unpriced certain/likely "
-                    "lines + steps this site does not list), so skipping a line cannot help rank"
+                    f"{sq.site.site_id}: totals.missing must be {want} (the expected steps with "
+                    "no figure), so skipping a line cannot help rank"
                 )
-        keys = [rank_key(sq) for sq in self.sites]
-        if keys != sorted(keys):
-            raise ValueError("sites must be ordered by rank_key: completeness band, then price")
+            if self.origin is not None and sq.distance_km is None:
+                raise ValueError(f"{sq.site.site_id}: distance_km is measured from origin")
+            for st in sq.steps:  # a missing step adds nothing to the ranking figure
+                if st.missing and st.rank_value is not None:
+                    raise ValueError(f"{sq.site.site_id}: missing step {st.key} has a rank value")
+        if self.ordering == "rank":
+            keys = [rank_key(sq) for sq in self.sites]
+            if keys != sorted(keys):
+                raise ValueError("sites must be ordered by rank_key: missing steps, then price")
+        else:
+            if self.origin is None:
+                raise ValueError("kind_then_distance needs its origin")
+            keys2 = [kind_distance_key(sq) for sq in self.sites]
+            if keys2 != sorted(keys2):
+                raise ValueError("no-location sites are grouped by kind, then by distance (P7)")
 
 
 # --------------------------------------------------------------------------- catalog (D3)

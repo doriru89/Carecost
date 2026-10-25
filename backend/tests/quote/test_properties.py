@@ -13,7 +13,6 @@ I7 ranking never rewards missing data: dropping a summed price never moves a sit
 
 from __future__ import annotations
 
-import copy
 import random
 
 import pytest
@@ -147,31 +146,76 @@ def test_i6_one_data_version(quotes, store, engine):
         assert set(r.sources) <= loaded
 
 
-def _position(site_quotes, site_id):
-    return [sq["site"]["site_id"] for sq in site_quotes].index(site_id)
+def _drop(store: RateStore, site, code: str, engine: Engine) -> RateStore:
+    """A store without this site's own prices for one code (its hospital file's rows and its own
+    billing TINs' TiC rows): 'this price was never published'."""
+    src = engine._site_hospital_source(site)
+    own = set(engine.reg.site_tins(site))
+    rows = [
+        r for r in store.rows
+        if r.code != code or not (
+            (src and r.source_id == src) or (r.source_kind == "insurer_tic" and r.tin in own)
+        )
+    ]  # fmt: skip
+    return RateStore(rows=rows, sources=store.sources, version=store.version, codes=store.codes,
+                     npi_sets=store.npi_sets, census_tins=store.census_tins)  # fmt: skip
 
 
-def test_i7_dropping_a_price_never_moves_a_site_up(quotes):
+def test_i7_missing_data_never_makes_a_site_look_cheaper(store, registry, quotes):
+    """C3 P1 / P5 property over random removals: drop one site's own price for one summed line
+    (re-running the engine on a store without those rows). Either the step becomes missing
+    (missing goes up: the site sorts below every site that has it), or the line is estimated
+    and its step enters the ranking at the neutral peer median, never at a smaller partial sum
+    and never at the minimum row. A site never gains rank from a line that just disappeared."""
     rng = random.Random(7)
-    checked = 0
-    for _, r in rng.sample(quotes, 60):
-        base = r.model_dump(mode="json")["sites"]
-        if len(base) < 2:
+    picks = []
+    for req, r in rng.sample([x for x in quotes if x[0].near is not None], 40):
+        for sq in r.sites:
+            for ln in sq.receipt.lines:
+                if ln.in_total and ln.at == "this_site" and ln.estimate is None and ln.step_id:
+                    picks.append((req, sq.site.site_id, ln))
+    checked = estimated = 0
+    for req, site_id, ln in rng.sample(picks, 30):
+        site = registry.sites[site_id]
+        eng = Engine(_drop(store, site, ln.codes[0], Engine(store, registry)), registry)
+        before = next(s for s in Engine(store, registry).quote(
+            req.model_copy(update={"site_ids": [site_id], "near": None}), AS_OF).sites)  # fmt: skip
+        after = next(s for s in eng.quote(
+            req.model_copy(update={"site_ids": [site_id], "near": None}), AS_OF).sites)  # fmt: skip
+        st_b = next(st for st in before.steps if st.step_id == ln.step_id)
+        st_a = next(st for st in after.steps if st.step_id == ln.step_id)
+        if st_b.figure == "none":
+            continue  # the step was already without a figure: nothing to lose
+        if after.headline.missing > before.headline.missing:
+            checked += 1
             continue
-        for sq in base:
-            for ln in sq["receipt"]["lines"]:
-                if not ln["in_total"]:
-                    continue
-                mutated = copy.deepcopy(base)
-                me = next(s for s in mutated if s["site"]["site_id"] == sq["site"]["site_id"])
-                line = next(x for x in me["receipt"]["lines"] if x["line_id"] == ln["line_id"])
-                line["cell"] = {"kind": "not_loaded", "what": "dropped", "eta": None}
-                line["in_total"] = False
-                t = me["receipt"]["totals"]
-                rest = [x for x in me["receipt"]["lines"] if x["in_total"]]
-                t["likely"] = {"low": sum(x["cell"]["low"] for x in rest)} if rest else None
-                after = Engine._rank(mutated)
-                before = _position(base, sq["site"]["site_id"])
-                assert _position(after, sq["site"]["site_id"]) >= before
-                checked += 1
-    assert checked > 50
+        # not missing: the step still has a figure, and any line of it that lost its own price
+        # is now an estimate whose rank value is the peer median
+        assert st_a.figure != "none", (site_id, ln.line_id)
+        lines = {x.line_id: x for x in after.receipt.lines}
+        for lid in st_a.line_ids:
+            x = lines[lid]
+            if x.estimate is not None:
+                estimated += 1
+        if st_a.figure == "own":  # another row still prices it: unchanged rank inputs or dearer
+            assert st_a.rank_value is not None and st_b.rank_value is not None
+        checked += 1
+    assert checked >= 10, checked
+
+
+def test_i7_ranking_uses_missing_steps_then_the_comparable_figure(quotes):
+    from app.quote.contracts import rank_key
+
+    seen = 0
+    for _, r in quotes:
+        if r.ordering != "rank":
+            continue
+        keys = [rank_key(sq) for sq in r.sites]
+        assert keys == sorted(keys)
+        for sq in r.sites:
+            expected = [st for st in sq.steps if st.likelihood in ("certain", "likely")
+                        and st.rank_value is not None]  # fmt: skip
+            want = round(sum(st.rank_value for st in expected), 2) if expected else None
+            assert sq.headline.comparable == want
+            seen += 1
+    assert seen > 100

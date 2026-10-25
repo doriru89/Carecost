@@ -88,6 +88,8 @@ export const EXCLUDED_REASON_KEY = {
   not_offered_here: "total.excluded.not_offered_here",
   repeats: "total.excluded.repeats",
   reference_only: "total.excluded.reference_only",
+  availability_unknown: "total.excluded.availability_unknown",
+  unusual: "total.excluded.unusual",
 } as const satisfies Record<ExcludedReason, string>;
 
 /** (a) Publisher side: "late to refresh" is the publisher's delay, shown with the data. */
@@ -163,6 +165,7 @@ export const NOTICE_KEY = {
   stale_on_our_side_sources: "notice.stale_on_our_side_sources",
   masshealth_aco_may_differ: "notice.masshealth_aco_may_differ",
   medicare_advantage_is_insurance: "notice.medicare_advantage_is_insurance",
+  chain_price_spread: "notice.chain_price_spread",
 } as const satisfies Record<QuoteResponse["notices"][number], string>;
 
 /** Why the AI is paused -> fixed copy key (backend: app.chat.contracts.PAUSE_KEY). */

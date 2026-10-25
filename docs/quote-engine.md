@@ -145,3 +145,25 @@ Numbers (Austin's Mac, 2026-10-25, full real data, registry of 208 sites):
   Harvard Square, p50 8.7 ms, p95 9.0 ms, 323,267 B raw / 20,987 B gzip; cash p50 5.2 ms, p95 5.7 ms,
   257,431 B / 14,870 B; BCBS without `near` (every site priced) p50 38.1 ms, p95 38.9 ms; 8 threads,
   new connection each: 115 quotes/s, p50 63.7 ms, p95 141.4 ms.
+
+## C3: the engine fixed at the source (wave-2 review R1-R12, Austin's rulings P1-P9)
+
+| Rule | Where | What |
+|---|---|---|
+| Offer evidence (R1, P6) | `engine.offers_code`, `_item_avail` | A step is offered only by the site's own hospital file, its (or its chain's) posted price, a `sites.yaml offered` entry, or agreed / austin_reviewed site facts (`app/quote/facts.py`, X1). A TiC row is never evidence: `availability: unknown`, `availability_reason: insurer_lists_rate`. Generic `imaging` covers X-rays only. |
+| Summed (R2) | `_finish` | `in_total` needs `availability == offered` and not a whole-line unusual price. |
+| Admission (R8) | `_admits` | Entry visit (layer 1) or core procedure (layer-2 certain/likely procedure) by evidence, else `admission_step_kinds` by kind. |
+| TIN roles (R3) | `app/quote/tin_roles.py`, `data/quote/tin_roles.yaml` | An ASC's own TIN prices the facility line only; a hospital TIN follows the row's billing class. |
+| Peer estimate (R4, P5, X2) | `_peers`, `_estimate` | Same code, modifier, component, payer, **network file**, kind (urgent care by site type, else by effective billing type), children-only apart; one value per billing group; p25-p75 of >= 5 groups per network, spanning networks when none is named; both ends cited (`estimate_peer_range`). Mode `same_system_then_kind` (O backtest). Rung 6 = this estimate; the Medicare multiple is deleted. |
+| Unusual (R17, P8) | `_gate` | Each row against its own network's peer median: outside 1/3x-3x is set aside; all rows outside = `unusual.whole_line`, not summed. Exception (Austin 2026-10-25): the group is >= 2x / <= 0.5x its peers on >= 5 other codes (`data/quote/contract_levels.yaml`, `python -m app.quote.contract_levels`): summed, `price.group_consistently_higher/lower`. |
+| Steps, missing, ranking (R5, P1, P3, P4) | `_steps`, `_step_pool`, `_totals` | `SiteQuote.steps` per step (map); a step not offered shows the p25-p75 at sites that do (`figure: elsewhere`); `missing` per step over every admitted site; `comparable` = own medians + estimates and elsewhere steps at the peer median. With `near` or `site_ids`: rank (missing, comparable, distance). |
+| No location (R6, P7) | `quote` | Every admitted site, `ordering: kind_then_distance` from Boston City Hall, receipts for the first `full_receipts`. |
+| Chains (R12) | `chains:` | AFC's posted page prices every AFC (`chain_price_from`); `chain_spreads` lists > 1.5x within a chain. |
+| Unknown billing (R7, P9) | `effective_billing` | Priced as a hospital clinic; `might_add` for possible steps. |
+| Anesthesia | `_anesthesia_units`, `_anesthesia_time` | A per-unit 008xx rate (same amount on codes with different base units) x base units, anesthesia groups only; "with typical time" from A5's `data/etl/physician_time.yaml`. |
+| Office POS (O F3a) | `_pos` | Offices read POS 11 rows only. |
+| Crashes / fallbacks (R10, R11) | `store.valid_npi`, `load_from_env`, `Dockerfile`, `/api/health` | Placeholder NPIs dropped at pack and load; no extract fallback; `CARECOST_ALLOW_EXTRACT=1` for tests/dev; health reports build, rows by source/kind, stale / late sources and the ETL's refresh failures (carried in the pack). |
+
+Numbers (A5 pack `a5.sqlite`, 1,812,636 rows; in-process, Austin's Mac): BCBS HMO shoulder with no
+location: 133 sites, 12 receipts, 963,417 B raw / 60,408 B gzip, p50 63 ms, p95 175 ms (HTTP via
+TestClient: p50 69 ms, p95 95 ms). Near Harvard Square (12 sites): 584,133 B / 45,244 B, p50 17 ms.

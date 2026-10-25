@@ -30,7 +30,8 @@
         "stated",
         "derived_pct_x_gross",
         "computed_fee_schedule",
-        "estimate_medicare_multiple"
+        "per_unit_x_base_units",
+        "estimate_peer_range"
       ],
       "title": "Method",
       "type": "string"

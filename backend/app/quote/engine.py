@@ -24,14 +24,31 @@ Lines per step and code, by how the site bills:
 
 The doctor's fee follows the ladder of plan §2.4 (D5, D6): rung 2 the group's TiC rate (by doctor
 when the NPIs are known and prices differ), rung 3 the hospital file's professional line, rung 4
-MassHealth, rung 5 Medicare, rung 6 Medicare x the group's own typical multiple (an estimate, in
-the total and flagged), rung 7 Medicare as a reference floor (shown, never summed). Self-pay
-doctor fees have no public source.
+MassHealth, rung 5 Medicare, rung 6 the peer estimate (C3, below), rung 7 Medicare as a reference
+floor (shown, never summed). Self-pay doctor fees have no public source.
+
+C3 (wave-2 review R1-R12, Austin's rulings P1-P9), at the source:
+
+* **Offer evidence** (R1, P6): a site offers a step only when its own hospital file lists the
+  code, it (or its chain) posts a price, a sites.yaml ``offered`` entry covers it, or site facts
+  (X1) say so. A TiC row is a contract term, never evidence. Not offered = never summed (R2).
+* **Admission** (R8): a site enters a path when it offers the entry visit or the core procedure.
+* **TIN roles** (R3): an ASC's own TINs price its facility line, never the doctor's.
+* **Peers** (R4, P5, X2): a missing line of an offered step is estimated from the same line's real
+  prices at >= 5 billing groups of the same kind of site, same payer and product (p25-p75, cited
+  rows). Peers are drawn from every admitted site, never from the response, so the answer does
+  not depend on which sites the person sees.
+* **Unusual** (R17, P8): rows outside 1/3x-3x of the peer median are set aside, never summed.
+* **Steps** (P1, P3, P4): each site gets a step summary; a step it does not do shows the p25-p75
+  at sites that do. Ranking compares missing steps, then own prices + estimates and elsewhere
+  steps at their neutral peer median. No location (P7): every admitted site, grouped by kind,
+  by distance from Boston City Hall.
 """
 
 from __future__ import annotations
 
 import math
+import re
 import statistics
 from collections import defaultdict
 from collections.abc import Callable, Iterable
@@ -41,7 +58,10 @@ from typing import Any
 
 from app.care_paths.models import CarePath
 from app.etl.contracts import Method, PriceBasis
+from app.quote.facts import SiteFacts, load_site_facts
+from app.quote.tin_roles import effective_billing, load_roles
 from app.quote.contracts import (
+    KIND_ORDER,
     CashPayment,
     InsurancePayment,
     MassHealthPayment,
@@ -51,7 +71,14 @@ from app.quote.contracts import (
     tier_basis_for_rating,
 )
 from app.quote.registry import Registry, posted_source
-from app.quote.store import DEFAULT_RULES, FEE_SCHEDULE_KINDS, RateStore, Row, SourceMeta
+from app.quote.store import (
+    DEFAULT_RULES,
+    FEE_SCHEDULE_KINDS,
+    REPO_ROOT,
+    RateStore,
+    Row,
+    SourceMeta,
+)
 from app.sites.contracts import Freshness, Site
 
 Json = dict[str, Any]
@@ -72,6 +99,55 @@ def _km(near: Any, site: Site) -> float:
         + math.cos(la1) * math.cos(la2) * math.sin((lo2 - lo1) / 2) ** 2
     )
     return 12742.0 * math.asin(math.sqrt(h))
+
+
+class _P:
+    """A point (lat / lon) for ``_km``."""
+
+    def __init__(self, lat: float, lon: float) -> None:
+        self.lat, self.lon = lat, lon
+
+
+def _rank_pos(n: int, pct: float) -> int:
+    """Nearest-rank percentile index into a sorted list of n values (so it is a real value)."""
+    return min(n - 1, max(0, math.ceil(pct / 100 * n) - 1))
+
+
+def _lower_median(vals: list[float]) -> float:
+    v = sorted(vals)
+    return v[(len(v) - 1) // 2]
+
+
+def yaml_load(path: Any) -> Any:
+    import yaml
+
+    return yaml.safe_load(path.read_text())
+
+
+_TABLES: dict[tuple, Any] = {}
+
+
+def _contract_table(path: Any) -> dict[str, dict[str, float]]:
+    """data/quote/contract_levels.yaml, parsed once per file version (1.9 MB of YAML)."""
+    if not path.exists():
+        return {}
+    key = (str(path), path.stat().st_mtime_ns)
+    if key not in _TABLES:
+        _TABLES[key] = (yaml_load(path) or {}).get("groups") or {}
+    return _TABLES[key]
+
+
+def _slug(text: str) -> str:
+    return "_".join(re.findall(r"[a-z0-9]+", text.lower()))[:60] or "chain"
+
+
+def _public(o: Any) -> Any:
+    """The response without the engine's private keys (``_m`` rows, ``_item`` ...)."""
+    if isinstance(o, dict):
+        return {k: _public(v) for k, v in o.items() if not k.startswith("_")}
+    if isinstance(o, list):
+        return [_public(v) for v in o]
+    return o
 
 
 def _matches(when: dict[str, list[str]], answers: dict[str, list[str]]) -> bool:
@@ -128,6 +204,9 @@ class Item:
     ai: bool = False
     at: str = "this_site"
     display_mod: str | None = None
+    path_id: str | None = None
+    step_codes: tuple[str, ...] = ()  # the step's primary + alternative codes (offer evidence)
+    step_kind: str | None = None
 
 
 @dataclass
@@ -156,16 +235,58 @@ class Engine:
         self.per15 = set(cfg["per_15_minutes"])
         self.neutral_mods = set(cfg["pricing_neutral_modifiers"])
         self.threshold = float(cfg["conflict_threshold"])
-        self.posted = {s.id: m for s in self.reg.sites.values() if (m := posted_source(s))}
-        self.posted_by_source = {m.source_id: m for m in self.posted.values()}
+        own_posted = {s.id: m for s in self.reg.sites.values() if (m := posted_source(s))}
+        self.posted_by_source = {m.source_id: m for m in own_posted.values()}
+        # R12: a chain's posted price list applies at every location of the chain
+        self.chain_of: dict[str, str] = {}
+        self.posted_site: dict[str, Site] = {}  # site id -> the site whose cash_prices apply
+        self.posted: dict[str, SourceMeta] = dict(own_posted)
+        for cid, ch in (cfg.get("chains") or {}).items():
+            src_site = self.reg.sites.get(ch.get("posted_price_site", ""))
+            for s in self.reg.sites.values():
+                if s.operator == ch["operator"]:
+                    self.chain_of[s.id] = cid
+                    if (
+                        s.id not in own_posted
+                        and src_site is not None
+                        and src_site.id in own_posted
+                    ):
+                        self.posted[s.id] = own_posted[src_site.id]
+                        self.posted_site[s.id] = src_site
+        for s in self.reg.sites.values():
+            self.posted_site.setdefault(s.id, s)
+        self.uc_types = frozenset(cfg["urgent_care_site_types"])
+        self.kind_by_billing: dict[str, str] = cfg["kind_by_billing"]
+        self.unknown_as: str = cfg["unknown_billing_priced_as"]
+        self.peer_cfg = cfg["peers"]
+        self.out_cfg = cfg["outliers"]
+        self.role_rule: dict[str, str] = cfg["tin_role_by_billing"]
+        self.roles = load_roles(REPO_ROOT / cfg["tin_roles_file"])
+        self.facts: SiteFacts = load_site_facts()
+        bdoc = REPO_ROOT / cfg["anesthesia_time_file"]
+        self.anes_base: dict[str, float] = {
+            str(k).zfill(5): float(v)
+            for k, v in ((yaml_load(bdoc) or {}).get("base_units") or {}).items()
+        } if bdoc.exists() else {}  # fmt: skip
+        self.anes_time = self._load_anesthesia_time(
+            REPO_ROOT / cfg["physician_time_file"], REPO_ROOT / cfg["anesthesia_time_file"]
+        )
+        o = cfg["no_location_origin"]
+        self.origin = _P(float(o["lat"]), float(o["lon"]))
+        # caches over data that never changes after startup (no request state, P1 #20)
+        self._code_offer: dict[tuple[str, str], bool] = {}
+        self._stats: dict[tuple, dict] = {}
+        self._peer_cache: dict[tuple, tuple[list, str]] = {}
+        cl = REPO_ROOT / cfg["contract_levels_file"]
+        self.contract_levels: dict[str, dict[str, float]] = _contract_table(cl)
+        self._admitted_cache: dict[tuple, list[str]] = {}
+        self._universe: dict[tuple, Json] = {}
         # fee schedules: every loaded file of a kind (Medicare PFS = RVU file + anesthesia file;
         # MassHealth = 101 CMR 316 / 317 / 318). One release per file id.
         self.pfs = self.store.sources_of("medicare_pfs")
         self.opps = self.store.sources_of("medicare_opps")
         self.asc = self.store.sources_of("medicare_asc")
         self.mh = self.store.sources_of("masshealth_fs")
-        self._multiples: dict[tuple, Json | None] = {}
-        self._evidence: dict[tuple[str, str], bool] = {}
         self.tic_sources = self.store.sources_of("insurer_tic")
 
     # ------------------------------------------------------------------ money from rows
@@ -184,11 +305,12 @@ class Engine:
             "low": lo[0],
             "high": hi[0],
             "basis": basis.value,
-            "prov": self.store.prov(lo[2], basis, method=method).model_dump(mode="json"),
+            "prov": self.store.prov_dict(lo[2], basis, method=method),
         }
         if hi[0] > lo[0]:
-            p = self.store.prov(hi[2], basis, method=method).model_dump(mode="json")
-            out["prov_high"] = p
+            out["prov_high"] = self.store.prov_dict(hi[2], basis, method=method)
+        # private (stripped before validation): the rows behind it, for peers and the P8 check
+        out["_m"] = ([(v, r) for v, _, r in vals], value, basis, method)
         return out
 
     def _far(self, a: Json, b: Json) -> bool:
@@ -252,17 +374,53 @@ class Engine:
         linked = sorted(self.store.census_tins.get(site.census_id or "", frozenset()) - set(own))
         return own, linked
 
+    def _billing(self, site: Site) -> str:
+        """How the engine prices the site (P9: unknown -> hospital clinic, ASC site -> asc)."""
+        return effective_billing(site, self.unknown_as)
+
+    def _pos(self, site: Site) -> frozenset[str]:
+        """Place-of-service codes a site's own professional rows must list. O F3a: an office reads
+        POS 11 rows only (a POS-20 urgent-care rate or a facility rate is not its price)."""
+        billing = self._billing(site)
+        if billing == "office_visit" and self._kind(site) == "office":
+            return self.pos["office_kind"]
+        return self.pos[billing]
+
+    def _kind(self, site: Site) -> str:
+        """X2: urgent care by site type, every other kind by the effective billing type."""
+        if site.site_type in self.uc_types:
+            return "urgent_care"
+        return self.kind_by_billing[self._billing(site)]
+
+    def _role(self, site: Site, tin: str) -> str:
+        """R3: tin_roles.yaml, else the site's billing-type rule."""
+        return self.roles.get((site.id, tin)) or self.role_rule[self._billing(site)]
+
     def _site_tic(self, q: Req, site: Site, codes: list[str], mod: str, pos: frozenset,
                   billing_class: str, *, any_pos: bool = False,
                   networks: list[str] | None = None) -> list[Row]:  # fmt: skip
+        """The site's TiC rows for one line. R3: a TIN with role ``facility`` (an ASC's own TIN)
+        prices only the facility line, from its rows of either billing class (an ASC bills its
+        fee on the professional form); a ``professional`` TIN only the doctor line;
+        ``by_billing_class`` follows the row."""
         own, linked = self._site_tins(site)
-        rows = self._tic_rows(q, own, codes, mod, pos, billing_class, any_pos=any_pos,
-                              networks=networks)  # fmt: skip
-        if linked:
-            cid = site.census_id or ""
-            more = self._tic_rows(q, linked, codes, mod, pos, billing_class, any_pos=any_pos,
-                                  networks=networks)  # fmt: skip
-            rows += [r for r in more if r.names_site(cid)]
+        cid = site.census_id or ""
+        rows: list[Row] = []
+        for tins, named_only in ((own, False), (linked, True)):
+            if not tins:
+                continue
+            roles = {t: self._role(site, t) for t in tins}
+            if billing_class == "facility":
+                part = self._tic_rows(q, [t for t in tins if roles[t] != "professional"], codes,
+                                      mod, pos, "facility", any_pos=any_pos, networks=networks)  # fmt: skip
+                fac = [t for t in tins if roles[t] == "facility"]
+                if fac:
+                    part += self._tic_rows(q, fac, codes, mod, self.pos["asc"], "professional",
+                                           networks=networks)  # fmt: skip
+            else:
+                part = self._tic_rows(q, [t for t in tins if roles[t] != "facility"], codes, mod,
+                                      pos, billing_class, any_pos=any_pos, networks=networks)  # fmt: skip
+            rows += [r for r in part if not named_only or r.names_site(cid)]
         return rows
 
     def _tic_rows(self, q: Req, tins: Iterable[str], codes: list[str], mod: str, pos: frozenset,
@@ -311,9 +469,10 @@ class Engine:
             m = self._money(rows, lambda r: r.discounted_cash, PriceBasis.discounted_cash)
             if m:
                 return m, all(r.component == "facility" for r in rows), list_price
-            return _not_published(self.store, src, f"a self-pay (cash) price for {what}",
-                                  "Ask the hospital for its discounted cash price or a Good Faith "
-                                  "Estimate."), True, list_price  # fmt: skip
+            return _not_published(self.store, src,
+                                  f"a self-pay (no insurance) price for {what}",
+                                  "Ask the hospital for its self-pay (no insurance) price or a "
+                                  "Good Faith Estimate."), True, list_price  # fmt: skip
 
         if q.kind == "insurance":
             first = pct = None
@@ -350,6 +509,9 @@ class Engine:
                                       "Ask the billing office for a Good Faith Estimate for your "
                                       "plan."), True, list_price  # fmt: skip
             if q.networks:
+                if site.billing_type == "unknown":  # P9
+                    what = ("a hospital facility fee this place may also charge (we could not "
+                            "confirm how it bills)")  # fmt: skip
                 return _not_published(self.store, q.networks[0], f"this insurer's rate for {what}",
                                       "Ask the center what your plan pays for its facility fee."), \
                     True, list_price  # fmt: skip
@@ -395,7 +557,7 @@ class Engine:
         if q.kind == "masshealth":
             return _not_loaded(f"MassHealth's hospital outpatient payment for {what} (APAD; not "
                                "loaded yet)"), True, list_price, {}  # fmt: skip
-        fs_srcs = self.asc if site.billing_type == "asc" else self.opps
+        fs_srcs = self.asc if self._billing(site) == "asc" else self.opps
         rows = [
             r for s in fs_srcs for c in codes for r in self.store.get("by_code", (s, c))
             if r.modifiers in ("", "TC") and r.billing_class in ("facility", "unknown")
@@ -490,9 +652,13 @@ class Engine:
                                "conversion factor; not loaded yet)"), None  # fmt: skip
         return _not_loaded(f"{label}'s physician fee schedule (not loaded yet)"), None
 
-    def _group_rate(self, rows: list[Row]) -> tuple[Json, Json] | None:
+    def _group_rate(self, rows: list[Row], code: str = "") -> tuple[Json, Json] | None:
         dollars = [r for r in rows if r.amount is not None and r.negotiated_type != "percentage"]
-        money = self._money(dollars, lambda r: r.amount, PriceBasis.negotiated)
+        value: Callable[[Row], float | None] = lambda r: r.amount  # noqa: E731
+        method = None
+        if code_class(code) == "anesthesia":
+            dollars, value, method = self._anesthesia_units(dollars, code)
+        money = self._money(dollars, value, PriceBasis.negotiated, method)
         if money is None:
             return None
         names = {r.business_name for r in dollars}
@@ -504,11 +670,40 @@ class Engine:
             "group_name": next(iter(names)) if len(names) == 1 and names != {""} else None,
             "group_tin": f"{tin[:2]}-{tin[2:]}" if tin and len(tin) == 9 else None,
         }
-        by_npi = self._by_npi(dollars)
+        by_npi = self._by_npi(dollars) if method is None else None
         if by_npi:
             fee["by_npi"] = by_npi
             fee["npi_count"] = len(by_npi)
         return money, fee
+
+    def _anesthesia_units(self, rows: list[Row], code: str):
+        """O audit: MGB and Fallon list an anesthesia group's 008xx codes at one per-unit rate
+        (the same amount on codes with different CMS base units). Such a row is a conversion
+        factor, not a fee: for an anesthesia group it prices the base units (rate x base units,
+        method per_unit_x_base_units); for any other group (dermatology, health centers,
+        surgicalists at a $20-30 default) it is not a fee and is left out."""
+        bases = self.anes_base
+        mine = bases.get(code)
+        full, units = [], []
+        for r in rows:
+            twin = None
+            for other, b in bases.items():
+                if other == code or b == mine:
+                    continue
+                twin = next((x for x in self.store.tic.get((r.source_id, r.tin, other), ())
+                             if x.amount == r.amount), None)  # fmt: skip
+                if twin:
+                    break
+            if twin is None:
+                full.append(r)
+                continue
+            if self.store.recorder is not None:
+                self.store.recorder.add([twin])
+            if mine and "ANESTH" in r.business_name.upper():
+                units.append(r)
+        if full or not units:
+            return full, (lambda r: r.amount), None
+        return units, (lambda r: round(r.amount * mine, 2)), Method.per_unit_x_base_units
 
     def _by_npi(self, dollars: list[Row]) -> list[Json] | None:
         """D6: per doctor, when the NPIs of every priced provider group are known and prices
@@ -530,65 +725,17 @@ class Engine:
             return None
         return out
 
-    def _multiple(self, q: Req, site: Site, setting: str, pos: frozenset) -> Json | None:
-        """Rung 6 (D5): the group's own typical multiple of Medicare for this payer, from codes
-        where both a group TiC dollar rate and the Medicare PFS rate exist (>= 5 codes)."""
-        key = (site.id, tuple(q.networks), setting, q.payer)
-        if key in self._multiples:
-            return self._multiples[key]
-        lows, highs = [], []
-        if self.pfs:
-            for code in sorted(self.store.codes):
-                fs = [r.amount for r in self._fs_rows(self.pfs, code, "", setting, site)
-                      if r.amount]  # fmt: skip
-                if not fs:
-                    continue
-                rows = [
-                    r for r in self._site_tic(q, site, [code], "", pos, "professional")
-                    if r.amount is not None and r.negotiated_type != "percentage"
-                ]  # fmt: skip
-                if rows:
-                    lows.append(min(r.amount for r in rows) / fs[0])  # type: ignore[operator]
-                    highs.append(max(r.amount for r in rows) / fs[0])  # type: ignore[operator]
-        out = None
-        if len(lows) >= self.cfg["ladder"]["rung6_min_codes"]:
-            out = {
-                "low": round(statistics.median(lows), 2),
-                "high": round(statistics.median(highs), 2),
-                "n_codes": len(lows),
-                "payer_id": q.payer,
-            }
-        self._multiples[key] = out
-        return out
-
-    def _estimate(self, q: Req, site: Site, code: str, mod: str, setting: str, pos: frozenset):
-        mult = self._multiple(q, site, setting, pos)
-        rows = self._fs_rows(self.pfs, code, mod, setting, site)
-        if not mult or not rows:
-            return None
-        base = min(rows, key=lambda r: (r.amount or 0, r.stage_row))
-        if base.amount is None:
-            return None
-        prov = self.store.prov(base, PriceBasis.estimate, method=Method.estimate_medicare_multiple)
-        p = prov.model_dump(mode="json")
-        low, high = round(base.amount * mult["low"], 2), round(base.amount * mult["high"], 2)
-        money: Json = {"kind": "money", "low": low, "high": high, "basis": "estimate", "prov": p}
-        if high > low:
-            money["prov_high"] = p
-        fee = {"rung": 6, "explanation_key": "fee.rung_6_estimate", "multiple": mult}
-        return money, fee
-
     def _doctor_cell(self, site: Site, item: Item, code: str, mod: str, q: Req, *,
                      hospital_line: bool):  # fmt: skip
         """-> (cell, doctor_fee or None, codes shown on the line)."""
-        billing = site.billing_type
+        billing = self._billing(site)
         setting = self.fs_setting[billing]
-        pos = self.pos[billing]
+        pos = self._pos(site)
         if q.kind == "cash":
             posted = q.posted.get(site.id)
             if not hospital_line and site.hospital_entity_id is None:
                 if posted:
-                    return self._posted_cell(site, posted, code), None, [code]
+                    return self._posted_cell(self.posted_site[site.id], posted, code), None, [code]
                 return _not_loaded("this clinic's self-pay price: we have not read a posted "
                                    "self-pay price list for it"), None, [code]  # fmt: skip
             return _no_source("the doctor's own fee for a self-pay patient"), {
@@ -645,10 +792,10 @@ class Engine:
         got = None
         if rad:
             rows = self._tic_rows(q, rad, codes, mod, pos, "professional", any_pos=True)
-            got = self._group_rate(rows)
+            got = self._group_rate(rows, code)
         if got is None:
             rows = self._site_tic(q, site, codes, mod, pos, "professional", any_pos=(mod == "26"))
-            got = self._group_rate(rows)
+            got = self._group_rate(rows, code)
         if got:
             return got[0], got[1], codes
         src = self._site_hospital_source(site)
@@ -660,14 +807,8 @@ class Engine:
                             PriceBasis.negotiated)  # fmt: skip
             if m:
                 return m, {"rung": 3, "explanation_key": "fee.rung_3_hospital_file"}, codes
-        est = self._estimate(q, site, code, mod, setting, pos)
-        if est:
-            return est[0], est[1], codes
-        if self.pfs:
-            ref = self._money(self._fs_rows(self.pfs, code, mod, setting, site), lambda r: r.amount,
-                              PriceBasis.fee_schedule)  # fmt: skip
-            if ref:
-                return ref, {"rung": 7, "explanation_key": "fee.rung_7_medicare_reference"}, codes
+        # a published "% of charges" term beats any estimate (security-gate F4): it is what the
+        # contract says; the peer estimate (rung 6) is filled after every site is priced
         pct = sorted((r.negotiated_pct, r.stage_row) for r in rows if r.negotiated_pct is not None)
         if pct:
             return (
@@ -680,6 +821,11 @@ class Engine:
                 None,
                 codes,
             )
+        if self.pfs:
+            ref = self._money(self._fs_rows(self.pfs, code, mod, setting, site), lambda r: r.amount,
+                              PriceBasis.fee_schedule)  # fmt: skip
+            if ref:
+                return ref, {"rung": 7, "explanation_key": "fee.rung_7_medicare_reference"}, codes
         return _not_published(self.store, q.networks[0],
                               "this insurer's rate for this doctor group and item",
                               "Ask the office which doctor group bills for it and what your "
@@ -695,7 +841,7 @@ class Engine:
                 "searched": {"source_id": meta.source_id, "source_sha256": meta.source_sha256},
             }
         p = min(hits, key=lambda p: (p.amount, p.item_id))
-        prov = {
+        prov: Json = {
             "source_id": meta.source_id,
             "source_kind": "clinic_posted",
             "source_file": meta.source_file,
@@ -707,7 +853,7 @@ class Engine:
             "row_id": None,
         }
         return {"kind": "money", "low": p.amount, "high": p.amount, "basis": "posted_self_pay",
-                "prov": prov}  # fmt: skip
+                "prov": prov, "_posted": (p.amount, f"posted:{meta.source_id}", prov)}  # fmt: skip
 
     def _referral_cell(self, item: Item, q: Req):
         """P1 #15: the HMO referral visit happens at the person's own primary care office."""
@@ -771,11 +917,19 @@ class Engine:
                 "learn": [{"label": lm.label, "url": lm.url} for lm in st.learn_more],
                 "at": "your_primary_care" if st.layer == 0 and st.kind == "referral"
                 else "this_site",
+                "path_id": path.id,
+                "step_codes": tuple(c.code for c in st.cpts if c.role in ("primary", "alternative")),
+                "step_kind": st.kind,
             }  # fmt: skip
             cpts = [c for c in st.cpts if c.payer_scope in scope_ok]
+            primaries = 0
             for c in cpts:
                 if c.role == "primary":
-                    out.append(Item(stem=st.id, code=c.code, unit="once", plain=st.plain.name,
+                    # two primary codes in one step under the same payment (Chat2): the second
+                    # gets its own line id instead of colliding on the step id
+                    stem = st.id if primaries == 0 else f"{st.id}_{c.code.lower()}"
+                    primaries += 1
+                    out.append(Item(stem=stem, code=c.code, unit="once", plain=st.plain.name,
                                     tech=st.plain.technical_name, display_mod=c.modifier,
                                     **base))  # fmt: skip
                 elif c.role in ("add_on", "guidance"):
@@ -859,11 +1013,17 @@ class Engine:
             "learn_more": item.learn,
             "price_notes": list(price_notes or []),
             "at": item.at,
+            "availability_reason": None,
+            "estimate": None,
+            "unusual": None,
+            "anesthesia_time": None,
+            "chain_price_from": None,
+            "_item": item,
         }
 
     def _site_lines(self, site: Site, items: list[Item], q: Req) -> list[Json]:
         lines: list[Json] = []
-        billing = site.billing_type
+        billing = self._billing(site)
         two_part = billing in ("hospital_outpatient", "asc")
         for it in items:
             code = it.code
@@ -917,10 +1077,21 @@ class Engine:
                     it, it.stem, codes, shown, it.plain, tech, "professional", True, cell,
                     doctor_fee=fee))  # fmt: skip
         for ln in lines:
-            if ln["at"] == "this_site" and not self._offers(site, ln["codes"][0]):
-                ln["availability"] = "unknown"
-            if code_class(ln["codes"][0]) == "anesthesia" and self._fs_money(ln["cell"]):
+            if ln["at"] == "this_site":
+                av, why = self._item_avail(site, ln["_item"])
+                ln["availability"], ln["availability_reason"] = av, why
+                if av == "not_offered":
+                    ln["cell"] = None
+            cell = ln["cell"]
+            if cell is not None and code_class(ln["codes"][0]) == "anesthesia" and (
+                self._fs_money(cell) or (cell["kind"] == "money" and cell["prov"]["method"]
+                                         == Method.per_unit_x_base_units.value)
+            ):  # fmt: skip
                 ln["price_notes"].append("price.anesthesia_base_units_only")
+            if cell is not None and cell["kind"] == "money" and cell["prov"]["source_id"] in (
+                self.posted_by_source
+            ) and self.posted_site[site.id].id != site.id:  # fmt: skip
+                ln["chain_price_from"] = self.posted_site[site.id].id  # R12
         return lines
 
     @staticmethod
@@ -929,45 +1100,56 @@ class Engine:
             [cell["a"], cell["b"]] if cell["kind"] == "conflict" else [])  # fmt: skip
         return any(m["prov"]["source_kind"] in FEE_SCHEDULE_KINDS for m in moneys)
 
-    def _offers(self, site: Site, code: str) -> bool:
-        """Positive evidence that the site offers this code (Site.offered, P1 #14): an offered
-        entry naming the code or a service that covers it (engine.yaml offered_services), a
-        posted self-pay price for it, or any rate row for it in the site's own hospital file or
-        in a TiC file for the site's billing TINs. Absence = unknown, never 'not offered'."""
+    # ------------------------------------------------------------------ offer evidence (R1)
+
+    def offers_code(self, site: Site, code: str) -> bool:
+        """Positive evidence the site offers this code (C3 R1, P6): an ``offered`` entry naming
+        the code or a service covering it (engine.yaml offered_services); a posted self-pay price
+        for it (the site's own, or its chain's, R12); a row for it in the site's own hospital
+        file. Never a TiC row: an insurer's file is a contract term, not a claim by the site."""
         key = (site.id, code)
-        if key in self._evidence:
-            return self._evidence[key]
+        if key in self._code_offer:
+            return self._code_offer[key]
         ok = any(code in o.codes or self._service_covers(o.service, code) for o in site.offered)
-        ok = ok or any(code in p.codes for p in site.cash_prices)
+        ok = ok or any(code in p.codes for p in self.posted_site[site.id].cash_prices)
         if not ok:
-            ok = self._first_row(site, code) is not None
-        self._evidence[key] = ok
+            src = self._site_hospital_source(site)
+            first = self.store.by_code.get((src, code)) if src else None
+            if first:
+                ok = True
+                if self.store.recorder is not None:  # the extract keeps the evidence row
+                    self.store.recorder.add(first[:1])
+        self._code_offer[key] = ok
         return ok
 
-    def _first_row(self, site: Site, code: str) -> Row | None:
-        """The first rate row for the code in the site's own hospital file or a TiC file for its
-        TINs (any modifier, place of service, payer). Recorded alone, so the committed extract
-        reproduces the evidence without every row behind it."""
-        found: Row | None = None
-        src = self._site_hospital_source(site)
-        if src and self.store.by_code.get((src, code)):
-            found = self.store.by_code[(src, code)][0]
-        if found is None:
-            own, linked = self._site_tins(site)
-            cid = site.census_id or ""
-            for sid in self.tic_sources:
-                for t in [*own, *linked]:
-                    for r in self.store.tic.get((sid, t, code), ()):
-                        if t in own or r.names_site(cid):
-                            found = r
-                            break
-                    if found:
-                        break
-                if found:
-                    break
-        if found is not None and self.store.recorder is not None:
-            self.store.recorder.add([found])
-        return found
+    def _item_avail(self, site: Site, it: Item) -> tuple[str, str | None]:
+        """Availability of a step at a site (one answer for every line of the step): site facts
+        (X1) first, then code evidence for any of the step's codes. -> (availability, reason)."""
+        if it.path_id and it.step_id:
+            said = self.facts.step(site.id, it.path_id, it.step_id)
+            if said == "offered":
+                return "offered", None
+            if said == "not_offered":
+                return "not_offered", "site_says_not_offered"
+        if any(self.offers_code(site, c) for c in (it.step_codes or (it.code,))):
+            return "offered", None
+        if self._tic_row_for(site, it.code):
+            return "unknown", "insurer_lists_rate"
+        return "unknown", "no_evidence"
+
+    def _tic_row_for(self, site: Site, code: str) -> bool:
+        """P6 wording only: does an insurer file list a rate for this code under the site's
+        TINs (any network)? Never evidence that the site offers it."""
+        own, linked = self._site_tins(site)
+        cid = site.census_id or ""
+        for sid in self.tic_sources:
+            for t in [*own, *linked]:
+                for r in self.store.tic.get((sid, t, code), ()):
+                    if t in own or r.names_site(cid):
+                        if self.store.recorder is not None:  # the extract keeps this row
+                            self.store.recorder.add([r])
+                        return True
+        return False
 
     def _service_covers(self, service: str, code: str) -> bool:
         rule = self.cfg["offered_services"].get(service) or {}
@@ -981,32 +1163,44 @@ class Engine:
             return any(lo <= code <= hi and len(code) == len(lo) for lo, hi in rule["ranges"])
         return bool(rule)
 
+    # ------------------------------------------------------------------ finishing lines
+
     @staticmethod
     def _finish(lines: list[Json]) -> list[Json]:
         for ln in lines:
-            kind = ln["cell"]["kind"]
+            cell = ln["cell"]
+            kind = cell["kind"] if cell is not None else None
             lk = ln["likelihood"]
-            ln["tier"] = "not_in_public_data" if kind in NO_NUMBER else (
-                "possible" if lk == "rare" else lk)  # fmt: skip
+            shown = "possible" if lk == "rare" else lk
+            ln["tier"] = "not_in_public_data" if kind in NO_NUMBER else shown
             fee = ln["doctor_fee"]
+            un = ln["unusual"]
             ln["in_total"] = (
                 ln["tier"] in ("certain", "likely")
                 and kind == "money"
                 and ln["unit"] == "once"
                 and not ln["ai_suggested"]
+                and ln["availability"] == "offered"  # R2: no evidence -> never summed
+                and not (un and un["whole_line"])  # P8
                 and (fee is None or (fee["rung"] or 0) in range(1, 7))
             )
         return lines
 
     @staticmethod
     def _excluded_reason(ln: Json) -> str:
-        kind = ln["cell"]["kind"]
+        kind = ln["cell"]["kind"] if ln["cell"] is not None else None
         if ln["ai_suggested"]:
             return "ai_suggested"
+        if ln["availability"] == "not_offered":
+            return "not_offered_here"
+        if ln["availability"] != "offered":
+            return "availability_unknown"
         if kind == "conflict":
             return "conflict"
         if kind != "money":
             return "no_dollar_amount"
+        if ln["unusual"] and ln["unusual"]["whole_line"]:
+            return "unusual"
         if ln["unit"] != "once":
             return "repeats"
         if ln["doctor_fee"] and (ln["doctor_fee"]["rung"] or 0) >= 7:
@@ -1027,7 +1221,8 @@ class Engine:
             "portal_url": None,
         }
 
-    def _totals(self, lines: list[Json], q: Req, fresh: Callable[[str], Freshness]) -> Json:
+    def _totals(self, lines: list[Json], steps: list[Json], q: Req,
+                fresh: Callable[[str], Freshness]) -> Json:  # fmt: skip
         summed = [ln for ln in lines if ln["in_total"]]
         likely = None
         if summed:
@@ -1039,28 +1234,519 @@ class Engine:
                 "high": round(sum(ln["cell"]["high"] for ln in summed), 2),
                 "line_ids": [ln["line_id"] for ln in summed],
                 "includes_estimate": any(
-                    ln["cell"]["prov"]["method"] == "estimate_medicare_multiple" for ln in summed
+                    ln["cell"]["prov"]["method"] == Method.estimate_peer_range.value
+                    for ln in summed
                 ),
                 "includes_late_source": any(x.late_to_refresh for x in f),
                 "includes_stale_source": any(x.stale_on_our_side for x in f),
             }
         partial = any(
             ln["likelihood"] in ("certain", "likely")
+            and ln["availability"] != "not_offered"
             and not ln["in_total"]
             and not ln["ai_suggested"]
             for ln in lines
         )
+        expected = [st for st in steps if st["_expected"]]
+        ranked = [st["rank_value"] for st in expected if st["rank_value"] is not None]
+        maybe = [
+            st for st in steps
+            if st["likelihood"] in ("possible", "rare") and not st["_ai"]
+            and st["availability"] == "offered" and st["figure"] in ("own", "estimate")
+        ]  # fmt: skip
         return {
             "likely": likely,
             "complete": not partial,
-            "missing": 0,  # set once every site is built (I7 needs the other sites)
+            "missing": sum(1 for st in steps if st["missing"]),
             "excluded": [
                 {"line_id": ln["line_id"], "reason": self._excluded_reason(ln)}
                 for ln in lines
                 if not ln["in_total"]
             ],
             "you_pay": self._you_pay(q),
-        }
+            "comparable": round(sum(ranked), 2) if ranked else None,
+            "real_steps": sum(1 for st in expected if st["figure"] == "own"),
+            "might_add": {
+                "low": round(min(st["low"] for st in maybe), 2),
+                "high": round(sum(st["high"] for st in maybe), 2),
+                "step_keys": [st["key"] for st in maybe],
+            } if maybe else None,
+        }  # fmt: skip
+
+    # ------------------------------------------------------------------ peers (R4, P5, P8, X2)
+
+    def _paykey(self, q: Req) -> tuple:
+        return (q.kind, q.payer, q.product, tuple(q.networks))
+
+    @staticmethod
+    def _pmod(ln: Json) -> str:
+        """The pricing modifier of a line (26 = a reading; display-only modifiers price as none)."""
+        return "26" if ln["modifier"] == "26" else ""
+
+    @staticmethod
+    def _group(r: Row) -> str:
+        """X2: peers are counted by distinct billing group: the TiC billing TIN, or the file."""
+        if r.source_kind == "insurer_tic":
+            return f"tin:{r.tin}@{r.source_id}"  # one group per TIN per network file
+        if r.source_kind in FEE_SCHEDULE_KINDS:
+            return f"fs:{r.source_id}"
+        return f"file:{r.source_id}"
+
+    def _entries(self, ln: Json) -> list[tuple[float, str, Any]]:
+        """(value, group, row or posted provenance) for each real price behind a line: no
+        estimate, no reference-only number, no conflict."""
+        cell = ln["cell"]
+        if cell is None or cell["kind"] != "money" or cell["basis"] == "estimate":
+            return []
+        fee = ln["doctor_fee"]
+        if fee and (fee["rung"] or 0) >= 7:
+            return []
+        if "_posted" in cell:
+            return [cell["_posted"]]
+        rows = cell.get("_m", ([],))[0]
+        return [(v, self._group(r), r) for v, r in rows]
+
+    def _line_stats(self, code: str, q: Req) -> dict[str, dict[tuple[str, str], list]]:
+        """Every quotable site's real prices for one code under this payment, per line
+        (component, pricing modifier). Computed once per (code, payment) over the whole
+        registry: peers never depend on which sites a request shows."""
+        key = (code, self._paykey(q))
+        if key not in self._stats:
+            it = Item(stem="peer", code=code, unit="once", plain=code, tech=code, why=None,
+                      likelihood="certain", tier_basis="picked", step_id=None, gloss=[],
+                      learn=[])  # fmt: skip
+            out: dict[str, dict[tuple[str, str], list]] = {}
+            for s in self.reg.sites.values():
+                if s.listing_status == "registry_only":
+                    continue
+                per: dict[tuple[str, str], list] = {}
+                for ln in self._site_lines(s, [it], q):
+                    ents = self._entries(ln)
+                    if ents:
+                        per[(ln["component"], self._pmod(ln))] = ents
+                if per:
+                    out[s.id] = per
+            self._stats[key] = out
+        return self._stats[key]
+
+    def _peers(self, site: Site, code: str, comp: str, pmod: str, q: Req, *, estimate: bool,
+               network: str | None = None) -> tuple[list[tuple[float, Any]], str]:  # fmt: skip
+        """X2 peer set for one line at one site: same code, modifier, component, payer and plan
+        product (the request's network files), sites of the same kind (and billing type, unless
+        engine.yaml turns it off) that offer the code; one value per distinct billing group (the
+        group's lower-median row), the site's own groups left out. ``estimate``: fee-schedule
+        groups are left out and one source kind is kept (a Money cites one kind). ``network``
+        (O audit): only rows of that network file (``hospital_file`` for hospital files), so
+        networks of one payer with different price levels are never pooled. A children-only site
+        is its own peer kind (O F4). Cached: it depends on the data and the payment only."""
+        ck = (site.id, code, comp, pmod, self._paykey(q), estimate, network)
+        hit = self._peer_cache.get(ck)
+        if hit is not None:
+            return hit
+        out = self._peers_uncached(site, code, comp, pmod, q, estimate=estimate, network=network)
+        self._peer_cache[ck] = out
+        return out
+
+    def _peers_uncached(self, site: Site, code: str, comp: str, pmod: str, q: Req, *,
+                        estimate: bool, network: str | None) -> tuple[list, str]:  # fmt: skip
+        stats = self._line_stats(code, q)
+        mine = {g for _, g, _ in stats.get(site.id, {}).get((comp, pmod), [])}
+        kind, bill = self._kind(site), self._billing(site)
+        same_bill = self.peer_cfg["key_includes_billing"]
+        cands = []
+        for sid in sorted(stats):
+            if sid == site.id:
+                continue
+            s = self.reg.sites[sid]
+            if self._kind(s) != kind or (same_bill and self._billing(s) != bill):
+                continue
+            if s.children_only != site.children_only:
+                continue
+            ents = stats[sid].get((comp, pmod))
+            if ents and network is not None:
+                ents = [e for e in ents if self._net(e[2]) == network]
+            if ents and self.offers_code(s, code):
+                cands.append((s, ents))
+
+        def groups(cs) -> dict[str, tuple[float, Any]]:
+            out: dict[str, tuple[float, Any]] = {}
+            for _, ents in cs:
+                by: dict[str, list] = defaultdict(list)
+                for v, g, ref in ents:
+                    if g in mine or g in out or (estimate and g.startswith("fs:")):
+                        continue
+                    by[g].append((v, ref))
+                for g, vs in by.items():
+                    vs.sort(key=lambda t: t[0])
+                    out[g] = vs[(len(vs) - 1) // 2]
+            return out
+
+        scope = "same_kind"
+        got = groups(cands)
+        if self.peer_cfg["mode"] == "same_system_then_kind" and site.system_id:
+            sys = groups([c for c in cands if c[0].system_id == site.system_id])
+            if len(sys) >= self.peer_cfg["system_min_groups"]:
+                got, scope = sys, "same_system"
+        vals = list(got.values())
+        if estimate and vals:  # one source kind per Money: the kind most groups come from
+            kinds: dict[str, int] = defaultdict(int)
+            for _, ref in vals:
+                kinds[self._ref_kind(ref)] += 1
+            top = min(kinds, key=lambda k: (-kinds[k], k))
+            vals = [t for t in vals if self._ref_kind(t[1]) == top]
+        return sorted(vals, key=lambda t: (t[0], self._ref_id(t[1]))), scope
+
+    @staticmethod
+    def _net(ref: Any) -> str:
+        """The network a price belongs to: its TiC file, or the hospital file / posted page."""
+        if isinstance(ref, Row):
+            return ref.source_id if ref.source_kind == "insurer_tic" else "hospital_file"
+        return "posted"
+
+    @staticmethod
+    def _ref_kind(ref: Any) -> str:
+        return ref.source_kind if isinstance(ref, Row) else ref["source_kind"]
+
+    @staticmethod
+    def _ref_id(ref: Any) -> str:
+        return ref.uid if isinstance(ref, Row) else ref["row_ref"]
+
+    def _est_prov(self, ref: Any, q: Req) -> Json:
+        payer = q.payer if q.kind == "insurance" else None
+        if isinstance(ref, Row):
+            p = self.store.prov_dict(ref, PriceBasis.estimate, method=Method.estimate_peer_range)
+        else:
+            p = dict(ref)
+        p["method"] = Method.estimate_peer_range.value
+        p["payer_id"] = payer
+        return p
+
+    def _gate(self, site: Site, ln: Json, q: Req) -> None:
+        """P8: each row is compared with the peer median of its own network (O audit: never a
+        pooled median); rows outside [low, high] x that median are set aside (cited, never
+        summed); every row outside -> the whole line is unusual."""
+        cell = ln["cell"]
+        if cell is None or cell["kind"] != "money" or cell["basis"] in ("fee_schedule", "estimate"):
+            return
+        if ln["at"] != "this_site" or not self._entries(ln):
+            return
+        lo_x, hi_x = float(self.out_cfg["low"]), float(self.out_cfg["high"])
+        meds: dict[str, tuple[float, int] | None] = {}
+
+        def median_for(net: str) -> tuple[float, int] | None:
+            if net not in meds:
+                peers, _ = self._peers(site, ln["codes"][0], ln["component"], self._pmod(ln), q,
+                                       estimate=False, network=net)  # fmt: skip
+                m = _lower_median([v for v, _ in peers]) if peers else 0.0
+                ok = len(peers) >= self.out_cfg["min_groups"] and m > 0
+                meds[net] = (m, len(peers)) if ok else None
+            return meds[net]
+
+        if "_posted" in cell:
+            v, _, ref = cell["_posted"]
+            got = median_for(self._net(ref))
+            if got and not lo_x * got[0] <= v <= hi_x * got[0]:
+                ln["unusual"] = {"peer_median": got[0], "n_groups": got[1], "whole_line": True,
+                                 "set_aside": []}  # fmt: skip
+            return
+        rows, value, basis, method = cell["_m"]
+        kept, out, first = [], [], None
+        for v, r in rows:
+            got = median_for(self._net(r))
+            if got and not lo_x * got[0] <= v <= hi_x * got[0]:
+                side = "high" if v > hi_x * got[0] else "low"
+                if self._contract_level(site, self._group(r), ln["codes"][0], q, side):
+                    # Austin 2026-10-25: a group consistently this far from its peers is its
+                    # contract, not a data error: summed, real price, with a note
+                    kept.append(r)
+                    note = f"price.group_consistently_{'higher' if side == 'high' else 'lower'}"
+                    if note not in ln["price_notes"]:
+                        ln["price_notes"].append(note)
+                    continue
+                out.append(r)
+                first = first or got
+            else:
+                kept.append(r)
+        if not out:
+            return
+        if not kept:
+            ln["unusual"] = {"peer_median": first[0], "n_groups": first[1], "whole_line": True,
+                             "set_aside": []}  # fmt: skip
+            return
+        ln["cell"] = self._money(kept, value, basis, method)
+        ln["unusual"] = {
+            "peer_median": first[0], "n_groups": first[1], "whole_line": False,
+            "set_aside": [self._money(out, value, basis, method)],
+        }  # fmt: skip
+
+    def contract_key(self, site: Site, group: str, q: Req) -> str:
+        return f"{site.id}|{group}|{q.kind}|{q.payer or ''}|{q.product}"
+
+    def contract_ratios(self, site: Site, group: str, q: Req) -> dict[str, float]:
+        """O ``contract_level`` (app/audit/causes.py), reimplemented on the engine's peer sets:
+        the group's lower-median price / its peer median (same network, same kind) for every
+        code-modifier-component the group prices at this site. Offline only (it prices every
+        code at every site): python -m app.quote.contract_levels writes the table."""
+        net = group.split("@", 1)[1] if "@" in group else "hospital_file"
+        ratios: dict[str, float] = {}
+        for c in sorted(self.store.codes):
+            per = self._line_stats(c, q).get(site.id, {})
+            for (comp, pmod), ents in per.items():
+                vals = sorted(v for v, g, _ in ents if g == group)
+                if not vals:
+                    continue
+                peers, _ = self._peers(site, c, comp, pmod, q, estimate=False, network=net)
+                if len(peers) < self.out_cfg["min_groups"]:
+                    continue
+                med = _lower_median([v for v, _ in peers])
+                if med > 0:
+                    ratios[f"{c}-{pmod}-{comp}"] = round(vals[(len(vals) - 1) // 2] / med, 4)
+        return ratios
+
+    def _contract_level(self, site: Site, group: str, code: str, q: Req, side: str) -> bool:
+        """Austin 2026-10-25: the same group sits at >= high x (<= low x) its peer median on
+        >= min_codes OTHER codes (median ratio), from data/quote/contract_levels.yaml."""
+        cfg = self.out_cfg["contract_level"]
+        ratios = self.contract_levels.get(self.contract_key(site, group, q)) or {}
+        others = [r for k, r in ratios.items() if not k.startswith(f"{code}-")]
+        if len(others) < int(cfg["min_codes"]):
+            return False
+        m = statistics.median(others)  # as O's causes.py
+        return m >= float(cfg["high"]) if side == "high" else m <= float(cfg["low"])
+
+    def _estimate(self, site: Site, ln: Json, q: Req) -> None:
+        """P5 (rung 6): a missing line of a step this site offers, from the same line's real
+        prices at >= min_groups peer groups (same kind, same payer): p25-p75, both ends cited.
+        Fewer groups -> no estimate (the Gap stays). A published %-of-charges term stays."""
+        cell = ln["cell"]
+        if q.kind not in ("insurance", "cash") or ln["at"] != "this_site" or cell is None:
+            return
+        if ln["availability"] != "offered" or ln["ai_suggested"] or ln["unit"] != "once":
+            return
+        fee = ln["doctor_fee"]
+        reference = cell["kind"] == "money" and fee is not None and (fee["rung"] or 0) >= 7
+        if cell["kind"] not in NO_NUMBER and not reference:
+            return
+        # O audit: per network, never pooled. Each network with >= min_groups groups gives its
+        # p25-p75; with no network named, the estimate spans them (low = the lowest p25, high = the
+        # highest p75, median = the median of the network medians), so a plan that pays a third
+        # of another never hides inside a pooled median. Insurer files first; a hospital-file
+        # range only when no insurer network has enough groups (one source kind per Money).
+        nets: list[str | None] = [*q.networks, "hospital_file"] if q.kind == "insurance" else [None]
+        per: list[tuple[tuple, tuple, float, int, str]] = []
+        for net in nets:
+            peers, scope = self._peers(site, ln["codes"][0], ln["component"], self._pmod(ln), q,
+                                       estimate=True, network=net)  # fmt: skip
+            n = len(peers)
+            if n < self.peer_cfg["min_groups"]:
+                continue
+            per.append((peers[_rank_pos(n, self.peer_cfg["low_percentile"])],
+                        peers[_rank_pos(n, self.peer_cfg["high_percentile"])],
+                        peers[(n - 1) // 2][0], n, scope))  # fmt: skip
+        if any(self._net(p[0][1]) != "hospital_file" for p in per):
+            per = [p for p in per if self._net(p[0][1]) != "hospital_file"]
+        kinds = {self._ref_kind(p[0][1]) for p in per} | {self._ref_kind(p[1][1]) for p in per}
+        if not per or len(kinds) > 1:
+            return
+        lo = min((p[0] for p in per), key=lambda t: (t[0], self._ref_id(t[1])))
+        hi = max((p[1] for p in per), key=lambda t: (t[0], self._ref_id(t[1])))
+        med = _lower_median([p[2] for p in per])
+        n = sum(p[3] for p in per)
+        scope = per[0][4]
+        money: Json = {"kind": "money", "low": lo[0], "high": hi[0], "basis": "estimate",
+                       "prov": self._est_prov(lo[1], q)}  # fmt: skip
+        if hi[0] > lo[0]:
+            money["prov_high"] = self._est_prov(hi[1], q)
+        ln["cell"] = money
+        ln["elsewhere"] = []
+        ln["estimate"] = {
+            "low": lo[0], "high": hi[0], "median": med, "n_groups": n, "kind": self._kind(site),
+            "scope": scope, "payer_id": q.payer if q.kind == "insurance" else None,
+        }  # fmt: skip
+        if fee is not None:
+            ln["doctor_fee"] = {"rung": 6, "explanation_key": "fee.rung_6_estimate"}
+
+    @staticmethod
+    def _central(ln: Json) -> float:
+        """A line's neutral figure for ranking: the peer median for an estimate, else the
+        lower-median row behind the cell (after the P8 check), never the minimum row (R5)."""
+        if ln["estimate"] is not None:
+            return ln["estimate"]["median"]
+        cell = ln["cell"]
+        if "_posted" in cell:
+            return cell["_posted"][0]
+        if "_m" in cell:
+            return _lower_median([v for v, _ in cell["_m"][0]])
+        return (cell["low"] + cell["high"]) / 2
+
+    @staticmethod
+    def _counts(ln: Json) -> bool:
+        """A line whose number can stand in a step figure."""
+        cell, fee, un = ln["cell"], ln["doctor_fee"], ln["unusual"]
+        return (
+            cell is not None and cell["kind"] == "money"
+            and not (un and un["whole_line"])
+            and not (fee and (fee["rung"] or 0) >= 7)
+        )  # fmt: skip
+
+    # ------------------------------------------------------------------ admission (R8)
+
+    def _admits(self, site: Site, path: CarePath | None, areas: set[str]) -> bool:
+        """A site enters a path when it offers the entry visit (layer 1) or the core procedure
+        (a layer-2 procedure that is certain or likely) by the offer rules; with no evidence either
+        way, when its kind may do that kind of step (engine.yaml admission_step_kinds)."""
+        if not self.reg.area_ok(site, areas):
+            return False
+        if path is None:
+            return True
+        keys = [st for st in path.steps if not st.no_price and (
+            (st.layer == 1 and st.kind == "visit")
+            or (st.layer == 2 and st.kind == "procedure"
+                and st.likelihood_tier in ("certain", "likely"))
+        )]  # fmt: skip
+        allowed = set(self.cfg["admission_step_kinds"].get(self._kind(site), ()))
+        open_ = []
+        for st in keys:
+            said = self.facts.step(site.id, path.id, st.id)
+            if said == "offered":
+                return True
+            if said == "not_offered":
+                continue
+            codes = [c.code for c in st.cpts if c.role in ("primary", "alternative")]
+            if any(self.offers_code(site, c) for c in codes):
+                return True
+            open_.append(st)
+        return any(st.kind in allowed for st in open_)
+
+    def _admitted(self, path: CarePath | None, areas: set[str]) -> list[str]:
+        key = (path.id if path else None, tuple(sorted(areas)))
+        if key not in self._admitted_cache:
+            self._admitted_cache[key] = [
+                s.id for s in sorted(self.reg.sites.values(), key=lambda s: s.id)
+                if s.listing_status != "registry_only" and not s.children_only
+                and self._admits(s, path, areas)
+            ]  # fmt: skip
+        return self._admitted_cache[key]
+
+    # ------------------------------------------------------------------ steps (P1, P3, P4)
+
+    @staticmethod
+    def _step_key(ln: Json) -> str:
+        return ln["step_id"] or ",".join(ln["codes"])
+
+    def _step_pool(self, key: str, items: list[Item], admitted: list[str], q: Req,
+                   path_id: str | None) -> Json:  # fmt: skip
+        """P4: one step's price at every admitted site that offers it (its own real prices after
+        the P8 check, no estimates), one value per distinct set of billing groups (a chain counts
+        once). -> {"range": PeerRange or None, "priced": any site has a figure}."""
+        ck = (path_id, key, tuple(it.code for it in items), tuple(admitted), self._paykey(q))
+        if ck in self._universe:
+            return self._universe[ck]
+        vals: dict[frozenset, tuple[float, str]] = {}
+        for sid in admitted:
+            site = self.reg.sites[sid]
+            lines = [ln for ln in self._site_lines(site, items, q)
+                     if ln["unit"] == "once" and not ln["ai_suggested"]]  # fmt: skip
+            if not lines or any(ln["availability"] != "offered" for ln in lines):
+                continue
+            for ln in lines:
+                self._gate(site, ln, q)
+            if not all(self._counts(ln) for ln in lines):
+                continue
+            sig = frozenset(g for ln in lines for _, g, _ in self._entries(ln)) or frozenset(
+                {f"site:{sid}"})  # fmt: skip
+            if sig not in vals:
+                vals[sig] = (round(sum(self._central(ln) for ln in lines), 2), sid)
+        got = sorted(vals.values())
+        n = len(got)
+        rng = None
+        if n >= self.peer_cfg["min_groups"]:
+            lo = got[_rank_pos(n, self.peer_cfg["low_percentile"])][0]
+            hi = got[_rank_pos(n, self.peer_cfg["high_percentile"])][0]
+            rng = {"low": lo, "high": hi, "median": got[(n - 1) // 2][0], "n_groups": n,
+                   "kind": None, "scope": "same_kind",
+                   "payer_id": q.payer if q.kind == "insurance" else None}  # fmt: skip
+        out = {"range": rng, "priced": n > 0}
+        self._universe[ck] = out
+        return out
+
+    def _steps(self, site: Site, lines: list[Json], items: list[Item], admitted: list[str],
+               q: Req) -> list[Json]:  # fmt: skip
+        """One summary per step (P3 map, P4 elsewhere, I7 missing per step)."""
+        groups: dict[str, list[Json]] = {}
+        for ln in lines:
+            groups.setdefault(self._step_key(ln), []).append(ln)
+        by_key: dict[str, list[Item]] = defaultdict(list)
+        for it in items:
+            by_key[it.step_id or it.code].append(it)
+        out = []
+        for key, lns in groups.items():
+            first = lns[0]
+            ai = all(ln["ai_suggested"] for ln in lns)
+            avail = "offered" if first["at"] != "this_site" else first["availability"]
+            priced = [ln for ln in lns if ln["unit"] == "once" and (ai or not ln["ai_suggested"])]
+            expected = first["likelihood"] in ("certain", "likely") and not ai
+            pool = self._step_pool(key, [it for it in by_key[key] if not it.ai], admitted, q,
+                                   first["_item"].path_id) if not ai else {"range": None,
+                                                                          "priced": False}  # fmt: skip
+            figure, low, high, rank, rng = "none", None, None, None, None
+            if avail == "offered":
+                if priced and all(self._counts(ln) for ln in priced):
+                    figure = "estimate" if any(ln["estimate"] for ln in priced) else "own"
+                    low = round(sum(ln["cell"]["low"] for ln in priced), 2)
+                    high = round(sum(ln["cell"]["high"] for ln in priced), 2)
+                    rank = round(sum(self._central(ln) for ln in priced), 2)
+            elif pool["range"] is not None:
+                rng = pool["range"]
+                figure, low, high, rank = "elsewhere", rng["low"], rng["high"], rng["median"]
+            missing = expected and figure == "none" and pool["priced"]
+            out.append({
+                "key": key, "step_id": first["step_id"], "likelihood": first["likelihood"],
+                "availability": avail, "figure": figure, "low": low, "high": high,
+                "rank_value": rank if expected and figure != "none" else None,
+                "estimated": any(ln["estimate"] for ln in lns),
+                "unusual": any(ln["unusual"] for ln in lns),
+                "in_total": bool(priced) and all(ln["in_total"] for ln in priced),
+                "missing": missing, "line_ids": [ln["line_id"] for ln in lns],
+                "elsewhere": rng, "_expected": expected, "_ai": ai,
+            })  # fmt: skip
+        return out
+
+    def _anesthesia_time(self, ln: Json) -> None:
+        """Item 12: 'with typical time, about $Y' = base-units fee x (base + minutes/15) / base."""
+        t = self.anes_time.get(ln["codes"][0])
+        cell = ln["cell"]
+        if not t or "price.anesthesia_base_units_only" not in ln["price_notes"] or (
+            cell is None or cell["kind"] != "money"
+        ):  # fmt: skip
+            return
+        f = (t["base_units"] + t["minutes"] / 15) / t["base_units"]
+        ln["anesthesia_time"] = {
+            "minutes": t["minutes"], "base_units": t["base_units"],
+            "low": round(cell["low"] * f, 2), "high": round(cell["high"] * f, 2),
+            "source": t["source"],
+        }  # fmt: skip
+
+    @staticmethod
+    def _load_anesthesia_time(times: Any, bases: Any) -> dict[str, Json]:
+        """code -> {minutes, base_units, source}: A5's CMS physician time + our base units."""
+        if not (times.exists() and bases.exists()):
+            return {}
+        import yaml
+
+        t = yaml.safe_load(times.read_text()) or {}
+        b = yaml.safe_load(bases.read_text()) or {}
+        src = t.get("source") or {}
+        label = f"CMS {src.get('release', 'physician time file')} ({src.get('member', '')})"
+        out = {}
+        for code, units in (b.get("base_units") or {}).items():
+            code = str(code).zfill(5)
+            rec = (t.get("times") or {}).get(code) or (t.get("times") or {}).get(int(code))
+            if not rec or rec.get("kind") != "anesthesia" or not rec.get("typical_anesthesia_min"):
+                continue
+            out[code] = {"minutes": float(rec["typical_anesthesia_min"]),
+                         "base_units": float(units), "source": label}  # fmt: skip
+        return out
 
     def _other_payers(self, src: str, lines: list[Json], q: Req) -> list[Json]:
         """Range bar on each certain/likely hospital facility line: every mapped payer's rate in
@@ -1131,6 +1817,8 @@ class Engine:
             "price_source_id": price_source_id,
             "listing_status": site.listing_status,
             "service_areas": list(site.service_areas),
+            "kind": self._kind(site),
+            "chain_id": self.chain_of.get(site.id),
             "children_only": site.children_only,
             "data_notices": self.reg.data_notices.get(price_source_id or "", []),
         }
@@ -1210,20 +1898,27 @@ class Engine:
             sid: s for sid, s in self.reg.sites.items() if s.listing_status != "registry_only"
         }
         named = req.site_ids is not None
-        wanted = req.site_ids if named else sorted(quotable)
+        admitted = self._admitted(path, areas)
         cands, without = [], []
-        for sid in wanted:
-            site = quotable.get(sid)
-            if site is None:
-                raise ValueError(f"unknown or unquotable site {sid}")
-            if site.children_only and not named:
-                continue  # D27: a children-only site only when the person names it
-            if not self.reg.area_ok(site, areas) or not items:
-                without.append(sid)
-                continue
-            cands.append(site)
-        if req.near is not None:  # C2: the max_sites closest sites, then I7 inside that set
-            cands = sorted(cands, key=lambda s: (_km(req.near, s), s.id))[: req.max_sites]
+        if named:
+            for sid in req.site_ids or []:
+                site = quotable.get(sid)
+                if site is None:
+                    raise ValueError(f"unknown or unquotable site {sid}")
+                if items and (sid in admitted or (
+                    site.children_only and self._admits(site, path, areas))):  # fmt: skip
+                    cands.append(site)  # D27: a children-only site only when named
+                else:
+                    without.append(sid)
+        else:
+            ok = set(admitted) if items else set()
+            cands = [quotable[sid] for sid in admitted] if items else []
+            without = sorted(sid for sid, s in quotable.items()
+                             if sid not in ok and not s.children_only)  # fmt: skip
+        origin = req.near if req.near is not None else self.origin
+        dist = {s.id: round(_km(origin, s), 2) for s in cands}
+        if req.near is not None:  # C2: the max_sites closest admitted sites
+            cands = sorted(cands, key=lambda s: (dist[s.id], s.id))[: req.max_sites]
 
         fresh_cache: dict[str, Freshness] = {}
 
@@ -1232,21 +1927,32 @@ class Engine:
                 fresh_cache[sid] = self.freshness(self._meta(sid, q), as_of)
             return fresh_cache[sid]
 
-        built = {site.id: self._site_quote(site, items, q) for site in cands}
-        if len(built) > req.max_sites:  # no point given: the best max_sites of the whole set (I7)
-            for sq in built.values():
-                sq["receipt"]["totals"] = self._totals(sq["receipt"]["lines"], q, fresh)
-            best = self._rank(list(built.values()))[: req.max_sites]
-            built = {sq["site"]["site_id"]: sq for sq in best}
-        site_quotes = list(built.values())
-        for sq in site_quotes:  # fresh copies of the mutable parts, then I7 inside the chosen set
-            for ln in sq["receipt"]["lines"]:
-                ln["elsewhere"] = []
-        self._elsewhere(site_quotes)
-        for sq in site_quotes:
-            sq["receipt"]["totals"] = self._totals(sq["receipt"]["lines"], q, fresh)
-        site_quotes = self._rank(site_quotes)
-        used = self._used_sources(site_quotes)
+        built = [self._site_quote(site, items, admitted, q, fresh) for site in cands]
+        for sq in built:
+            sq["distance_km"] = dist[sq["site"]["site_id"]]
+        if req.near is not None or named:
+            ordering = "rank"
+
+            def order(sq: Json) -> tuple:
+                h = sq["headline"]
+                return (h["missing"], h["comparable"] if h["comparable"] is not None else math.inf,
+                        sq["distance_km"] if req.near is not None else 0.0,
+                        -h["real_steps"], sq["site"]["name"], sq["site"]["site_id"])  # fmt: skip
+        else:
+            ordering = "kind_then_distance"  # P7: no "best value overall"
+
+            def order(sq: Json) -> tuple:
+                return (KIND_ORDER[sq["site"]["kind"]], sq["distance_km"], sq["site"]["name"],
+                        sq["site"]["site_id"])  # fmt: skip
+
+        built.sort(key=order)
+        self._elsewhere(built)
+        spreads = self._chain_spreads(built)
+        if req.near is None and not named:  # item 9: summaries for all, receipts for the first N
+            for sq in built[req.full_receipts :]:
+                sq["receipt"] = None
+                sq["other_payers"] = []
+        used = self._used_sources(built)
         sources = {}
         for sid in sorted(used):
             m = self._meta(sid, q)
@@ -1268,8 +1974,11 @@ class Engine:
             notices.append("masshealth_aco_may_differ")
         if q.kind == "medicare":
             notices.append("medicare_advantage_is_insurance")
+        if spreads:
+            notices.append("chain_price_spread")
         body = {
             "payment": req.payment.model_dump(mode="json"),
+            "payment_label": self._payment_label(q),
             "care_path": None if path is None else {
                 "id": path.id,
                 "version": path.version,
@@ -1287,52 +1996,74 @@ class Engine:
                 "care_paths_version": path.version if path else None,
             },
             "sources": sources,
-            "sites": site_quotes,
+            "sites": built,
+            "ordering": ordering,
+            "origin": {"lat": origin.lat, "lon": origin.lon},
+            "chain_spreads": spreads,
             "sites_without_service": without,
             "copy_keys": COPY_KEYS if path is not None else [],
             "notices": notices,
         }  # fmt: skip
-        return QuoteResponse.model_validate(body)
+        return QuoteResponse.model_validate(_public(body))
 
-    def _site_quote(self, site: Site, items: list[Item], q: Req) -> Json:
-        lines = self._finish(self._site_lines(site, items, q))
+    def _payment_label(self, q: Req) -> Json:
+        if q.kind == "insurance":
+            name = self.reg.payer_labels.get(q.payer or "", q.payer or "")
+            return {"en": f"{name} {q.product}", "zh": f"{name} {q.product}"}
+        return dict(self.cfg["payment_labels"][q.kind])
+
+    def _site_quote(self, site: Site, items: list[Item], admitted: list[str], q: Req,
+                    fresh: Callable[[str], Freshness]) -> Json:  # fmt: skip
+        lines = self._site_lines(site, items, q)
+        for ln in lines:  # P8 first (on the site's own rows), then P5 for what is still missing
+            self._gate(site, ln, q)
+        for ln in lines:
+            self._estimate(site, ln, q)
+        lines = self._finish(lines)
+        for ln in lines:
+            self._anesthesia_time(ln)
+        steps = self._steps(site, lines, items, admitted, q)
         src, label = self._price_source(site, q, lines)
         hs = self._site_hospital_source(site)
+        totals = self._totals(lines, steps, q, fresh)
+        t = totals
         return {
             "site": self._summary(site, src, label),
-            "receipt": {"lines": lines, "totals": {}},
+            "headline": {
+                "likely_low": t["likely"]["low"] if t["likely"] else None,
+                "likely_high": t["likely"]["high"] if t["likely"] else None,
+                "includes_estimate": bool(t["likely"] and t["likely"]["includes_estimate"]),
+                "complete": t["complete"],
+                "missing": t["missing"],
+                "comparable": t["comparable"],
+                "real_steps": t["real_steps"],
+                "might_add": t["might_add"],
+            },  # fmt: skip
+            "steps": steps,
+            "distance_km": None,
+            "receipt": {"lines": lines, "totals": totals},
             "other_payers": self._other_payers(hs, lines, q) if hs else [],
         }
 
     def _elsewhere(self, site_quotes: list[Json]) -> None:
         """'Available elsewhere': a line with no number here lists the cheapest other sites in
-        this quote that have a dollar amount for the same part of the same step."""
+        this quote that offer the same part of the same step and have a real dollar amount."""
         offers: dict[tuple, list[tuple[float, Json, Json]]] = defaultdict(list)
         for sq in site_quotes:
             for ln in sq["receipt"]["lines"]:
-                fee = ln["doctor_fee"]
-                if (fee and (fee["rung"] or 0) >= 7) or ln["ai_suggested"]:
-                    continue  # a reference-only number is not an offer (it never counts)
-                if ln["cell"]["kind"] == "money" and ln["at"] == "this_site":
-                    k = (
-                        ln["step_id"] or ",".join(ln["codes"]),
-                        ln["component"],
-                        ln["codes"][0],
-                        ln["modifier"],
-                    )
+                if not self._counts(ln) or ln["ai_suggested"] or ln["estimate"]:
+                    continue  # a reference-only, unusual or estimated number is not an offer
+                if ln["at"] == "this_site" and ln["availability"] == "offered":
+                    k = (self._step_key(ln), ln["component"], ln["codes"][0], ln["modifier"])
                     offers[k].append((ln["cell"]["low"], sq["site"], ln["cell"]))
         n = self.cfg["elsewhere_max"]
         for sq in site_quotes:
             me = sq["site"]["site_id"]
             for ln in sq["receipt"]["lines"]:
-                if ln["cell"]["kind"] not in NO_NUMBER or ln["at"] != "this_site":
+                cell = ln["cell"]
+                if cell is not None and cell["kind"] not in NO_NUMBER or ln["at"] != "this_site":
                     continue
-                k = (
-                    ln["step_id"] or ",".join(ln["codes"]),
-                    ln["component"],
-                    ln["codes"][0],
-                    ln["modifier"],
-                )
+                k = (self._step_key(ln), ln["component"], ln["codes"][0], ln["modifier"])
                 opts = sorted((o for o in offers.get(k, []) if o[1]["site_id"] != me),
                               key=lambda o: (o[0], o[1]["site_id"]))[:n]  # fmt: skip
                 ln["elsewhere"] = [
@@ -1341,29 +2072,30 @@ class Engine:
                     for _, s, cell in opts
                 ]  # fmt: skip
 
-    @staticmethod
-    def _rank(site_quotes: list[Json]) -> list[Json]:
-        """I7: missing = unpriced certain/likely lines + certain/likely steps another site lists
-        and this one does not; then order by (missing, total low, site id)."""
-
-        def expected(ln: Json) -> bool:  # contracts._expected
-            return ln["likelihood"] in ("certain", "likely") and not ln["ai_suggested"]
-
-        def key(ln: Json) -> str:
-            return ln["step_id"] or ",".join(ln["codes"])
-
-        steps = {key(ln) for sq in site_quotes for ln in sq["receipt"]["lines"] if expected(ln)}
+    def _chain_spreads(self, site_quotes: list[Json]) -> list[Json]:
+        """R12: within one chain, the same line under the same payer more than chain_spread_max
+        apart (each site's neutral figure for the line)."""
+        own = set(self.cfg.get("chain_ownerships") or [])
+        by: dict[tuple, list[tuple[float, str]]] = defaultdict(list)
         for sq in site_quotes:
-            lines = sq["receipt"]["lines"]
-            unpriced = sum(1 for ln in lines if expected(ln) and not ln["in_total"])
-            sq["receipt"]["totals"]["missing"] = unpriced + len(steps - {key(ln) for ln in lines})
-
-        def rank(sq: Json) -> tuple:
-            t = sq["receipt"]["totals"]
-            return (t["missing"], t["likely"]["low"] if t["likely"] else float("inf"),
-                    sq["site"]["site_id"])  # fmt: skip
-
-        return sorted(site_quotes, key=rank)
+            site = self.reg.sites[sq["site"]["site_id"]]
+            chain = self.chain_of.get(site.id) or (
+                _slug(site.operator) if site.ownership in own else None)  # fmt: skip
+            if not chain:
+                continue
+            for ln in sq["receipt"]["lines"]:
+                if ln["at"] == "this_site" and self._counts(ln) and not ln["estimate"]:
+                    k = (chain, f"{self._step_key(ln)}/{ln['component']}/{ln['codes'][0]}/"
+                         f"{ln['modifier'] or ''}")  # fmt: skip
+                    by[k].append((round(self._central(ln), 2), site.id))
+        out = []
+        for (chain, key), vals in sorted(by.items()):
+            lo, hi = min(vals), max(vals)
+            if lo[0] > 0 and hi[0] / lo[0] > float(self.cfg["chain_spread_max"]):
+                out.append({"chain_id": chain, "key": key, "low_site_id": lo[1], "low": lo[0],
+                            "high_site_id": hi[1], "high": hi[0],
+                            "ratio": round(hi[0] / lo[0], 2)})  # fmt: skip
+        return out
 
     @staticmethod
     def _used_sources(site_quotes: list[Json]) -> set[str]:

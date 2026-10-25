@@ -10,6 +10,7 @@ version: 1
 place_of_service:
   hospital_outpatient: ["22", "19"]
   office_visit: ["11", "20"]
+  office_kind: ["11"]  # O F3a: an office (not an urgent care) reads POS 11 rows only
   asc: ["24"]
   unknown: ["11", "20"]
 
@@ -39,10 +40,103 @@ hospital_visit_facility_codes: ["G0463"]
 # far apart are a `conflict` (both shown, neither summed). Otherwise the dollar / hospital file wins.
 conflict_threshold: 0.10
 
-# Doctor-fee ladder (plan §2.4, D5, D6).
+# Doctor-fee ladder (plan §2.4, D5, D6). Rung 6 is the peer estimate (C3, `peers` below); the
+# Medicare-multiple estimate is gone (R4: it read a facility rate as a doctor fee at ASCs, 20.97x,
+# and broke on flat urgent-care rates).
 ladder:
-  rung6_min_codes: 5        # a group's typical multiple of Medicare needs >= 5 codes with real prices
   max_by_npi: 20            # D6: list by doctor only when at most this many NPIs are involved
+
+# X2 (C3 + O): kinds of site. A peer set is drawn from one kind only: urgent care from urgent
+# cares, offices from offices, hospitals from hospitals, ASCs from ASCs (P5). Urgent care comes
+# from site_type (ortho_walk_in is a walk-in clinic billing like one); every other kind from how
+# the site bills (its effective billing type, P9), so an office A5 resolved to hospital billing
+# (20 specialist offices after wave2/a5-etl) is a hospital clinic's peer, never a plain office's.
+urgent_care_site_types: [urgent_care, ortho_walk_in]
+kind_by_billing:
+  office_visit: office
+  hospital_outpatient: hospital_outpatient
+  asc: ambulatory_surgery_center
+
+# P9 (R7): a site whose billing type is unknown is priced as a hospital clinic (facility line +
+# doctor line, "may also charge a hospital facility fee"), never as an office. A surgery center
+# whose billing is unknown is priced as an ASC (the Site contract ties asc to that site type).
+unknown_billing_priced_as: hospital_outpatient
+
+# P5 / X2: the estimate for a missing line. Same billing code, modifier, component (facility /
+# professional), payer and plan product (the request's network files), at sites of the same kind;
+# one value per distinct billing group (TIN, or the hospital file); p25-p75 of >= min_groups
+# groups, else no estimate (a Gap). mode: same_kind | same_system_then_kind (the site's own
+# health system first when it has >= system_min_groups groups). O backtests both modes.
+# key_includes_billing: also require the same billing type (an office's global fee is not a
+# hospital doctor's fee even at the same kind of site); O can turn it off.
+peers:
+  mode: same_system_then_kind  # O backtest: office MdAPE 15.1% -> 12.7%, hospital 18.2% -> 16.1%
+  min_groups: 5
+  system_min_groups: 3
+  key_includes_billing: true
+  low_percentile: 25
+  high_percentile: 75
+
+# P8 (R17): a line priced more than `high`x or less than `low`x its peer median (same line, same
+# payer, same kind; at least min_groups other groups) is set aside: not summed, "price looks
+# unusual, being checked". A fee-schedule number (Medicare / MassHealth) is the payer's own
+# schedule and is never checked.
+outliers:
+  low: 0.3333
+  high: 3.0
+  min_groups: 5
+  # Austin 2026-10-25 ("a 对 只要你回加着一句话就很好"): not gated when the cause is the group's
+  # contract level (O app/audit/causes.py contract_level): the same group (TIN, same payer
+  # network) is >= high x / <= low x its peer median, median over >= min_codes OTHER codes.
+  # Such a line is summed at its real price with price.group_consistently_higher / _lower.
+  contract_level: {min_codes: 5, high: 2.0, low: 0.5}
+contract_levels_file: data/quote/contract_levels.yaml  # python -m app.quote.contract_levels
+
+# R3: whose TIN bills which line. data/quote/tin_roles.yaml (python -m app.quote.tin_roles) lists
+# the role of each site's own TINs with its source; a TIN not listed takes its site's billing-type
+# rule here. by_billing_class: the TiC row's own billing_class decides (facility rows price the
+# facility line, professional rows the doctor line). asc: an ASC bills its facility fee on the
+# CMS-1500 form, so its own TINs' "professional" rows are the center's fee, never the doctor's.
+tin_role_by_billing:
+  hospital_outpatient: by_billing_class
+  asc: facility
+  office_visit: professional
+tin_roles_file: data/quote/tin_roles.yaml
+
+# R8 (C3): a site enters a path only when it offers the path's entry step (the first visit,
+# layer 1) or its core procedure (a layer-2 procedure that is certain or likely), by the evidence
+# rules below; where there is no evidence either way, these kinds may do these step kinds.
+admission_step_kinds:
+  urgent_care: [visit, imaging]
+  office: [visit]
+  hospital_outpatient: [visit, imaging, procedure, therapy, lab, anesthesia]
+  ambulatory_surgery_center: [procedure, anesthesia]
+
+# R12: a chain-wide posted self-pay price applies at every location of the chain (the line says
+# it is the chain's posted price). AFC's self-pay page (afc_watertown cash_prices) is the AFC
+# franchise's price list. chain_spread_max: within one chain, the same line under the same payer
+# more than this far apart is listed in the response's chain_spreads.
+chains:
+  afc_urgent_care:
+    operator: AFC Urgent Care (franchise)
+    posted_price_site: afc_watertown
+chain_ownerships: [franchise, pe_backed_chain, retail, payer_owned]
+chain_spread_max: 1.5
+
+# P7: with no location every admitted site is listed, grouped by kind, by distance from here.
+no_location_origin: {lat: 42.3603, lon: -71.0580, label: Boston City Hall}
+
+# Item 12: typical anesthesia minutes come from A5's data/etl/physician_time.yaml (CMS CY2026
+# Physician Work Time); the base units per code from anesthesia_time_file. Either file absent =
+# no "with typical time" note.
+physician_time_file: data/etl/physician_time.yaml
+anesthesia_time_file: data/quote/anesthesia_time.yaml
+
+# P2: how a payment is named to a person (enum values stay; the words change).
+payment_labels:
+  cash: {en: Self-pay (no insurance), zh: 自费（无保险）}
+  medicare: {en: Medicare, zh: Medicare（联邦医疗保险）}
+  masshealth: {en: MassHealth, zh: MassHealth（麻州医疗补助）}
 
 # "Available elsewhere" on a line with no number here: the cheapest other sites in the quote.
 elsewhere_max: 3
@@ -57,6 +151,8 @@ areas:
   skin: [skin]
   gi_lower: [gi]
   gi_upper: [gi]
+  gi_abdomen: [urgent_care, gi]  # Chat2: stomach_ache_v1 (P12)
+  skin_rash: [urgent_care, skin]  # Chat2: rash_v1 (P12)
 code_domains:
   ortho: [ortho, urgent_care]
   derm: [skin]
@@ -81,17 +177,21 @@ medicare_locality:
   rest_of_state: "99"
   rest_of_state_cities: [Brockton, Lynn, Saugus]
 
-# Site selection for one quote (C2). Without `near`, every eligible site is priced and the
-# max_sites best (I7) are returned, then ranked again inside that set.
+# Site selection for one quote (C2, C3). With `near`: the max_sites closest admitted sites,
+# ranked. Without: every admitted site (P7, no "best N" trim).
 children_only_rule: named_only   # a children-only site is quoted only when site_ids names it
 
-# Positive evidence that a site offers a line (Site.offered, P1 #14): an `offered` entry naming
-# the code, or one whose service covers the code (below), or any rate row for the code in the
-# site's own hospital file or in a TiC file for the site's billing TINs. No evidence =
-# availability "unknown", never "not_offered" (absence of evidence is not evidence).
+# Positive evidence that a site offers a step (C3 R1, P6): the site's own hospital file lists the
+# code; or the site (or its chain) posts a price for it; or a sites.yaml `offered` entry names the
+# code or a service that covers it (below); or site facts (data/sites/site_facts, X1) say
+# `offered` with status agreed / austin_reviewed. A row in an insurer (TiC) file is NEVER
+# evidence: it is a contract term, not a claim by the site. No evidence = availability "unknown"
+# (never summed, not on the map); site facts `not_offered` = "not_offered".
+# `imaging` without a modality (a DPH clinic licence) covers plain X-rays only: it cannot
+# establish an MRI, CT or ultrasound (those need their own entry).
 offered_services:
   visit: {classes: [visit]}
-  imaging: {classes: [imaging]}
+  imaging: {classes: [imaging], words: ["X-ray"]}
   xray: {classes: [imaging], words: ["X-ray"]}
   mri: {classes: [imaging], words: ["MRI"]}
   ct: {classes: [imaging], words: ["CT "]}

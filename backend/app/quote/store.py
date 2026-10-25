@@ -192,6 +192,7 @@ class RateStore:
     codes: frozenset[str] = frozenset()  # codes the hospital / TiC ETL loads (codes.yaml)
     npi_sets: dict[int, tuple[str, ...]] = field(default_factory=dict)
     census_tins: dict[str, frozenset[str]] = field(default_factory=dict)
+    refresh_status: dict[str, dict[str, Any]] = field(default_factory=dict)  # P11 (ETL side)
     by_code: dict[tuple[str, str], list[Row]] = field(default_factory=dict)
     hospital: dict[tuple[str, str, str], list[Row]] = field(default_factory=dict)
     cash: dict[tuple[str, str], list[Row]] = field(default_factory=dict)
@@ -251,6 +252,33 @@ class RateStore:
 
     # ------------------------------------------------------------------ provenance
 
+    def prov_dict(self, r: Row, basis: PriceBasis, *, method: Method | None = None,
+                  payer_id: str | None = None) -> dict[str, Any]:  # fmt: skip
+        """``prov(...).model_dump(mode="json")`` without building the model (the quote validates
+        the whole response once). ``payer_id`` overrides the number's payer (C3: a peer estimate
+        built from one payer's rates keeps that payer)."""
+        m = self.sources[r.source_id]
+        if method is None:
+            if r.source_kind in FEE_SCHEDULE_KINDS:
+                method = fee_schedule_method(r.source_kind)
+            elif r.amount_method == "derived_pct_x_gross" and basis == PriceBasis.negotiated:
+                method = Method.derived_pct_x_gross
+            else:
+                method = Method.stated
+        return {
+            "source_id": r.source_id,
+            "source_kind": r.source_kind,
+            "source_file": m.source_file,
+            "source_sha256": m.source_sha256,
+            "source_date": m.source_date or None,
+            "method": method.value,
+            "row_ref": m.row_ref(r),
+            "payer_id": payer_id
+            if payer_id is not None
+            else number_payer(r.row_kind, r.payer_id, basis),
+            "row_id": r.row_id if r.source_kind == "insurer_tic" else None,
+        }
+
     def prov(self, r: Row, basis: PriceBasis, *, method: Method | None = None) -> Provenance:
         m = self.sources[r.source_id]
         if method is None:
@@ -292,6 +320,13 @@ def _i(v: Any) -> int:
 
 def tin_digits(v: Any) -> str:
     return "".join(ch for ch in _s(v) if ch.isdigit())
+
+
+def valid_npi(n: str) -> bool:
+    """A CMS NPI: 10 digits starting with 1 or 2. Insurer files use "0" (and other short values)
+    as a placeholder for "no NPI"; a placeholder is "unknown", never an NPI (R10: one "0" in a
+    Tufts file turned every quote near Milton into a 500)."""
+    return len(n) == 10 and n.isdigit() and n[0] in "12"
 
 
 _intern = sys.intern
@@ -386,6 +421,7 @@ def write_pack(
     codes: Iterable[str],
     npi_sets: dict[int, tuple[str, ...]] | None = None,
     census_tins: dict[str, Iterable[str]] | None = None,
+    refresh_status: dict[str, dict[str, Any]] | None = None,
 ) -> int:
     """``npi_sets`` / ``census_tins`` may be filled while ``rows`` streams (they are written after
     the rows)."""
@@ -401,6 +437,7 @@ def write_pack(
         "build_date": version.build_date,
         "tic_release": version.tic_release or "",
         "codes": json.dumps(sorted(set(codes))),
+        "refresh_status": json.dumps(refresh_status or {}, sort_keys=True),
     }
     db.executemany("insert into meta values (?, ?)", meta.items())
     db.executemany(
@@ -488,7 +525,7 @@ def load_pack(
     used = {r.npi_set for r in rows if r.npi_set}
     npis: dict[int, list[str]] = defaultdict(list)
     for i, npi in db.execute("select id, npi from npi_sets order by id, npi"):
-        if i in used:
+        if i in used and valid_npi(npi):  # packs built before the pack-side filter carry "0"
             npis[i].append(sys.intern(npi))
     db.close()
     version = DataVersionInfo(
@@ -503,6 +540,7 @@ def load_pack(
         codes=frozenset(json.loads(meta["codes"])),
         npi_sets={k: tuple(v) for k, v in npis.items()},
         census_tins={c: frozenset(v) for c, v in census.items()},
+        refresh_status=json.loads(meta.get("refresh_status") or "{}"),
     )
 
 
@@ -570,7 +608,7 @@ def read_extract(
             meta = sources[d["source_id"]]
             d["ref"] = standard_ref(meta, d["row_ref"], int(d["stage_row"]))
             if d.get("npis"):
-                key = tuple(d["npis"].split("|"))
+                key = tuple(n for n in d["npis"].split("|") if valid_npi(n))
                 d["npi_set"] = set_ids.setdefault(key, len(set_ids) + 1)
                 npis[d["npi_set"]] = key
             rows.append(make_row(d))
@@ -605,9 +643,23 @@ def store_from_extract(
         return load_pack(p)
 
 
+class ExtractRefused(SystemExit):
+    """R11: the server never silently serves the 7,791-row test extract as if it were the data."""
+
+
 def load_from_env(tins: Iterable[str] | None = None, census_ids: Iterable[str] = ()) -> RateStore:
-    """Server startup. ``CARECOST_QUOTE_PACK`` -> that pack; otherwise the committed extract."""
+    """Server startup. ``CARECOST_QUOTE_PACK`` -> that pack (it must exist). Without it, the
+    committed test extract only when ``CARECOST_ALLOW_EXTRACT=1`` (tests and dev set it);
+    otherwise refuse to start (R11: a missing pack must never look like "no public price")."""
     pack = os.environ.get("CARECOST_QUOTE_PACK")
     if pack:
-        return load_pack(Path(pack), tins=tins, census_ids=census_ids)
+        p = Path(pack)
+        if not p.exists():
+            raise ExtractRefused(f"CARECOST_QUOTE_PACK={pack} does not exist")
+        return load_pack(p, tins=tins, census_ids=census_ids)
+    if os.environ.get("CARECOST_ALLOW_EXTRACT") != "1":
+        raise ExtractRefused(
+            "no CARECOST_QUOTE_PACK: refusing to serve the test extract (set "
+            "CARECOST_ALLOW_EXTRACT=1 for tests and local development)"
+        )
     return store_from_extract()

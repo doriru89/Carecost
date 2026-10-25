@@ -2,15 +2,17 @@ version: 2
 note: Freshness inputs for the sources in rate_row_extract.csv. Written by python
   -m app.quote.fixtures_gen; do not edit by hand.
 data_version:
-  build_id: 20261024-336340ed
-  build_date: '2026-10-24'
+  build_id: 20261025-336340ed
+  build_date: '2026-10-25'
   tic_release: tic-2026-10
 codes:
+- '00731'
 - 00811
 - 00812
 - 00813
 - '11102'
 - '11104'
+- '11106'
 - '11300'
 - '11301'
 - '11302'
@@ -23,21 +25,36 @@ codes:
 - '11311'
 - '11312'
 - '11313'
+- '11401'
+- '11402'
+- '11601'
+- '11602'
 - '17000'
 - '17110'
 - '20610'
 - '20611'
+- '23350'
 - '29826'
 - '29827'
+- '43235'
 - '43239'
 - '45378'
 - '45380'
 - '45385'
+- '72100'
+- '72148'
 - '73030'
 - '73221'
 - '73222'
+- '73560'
+- '73562'
+- '73564'
+- '73600'
+- '73610'
+- '73721'
 - '76881'
 - '76882'
+- '77002'
 - '88305'
 - '97110'
 - '97161'
@@ -53,13 +70,37 @@ codes:
 - '99213'
 - '99214'
 - '99215'
+- G0121
+- J3301
 - S9083
 - S9088
 census_tins:
+  GB0003:
+  - '043306443'
+  GB0005:
+  - '874311329'
+  GB0011:
+  - 043382778
+  GB0016:
+  - '042103611'
+  - '043236175'
+  GB0017:
+  - '460828648'
+  GB0030:
+  - '1144751777'
+  - '1811512627'
+  - '475056274'
   GB0034:
   - 042807148
   GB0037:
   - 043397450
+  GB0039:
+  - '043355366'
+  - 061658534
+  - '201780432'
+  - '464282800'
+  - '821413496'
+  - '842778995'
   GB0042:
   - 043487710
   - '571146349'
@@ -67,6 +108,35 @@ census_tins:
   - '833063891'
   GB0045:
   - 042519087
+  GB0047:
+  - 042707080
+  - 042930650
+  - '863871598'
+  GB0050:
+  - 043487710
+  GB0051:
+  - '810765237'
+  - '831820202'
+  GB0052:
+  - '334234202'
+  - '810806712'
+  - '833242900'
+  GB0054:
+  - 043397450
+  GB0058:
+  - '043355366'
+  - 061658534
+  - '201780432'
+  - '464282800'
+  - '821413496'
+  GB0063:
+  - '1730194226'
+  - '300309452'
+  GB0064:
+  - '043214763'
+  - '844059500'
+  - '871879750'
+  - '871893757'
   GB0065:
   - 042297845
   - 042682152
@@ -85,11 +155,49 @@ census_tins:
   - 043278862
   - '863792771'
   - '873323847'
+  GB0072:
+  - 043306782
+  - 043317992
+  - '043335166'
+  - '204012780'
+  - '271887150'
+  - '300761298'
+  - '352465814'
+  - '371711619'
+  - '461807409'
+  - '471208235'
+  - '834117915'
+  - '863881752'
+  GB0074:
+  - 043452638
   GB0075:
   - '042472266'
   - 043397450
+  GB0076:
+  - 042707080
+  - 043317992
+  - '271887150'
+  - '834117915'
+  - '863871598'
   GB0077:
   - 043397450
+  GB0078:
+  - '260883505'
+  GB0079:
+  - '831681208'
+  GB0080:
+  - '203237977'
+  GB0081:
+  - '842432483'
+  GB0082:
+  - 043523893
+  - '260883505'
+  - '932662766'
+  GB0083:
+  - 043163854
+  - '455480930'
+  - '821251146'
+  - '823717773'
   GB0084:
   - '042472266'
   - '1346506763'
@@ -123,8 +231,31 @@ census_tins:
   - 042796795
   - '874508256'
   - '922805272'
+  GB0116:
+  - '1174082499'
+  GB0118:
+  - '1386621092'
+  - '237125970'
+  - '510172171'
+  GB0121:
+  - 043080484
+  - '1326049669'
+  GB0128:
+  - 043140938
+  GB0135:
+  - 043140938
   GB0139:
   - 043397450
+  GB0142:
+  - '042104434'
+  - 043484803
+  GB0143:
+  - 043018804
+  - '204012780'
+  - '300761298'
+  - '352465814'
+  - '371711619'
+  - '471208235'
   GB0144:
   - 043397450
   - '222768204'
@@ -139,9 +270,18 @@ census_tins:
   - '352465814'
   - '371711619'
   - '471208235'
+  GB0147:
+  - '043335166'
+  - '043354360'
   GB0148:
   - 042312909
   - '043466314'
+  GB0149:
+  - '042774441'
+  - 042864081
+  - 042943146
+  - 042970129
+  - '431987409'
   GB0150:
   - '042263040'
   - '043466314'
@@ -166,6 +306,10 @@ census_tins:
   - 042648197
   - 042697983
   - 042807148
+  GB0156:
+  - 042743894
+  - 043148397
+  - '205129051'
   GB0157:
   - 043278862
   - '043464322'
@@ -187,6 +331,12 @@ census_tins:
   - '832916287'
   - '833063891'
   - '834203732'
+  GB0161:
+  - 042509828
+  - '043403743'
+  - '473026344'
+  - '562672236'
+  - '831231184'
   GB0162:
   - 043397450
   GB0163:
@@ -234,6 +384,12 @@ census_tins:
   GB0178:
   - 043026897
   - '043242075'
+  GB0179:
+  - '042652154'
+  - '043036472'
+  - '043243146'
+  - '461313735'
+  - '822689674'
   GB0180:
   - 042103881
   - '043243146'
@@ -244,6 +400,24 @@ census_tins:
   - '222768204'
   - '262308255'
   - '832502123'
+  GB0183:
+  - 043287533
+  - '043464325'
+  GB0185:
+  - '272777455'
+  - '454639673'
+  - '814960795'
+  - '824400069'
+  - '841975038'
+  - '842120182'
+  GB0186:
+  - 042461479
+  - 042684357
+  - 043189783
+  - 043535793
+  - '264184089'
+  - '352186955'
+  - '455480930'
   GB0187:
   - '043466314'
   - '222560501'
@@ -256,16 +430,33 @@ census_tins:
   - 043397450
   - '474307410'
   - '844059500'
+  GB0190:
+  - 042481067
+  - '1053448498'
+  - '208206420'
+  - '334821869'
+  - '471376651'
   GB0193:
   - 043397450
   GB0194:
   - '043320571'
+  GB0195:
+  - 010779593
+  - 042702579
+  - '1447212238'
+  - '1619956356'
+  - '222560501'
   GB0197:
   - 042455168
   - 043278862
   - '832778031'
   - '863792771'
   - '873323847'
+  GB0199:
+  - '043064615'
+  - 043088303
+  - 043163854
+  - '851794298'
   GB0204:
   - '042604607'
   - 043032822
@@ -275,14 +466,23 @@ census_tins:
   - '814207696'
   GB0210:
   - '043466314'
+  GB0215:
+  - 030494865
+  - '043400441'
+  - '043467320'
+  - '1649270810'
   GB0216:
   - 042697983
   - 042807148
   - '050542303'
+  GB0222:
+  - 043428151
   GB0223:
   - 042962214
   - '811186412'
   - '820671467'
+  GB0226:
+  - '1952490526'
   GB0228:
   - 042807148
   GB0230:
@@ -300,6 +500,8 @@ census_tins:
   - 042103881
   - '202838785'
   - '222768204'
+  GB0237:
+  - 043428151
   GB0238:
   - 042103881
   - '043354353'
@@ -310,8 +512,38 @@ census_tins:
   - '1740266477'
   - '237425849'
   - '510172171'
+  GB0243:
+  - '831110515'
+  GB0245:
+  - '1285680330'
+  - '352186955'
+  GB0252:
+  - 042682152
+  - 043314093
+  GB0254:
+  - '042736521'
+  - 043235796
+  - 043294500
+  - '043344732'
+  - 043401847
+  - '201032218'
+  - '261904388'
+  - '320018722'
+  - '320465146'
+  - '462957380'
+  - '830619934'
+  - '845129726'
+  - '850487888'
   GB0255:
   - '043320571'
+  GB0262:
+  - '1821610296'
+  - '222560501'
+  GB0264:
+  - '320465146'
+  GB0271:
+  - '042746756'
+  - '831301823'
   GB0274:
   - '454148303'
   - '460903626'
@@ -321,14 +553,43 @@ census_tins:
   - '460782127'
   - '460903626'
   - '472237031'
+  GB0281:
+  - '851144017'
+  - '872011088'
+  - '934800903'
+  GB0282:
+  - '851144017'
+  - '872011088'
+  - '934800903'
+  GB0283:
+  - '851144017'
+  - '872011088'
+  - '934800903'
+  GB0286:
+  - '471683619'
+  GB0290:
+  - '273676242'
+  - '331237732'
+  - '454148303'
+  - '813416211'
   GB0292:
   - '208550806'
+  GB0296:
+  - '452385865'
+  GB0297:
+  - '851144017'
+  - '872011088'
+  - '934800903'
+  GB0300:
+  - '471683619'
   GB0301:
   - '1821254046'
   - '454148303'
   - '460782127'
   - '460903626'
   - '472237031'
+  GB0303:
+  - '931375169'
   GB0306:
   - '454148303'
   - '460782127'
@@ -336,6 +597,11 @@ census_tins:
   - '472237031'
   GB0308:
   - '208550806'
+  GB0320:
+  - '933207654'
+  GB0323:
+  - '222658209'
+  - '320367841'
   GB0325:
   - '454148303'
   - '460782127'
@@ -350,6 +616,14 @@ census_tins:
   - '472237031'
   GB0328:
   - '222768204'
+  GB0331:
+  - '931375169'
+  GB0333:
+  - 042678774
+  GB0342:
+  - '843066202'
+  GB0343:
+  - '471683619'
   GB0344:
   - '272343207'
   - '454148303'
@@ -364,16 +638,26 @@ census_tins:
   - '472237031'
   GB0347:
   - '208550806'
+  GB0351:
+  - '455391610'
   GB0354:
   - '208550806'
+  GB0355:
+  - '471683619'
   GB0357:
   - '454148303'
   - '460782127'
   - '460903626'
   - '472237031'
   - '933649266'
+  GB0360:
+  - '931375169'
   GB0363:
   - '208550806'
+  GB0364:
+  - '934880533'
+  GB0365:
+  - '873254273'
   GB0367:
   - '1184972333'
   - '1942383138'
@@ -382,6 +666,8 @@ census_tins:
   - '454478857'
   - '460903626'
   - '472237031'
+  GB0370:
+  - '821363644'
   GB0372:
   - '043320571'
   GB0376:
@@ -400,15 +686,62 @@ census_tins:
   - '222768204'
   GB0383:
   - '208550806'
+  GB0384:
+  - '851144017'
+  - '872011088'
+  - '934800903'
   GB0389:
   - 042103881
   - '222768204'
   - '320058309'
   - '931375169'
+  GB0392:
+  - '042461414'
+  - '043170333'
+  - '452385865'
+  - '452633484'
+  - '464690516'
+  GB0394:
+  - '042104434'
+  - 043484803
   GB0395:
   - 042807148
   - '471683619'
+  GB0397:
+  - '821363644'
 sources:
+  bid_milton_mrf:
+    source_kind: hospital_mrf
+    publisher: Beth Israel Deaconess Hospital-Milton
+    source_file: e29c72cd96324d6c65204d0020bc45f630d5f6de32d94badadc39d7f3640e612.json
+    source_sha256: e29c72cd96324d6c65204d0020bc45f630d5f6de32d94badadc39d7f3640e612
+    source_date: '2026-04-01'
+    last_updated: '2026-04-01'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  bid_needham_mrf:
+    source_kind: hospital_mrf
+    publisher: Beth Israel Deaconess Hospital-Needham
+    source_file: a13270bcc367cf57eb8188ab492d632c51162e35d1abc541b5c49d6dde8d4204.json
+    source_sha256: a13270bcc367cf57eb8188ab492d632c51162e35d1abc541b5c49d6dde8d4204
+    source_date: '2026-04-01'
+    last_updated: '2026-04-01'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
   bidmc_mrf:
     source_kind: hospital_mrf
     publisher: Beth Israel Deaconess Medical Center
@@ -457,6 +790,22 @@ sources:
     product: ''
     network_label: ''
     line_of_business: ''
+  bmc_south_mrf:
+    source_kind: hospital_mrf
+    publisher: Boston Medical Center South
+    source_file: 1fe3320439664efb9fbece181db7fdaba8e29df00b3cb9d7e4aa7f99d703ce9b.zip
+    source_sha256: 1fe3320439664efb9fbece181db7fdaba8e29df00b3cb9d7e4aa7f99d703ce9b
+    source_date: '2026-03-13'
+    last_updated: '2026-03-13'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
   brigham_mrf:
     source_kind: hospital_mrf
     publisher: Brigham and Women's Hospital
@@ -489,12 +838,44 @@ sources:
     product: ''
     network_label: ''
     line_of_business: ''
+  childrens_mrf:
+    source_kind: hospital_mrf
+    publisher: Boston Children's Hospital
+    source_file: d989bdd477aabac960d371c851124d6cbfbd434a87b8388501ab70b2b7f0831f.json
+    source_sha256: d989bdd477aabac960d371c851124d6cbfbd434a87b8388501ab70b2b7f0831f
+    source_date: '2026-04-01'
+    last_updated: '2026-04-01'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
   cms_anes_base_units_cy2022:
     source_kind: medicare_pfs
     publisher: CMS (Medicare physician fee schedule) · CY2022 base units x RVU26D
       anesthesia CF
     source_file: 3fbb43abb6ef2f4ba7680995c94572d7cc69f503a1c123264565223b2e2502d1.zip
     source_sha256: 3fbb43abb6ef2f4ba7680995c94572d7cc69f503a1c123264565223b2e2502d1
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-25'
+    source_rule: fee_schedule_quarterly
+    our_rule: fee_schedule_per_release
+    expected_by: '2027-01-01'
+    our_refresh_due: '2027-01-01'
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  cms_asc_2026q4:
+    source_kind: medicare_asc
+    publisher: CMS (Medicare ambulatory surgery centers) · 2026-10
+    source_file: 476285fa325f29dbac2f193f3a37a5bf5f3d286fb5cdb04dcfd4f9dc455f10a8.zip
+    source_sha256: 476285fa325f29dbac2f193f3a37a5bf5f3d286fb5cdb04dcfd4f9dc455f10a8
     source_date: '2026-10-01'
     last_updated: '2026-10-01'
     fetched_at: '2026-10-25'
@@ -534,6 +915,38 @@ sources:
     our_rule: fee_schedule_per_release
     expected_by: '2027-01-01'
     our_refresh_due: '2027-01-01'
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  dana_farber_mrf:
+    source_kind: hospital_mrf
+    publisher: Dana-Farber Cancer Institute
+    source_file: ae1fb1fa761f9da37b4822c44a1740a07c8d7227097cea0891d9e95a4dde8c16.json
+    source_sha256: ae1fb1fa761f9da37b4822c44a1740a07c8d7227097cea0891d9e95a4dde8c16
+    source_date: '2026-04-01'
+    last_updated: '2026-04-01'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  faulkner_mrf:
+    source_kind: hospital_mrf
+    publisher: Brigham and Women's Faulkner
+    source_file: d66cc4a4b284a5752be35855a0ac1dbd456f7bbbf258fb0114f58be3a25297ca.zip
+    source_sha256: d66cc4a4b284a5752be35855a0ac1dbd456f7bbbf258fb0114f58be3a25297ca
+    source_date: '2026-03-27'
+    last_updated: '2026-03-27'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
     payer_id: null
     product: ''
     network_label: ''
@@ -634,6 +1047,38 @@ sources:
     product: ''
     network_label: ''
     line_of_business: ''
+  nebh_mrf:
+    source_kind: hospital_mrf
+    publisher: New England Baptist Hospital
+    source_file: 47ade3a708565ec0b128af079599243f6a9c4a9d0ad759e10e0e6ecce0c18e9d.json
+    source_sha256: 47ade3a708565ec0b128af079599243f6a9c4a9d0ad759e10e0e6ecce0c18e9d
+    source_date: '2026-04-01'
+    last_updated: '2026-04-01'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
+  newton_wellesley_mrf:
+    source_kind: hospital_mrf
+    publisher: Newton-Wellesley Hospital
+    source_file: aad204b63a2cc6ffac3a109da178a3b55b39daea078a88348692b9e361c042c5.zip
+    source_sha256: aad204b63a2cc6ffac3a109da178a3b55b39daea078a88348692b9e361c042c5
+    source_date: '2026-03-27'
+    last_updated: '2026-03-27'
+    fetched_at: '2026-10-25'
+    source_rule: hospital_mrf_365_days
+    our_rule: hospital_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: null
+    product: ''
+    network_label: ''
+    line_of_business: ''
   tic_aetna_choice_pos2_pl_1s7:
     source_kind: insurer_tic
     publisher: Aetna · Aetna Choice POS II (pl-1s7)
@@ -649,6 +1094,22 @@ sources:
     payer_id: AETNA
     product: POS
     network_label: Aetna Choice POS II (pl-1s7)
+    line_of_business: commercial
+  tic_aetna_ppo_pl_3j4:
+    source_kind: insurer_tic
+    publisher: Aetna · Aetna PPO (pl-3j4)
+    source_file: 2026-10-05_pl-3j4-hr23-1c054fd9cca277d346e9d15b5d675b41117c9760a54959900ffbf70ccfe40918_Aetna-Life-Insurance-Company.json.gz
+    source_sha256: 0e0821fae58027e5d9df16ceaf6ad888f23c951fc0f6737fe99bc1dc93a9ae3c
+    source_date: '2026-10-05'
+    last_updated: '2026-10-05'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: AETNA
+    product: PPO
+    network_label: Aetna PPO (pl-3j4)
     line_of_business: commercial
   tic_bcbs_ma_bce_fi:
     source_kind: insurer_tic
@@ -766,6 +1227,22 @@ sources:
     product: HMO
     network_label: New England Managed Care (self insured)
     line_of_business: commercial
+  tic_bcbs_ma_par:
+    source_kind: insurer_tic
+    publisher: Blue Cross Blue Shield of Massachusetts · PAR Providers (indemnity)
+    source_file: 2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_PAR-Providers_in-network-rates.json.gz
+    source_sha256: 4b9007240b1544036f57dc8ad692be4c94aaa9698ecaa505a41bf17e3090f1da
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: BCBS_MA
+    product: INDEMNITY
+    network_label: PAR Providers (indemnity)
+    line_of_business: commercial
   tic_fallon_community_care:
     source_kind: insurer_tic
     publisher: Fallon Health · Fallon Community Care (Connector)
@@ -782,6 +1259,107 @@ sources:
     product: HMO
     network_label: Fallon Community Care (Connector)
     line_of_business: connector
+  tic_hphc_a001_fs:
+    source_kind: insurer_tic
+    publisher: Harvard Pilgrim (Point32Health) · HPHC House Account Access (A001,
+      self funded)
+    source_file: 2026-10-01_A001-FS_in-network-rates.zip
+    source_sha256: 865aa017c2b221a2fa42fc27cadc15e16ee2efbefcc23906e2164e92493b575b
+    source_date: '2026-10-05'
+    last_updated: '2026-10-05'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: HARVARD_PILGRIM
+    product: PPO
+    network_label: HPHC House Account Access (A001, self funded)
+    line_of_business: commercial
+  tic_mgb_hp_commercial_hmo:
+    source_kind: insurer_tic
+    publisher: Mass General Brigham Health Plan (formerly AllWays) · MGB Health Plan
+      Commercial HMO
+    source_file: INN_COMMERCIAL_HMO_2026-09-27.json.gz
+    source_sha256: 881bdfae39b4f26bc3591a857aec238aa01f73aaf20dd23ece0ac0ab3d2dd52a
+    source_date: '2026-09-27'
+    last_updated: '2026-09-27'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: MGB_HP
+    product: HMO
+    network_label: MGB Health Plan Commercial HMO
+    line_of_business: commercial
+  tic_tufts_direct_nonsub_group:
+    source_kind: insurer_tic
+    publisher: Tufts Health Plan (Point32Health) · Tufts Health Direct (non-subsidized,
+      group)
+    source_file: 2026-10-01_TuftsHealthPublicPlans_DirectNonSubsidizedGroup_in-network-rates.zip
+    source_sha256: 04e60eab0640267f2e6475a8dd165ccc003ddb0a252b3bace87d8631e160a748
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: TUFTS_HP
+    product: HMO
+    network_label: Tufts Health Direct (non-subsidized, group)
+    line_of_business: connector
+  tic_tufts_direct_nonsub_indiv:
+    source_kind: insurer_tic
+    publisher: Tufts Health Plan (Point32Health) · Tufts Health Direct (non-subsidized,
+      individual)
+    source_file: 2026-10-01_TuftsHealthPublicPlans_DirectNonSubsidizedIndividual_in-network-rates.zip
+    source_sha256: 2a88f82b67e40b35cb3aa9112504fad26c06abf503583e186e02488761948b9a
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: TUFTS_HP
+    product: HMO
+    network_label: Tufts Health Direct (non-subsidized, individual)
+    line_of_business: connector
+  tic_tufts_direct_sub_indiv:
+    source_kind: insurer_tic
+    publisher: Tufts Health Plan (Point32Health) · Tufts Health Direct (ConnectorCare,
+      subsidized)
+    source_file: 2026-10-01_TuftsHealthPublicPlans_DirectSubsidizedIndividual_in-network-rates.zip
+    source_sha256: 86fff6c56dd5948ec1c1a265fed5655d66645471dfb918e83802a9d08d4d35aa
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: TUFTS_HP
+    product: HMO
+    network_label: Tufts Health Direct (ConnectorCare, subsidized)
+    line_of_business: connector
+  tic_uhc_choice_hmo_560:
+    source_kind: insurer_tic
+    publisher: UnitedHealthcare · UHC Choice HMO (560, New England)
+    source_file: 2026-10-01_UnitedHealthcare-of-New-England--Inc-_Insurer_Choice-HMO_560_in-network-rates.json.gz
+    source_sha256: fee00f9cec775ec6c9e64a709f4962464cbe0323106d959b1197328e2c9f4009
+    source_date: '2026-10-01'
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+    source_rule: tic_45_days
+    our_rule: tic_monthly
+    expected_by: null
+    our_refresh_due: null
+    payer_id: UHC
+    product: HMO
+    network_label: UHC Choice HMO (560, New England)
+    line_of_business: commercial
   tufts_mrf:
     source_kind: hospital_mrf
     publisher: Tufts Medical Center

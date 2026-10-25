@@ -5,8 +5,9 @@
 
 Data is loaded once at startup into memory:
 
-* rate rows: ``CARECOST_QUOTE_PACK`` (the runtime SQLite pack, ``python -m app.quote.pack``) or,
-  when unset, the committed extract (``contracts/fixtures/rate_row_extract.csv``);
+* rate rows: ``CARECOST_QUOTE_PACK`` (the runtime SQLite pack, ``python -m app.quote.pack``). The
+  committed test extract (``contracts/fixtures/rate_row_extract.csv``) only with
+  ``CARECOST_ALLOW_EXTRACT=1`` (tests, local dev): otherwise startup fails (R11);
 * sites: ``CARECOST_SITES_PATH`` or A3's ``data/sites/sites.yaml`` (208 sites);
 * care paths, payer networks and rules from ``data/``.
 
@@ -51,6 +52,7 @@ def create_app(
         reg = registry() if callable(registry) else registry
         data = store(tins=reg.tins, census_ids=reg.census_ids) if callable(store) else store
         app.state.engine = Engine(data, reg)
+        app.state.test_extract = callable(store) and not os.environ.get("CARECOST_QUOTE_PACK")
         app.state.catalog = build_catalog(reg)
         app.state.catalog_json = app.state.catalog.model_dump_json()
         app.state.catalog_names = path_service_names(reg)

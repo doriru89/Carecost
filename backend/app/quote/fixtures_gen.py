@@ -75,6 +75,23 @@ def fixture_text(resp_json: dict[str, Any]) -> str:
     return json.dumps({"_fixture": True, "_schema": "QuoteResponse", **resp_json}, indent=2) + "\n"
 
 
+TUFTS_HMO = {"kind": "insurance", "payer_id": "TUFTS_HP", "product": "HMO", "network": None}
+AETNA_PPO = {"kind": "insurance", "payer_id": "AETNA", "product": "PPO", "network": None}
+MILTON = {"lat": 42.2497, "lon": -71.0777}
+C3_CASES: list[tuple[dict[str, Any], str, dict[str, Any]]] = [
+    # P8: the $14 Tufts row for an AFC visit (DRX UC Watertown PC) and CHA's $5.04 Medicare 45378
+    (TUFTS_HMO, "back_new_pain_v1", {"site_ids": ["afc_urgent_care_arlington_arlington"]}),
+    ({"kind": "medicare"}, "colon_diagnostic_v1", {"site_ids": ["cha_cambridge_hospital"]}),
+    # R10: placeholder NPI "0" near Milton under Tufts HMO (was a 500)
+    (TUFTS_HMO, "shoulder_chronic_clicking_v1", {"site_ids": None, "near": MILTON}),
+    # R3: an ASC's own TIN prices its facility line, never the doctor's (20.97x before)
+    (AETNA_PPO, "colon_screening_v1",
+     {"site_ids": ["mass_general_brigham_endoscopy_clinic_braintree"]}),
+    # P7 / item 9: no location = every admitted site, by kind, from City Hall
+    (RECORDED[0], "shoulder_chronic_clicking_v1", {"site_ids": None}),
+]  # fmt: skip
+"""Requests recorded for the C3 tests (named rows on real data)."""
+
 KEY_SITES = [
     "afc_watertown", "bilh_urgent_care_watertown", "brigham_and_womens_hospital",
     "franciscan_childrens", "mount_auburn_hospital", "tufts_medical_center",
@@ -93,6 +110,9 @@ def recorded_requests(reg: Registry) -> list[QuoteRequest]:
                         "payment": pay, "care_path_id": pid, "answers": answers,
                         "service_codes": [], "picked_by": "person", **where,
                     }))  # fmt: skip
+    out += [QuoteRequest.model_validate({"payment": pay, "care_path_id": pid, "answers": {},
+                                         "service_codes": [], "picked_by": "person", **where})
+            for pay, pid, where in C3_CASES]  # fmt: skip
     for pay in RECORDED:  # manual picks at the key sites (the MassHealth golden's codes)
         out.append(QuoteRequest.model_validate({
             "payment": pay, "care_path_id": None, "answers": {},
