@@ -274,6 +274,7 @@ PriceNote = Literal[
     "price.group_consistently_lower",
     "price.flat_visit_rate",
     "price.several_rates_same_doctors",
+    "price.anesthesia_typical_time",
 ]
 """Fixed explanation keys for how a line's number was made (copy lives with the glossary).
 national_unadjusted: a Medicare OPPS / ASC national rate; a Boston facility is paid this times a
@@ -296,7 +297,10 @@ KIND_ORDER: dict[str, int] = {
 }  # fmt: skip
 """P7: the order of the kind groups in a no-location list."""
 
-PeerScope = Literal["same_kind", "same_system"]
+PeerScope = Literal["same_kind", "same_system", "payer_network"]
+"""payer_network (C4c): anesthesia only. The payer's anesthesia groups' per-unit rates in the
+person's network files x (CMS base units + typical minutes / 15), whatever kind of site: an
+anesthesia group bills for the colonoscopy wherever it is done."""
 
 AvailabilityReason = Literal[
     "insurer_lists_rate", "price_file_lists_rate", "no_evidence", "site_says_not_offered"
@@ -808,7 +812,12 @@ class SiteSummary(_Strict):
     booking: list[BookingOption]
     portal_links: list[PortalLink]
     hours: Hours | None
-    hours_label: Literal["live_by_operator", "posted_hours", "may_close_early", "unknown"]
+    hours_label: Literal[
+        "live_by_operator", "posted_hours", "may_close_early", "site_page_hours", "unknown"
+    ] = Field(
+        description="site_page_hours (C4c): hours read from the site's own web page (site facts, "
+        "agreed by two independent reads or reviewed by Austin)"
+    )
     price_label: Literal["price_file", "posted_price", "price_on_request", "mixed"]
     price_source_id: str | None = Field(
         pattern=ID_RE,
@@ -873,6 +882,12 @@ class StepSummary(_Strict):
         description="C4b: this insurer pays this place one amount per visit and lists it on this "
         "step's code too: the step adds $0 here (low = high = 0), 'the test may be included'",
     )
+    from_only: bool = Field(
+        default=False,
+        description="C4c: 'from $low': the hospital's bill is priced, the doctor's bill has no "
+        "number (no public source / not published). Still counted in `missing`, never in the "
+        "ranking figure",
+    )
 
     @model_validator(mode="after")
     def _shape(self) -> StepSummary:
@@ -890,7 +905,10 @@ class StepSummary(_Strict):
             and not self.in_total
         ) or (self.figure == "elsewhere_estimate" and not self.estimated):  # fmt: skip
             raise ValueError(f"{self.key}: elsewhere_estimate is an offered step's peer range")
-        if self.missing and self.figure != "none":
+        if self.from_only and (self.figure not in ("own", "estimate") or self.rank_value is not None
+                               or self.in_total):  # fmt: skip
+            raise ValueError(f"{self.key}: a 'from' figure is partial: never ranked or summed")
+        if self.missing and self.figure != "none" and not self.from_only:
             raise ValueError(f"{self.key}: a step with a figure is not missing")
         if self.in_total and self.availability != "offered":
             raise ValueError(f"{self.key}: only an offered step is summed")
@@ -938,6 +956,7 @@ class MayAlsoOrder(_Strict):
     high: float | None = Field(ge=0)
     figure: Literal["own", "estimate", "elsewhere", "elsewhere_estimate", "none"]
     exclusive_group: str | None = None
+    from_only: bool = Field(default=False, description="C4c: 'from $low', the doctor bills apart")
 
 
 HeadlineBasis = Literal["complete", "includes_estimate", "partial"]
@@ -974,7 +993,13 @@ class HeadlineRange(_Strict):
         description="C4b 3b: the visit's doctor fee has no public source (self-pay at a hospital "
         "clinic): show 'from $low', with note_keys"
     )
-    note_keys: list[Literal["headline.doctor_bills_separately"]] = Field(default_factory=list)
+    note_keys: list[
+        Literal["headline.doctor_bills_separately", "headline.doctor_bill_not_published"]
+    ] = Field(
+        default_factory=list,
+        description="doctor_bills_separately: the doctor's bill has no public source (self-pay); "
+        "doctor_bill_not_published (C4c): the insurer's file has no rate for it",
+    )
     visit_step_keys: list[str] = Field(min_length=1, description="the first visit's step(s)")
     visit_only: Subtotal
     with_likely: Subtotal
@@ -1072,7 +1097,7 @@ class SiteQuote(_Strict):
         for k in hr.visit_step_keys:
             if k not in by:
                 raise ValueError(f"{self.site.site_id}: headline visit step {k} is not a step")
-        if not hr.from_only:
+        if True:  # C4c: every first-visit step carries its (possibly 'from') figure
             vis = [by[k] for k in hr.visit_step_keys]
             if any(st.low is None for st in vis) or (
                 round(sum(st.low or 0 for st in vis), 2), round(sum(st.high or 0 for st in vis), 2)
@@ -1290,6 +1315,21 @@ class QuoteOption(_Strict):
         description="the basis of that site's figure: 'complete' = its own published prices; "
         "'partial' = only partial prices are available in this option",
     )
+    basis: HeadlineBasis | None = Field(
+        default=None,
+        description="C4c: the best basis present; low / high / the spans come from those sites only",
+    )
+    sites_by_basis: dict[HeadlineBasis, int] = Field(
+        default_factory=dict, description="C4c: sites with a range, per basis"
+    )
+    partial_site_count: int = Field(
+        default=0, ge=0, description="C4c: sites with only partial prices ('plus N places ...')"
+    )
+    implicit: bool = Field(
+        default=False,
+        description="C4c: a path without entry options gets one implicit option (all its sites), "
+        "so cheapest_site_id exists; the list keeps its rank / kind_then_distance ordering",
+    )
 
 
 ErStatus = Literal["priced", "not_published", "not_loaded"]
@@ -1454,10 +1494,20 @@ class QuoteResponse(_Strict):
                 if o.low is not None or o.cheapest_site_id is not None:
                     raise ValueError(f"option {o.id}: no range without sites that have one")
                 continue
-            lows = [sq.headline_range.low for sq in ranged]  # type: ignore[union-attr]
-            highs = [sq.headline_range.high for sq in ranged]  # type: ignore[union-attr]
+            best_rank = min(BASIS_RANK[sq.headline_range.basis] for sq in ranged)  # type: ignore[union-attr]
+            top = [sq for sq in ranged if BASIS_RANK[sq.headline_range.basis] == best_rank]  # type: ignore[union-attr]
+            lows = [sq.headline_range.low for sq in top]  # type: ignore[union-attr]
+            highs = [sq.headline_range.high for sq in top]  # type: ignore[union-attr]
             if (o.low, o.high) != (min(lows), max(highs)):
-                raise ValueError(f"option {o.id}: range is min low .. max high over its sites")
+                raise ValueError(f"option {o.id}: range is min low .. max high over its sites of "
+                                 "the best basis")  # fmt: skip
+            counts: dict[str, int] = {}
+            for sq in ranged:
+                counts[sq.headline_range.basis] = counts.get(sq.headline_range.basis, 0) + 1  # type: ignore[union-attr]
+            if dict(o.sites_by_basis) != counts or o.partial_site_count != counts.get("partial", 0):
+                raise ValueError(f"option {o.id}: sites_by_basis / partial_site_count")
+            if o.basis != top[0].headline_range.basis:  # type: ignore[union-attr]
+                raise ValueError(f"option {o.id}: basis is the best basis present")
             best = min(ranged, key=lambda sq: (
                 BASIS_RANK[sq.headline_range.basis], sq.headline_range.low,  # type: ignore[union-attr]
                 sq.distance_km or 0.0, sq.site.site_id))  # fmt: skip
@@ -1466,8 +1516,9 @@ class QuoteResponse(_Strict):
                                  "within the best basis")  # fmt: skip
             if o.cheapest_basis != best.headline_range.basis:  # type: ignore[union-attr]
                 raise ValueError(f"option {o.id}: cheapest_basis is that site's basis")
+        implicit = len(self.options) == 1 and self.options[0].implicit
         if self.ordering.startswith("option_then_"):
-            if not self.options:
+            if not self.options or implicit:
                 raise ValueError("option ordering needs options")
             pos = [ids.index(sq.option_id) for sq in self.sites]  # type: ignore[arg-type]
             if pos != sorted(pos):
@@ -1478,7 +1529,7 @@ class QuoteResponse(_Strict):
                         else [(0, sq.distance_km or 0.0) for sq in mine])  # fmt: skip
                 if keys != sorted(keys):
                     raise ValueError(f"option {oid}: sites out of {self.ordering} order")
-        elif self.options:
+        elif self.options and not implicit:
             raise ValueError("a quote with options is ordered by option")
 
     def _check_source_refs(self) -> None:

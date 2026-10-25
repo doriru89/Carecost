@@ -106,8 +106,28 @@
           }
         ],
         "portal_links": [],
-        "hours": null,
-        "hours_label": "unknown",
+        "hours": {
+          "source": "operator_html",
+          "source_url": "https://www.afcurgentcare.com/cambridge-inman-square/",
+          "checked_at": "2026-10-25",
+          "weekly": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri",
+                "sat",
+                "sun"
+              ],
+              "opens": "08:00",
+              "closes": "20:00"
+            }
+          ],
+          "may_close_early": false
+        },
+        "hours_label": "site_page_hours",
         "price_label": "price_file",
         "price_source_id": "masshealth_318_20261001",
         "listing_status": "web_verified",
@@ -151,7 +171,8 @@
             "svc_73030"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -171,7 +192,8 @@
             "svc_73221"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 1.48,
@@ -351,8 +373,28 @@
           }
         ],
         "portal_links": [],
-        "hours": null,
-        "hours_label": "unknown",
+        "hours": {
+          "source": "operator_html",
+          "source_url": "https://www.afcurgentcare.com/cambridge/",
+          "checked_at": "2026-10-25",
+          "weekly": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri",
+                "sat",
+                "sun"
+              ],
+              "opens": "08:00",
+              "closes": "20:00"
+            }
+          ],
+          "may_close_early": false
+        },
+        "hours_label": "site_page_hours",
         "price_label": "price_file",
         "price_source_id": "masshealth_318_20261001",
         "listing_status": "web_verified",
@@ -396,7 +438,8 @@
             "svc_73030"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -416,7 +459,8 @@
             "svc_73221"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 1.76,
@@ -643,7 +687,8 @@
             "svc_73030_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -664,7 +709,8 @@
             "svc_73221_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 0.77,
@@ -679,7 +725,7 @@
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's bill",
             "technical_name": "Shoulder X-ray (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -692,7 +738,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -793,7 +839,7 @@
               "73221"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's bill",
             "technical_name": "Shoulder MRI (no contrast) (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -806,7 +852,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -1234,7 +1280,8 @@
             "svc_73030_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -1255,7 +1302,8 @@
             "svc_73221_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 0.98,
@@ -1270,7 +1318,7 @@
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's bill",
             "technical_name": "Shoulder X-ray (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -1283,7 +1331,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -1384,7 +1432,7 @@
               "73221"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's bill",
             "technical_name": "Shoulder MRI (no contrast) (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -1397,7 +1445,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -1800,7 +1848,8 @@
             "svc_73030_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -1821,7 +1870,8 @@
             "svc_73221_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 1.14,
@@ -1836,7 +1886,7 @@
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's bill",
             "technical_name": "Shoulder X-ray (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -1849,7 +1899,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -1950,7 +2000,7 @@
               "73221"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's bill",
             "technical_name": "Shoulder MRI (no contrast) (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -1963,7 +2013,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -2392,7 +2442,8 @@
             "svc_73030_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -2413,7 +2464,8 @@
             "svc_73221_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 1.17,
@@ -2428,7 +2480,7 @@
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's bill",
             "technical_name": "Shoulder X-ray (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -2441,7 +2493,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -2542,7 +2594,7 @@
               "73221"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's bill",
             "technical_name": "Shoulder MRI (no contrast) (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -2555,7 +2607,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -2985,7 +3037,8 @@
             "svc_73030_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -3006,7 +3059,8 @@
             "svc_73221_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 1.28,
@@ -3021,7 +3075,7 @@
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's bill",
             "technical_name": "Shoulder X-ray (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -3034,7 +3088,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -3135,7 +3189,7 @@
               "73221"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's bill",
             "technical_name": "Shoulder MRI (no contrast) (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -3148,7 +3202,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -3812,7 +3866,8 @@
             "svc_73030_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -3833,7 +3888,8 @@
             "svc_73221_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 1.38,
@@ -3848,7 +3904,7 @@
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's bill",
             "technical_name": "Shoulder X-ray (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -3861,7 +3917,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -3962,7 +4018,7 @@
               "73221"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's bill",
             "technical_name": "Shoulder MRI (no contrast) (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -3975,7 +4031,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -4591,8 +4647,34 @@
         "billing_type": "unknown",
         "booking": [],
         "portal_links": [],
-        "hours": null,
-        "hours_label": "unknown",
+        "hours": {
+          "source": "operator_html",
+          "source_url": "https://www.challiance.org/locations/somerville/cha-urgent-care-center",
+          "checked_at": "2026-10-25",
+          "weekly": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri"
+              ],
+              "opens": "09:00",
+              "closes": "20:00"
+            },
+            {
+              "days": [
+                "sat",
+                "sun"
+              ],
+              "opens": "10:00",
+              "closes": "17:00"
+            }
+          ],
+          "may_close_early": false
+        },
+        "hours_label": "site_page_hours",
         "price_label": "price_file",
         "price_source_id": "cha_mrf",
         "listing_status": "multi_registry",
@@ -4637,7 +4719,8 @@
             "svc_73030_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -4658,7 +4741,8 @@
             "svc_73221_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 1.94,
@@ -4673,7 +4757,7 @@
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's bill",
             "technical_name": "Shoulder X-ray (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -4686,7 +4770,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -4787,7 +4871,7 @@
               "73221"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's bill",
             "technical_name": "Shoulder MRI (no contrast) (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -4800,7 +4884,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -5464,7 +5548,8 @@
             "svc_73030_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -5485,7 +5570,8 @@
             "svc_73221_reading"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 2.06,
@@ -5500,7 +5586,7 @@
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's bill",
             "technical_name": "Shoulder X-ray (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -5513,7 +5599,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -5614,7 +5700,7 @@
               "73221"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's bill",
             "technical_name": "Shoulder MRI (no contrast) (facility fee)",
             "why": null,
             "glossary_keys": [
@@ -5627,7 +5713,7 @@
             "availability_reason": null,
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the place's own bill for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -6288,7 +6374,8 @@
             "svc_73030"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -6308,7 +6395,8 @@
             "svc_73221"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 2.64,
@@ -6475,8 +6563,34 @@
         "billing_type": "office_visit",
         "booking": [],
         "portal_links": [],
-        "hours": null,
-        "hours_label": "unknown",
+        "hours": {
+          "source": "operator_html",
+          "source_url": "https://www.atriushealth.org/locations/somerville",
+          "checked_at": "2026-10-25",
+          "weekly": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri"
+              ],
+              "opens": "08:00",
+              "closes": "20:00"
+            },
+            {
+              "days": [
+                "sat",
+                "sun"
+              ],
+              "opens": "09:00",
+              "closes": "17:00"
+            }
+          ],
+          "may_close_early": false
+        },
+        "hours_label": "site_page_hours",
         "price_label": "price_file",
         "price_source_id": "masshealth_318_20261001",
         "listing_status": "multi_registry",
@@ -6522,7 +6636,8 @@
             "svc_73030"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         },
         {
           "key": "73221",
@@ -6542,7 +6657,8 @@
             "svc_73221"
           ],
           "elsewhere": null,
-          "flat_visit_rate": false
+          "flat_visit_rate": false,
+          "from_only": false
         }
       ],
       "distance_km": 2.7,

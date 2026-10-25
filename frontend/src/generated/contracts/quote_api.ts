@@ -289,7 +289,10 @@ export interface HeadlineRange {
    * C4b 3b: the visit's doctor fee has no public source (self-pay at a hospital clinic): show 'from $low', with note_keys
    */
   from_only: boolean;
-  note_keys: "headline.doctor_bills_separately"[];
+  /**
+   * doctor_bills_separately: the doctor's bill has no public source (self-pay); doctor_bill_not_published (C4c): the insurer's file has no rate for it
+   */
+  note_keys: ("headline.doctor_bills_separately" | "headline.doctor_bill_not_published")[];
   /**
    * the first visit's step(s)
    */
@@ -378,6 +381,10 @@ export interface MayAlsoOrder {
   high: number | null;
   figure: "own" | "estimate" | "elsewhere" | "elsewhere_estimate" | "none";
   exclusive_group: string | null;
+  /**
+   * C4c: 'from $low', the doctor bills apart
+   */
+  from_only: boolean;
 }
 
 /**
@@ -541,7 +548,7 @@ export interface PeerRange {
   /**
    * same_system: the site's own health system's groups
    */
-  scope: "same_kind" | "same_system";
+  scope: "same_kind" | "same_system" | "payer_network";
   /**
    * whose rates; None for self-pay / fee schedules
    */
@@ -648,6 +655,22 @@ export interface QuoteOption {
    * the basis of that site's figure: 'complete' = its own published prices; 'partial' = only partial prices are available in this option
    */
   cheapest_basis: "complete" | "includes_estimate" | "partial" | null;
+  /**
+   * C4c: the best basis present; low / high / the spans come from those sites only
+   */
+  basis: "complete" | "includes_estimate" | "partial" | null;
+  /**
+   * C4c: sites with a range, per basis
+   */
+  sites_by_basis: Record<string, number>;
+  /**
+   * C4c: sites with only partial prices ('plus N places ...')
+   */
+  partial_site_count: number;
+  /**
+   * C4c: a path without entry options gets one implicit option (all its sites), so cheapest_site_id exists; the list keeps its rank / kind_then_distance ordering
+   */
+  implicit: boolean;
 }
 
 export interface QuoteRequest {
@@ -802,7 +825,7 @@ export interface ReceiptLine {
   /**
    * C2: fixed copy keys that explain how the line's number was made (e.g. a Medicare national rate not adjusted for Boston wages). Empty = nothing to add
    */
-  price_notes: ("price.national_unadjusted" | "price.anesthesia_base_units_only" | "price.group_consistently_higher" | "price.group_consistently_lower" | "price.flat_visit_rate" | "price.several_rates_same_doctors")[];
+  price_notes: ("price.national_unadjusted" | "price.anesthesia_base_units_only" | "price.group_consistently_higher" | "price.group_consistently_lower" | "price.flat_visit_rate" | "price.several_rates_same_doctors" | "price.anesthesia_typical_time")[];
   /**
    * C3 (P5): the peer range behind an estimated cell (basis estimate); None otherwise
    */
@@ -872,7 +895,10 @@ export interface SiteSummary {
   booking: BookingOption[];
   portal_links: PortalLink[];
   hours: Hours | null;
-  hours_label: "live_by_operator" | "posted_hours" | "may_close_early" | "unknown";
+  /**
+   * site_page_hours (C4c): hours read from the site's own web page (site facts, agreed by two independent reads or reviewed by Austin)
+   */
+  hours_label: "live_by_operator" | "posted_hours" | "may_close_early" | "site_page_hours" | "unknown";
   price_label: "price_file" | "posted_price" | "price_on_request" | "mixed";
   /**
    * The site's own price source (its hospital MRF or posted page); its freshness is QuoteResponse.sources[price_source_id]. None = the site has its own price source but we do not read it yet (e.g. a clinic's self-pay page): its lines are not_loaded (P1 problem 9)
@@ -973,6 +999,10 @@ export interface StepSummary {
    * C4b: this insurer pays this place one amount per visit and lists it on this step's code too: the step adds $0 here (low = high = 0), 'the test may be included'
    */
   flat_visit_rate: boolean;
+  /**
+   * C4c: 'from $low': the hospital's bill is priced, the doctor's bill has no number (no public source / not published). Still counted in `missing`, never in the ranking figure
+   */
+  from_only: boolean;
 }
 
 /**

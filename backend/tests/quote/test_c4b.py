@@ -166,11 +166,16 @@ def test_stomach_gi_option_is_listed_unpriced_and_has_no_sites(engine):
 
 def test_option_ranges_and_cheapest_site(engine):
     r = _q(engine, path=RASH)
+    from app.quote.contracts import BASIS_RANK
+
     for o in r.options:
         mine = [sq for sq in r.sites if sq.option_id == o.id and sq.headline_range]
-        assert o.low == min(sq.headline_range.low for sq in mine)
-        assert o.high == max(sq.headline_range.high for sq in mine)
-        best = min(mine, key=lambda sq: (sq.headline_range.low, sq.distance_km, sq.site.site_id))
+        # C4c: the range comes from the sites of the best basis present
+        best = min(BASIS_RANK[sq.headline_range.basis] for sq in mine)
+        top = [sq for sq in mine if BASIS_RANK[sq.headline_range.basis] == best]
+        assert o.low == min(sq.headline_range.low for sq in top)
+        assert o.high == max(sq.headline_range.high for sq in top)
+        best = min(top, key=lambda sq: (sq.headline_range.low, sq.distance_km, sq.site.site_id))
         assert o.cheapest_site_id == best.site.site_id
     doc = _json(r)
     other = next(s for s in doc["sites"] if s["option_id"] == "a" and s["headline_range"]
@@ -195,7 +200,10 @@ def test_ordering_within_an_option_is_distance_by_default_or_price(engine):
 def test_hmo_referral_for_a_specialist_option_is_a_top_notice(engine):
     hmo = {"Q14": ["hmo_referral_required"]}
     assert "hmo_referral_for_specialist" in _q(engine, path=RASH, answers=hmo, near=NEAR).notices
-    assert "hmo_referral_for_specialist" not in _q(engine, path=RASH, near=NEAR).notices
+    # C4c: an HMO plan with Q14 unanswered is an HMO referral (derived on the server)
+    assert "hmo_referral_for_specialist" in _q(engine, path=RASH, near=NEAR).notices
+    ppo = {**BCBS_HMO, "product": "PPO"}
+    assert "hmo_referral_for_specialist" not in _q(engine, ppo, RASH, near=NEAR).notices
     # stomach's specialist option (GI) is not priced: no sites, no notice
     assert "hmo_referral_for_specialist" not in _q(engine, answers=hmo, near=NEAR).notices
 
