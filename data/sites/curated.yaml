@@ -66,7 +66,19 @@ sites:
   cash_prices:
   - item_id: evaluation_consultation
     label: Evaluation Consultation (provider)
-    codes: []
+    # A7 2026-10-25: the page's one provider-visit price ("Evaluation Consultation (provider)
+    # $179", and "STD Testing $179 plus the cost of the test"), with no visit levels. Read as the
+    # self-pay price of any new or established office visit level 2-5 (99211, a nurse visit, is
+    # left out). Source: the page below, snapshot data/sites/posted/afc_watertown.json.
+    codes:
+    - '99202'
+    - '99203'
+    - '99204'
+    - '99205'
+    - '99212'
+    - '99213'
+    - '99214'
+    - '99215'
     amount: 179.0
     includes_provider_fee: true
     source_url: https://www.afcurgentcare.com/watertown/resources/self-pay

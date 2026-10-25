@@ -7526,6 +7526,15 @@ sites:
   cash_prices:
   - item_id: evaluation_consultation
     label: Evaluation Consultation (provider)
+    codes:
+    - '99202'
+    - '99203'
+    - '99204'
+    - '99205'
+    - '99212'
+    - '99213'
+    - '99214'
+    - '99215'
     amount: 179.0
     includes_provider_fee: true
     source_url: https://www.afcurgentcare.com/watertown/resources/self-pay

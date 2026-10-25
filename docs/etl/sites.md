@@ -59,6 +59,13 @@ diff for review; nothing is committed by CI).
 - **Problem 9 (AFC posted prices):** reader for AFC's self-pay tables; it agrees with every curated
   cash price (Evaluation $179, X-ray 2 views $150, sling $32); diffs go to a person, never straight
   into sites.yaml. Carbon Health's pricing page (5 sites) has no reader yet.
+  A7 (2026-10-25): `evaluation_consultation` ($179, `includes_provider_fee: true`) now carries the
+  visit codes 99202-99205 and 99212-99215 in `curated.yaml`, so a self-pay visit at AFC is priced
+  from the page instead of `not_published`. The page posts one provider-visit price with no levels
+  ("Evaluation Consultation (provider)", and "STD Testing $179 plus the cost of the test"), so the
+  mapping reads it as any level 2-5 office visit; 99211 (a nurse visit) is left out. The other two
+  cash prices: `xray_2_views` has 73030; `sling` has no code (a supply with no confident CPT /
+  HCPCS mapping, left empty on purpose). No other site has cash prices.
 - **Problem 14 (offered services):** `Site.offered` holds positive evidence only (absence = unknown,
   never "not offered"): census category (visit / endoscopy), AFC's posted X-ray price, DPH licensed
   service flags (MRI, physical rehab) and the DPH/HPC urgent-care flags (imaging, lab) applied only

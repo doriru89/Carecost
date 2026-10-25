@@ -338,6 +338,8 @@ class CodeList(BaseModel):
     path_area_domains: dict[str, str] = {}
     # code -> domains, generated from the care paths (path_codes.yaml; app.etl.path_codes)
     path_codes: dict[str, list[str]] = {}
+    # A7: extracted and packed, but in no domain: no site area admits them (never ranked)
+    reference: dict[str, str] = {}
 
     def component_for_rc(self, rc: str) -> str:
         if not rc.isdigit():
@@ -352,8 +354,16 @@ class CodeList(BaseModel):
 
     @property
     def codes(self) -> set[str]:
-        """Hand-written codes.yaml list + every care-path code (path_codes.yaml, R9)."""
-        return {c for d in self.domains.values() for c in d} | set(self.path_codes)
+        """Hand-written codes.yaml list + every care-path code (path_codes.yaml, R9) + the
+        reference codes."""
+        return {c for d in self.domains.values() for c in d} | set(self.path_codes) | set(
+            self.reference
+        )
+
+    def group_for(self, code: str) -> str:
+        """For reports: the code's domains, or ``reference``."""
+        doms = self.domains_for(code)
+        return "/".join(doms) if doms else ("reference" if code in self.reference else "")
 
     def domains_for(self, code: str) -> list[str]:
         out = [name for name, codes in self.domains.items() if code in codes]
@@ -363,7 +373,7 @@ class CodeList(BaseModel):
         for codes in self.domains.values():
             if code in codes:
                 return codes[code]
-        return ""
+        return self.reference.get(code, "")
 
 
 @functools.lru_cache(maxsize=4)
