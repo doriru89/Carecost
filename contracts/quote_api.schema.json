@@ -635,6 +635,199 @@
       "title": "ElsewhereOption",
       "type": "object"
     },
+    "ErHospital": {
+      "additionalProperties": false,
+      "properties": {
+        "distance_km": {
+          "minimum": 0,
+          "title": "Distance Km",
+          "type": "number"
+        },
+        "levels": {
+          "items": {
+            "$ref": "#/$defs/ErLevel"
+          },
+          "title": "Levels",
+          "type": "array"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "site_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Site Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "name",
+        "distance_km",
+        "levels"
+      ],
+      "title": "ErHospital",
+      "type": "object"
+    },
+    "ErLevel": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "description": "ED visit level (99283 = 3 ... 99285 = 5)",
+          "pattern": "^([0-9]{4}[0-9A-Z]|[A-Z][0-9]{4})$",
+          "title": "Code",
+          "type": "string"
+        },
+        "doctor": {
+          "discriminator": {
+            "mapping": {
+              "conflict": "#/$defs/Conflict",
+              "money": "#/$defs/Money",
+              "no_source": "#/$defs/NoSource",
+              "not_loaded": "#/$defs/NotLoaded",
+              "not_published": "#/$defs/NotPublished",
+              "percent_only": "#/$defs/PercentOnly"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "$ref": "#/$defs/NotPublished"
+            },
+            {
+              "$ref": "#/$defs/NotLoaded"
+            },
+            {
+              "$ref": "#/$defs/NoSource"
+            },
+            {
+              "$ref": "#/$defs/PercentOnly"
+            },
+            {
+              "$ref": "#/$defs/Conflict"
+            }
+          ],
+          "title": "Doctor"
+        },
+        "facility": {
+          "discriminator": {
+            "mapping": {
+              "conflict": "#/$defs/Conflict",
+              "money": "#/$defs/Money",
+              "no_source": "#/$defs/NoSource",
+              "not_loaded": "#/$defs/NotLoaded",
+              "not_published": "#/$defs/NotPublished",
+              "percent_only": "#/$defs/PercentOnly"
+            },
+            "propertyName": "kind"
+          },
+          "oneOf": [
+            {
+              "$ref": "#/$defs/Money"
+            },
+            {
+              "$ref": "#/$defs/NotPublished"
+            },
+            {
+              "$ref": "#/$defs/NotLoaded"
+            },
+            {
+              "$ref": "#/$defs/NoSource"
+            },
+            {
+              "$ref": "#/$defs/PercentOnly"
+            },
+            {
+              "$ref": "#/$defs/Conflict"
+            }
+          ],
+          "title": "Facility"
+        }
+      },
+      "required": [
+        "code",
+        "facility",
+        "doctor"
+      ],
+      "title": "ErLevel",
+      "type": "object"
+    },
+    "ErReference": {
+      "additionalProperties": false,
+      "description": "C4b item 7 (Austin: \"急诊应该是一上来医生就贵\"): the nearest hospitals' ER visit levels 3-5,\nfacility + doctor, under this payment. Response level only: never ranked, never a site's\nprice. low = the cheapest level-3 sum, high = the dearest level-5 sum (doctor part only where\nit is published: includes_doctor).",
+      "properties": {
+        "codes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Codes",
+          "type": "array"
+        },
+        "high": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "High"
+        },
+        "hospitals": {
+          "items": {
+            "$ref": "#/$defs/ErHospital"
+          },
+          "title": "Hospitals",
+          "type": "array"
+        },
+        "includes_doctor": {
+          "title": "Includes Doctor",
+          "type": "boolean"
+        },
+        "low": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Low"
+        },
+        "note_key": {
+          "const": "er.visit_alone_costs_more",
+          "title": "Note Key",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "priced",
+            "not_published",
+            "not_loaded"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "note_key",
+        "codes",
+        "low",
+        "high",
+        "includes_doctor",
+        "hospitals"
+      ],
+      "title": "ErReference",
+      "type": "object"
+    },
     "ExcludedLine": {
       "additionalProperties": false,
       "properties": {
@@ -652,7 +845,8 @@
             "repeats",
             "reference_only",
             "availability_unknown",
-            "unusual"
+            "unusual",
+            "flat_visit_rate"
           ],
           "title": "Reason",
           "type": "string"
@@ -676,7 +870,8 @@
         "repeats",
         "reference_only",
         "availability_unknown",
-        "unusual"
+        "unusual",
+        "flat_visit_rate"
       ],
       "type": "string"
     },
@@ -876,6 +1071,82 @@
         "might_add"
       ],
       "title": "Headline",
+      "type": "object"
+    },
+    "HeadlineRange": {
+      "additionalProperties": false,
+      "description": "C4b item 1 (Austin 2026-10-25): what seeing a doctor for this probably costs here. The range\ncovers the certain and likely steps only: low = the sum of their lows, high = the sum of their\nhighs (this site's own price, or the elsewhere range where it does not do the step). Possible\nsteps are not in it: they are listed in ``may_also_order``. Three subtotals for the breakdown:\nvisit_only (the first visit with all its bills), with_likely (= this range), with_possible\n(+ possible steps; of one exclusive_group only the dearest member counts).",
+      "properties": {
+        "from_only": {
+          "description": "C4b 3b: the visit's doctor fee has no public source (self-pay at a hospital clinic): show 'from $low', with note_keys",
+          "title": "From Only",
+          "type": "boolean"
+        },
+        "high": {
+          "minimum": 0,
+          "title": "High",
+          "type": "number"
+        },
+        "includes": {
+          "description": "= with_likely.includes",
+          "items": {
+            "type": "string"
+          },
+          "title": "Includes",
+          "type": "array"
+        },
+        "low": {
+          "minimum": 0,
+          "title": "Low",
+          "type": "number"
+        },
+        "may_also_order": {
+          "items": {
+            "$ref": "#/$defs/MayAlsoOrder"
+          },
+          "title": "May Also Order",
+          "type": "array"
+        },
+        "note_keys": {
+          "items": {
+            "const": "headline.doctor_bills_separately",
+            "type": "string"
+          },
+          "title": "Note Keys",
+          "type": "array"
+        },
+        "visit_only": {
+          "$ref": "#/$defs/Subtotal"
+        },
+        "visit_step_keys": {
+          "description": "the first visit's step(s)",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Visit Step Keys",
+          "type": "array"
+        },
+        "with_likely": {
+          "$ref": "#/$defs/Subtotal"
+        },
+        "with_possible": {
+          "$ref": "#/$defs/Subtotal"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "includes",
+        "from_only",
+        "note_keys",
+        "visit_step_keys",
+        "visit_only",
+        "with_likely",
+        "with_possible",
+        "may_also_order"
+      ],
+      "title": "HeadlineRange",
       "type": "object"
     },
     "Hours": {
@@ -1091,6 +1362,89 @@
         "kind"
       ],
       "title": "MassHealthPayment",
+      "type": "object"
+    },
+    "MayAlsoOrder": {
+      "additionalProperties": false,
+      "description": "C4b (Austin 2026-10-25): a possible step, listed on its own under the headline: 'the doctor\nmay also order'. Never in the headline range.",
+      "properties": {
+        "exclusive_group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclusive Group"
+        },
+        "figure": {
+          "enum": [
+            "own",
+            "estimate",
+            "elsewhere",
+            "none"
+          ],
+          "title": "Figure",
+          "type": "string"
+        },
+        "high": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "High"
+        },
+        "low": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Low"
+        },
+        "plain_name": {
+          "title": "Plain Name",
+          "type": "string"
+        },
+        "step_key": {
+          "title": "Step Key",
+          "type": "string"
+        },
+        "why": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "its plain purpose, from the care path",
+          "title": "Why"
+        }
+      },
+      "required": [
+        "step_key",
+        "plain_name",
+        "why",
+        "low",
+        "high",
+        "figure",
+        "exclusive_group"
+      ],
+      "title": "MayAlsoOrder",
       "type": "object"
     },
     "MedicarePayment": {
@@ -1350,6 +1704,37 @@
         "money"
       ],
       "title": "NpiPrice",
+      "type": "object"
+    },
+    "OptionSpan": {
+      "additionalProperties": false,
+      "description": "min low .. max high of one subtotal over an option's sites in this response.",
+      "properties": {
+        "high": {
+          "minimum": 0,
+          "title": "High",
+          "type": "number"
+        },
+        "includes": {
+          "description": "plain names any of its sites counts, path order",
+          "items": {
+            "type": "string"
+          },
+          "title": "Includes",
+          "type": "array"
+        },
+        "low": {
+          "minimum": 0,
+          "title": "Low",
+          "type": "number"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "includes"
+      ],
+      "title": "OptionSpan",
       "type": "object"
     },
     "OtherPayerRange": {
@@ -1779,6 +2164,158 @@
       "title": "Provenance",
       "type": "object"
     },
+    "QuoteOption": {
+      "additionalProperties": false,
+      "description": "C4b (D-UI-3): where to go first, option A or B (e.g. urgent care vs a skin doctor), each\nwith its own range. ``priced: false`` = listed but not priced yet (no sites).",
+      "properties": {
+        "cheapest_site_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Austin 2026-10-25: the site with the lowest headline low (ties: nearest)",
+          "title": "Cheapest Site Id"
+        },
+        "high": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "= with_likely.high",
+          "title": "High"
+        },
+        "id": {
+          "pattern": "^[a-z]$",
+          "title": "Id",
+          "type": "string"
+        },
+        "includes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Includes",
+          "type": "array"
+        },
+        "label": {
+          "$ref": "#/$defs/LocalLabel"
+        },
+        "low": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "= with_likely.low",
+          "title": "Low"
+        },
+        "missing_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Missing Reason"
+        },
+        "priced": {
+          "title": "Priced",
+          "type": "boolean"
+        },
+        "site_count": {
+          "description": "sites of this option in this response",
+          "minimum": 0,
+          "title": "Site Count",
+          "type": "integer"
+        },
+        "sites_with_range": {
+          "description": "of them, with a headline_range",
+          "minimum": 0,
+          "title": "Sites With Range",
+          "type": "integer"
+        },
+        "specialist": {
+          "description": "a specialist visit: an HMO may need a referral first",
+          "title": "Specialist",
+          "type": "boolean"
+        },
+        "visit_only": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OptionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "visit_step": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Visit Step"
+        },
+        "with_likely": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OptionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "with_possible": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OptionSpan"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "visit_step",
+        "specialist",
+        "priced",
+        "missing_reason",
+        "site_count",
+        "sites_with_range",
+        "low",
+        "high",
+        "includes",
+        "visit_only",
+        "with_likely",
+        "with_possible",
+        "cheapest_site_id"
+      ],
+      "title": "QuoteOption",
+      "type": "object"
+    },
     "QuoteRequest": {
       "additionalProperties": false,
       "properties": {
@@ -1809,7 +2346,7 @@
         },
         "full_receipts": {
           "default": 12,
-          "description": "C3: without `near` and `site_ids`, the first N sites carry their full receipt; the rest carry the summary (headline + steps) and are fetched by `site_ids`",
+          "description": "C3: without `near` and `site_ids`, the first N sites carry their full receipt (C4b: the first N of each entry option); the rest carry the summary (headline + steps) and are fetched by `site_ids`",
           "maximum": 50,
           "minimum": 0,
           "title": "Full Receipts",
@@ -1834,6 +2371,23 @@
           ],
           "default": null,
           "description": "C2: quote the max_sites sites closest to this point (straight-line distance), ranked (I7). None (P7) = every admitted site, grouped by kind of site and ordered by distance from Boston City Hall"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "distance",
+                "price"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C4b (D-UI-1): for a care path with entry options, sites are grouped by option and ordered by distance (None = distance) or by price (rank_key). Paths without options keep `rank` (with `near` / site_ids) or `kind_then_distance`",
+          "title": "Order By"
         },
         "payment": {
           "discriminator": {
@@ -1948,7 +2502,20 @@
         "data_version": {
           "$ref": "#/$defs/DataVersion"
         },
+        "er_reference": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ErReference"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C4b: the ER visit for comparison (care path quotes)"
+        },
         "notices": {
+          "description": "C4b hmo_referral_for_specialist: the person's plan may need a referral (Q14) and an option is a specialist visit: shown at the top, not inside a receipt",
           "items": {
             "enum": [
               "care_path_draft",
@@ -1957,11 +2524,20 @@
               "stale_on_our_side_sources",
               "masshealth_aco_may_differ",
               "medicare_advantage_is_insurance",
-              "chain_price_spread"
+              "chain_price_spread",
+              "hmo_referral_for_specialist"
             ],
             "type": "string"
           },
           "title": "Notices",
+          "type": "array"
+        },
+        "options": {
+          "description": "C4b: entry options A / B (empty: one option)",
+          "items": {
+            "$ref": "#/$defs/QuoteOption"
+          },
+          "title": "Options",
           "type": "array"
         },
         "ordering": {
@@ -1969,7 +2545,9 @@
           "description": "C3 P7: rank with a point or named sites, else by kind",
           "enum": [
             "rank",
-            "kind_then_distance"
+            "kind_then_distance",
+            "option_then_distance",
+            "option_then_price"
           ],
           "title": "Ordering",
           "type": "string"
@@ -2071,7 +2649,9 @@
         "chain_spreads",
         "sites_without_service",
         "copy_keys",
-        "notices"
+        "notices",
+        "options",
+        "er_reference"
       ],
       "title": "QuoteResponse",
       "type": "object"
@@ -2142,6 +2722,7 @@
             {
               "enum": [
                 "insurer_lists_rate",
+                "price_file_lists_rate",
                 "no_evidence",
                 "site_says_not_offered"
               ],
@@ -2337,7 +2918,9 @@
               "price.national_unadjusted",
               "price.anesthesia_base_units_only",
               "price.group_consistently_higher",
-              "price.group_consistently_lower"
+              "price.group_consistently_lower",
+              "price.flat_visit_rate",
+              "price.several_rates_same_doctors"
             ],
             "type": "string"
           },
@@ -2493,6 +3076,32 @@
         "headline": {
           "$ref": "#/$defs/Headline"
         },
+        "headline_range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HeadlineRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C4b: the range a person reads first; None when the first visit has no figure"
+        },
+        "option_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z]$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C4b: the entry option this site is in",
+          "title": "Option Id"
+        },
         "other_payers": {
           "items": {
             "$ref": "#/$defs/OtherPayerRange"
@@ -2525,7 +3134,9 @@
       },
       "required": [
         "site",
+        "option_id",
         "headline",
+        "headline_range",
         "steps",
         "distance_km",
         "receipt",
@@ -2571,6 +3182,19 @@
           "default": null,
           "description": "C3 R12: the chain whose posted prices apply here",
           "title": "Chain Id"
+        },
+        "chain_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C4b: the chain's name as a person reads it, e.g. 'AFC Urgent Care'",
+          "title": "Chain Name"
         },
         "children_only": {
           "default": false,
@@ -2736,6 +3360,7 @@
         "service_areas",
         "kind",
         "chain_id",
+        "chain_name",
         "children_only",
         "data_notices"
       ],
@@ -2832,6 +3457,12 @@
           "title": "Figure",
           "type": "string"
         },
+        "flat_visit_rate": {
+          "default": false,
+          "description": "C4b: this insurer pays this place one amount per visit and lists it on this step's code too: the step adds $0 here (low = high = 0), 'the test may be included'",
+          "title": "Flat Visit Rate",
+          "type": "boolean"
+        },
         "high": {
           "anyOf": [
             {
@@ -2888,6 +3519,12 @@
           "title": "Missing",
           "type": "boolean"
         },
+        "plain_name": {
+          "default": "",
+          "description": "C4b: the step's plain name (map label)",
+          "title": "Plain Name",
+          "type": "string"
+        },
         "rank_value": {
           "anyOf": [
             {
@@ -2923,6 +3560,7 @@
       "required": [
         "key",
         "step_id",
+        "plain_name",
         "likelihood",
         "availability",
         "figure",
@@ -2934,9 +3572,74 @@
         "in_total",
         "missing",
         "line_ids",
-        "elsewhere"
+        "elsewhere",
+        "flat_visit_rate"
       ],
       "title": "StepSummary",
+      "type": "object"
+    },
+    "Subtotal": {
+      "additionalProperties": false,
+      "description": "C4b (D-UI-2): one scenario of the breakdown. low / high = the first visit's low / high plus\nthe low / high of every step in ``step_keys`` (its StepSummary figure: this site's own price,\nan estimate, or the elsewhere range; a flat-rate step adds $0).",
+      "properties": {
+        "alternatives": {
+          "description": "exclusive_group members left out because a dearer alternative is counted",
+          "items": {
+            "type": "string"
+          },
+          "title": "Alternatives",
+          "type": "array"
+        },
+        "estimated": {
+          "description": "an estimate or an elsewhere range is in it",
+          "title": "Estimated",
+          "type": "boolean"
+        },
+        "high": {
+          "minimum": 0,
+          "title": "High",
+          "type": "number"
+        },
+        "includes": {
+          "description": "their plain names, in the same order: 'includes: belly CT, blood tests'",
+          "items": {
+            "type": "string"
+          },
+          "title": "Includes",
+          "type": "array"
+        },
+        "low": {
+          "minimum": 0,
+          "title": "Low",
+          "type": "number"
+        },
+        "not_priced": {
+          "description": "steps of this scenario with no figure (not counted)",
+          "items": {
+            "type": "string"
+          },
+          "title": "Not Priced",
+          "type": "array"
+        },
+        "step_keys": {
+          "description": "the steps counted on top of the first visit",
+          "items": {
+            "type": "string"
+          },
+          "title": "Step Keys",
+          "type": "array"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "step_keys",
+        "includes",
+        "not_priced",
+        "alternatives",
+        "estimated"
+      ],
+      "title": "Subtotal",
       "type": "object"
     },
     "SummedAmount": {

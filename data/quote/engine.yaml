@@ -119,6 +119,7 @@ admission_step_kinds:
 chains:
   afc_urgent_care:
     operator: AFC Urgent Care (franchise)
+    display_name: AFC Urgent Care  # C4b: the chain name a person reads (SiteSummary.chain_name)
     posted_price_site: afc_watertown
 chain_ownerships: [franchise, pe_backed_chain, retail, payer_owned]
 chain_spread_max: 1.5
@@ -158,6 +159,26 @@ code_domains:
   derm: [skin]
   gi: [gi]
   urgent_care: [urgent_care, ortho]
+# C4b item 6: a clinical lab code (CMS PC/TC indicator 9, data/quote/pctc.yaml) is also done at
+# urgent care and primary care (a urine or blood test), whatever its codes.yaml domain (81003
+# sat under gi only, so a manual pick admitted GI sites only). sites.yaml has no primary-care
+# service area yet; primary-care offices are reached through the path options.
+clinical_lab_areas: [urgent_care]
+
+# C4b 3a: CMS PFS PC/TC indicator per code (python -m app.quote.pctc --rvu-zip <RVU zip>).
+# 3 / 4 / 7 / 9 (clinical labs among them): no separate doctor's fee line at a hospital.
+pctc_file: data/quote/pctc.yaml
+
+# C4b 3c: Q14 answers under which an HMO may need a referral before a specialist (option B):
+# the response carries notice hmo_referral_for_specialist at the top.
+referral_answers: [hmo_referral_required, unsure]
+
+# C4b item 7: the ER reference (response level, never ranked). ED visit levels 3-5, at the
+# nearest `hospitals` hospitals (one site per hospital, its own price file), facility + doctor.
+# Until the pack has these codes (A7), the reference says not_loaded.
+er_reference:
+  codes: ["99283", "99284", "99285"]
+  hospitals: 3
 
 # P11 you-pay per payer (insurance). Payers not listed use `default`.
 you_pay:

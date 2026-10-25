@@ -53,12 +53,14 @@ import statistics
 from collections import defaultdict
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
+from functools import cached_property
 from datetime import date
 from typing import Any
 
 from app.care_paths.models import CarePath
 from app.etl.contracts import Method, PriceBasis
 from app.quote.facts import SiteFacts, load_site_facts
+from app.quote.pctc import NO_PROFESSIONAL_FEE, READING, load_pctc
 from app.quote.tin_roles import effective_billing, load_roles
 from app.quote.contracts import (
     KIND_ORDER,
@@ -207,6 +209,9 @@ class Item:
     path_id: str | None = None
     step_codes: tuple[str, ...] = ()  # the step's primary + alternative codes (offer evidence)
     step_kind: str | None = None
+    step_name: str = ""  # C4b: the step's plain name (StepSummary.plain_name, `includes`)
+    excl: str | None = None  # C4b: the step's exclusive_group
+    entry: bool = False  # C4b: this option's first visit (the headline's low end)
 
 
 @dataclass
@@ -271,6 +276,10 @@ class Engine:
         self.anes_time = self._load_anesthesia_time(
             REPO_ROOT / cfg["physician_time_file"], REPO_ROOT / cfg["anesthesia_time_file"]
         )
+        self.pctc = load_pctc(REPO_ROOT / cfg["pctc_file"])  # C4b 3a: CMS PC/TC indicator
+        self.chain_names = {cid: ch.get("display_name") or ch["operator"]
+                            for cid, ch in (cfg.get("chains") or {}).items()}  # fmt: skip
+        self._flat: dict[tuple, bool] = {}
         o = cfg["no_location_origin"]
         self.origin = _P(float(o["lat"]), float(o["lon"]))
         # caches over data that never changes after startup (no request state, P1 #20)
@@ -694,10 +703,11 @@ class Engine:
                              if x.amount == r.amount), None)  # fmt: skip
                 if twin:
                     break
-            if twin is None:
+            per_unit = "anesthesia_per_unit" in self.store.row_flags(r)  # C4b: A6's flag
+            if twin is None and not per_unit:
                 full.append(r)
                 continue
-            if self.store.recorder is not None:
+            if twin is not None and self.store.recorder is not None:
                 self.store.recorder.add([twin])
             if mine and "ANESTH" in r.business_name.upper():
                 units.append(r)
@@ -744,12 +754,8 @@ class Engine:
             cell, fee = self._fee_schedule_fee(self.pfs, code, mod, setting, 5, "Medicare", site)
             return cell, fee, [code]
         if q.kind == "masshealth":
+            # C4b 3d: never a Medicare figure (rung 7) for a person who is not on Medicare
             cell, fee = self._fee_schedule_fee(self.mh, code, mod, setting, 4, "MassHealth", site)
-            if cell["kind"] != "money" and self.pfs:
-                ref, rfee = self._fee_schedule_fee(self.pfs, code, mod, setting, 7, "Medicare",
-                                                   site)  # fmt: skip
-                if ref["kind"] == "money":
-                    return ref, rfee, [code]
             return cell, fee, [code]
 
         # insurance
@@ -821,11 +827,8 @@ class Engine:
                 None,
                 codes,
             )
-        if self.pfs:
-            ref = self._money(self._fs_rows(self.pfs, code, mod, setting, site), lambda r: r.amount,
-                              PriceBasis.fee_schedule)  # fmt: skip
-            if ref:
-                return ref, {"rung": 7, "explanation_key": "fee.rung_7_medicare_reference"}, codes
+        # C4b 3d: no Medicare reference (rung 7) for an insured person: the gap stays a gap (the
+        # peer estimate, rung 6, may still fill it from this insurer's own rates)
         return _not_published(self.store, q.networks[0],
                               "this insurer's rate for this doctor group and item",
                               "Ask the office which doctor group bills for it and what your "
@@ -893,14 +896,30 @@ class Engine:
 
     # ------------------------------------------------------------------ items
 
-    def _path_items(self, path: CarePath, q: Req) -> list[Item]:
+    @staticmethod
+    def _entry_steps(path: CarePath, option: Any | None) -> set[str]:
+        """The first visit(s): the option's visit step, else every layer-1 visit."""
+        if option is not None:
+            return {option.visit_step}
+        return {st.id for st in path.steps if st.layer == 1 and st.kind == "visit"}
+
+    def _path_items(self, path: CarePath, q: Req, option: Any | None = None) -> list[Item]:
+        """The items to price. C4b (D-UI-3): with an entry option, the other options' first
+        visits are not steps here (an urgent care has no skin-doctor visit line), and the
+        option's own first visit is the certain entry visit."""
         answers = q.req.answers
         scope_ok = {"medicare": ("all", "medicare")}.get(q.kind, ("all", "commercial"))
+        entry = self._entry_steps(path, option)
+        others = {o.visit_step for o in path.entry_options if o.visit_step} - entry
         out: list[Item] = []
         for st in path.steps:
             if st.condition and not _matches(st.condition, answers):
                 continue
+            if st.id in others:
+                continue
             tier, rating = st.likelihood_tier, st.appropriateness.rating
+            if option is not None and st.id in entry:
+                tier = "certain"  # the option's first visit
             for m in path.tier_modifiers:  # P1 #19: the modified step is the one shown
                 if m.step == st.id and _matches(m.when, answers):
                     tier = m.tier
@@ -920,6 +939,9 @@ class Engine:
                 "path_id": path.id,
                 "step_codes": tuple(c.code for c in st.cpts if c.role in ("primary", "alternative")),
                 "step_kind": st.kind,
+                "step_name": st.plain.name,
+                "excl": st.exclusive_group,
+                "entry": st.id in entry,
             }  # fmt: skip
             cpts = [c for c in st.cpts if c.payer_scope in scope_ok]
             primaries = 0
@@ -1056,10 +1078,12 @@ class Engine:
                     f"{it.plain}: {who}", f"{it.tech} (facility fee)", "facility", confirmed, cell,
                     extra_gloss=["facility_fee"], list_price=lp,
                     price_notes=extra.get("price_notes", [])))  # fmt: skip
-            if two_part and code in self.facility_only:
-                continue
+            if two_part and (code in self.facility_only or (
+                    cls != "anesthesia" and self.pctc.get(code) in NO_PROFESSIONAL_FEE)):
+                continue  # C4b 3a: CMS PC/TC 3/4/7/9 (e.g. clinical labs): no doctor's fee line
             if two_part:
-                reading = code in self.reg.pc_tc_codes
+                reading = (self.pctc[code] in READING if code in self.pctc
+                           else code in self.reg.pc_tc_codes)  # fmt: skip
                 mod = "26" if reading else ""
                 line_id = f"{it.stem}_reading" if reading else f"{it.stem}_doctor"
                 if cls == "anesthesia":
@@ -1070,6 +1094,7 @@ class Engine:
                 lines.append(self._line(
                     it, line_id, codes, mod or shown, plain, f"{it.tech} (professional fee)",
                     "professional", True, cell, doctor_fee=fee))  # fmt: skip
+                lines[-1]["_ladder"] = True  # a hospital doctor's fee: priced by the ladder
             else:
                 cell, fee, codes = self._doctor_cell(site, it, code, "", q, hospital_line=False)
                 tech = it.tech if codes == [code] else f"{it.tech} (urgent care global fee)"
@@ -1078,11 +1103,14 @@ class Engine:
                     doctor_fee=fee))  # fmt: skip
         for ln in lines:
             if ln["at"] == "this_site":
-                av, why = self._item_avail(site, ln["_item"])
+                av, why = self._item_avail(site, ln["_item"], q)
                 ln["availability"], ln["availability_reason"] = av, why
                 if av == "not_offered":
                     ln["cell"] = None
             cell = ln["cell"]
+            if cell is not None and cell["kind"] == "money" and "_m" in cell:
+                self._flat_and_flags(ln, q)
+                cell = ln["cell"]
             if cell is not None and code_class(ln["codes"][0]) == "anesthesia" and (
                 self._fs_money(cell) or (cell["kind"] == "money" and cell["prov"]["method"]
                                          == Method.per_unit_x_base_units.value)
@@ -1093,6 +1121,57 @@ class Engine:
             ) and self.posted_site[site.id].id != site.id:  # fmt: skip
                 ln["chain_price_from"] = self.posted_site[site.id].id  # R12
         return lines
+
+    def _is_flat(self, r: Row) -> bool:
+        """C4b item 5: a TiC row on a non-visit code whose group (TIN) has the same amount, same
+        billing class, on a visit code in the same network file: the insurer pays this place one
+        amount per visit (Tufts Direct pays ConvenientMD $125 on 99203 / 99213 / 81003 / 81025)."""
+        if r.source_kind != "insurer_tic" or r.amount is None or code_class(r.code) == "visit":
+            return False
+        k = (r.source_id, r.tin, r.billing_class, r.amount)
+        if k not in self._flat:
+            self._flat[k] = any(
+                x.amount == r.amount and x.billing_class == r.billing_class
+                for vc in self.visit_codes for x in self.store.tic.get((r.source_id, r.tin, vc), ())
+            )  # fmt: skip
+        return self._flat[k]
+
+    @cached_property
+    def visit_codes(self) -> tuple[str, ...]:
+        return tuple(sorted(c for c in self.store.codes if code_class(c) == "visit"))
+
+    def _flat_and_flags(self, ln: Json, q: Req) -> None:
+        """C4b items 4-5 on one priced line: A6's TiC flags and the flat visit rate.
+
+        * ``institutional_on_physician_npi``: a doctors' group's "institutional" row is neither a
+          facility fee nor a doctor's fee: left out of the line.
+        * ``anesthesia_per_unit``: a per-unit rate, never a whole price (left to the anesthesia
+          per-unit rule, which multiplies an anesthesia group's rate by the base units).
+        * ``same_npi_pos_multi_rate``: the same doctors at the same place have several rates in
+          the file: the line keeps the range and says so (``price.several_rates_same_doctors``).
+        * flat visit rate: rows that are this group's visit amount are counted once, on the
+          visit. When every row is one, the line keeps the amount, is never summed (P8a cannot
+          sum it either: it is never gated) and says ``price.flat_visit_rate``."""
+        cell = ln["cell"]
+        rows, value, basis, method = cell["_m"]
+        flags = self.store.row_flags
+        keep = [(v, r) for v, r in rows if "institutional_on_physician_npi" not in flags(r)]
+        if ln["at"] == "this_site":
+            flat = [(v, r) for v, r in keep if self._is_flat(r)]
+            if flat and len(flat) == len(keep):
+                ln["_flat"] = True
+                ln["price_notes"].append("price.flat_visit_rate")
+            elif flat:
+                keep = [t for t in keep if t not in flat]
+        if len(keep) != len(rows):
+            m = self._money([r for _, r in keep], value, basis, method) if keep else None
+            ln["cell"] = m or _not_published(
+                self.store, rows[0][1].source_id, "a usable rate for this item here (the file's "
+                "rows for it are not this kind of fee)", "Ask the office what your plan pays.")
+            cell = ln["cell"]
+        if cell["kind"] == "money" and any(
+                "same_npi_pos_multi_rate" in flags(r) for _, r in cell["_m"][0]):  # fmt: skip
+            ln["price_notes"].append("price.several_rates_same_doctors")
 
     @staticmethod
     def _fs_money(cell: Json) -> bool:
@@ -1122,7 +1201,7 @@ class Engine:
         self._code_offer[key] = ok
         return ok
 
-    def _item_avail(self, site: Site, it: Item) -> tuple[str, str | None]:
+    def _item_avail(self, site: Site, it: Item, q: Req) -> tuple[str, str | None]:
         """Availability of a step at a site (one answer for every line of the step): site facts
         (X1) first, then code evidence for any of the step's codes. -> (availability, reason)."""
         if it.path_id and it.step_id:
@@ -1134,7 +1213,9 @@ class Engine:
         if any(self.offers_code(site, c) for c in (it.step_codes or (it.code,))):
             return "offered", None
         if self._tic_row_for(site, it.code):
-            return "unknown", "insurer_lists_rate"
+            # C4b 3e: "your insurer lists a rate" is only true for an insurance payment
+            return "unknown", ("insurer_lists_rate" if q.kind == "insurance"
+                               else "price_file_lists_rate")  # fmt: skip
         return "unknown", "no_evidence"
 
     def _tic_row_for(self, site: Site, code: str) -> bool:
@@ -1183,6 +1264,7 @@ class Engine:
                 and ln["availability"] == "offered"  # R2: no evidence -> never summed
                 and not (un and un["whole_line"])  # P8
                 and (fee is None or (fee["rung"] or 0) in range(1, 7))
+                and not ln.get("_flat")  # C4b item 5: counted once, on the visit
             )
         return lines
 
@@ -1195,6 +1277,8 @@ class Engine:
             return "not_offered_here"
         if ln["availability"] != "offered":
             return "availability_unknown"
+        if ln.get("_flat"):
+            return "flat_visit_rate"
         if kind == "conflict":
             return "conflict"
         if kind != "money":
@@ -1245,6 +1329,7 @@ class Engine:
             and ln["availability"] != "not_offered"
             and not ln["in_total"]
             and not ln["ai_suggested"]
+            and not ln.get("_flat")  # C4b: its amount is the visit's, already summed
             for ln in lines
         )
         expected = [st for st in steps if st["_expected"]]
@@ -1297,6 +1382,8 @@ class Engine:
         estimate, no reference-only number, no conflict."""
         cell = ln["cell"]
         if cell is None or cell["kind"] != "money" or cell["basis"] == "estimate":
+            return []
+        if ln.get("_flat"):  # C4b: the visit's amount, not a price for this item
             return []
         fee = ln["doctor_fee"]
         if fee and (fee["rung"] or 0) >= 7:
@@ -1428,7 +1515,7 @@ class Engine:
         cell = ln["cell"]
         if cell is None or cell["kind"] != "money" or cell["basis"] in ("fee_schedule", "estimate"):
             return
-        if ln["at"] != "this_site" or not self._entries(ln):
+        if ln["at"] != "this_site" or ln.get("_flat") or not self._entries(ln):
             return
         lo_x, hi_x = float(self.out_cfg["low"]), float(self.out_cfg["high"])
         meds: dict[str, tuple[float, int] | None] = {}
@@ -1563,7 +1650,7 @@ class Engine:
             "low": lo[0], "high": hi[0], "median": med, "n_groups": n, "kind": self._kind(site),
             "scope": scope, "payer_id": q.payer if q.kind == "insurance" else None,
         }  # fmt: skip
-        if fee is not None:
+        if fee is not None or ln.get("_ladder"):  # C4b: a ladder gap (no rung 7 now) too
             ln["doctor_fee"] = {"rung": 6, "explanation_key": "fee.rung_6_estimate"}
 
     @staticmethod
@@ -1591,7 +1678,20 @@ class Engine:
 
     # ------------------------------------------------------------------ admission (R8)
 
-    def _admits(self, site: Site, path: CarePath | None, areas: set[str]) -> bool:
+    def option_of(self, site: Site, path: CarePath | None) -> Any | None:
+        """C4b: the first entry option of the path whose kinds, site types or service areas the
+        site matches (None: the path has no options, or the site matches none)."""
+        if path is None:
+            return None
+        kind = self._kind(site)
+        for o in path.entry_options:
+            if (kind in o.site_kinds or site.site_type in o.site_types
+                    or set(site.service_areas) & set(o.service_areas)):  # fmt: skip
+                return o
+        return None
+
+    def _admits(self, site: Site, path: CarePath | None, areas: set[str],
+                option: Any | None = None) -> bool:  # fmt: skip
         """A site enters a path when it offers the entry visit (layer 1) or the core procedure
         (a layer-2 procedure that is certain or likely) by the offer rules; with no evidence either
         way, when its kind may do that kind of step (engine.yaml admission_step_kinds)."""
@@ -1599,8 +1699,9 @@ class Engine:
             return False
         if path is None:
             return True
+        entry = self._entry_steps(path, option)
         keys = [st for st in path.steps if not st.no_price and (
-            (st.layer == 1 and st.kind == "visit")
+            st.id in entry
             or (st.layer == 2 and st.kind == "procedure"
                 and st.likelihood_tier in ("certain", "likely"))
         )]  # fmt: skip
@@ -1618,13 +1719,18 @@ class Engine:
             open_.append(st)
         return any(st.kind in allowed for st in open_)
 
-    def _admitted(self, path: CarePath | None, areas: set[str]) -> list[str]:
-        key = (path.id if path else None, tuple(sorted(areas)))
+    def _admitted(self, path: CarePath | None, areas: set[str],
+                  option: Any | None = None) -> list[str]:  # fmt: skip
+        """Admitted sites. With an option: the sites whose option it is (option_of) that offer
+        its first visit or the core procedure. Without: the path's whole pool (the sites peers
+        and 'elsewhere' ranges are drawn from)."""
+        key = (path.id if path else None, tuple(sorted(areas)), option.id if option else None)
         if key not in self._admitted_cache:
             self._admitted_cache[key] = [
                 s.id for s in sorted(self.reg.sites.values(), key=lambda s: s.id)
                 if s.listing_status != "registry_only" and not s.children_only
-                and self._admits(s, path, areas)
+                and (option is None or self.option_of(s, path) is option)
+                and self._admits(s, path, areas, option)
             ]  # fmt: skip
         return self._admitted_cache[key]
 
@@ -1647,7 +1753,8 @@ class Engine:
             site = self.reg.sites[sid]
             lines = [ln for ln in self._site_lines(site, items, q)
                      if ln["unit"] == "once" and not ln["ai_suggested"]]  # fmt: skip
-            if not lines or any(ln["availability"] != "offered" for ln in lines):
+            if not lines or any(ln["availability"] != "offered" or ln.get("_flat")
+                                for ln in lines):  # fmt: skip
                 continue
             for ln in lines:
                 self._gate(site, ln, q)
@@ -1690,12 +1797,14 @@ class Engine:
                                    first["_item"].path_id) if not ai else {"range": None,
                                                                           "priced": False}  # fmt: skip
             figure, low, high, rank, rng = "none", None, None, None, None
+            flat = bool(priced) and all(ln.get("_flat") for ln in priced)
             if avail == "offered":
                 if priced and all(self._counts(ln) for ln in priced):
+                    paid = [ln for ln in priced if not ln.get("_flat")]  # C4b: flat adds $0
                     figure = "estimate" if any(ln["estimate"] for ln in priced) else "own"
-                    low = round(sum(ln["cell"]["low"] for ln in priced), 2)
-                    high = round(sum(ln["cell"]["high"] for ln in priced), 2)
-                    rank = round(sum(self._central(ln) for ln in priced), 2)
+                    low = round(sum(ln["cell"]["low"] for ln in paid), 2)
+                    high = round(sum(ln["cell"]["high"] for ln in paid), 2)
+                    rank = round(sum(self._central(ln) for ln in paid), 2)
             elif pool["range"] is not None:
                 rng = pool["range"]
                 figure, low, high, rank = "elsewhere", rng["low"], rng["high"], rng["median"]
@@ -1709,6 +1818,10 @@ class Engine:
                 "in_total": bool(priced) and all(ln["in_total"] for ln in priced),
                 "missing": missing, "line_ids": [ln["line_id"] for ln in lns],
                 "elsewhere": rng, "_expected": expected, "_ai": ai,
+                "plain_name": first["_item"].step_name or first["_item"].plain,
+                "flat_visit_rate": flat and figure == "own",
+                "_excl": first["_item"].excl, "_entry": first["_item"].entry,
+                "_why": first["why"],
             })  # fmt: skip
         return out
 
@@ -1819,6 +1932,7 @@ class Engine:
             "service_areas": list(site.service_areas),
             "kind": self._kind(site),
             "chain_id": self.chain_of.get(site.id),
+            "chain_name": self.chain_names.get(self.chain_of.get(site.id) or ""),
             "children_only": site.children_only,
             "data_notices": self.reg.data_notices.get(price_source_id or "", []),
         }
@@ -1889,36 +2003,67 @@ class Engine:
         if req.care_path_id and path is None:
             raise ValueError(f"unknown care path {req.care_path_id}")
         if path is not None:
-            items, areas = self._path_items(path, q), self.reg.path_areas(path)
+            areas = self.reg.path_areas(path)
         else:
-            items = self._code_items(q)
             areas = set().union(*(self.reg.code_areas(c) for c in req.service_codes))
             areas = areas or {"ortho", "skin", "gi", "urgent_care"}
         quotable = {
             sid: s for sid, s in self.reg.sites.items() if s.listing_status != "registry_only"
         }
         named = req.site_ids is not None
-        admitted = self._admitted(path, areas)
-        cands, without = [], []
+        pool = self._admitted(path, areas)  # P4 / P5: peers and elsewhere ranges come from here
+        options = list(path.entry_options) if path is not None else []
+        # C4b (D-UI-3): one group per priced entry option (its own first visit and sites); a path
+        # without options is one group of the whole pool
+        groups: list[tuple[Any, list[Item], list[str]]] = []
+        if options:
+            for o in options:
+                if o.priced:
+                    groups.append((o, self._path_items(path, q, o),  # type: ignore[arg-type]
+                                   self._admitted(path, areas, o)))  # fmt: skip
+        else:
+            items = self._path_items(path, q) if path is not None else self._code_items(q)
+            groups.append((None, items, pool))
+        member: dict[str, tuple[Any, list[Item]]] = {}
+        for o, its, adm in groups:
+            for sid in adm if its else []:
+                member.setdefault(sid, (o, its))
+        cands: list[tuple[Site, Any, list[Item]]] = []
+        without: list[str] = []
         if named:
             for sid in req.site_ids or []:
                 site = quotable.get(sid)
                 if site is None:
                     raise ValueError(f"unknown or unquotable site {sid}")
-                if items and (sid in admitted or (
-                    site.children_only and self._admits(site, path, areas))):  # fmt: skip
-                    cands.append(site)  # D27: a children-only site only when named
+                if sid in member:
+                    cands.append((site, *member[sid]))
+                    continue
+                kid = None  # D27: a children-only site only when named
+                if site.children_only:
+                    for o, its, _ in groups:
+                        if its and (o is None or self.option_of(site, path) is o) and \
+                                self._admits(site, path, areas, o):  # fmt: skip
+                            kid = (o, its)
+                            break
+                if kid:
+                    cands.append((site, *kid))
                 else:
                     without.append(sid)
         else:
-            ok = set(admitted) if items else set()
-            cands = [quotable[sid] for sid in admitted] if items else []
+            cands = [(quotable[sid], o, its) for o, its, adm in groups if its for sid in adm]
+            unpriced = {sid for sid in pool if path is not None and options and (
+                (o := self.option_of(quotable[sid], path)) is not None and not o.priced)}
             without = sorted(sid for sid, s in quotable.items()
-                             if sid not in ok and not s.children_only)  # fmt: skip
+                             if sid not in member and sid not in unpriced
+                             and not s.children_only)  # fmt: skip
         origin = req.near if req.near is not None else self.origin
-        dist = {s.id: round(_km(origin, s), 2) for s in cands}
-        if req.near is not None:  # C2: the max_sites closest admitted sites
-            cands = sorted(cands, key=lambda s: (dist[s.id], s.id))[: req.max_sites]
+        dist = {c[0].id: round(_km(origin, c[0]), 2) for c in cands}
+        if req.near is not None:  # C2: the max_sites closest admitted sites (per option, C4b)
+            kept: list[tuple[Site, Any, list[Item]]] = []
+            for o, _, _ in groups:
+                mine = [c for c in cands if c[1] is o]
+                kept += sorted(mine, key=lambda c: (dist[c[0].id], c[0].id))[: req.max_sites]
+            cands = kept
 
         fresh_cache: dict[str, Freshness] = {}
 
@@ -1927,17 +2072,29 @@ class Engine:
                 fresh_cache[sid] = self.freshness(self._meta(sid, q), as_of)
             return fresh_cache[sid]
 
-        built = [self._site_quote(site, items, admitted, q, fresh) for site in cands]
+        built = [self._site_quote(site, its, pool, q, fresh, o) for site, o, its in cands]
         for sq in built:
             sq["distance_km"] = dist[sq["site"]["site_id"]]
-        if req.near is not None or named:
-            ordering = "rank"
+        opt_index = {o.id: i for i, o in enumerate(options)}
+
+        def rank(sq: Json) -> tuple:
+            h = sq["headline"]
+            return (h["missing"], h["comparable"] if h["comparable"] is not None else math.inf,
+                    sq["distance_km"] if req.near is not None else 0.0,
+                    -h["real_steps"], sq["site"]["name"], sq["site"]["site_id"])  # fmt: skip
+
+        if options:  # C4b: option A then B; within one, distance (default) or price
+            by = req.order_by or "distance"
+            ordering = f"option_then_{by}"
 
             def order(sq: Json) -> tuple:
-                h = sq["headline"]
-                return (h["missing"], h["comparable"] if h["comparable"] is not None else math.inf,
-                        sq["distance_km"] if req.near is not None else 0.0,
-                        -h["real_steps"], sq["site"]["name"], sq["site"]["site_id"])  # fmt: skip
+                head = (opt_index[sq["option_id"]],)
+                if by == "price":
+                    return head + rank(sq)
+                return head + (sq["distance_km"], sq["site"]["name"], sq["site"]["site_id"])
+        elif req.near is not None or named:
+            ordering = "rank"
+            order = rank
         else:
             ordering = "kind_then_distance"  # P7: no "best value overall"
 
@@ -1949,10 +2106,14 @@ class Engine:
         self._elsewhere(built)
         spreads = self._chain_spreads(built)
         if req.near is None and not named:  # item 9: summaries for all, receipts for the first N
-            for sq in built[req.full_receipts :]:
-                sq["receipt"] = None
-                sq["other_payers"] = []
-        used = self._used_sources(built)
+            seen: dict[Any, int] = defaultdict(int)
+            for sq in built:  # C4b: the first N of each option
+                seen[sq["option_id"]] += 1
+                if seen[sq["option_id"]] > req.full_receipts:
+                    sq["receipt"] = None
+                    sq["other_payers"] = []
+        er = self._er_reference(q, origin) if path is not None else None
+        used = self._used_sources(built) | (self._walk_sources(er) if er else set())
         sources = {}
         for sid in sorted(used):
             m = self._meta(sid, q)
@@ -1976,6 +2137,10 @@ class Engine:
             notices.append("medicare_advantage_is_insurance")
         if spreads:
             notices.append("chain_price_spread")
+        opts = [self._option_summary(o, built) for o in options]
+        referral = set(req.answers.get("Q14", [])) & set(self.cfg["referral_answers"])
+        if referral and any(o["specialist"] and o["site_count"] for o in opts):
+            notices.append("hmo_referral_for_specialist")  # C4b 3c: at the top, not in a receipt
         body = {
             "payment": req.payment.model_dump(mode="json"),
             "payment_label": self._payment_label(q),
@@ -2003,6 +2168,8 @@ class Engine:
             "sites_without_service": without,
             "copy_keys": COPY_KEYS if path is not None else [],
             "notices": notices,
+            "options": opts,
+            "er_reference": er,
         }  # fmt: skip
         return QuoteResponse.model_validate(_public(body))
 
@@ -2013,7 +2180,7 @@ class Engine:
         return dict(self.cfg["payment_labels"][q.kind])
 
     def _site_quote(self, site: Site, items: list[Item], admitted: list[str], q: Req,
-                    fresh: Callable[[str], Freshness]) -> Json:  # fmt: skip
+                    fresh: Callable[[str], Freshness], option: Any | None = None) -> Json:  # fmt: skip
         lines = self._site_lines(site, items, q)
         for ln in lines:  # P8 first (on the site's own rows), then P5 for what is still missing
             self._gate(site, ln, q)
@@ -2029,6 +2196,7 @@ class Engine:
         t = totals
         return {
             "site": self._summary(site, src, label),
+            "option_id": option.id if option is not None else None,
             "headline": {
                 "likely_low": t["likely"]["low"] if t["likely"] else None,
                 "likely_high": t["likely"]["high"] if t["likely"] else None,
@@ -2039,11 +2207,186 @@ class Engine:
                 "real_steps": t["real_steps"],
                 "might_add": t["might_add"],
             },  # fmt: skip
+            "headline_range": self._headline_range(steps, lines, any(it.entry for it in items)),
             "steps": steps,
             "distance_km": None,
             "receipt": {"lines": lines, "totals": totals},
             "other_payers": self._other_payers(hs, lines, q) if hs else [],
         }
+
+    # ------------------------------------------------------------------ headline range (C4b)
+
+    @staticmethod
+    def _step_fig(st: Json) -> tuple[float, float] | None:
+        """A step's (low, high) for the headline: this site's own price or estimate, or the
+        elsewhere range when this site has no evidence it does it; a flat-rate step adds $0."""
+        if st["figure"] == "none":
+            return None
+        return (st["low"], st["high"])
+
+    def _partial_visit(self, lns: list[Json]) -> tuple[float, float] | None:
+        """C4b 3b: a self-pay hospital visit whose facility fee is published and whose doctor fee
+        has no public source: 'from $X', the doctor bills separately."""
+        once = [ln for ln in lns if ln["unit"] == "once" and not ln["ai_suggested"]]
+        priced = [ln for ln in once if self._counts(ln)]
+        rest = [ln for ln in once if ln not in priced]
+        if not priced or not rest or not all(
+            ln["cell"] is not None and ln["cell"]["kind"] == "no_source"
+            and ln["component"] == "professional" for ln in rest
+        ):  # fmt: skip
+            return None
+        return (round(sum(ln["cell"]["low"] for ln in priced), 2),
+                round(sum(ln["cell"]["high"] for ln in priced), 2))  # fmt: skip
+
+    def _headline_range(self, steps: list[Json], lines: list[Json], has_entry: bool) -> Json | None:
+        """C4b item 1 (Austin 2026-10-25): the headline is a range for the certain and likely
+        steps. Low = the sum of their lows, high = the sum of their highs (this site's own price,
+        or the elsewhere range where it does not do the step). Three subtotals for the breakdown:
+        visit_only (the first visit, every bill), with_likely (= the headline), with_possible
+        (+ possible and rare steps; within an exclusive_group only the dearest counts). Possible
+        steps are listed one by one in may_also_order, never in the headline."""
+        real = [st for st in steps if not st["_ai"]]
+        base = [st for st in real if st["_entry"]] if has_entry else [
+            st for st in real if st["likelihood"] == "certain"]  # manual picks: what was picked
+        if not base:
+            return None
+        lns: dict[str, list[Json]] = defaultdict(list)
+        for ln in lines:
+            lns[self._step_key(ln)].append(ln)
+        vlo = vhi = 0.0
+        from_only = False
+        est = False
+        for st in base:
+            f = self._step_fig(st)
+            if f is None:
+                f = self._partial_visit(lns[st["key"]])
+                if f is None:
+                    return None
+                from_only = True
+            est = est or st["figure"] in ("estimate", "elsewhere")
+            vlo, vhi = vlo + f[0], vhi + f[1]
+        rest = [st for st in real if st not in base]
+
+        def tier(sts: list[Json], exclusive: bool) -> Json:
+            best: dict[str, Json] = {}
+            if exclusive:
+                for st in sts:
+                    g, f = st["_excl"], self._step_fig(st)
+                    if g and f is not None and (g not in best or f[1] > best[g]["high"]):
+                        best[g] = st
+            lo, hi, out = vlo, vhi, {"step_keys": [], "includes": [], "not_priced": [],
+                                      "alternatives": [], "estimated": est}  # fmt: skip
+            for st in sts:
+                f = self._step_fig(st)
+                if f is None:
+                    out["not_priced"].append(st["plain_name"])
+                elif exclusive and st["_excl"] and best[st["_excl"]] is not st:
+                    out["alternatives"].append(st["plain_name"])
+                else:
+                    lo, hi = lo + f[0], hi + f[1]
+                    out["step_keys"].append(st["key"])
+                    out["includes"].append(st["plain_name"])
+                    out["estimated"] = out["estimated"] or st["figure"] in ("estimate", "elsewhere")
+            return {"low": round(lo, 2), "high": round(hi, 2), **out}
+
+        likely = [st for st in rest if st["likelihood"] in ("certain", "likely")]
+        possible = [st for st in rest if st["likelihood"] in ("possible", "rare")]
+        visit = {"low": round(vlo, 2), "high": round(vhi, 2), "step_keys": [], "includes": [],
+                 "not_priced": [], "alternatives": [], "estimated": est}  # fmt: skip
+        with_likely = tier(likely, exclusive=False)
+        with_possible = tier(likely + possible, exclusive=True)
+        return {
+            "low": with_likely["low"], "high": with_likely["high"],
+            "includes": list(with_likely["includes"]),
+            "from_only": from_only,
+            "note_keys": ["headline.doctor_bills_separately"] if from_only else [],
+            "visit_step_keys": [st["key"] for st in base],
+            "visit_only": visit, "with_likely": with_likely, "with_possible": with_possible,
+            "may_also_order": [
+                {"step_key": st["key"], "plain_name": st["plain_name"], "why": st["_why"],
+                 "low": f[0] if (f := self._step_fig(st)) else None,
+                 "high": f[1] if f else None, "figure": st["figure"],
+                 "exclusive_group": st["_excl"]}
+                for st in possible
+            ],
+        }  # fmt: skip
+
+    def _option_summary(self, o: Any, built: list[Json]) -> Json:
+        """C4b: one entry option over its sites in this response: each subtotal's min low ..
+        max high, the plain names any site includes, and the cheapest site (lowest headline low,
+        ties by distance; Austin: 'the cheapest place to see a doctor for this')."""
+        mine = [sq for sq in built if sq["option_id"] == o.id]
+        ranged = [sq for sq in mine if sq["headline_range"] is not None]
+
+        def span(key: str) -> Json | None:
+            vals = [sq["headline_range"][key] for sq in ranged]
+            if not vals:
+                return None
+            names: list[str] = []
+            for v in vals:
+                names += [n for n in v["includes"] if n not in names]
+            return {"low": min(v["low"] for v in vals), "high": max(v["high"] for v in vals),
+                    "includes": names}  # fmt: skip
+
+        cheapest = min(ranged, key=lambda sq: (sq["headline_range"]["low"], sq["distance_km"],
+                                               sq["site"]["site_id"]), default=None)  # fmt: skip
+        head = span("with_likely")
+        return {
+            "id": o.id, "label": o.label.model_dump(mode="json"), "visit_step": o.visit_step,
+            "specialist": o.specialist, "priced": o.priced, "missing_reason": o.missing_reason,
+            "site_count": len(mine), "sites_with_range": len(ranged),
+            "low": head["low"] if head else None, "high": head["high"] if head else None,
+            "includes": head["includes"] if head else [],
+            "visit_only": span("visit_only"), "with_likely": head,
+            "with_possible": span("with_possible"),
+            "cheapest_site_id": cheapest["site"]["site_id"] if cheapest else None,
+        }  # fmt: skip
+
+    # ------------------------------------------------------------------ ER reference (C4b 7)
+
+    def _er_reference(self, q: Req, origin: Any) -> Json:
+        """C4b item 7: what the nearest hospitals' emergency rooms bill for an ED visit, levels
+        3-5 (facility + doctor), under this payment. Response level only: never ranked, never a
+        site's price. Austin: 'the ER visit alone usually costs much more, before any tests'."""
+        cfg = self.cfg["er_reference"]
+        codes = list(cfg["codes"])
+        base = {"note_key": "er.visit_alone_costs_more", "codes": codes, "low": None,
+                "high": None, "includes_doctor": False, "hospitals": []}  # fmt: skip
+        if not any(c in self.store.codes for c in codes):
+            return {**base, "status": "not_loaded"}
+        near: dict[str, tuple[float, Site]] = {}
+        for s in self.reg.sites.values():
+            if s.listing_status == "registry_only" or s.children_only:
+                continue
+            if self._site_hospital_source(s) is None or s.site_type != "hospital_outpatient":
+                continue
+            d = round(_km(origin, s), 2)
+            ent = s.hospital_entity_id or s.id
+            if ent not in near or (d, s.id) < (near[ent][0], near[ent][1].id):
+                near[ent] = (d, s)
+        hosp = sorted(near.values(), key=lambda t: (t[0], t[1].id))[: int(cfg["hospitals"])]
+        it = Item(stem="er", code=codes[0], unit="once", plain="ER visit", tech="ED visit",
+                  why=None, likelihood="certain", tier_basis="picked", step_id=None, gloss=[],
+                  learn=[])  # fmt: skip
+        out, lows, highs, doctor_all = [], [], [], True
+        for d, s in hosp:
+            levels = []
+            for code in codes:
+                fac = self._facility_cell(s, code, q, "er")[0]
+                doc = self._doctor_cell(s, it, code, "", q, hospital_line=True)[0]
+                levels.append({"code": code, "facility": fac, "doctor": doc})
+                if fac["kind"] == "money":
+                    dm = doc if doc["kind"] == "money" else None
+                    doctor_all = doctor_all and dm is not None
+                    lows.append((code, fac["low"] + (dm["low"] if dm else 0)))
+                    highs.append((code, fac["high"] + (dm["high"] if dm else 0)))
+            out.append({"site_id": s.id, "name": s.name, "distance_km": d, "levels": levels})
+        if not lows:
+            return {**base, "status": "not_published", "hospitals": out}
+        return {**base, "status": "priced", "hospitals": out,
+                "low": round(min(v for _, v in lows), 2),
+                "high": round(max(v for _, v in highs), 2),
+                "includes_doctor": doctor_all}  # fmt: skip
 
     def _elsewhere(self, site_quotes: list[Json]) -> None:
         """'Available elsewhere': a line with no number here lists the cheapest other sites in
@@ -2051,8 +2394,8 @@ class Engine:
         offers: dict[tuple, list[tuple[float, Json, Json]]] = defaultdict(list)
         for sq in site_quotes:
             for ln in sq["receipt"]["lines"]:
-                if not self._counts(ln) or ln["ai_suggested"] or ln["estimate"]:
-                    continue  # a reference-only, unusual or estimated number is not an offer
+                if not self._counts(ln) or ln["ai_suggested"] or ln["estimate"] or ln.get("_flat"):
+                    continue  # a reference-only, unusual, estimated or flat number is not an offer
                 if ln["at"] == "this_site" and ln["availability"] == "offered":
                     k = (self._step_key(ln), ln["component"], ln["codes"][0], ln["modifier"])
                     offers[k].append((ln["cell"]["low"], sq["site"], ln["cell"]))
@@ -2084,7 +2427,8 @@ class Engine:
             if not chain:
                 continue
             for ln in sq["receipt"]["lines"]:
-                if ln["at"] == "this_site" and self._counts(ln) and not ln["estimate"]:
+                if (ln["at"] == "this_site" and self._counts(ln) and not ln["estimate"]
+                        and not ln.get("_flat")):  # fmt: skip
                     k = (chain, f"{self._step_key(ln)}/{ln['component']}/{ln['codes'][0]}/"
                          f"{ln['modifier'] or ''}")  # fmt: skip
                     by[k].append((round(self._central(ln), 2), site.id))
@@ -2097,8 +2441,17 @@ class Engine:
                             "ratio": round(hi[0] / lo[0], 2)})  # fmt: skip
         return out
 
+    @classmethod
+    def _used_sources(cls, site_quotes: list[Json]) -> set[str]:
+        used: set[str] = set()
+        for sq in site_quotes:
+            if sq["site"]["price_source_id"]:
+                used.add(sq["site"]["price_source_id"])
+            used |= cls._walk_sources(sq)
+        return used
+
     @staticmethod
-    def _used_sources(site_quotes: list[Json]) -> set[str]:
+    def _walk_sources(obj: Any) -> set[str]:
         used: set[str] = set()
 
         def walk(o: Any) -> None:
@@ -2114,8 +2467,5 @@ class Engine:
                 for v in o:
                     walk(v)
 
-        for sq in site_quotes:
-            if sq["site"]["price_source_id"]:
-                used.add(sq["site"]["price_source_id"])
-            walk(sq)
+        walk(obj)
         return used

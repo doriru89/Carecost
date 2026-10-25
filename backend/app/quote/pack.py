@@ -122,7 +122,7 @@ def hospital_rows(build: Path, codes: set[str]) -> tuple[list[Row], dict[str, So
 
 def tic_rows(
     tic_root: Path, codes: set[str]
-) -> tuple[Iterator[Row], dict[str, SourceMeta], tuple[dict, dict, dict], str | None]:
+) -> tuple[Iterator[Row], dict[str, SourceMeta], tuple[dict, dict, dict, dict], str | None]:
     import pyarrow.parquet as pq
 
     nets = {n.source_id: n for n in load_networks()}
@@ -156,11 +156,13 @@ def tic_rows(
 
     npi_sets: dict[int, tuple[str, ...]] = {}
     census: dict[str, set[str]] = {}
+    flags: dict[str, frozenset[str]] = {}  # C4b: packed row uid -> A6 flags of its bunch
     stats = {
         "tic_rows_read": 0,
         "tic_rows_kept": 0,
         "tic_rows_packed": 0,
         "tic_placeholder_npis_dropped": 0,
+        "tic_packed_rows_flagged": 0,
     }
 
     def gen() -> Iterator[Row]:
@@ -170,6 +172,12 @@ def tic_rows(
                               filters=[("code", "in", sorted(codes))])  # fmt: skip
             meta = sources[sid]
             stats["tic_rows_read"] += t.num_rows
+            # A6 (O's audit at the source): flags.parquet = row_id -> '|'-joined flags
+            fl: dict[str, str] = {}
+            if (sd / "flags.parquet").exists():
+                ft = pq.read_table(sd / "flags.parquet", columns=["row_id", "flags"])
+                fl = dict(zip(ft.column("row_id").to_pylist(), ft.column("flags").to_pylist()))
+            bflags: dict[tuple, set[str]] = {}
             bunch: dict[tuple, tuple[Row, set[tuple[int, int]]]] = {}
             for d in t.to_pylist():
                 if d["excluded"] or d["modifiers"] not in PACKED_MODIFIERS:
@@ -179,6 +187,8 @@ def tic_rows(
                 r = make_row(d)
                 k = tuple(getattr(r, c) for c in AGG_KEY)
                 grp = (d["tic_provider_group_id"] or 0, d["tic_group_ordinal"] or 0)
+                if fl.get(r.row_id):
+                    bflags.setdefault(k, set()).update(fl[r.row_id].split("|"))
                 have = bunch.get(k)
                 if have is None:
                     bunch[k] = (r, {grp})
@@ -198,7 +208,11 @@ def tic_rows(
                     stats["tic_placeholder_npis_dropped"] += len(got) - len(keep)
                     got = keep or None
                 gnpis[k2] = got
-            for r, grps in sorted(bunch.values(), key=lambda b: (b[0].stage_row, b[0].row_id)):
+            for k, (r, grps) in sorted(bunch.items(),
+                                       key=lambda kv: (kv[1][0].stage_row, kv[1][0].row_id)):  # fmt: skip
+                if k in bflags:  # one flagged row in the bunch flags the packed row
+                    flags[r.uid] = frozenset(bflags[k])
+                    stats["tic_packed_rows_flagged"] += 1
                 npis: set[str] | None = set()
                 for grp in grps:
                     got = gnpis.get(grp)
@@ -216,7 +230,7 @@ def tic_rows(
                 stats["tic_rows_packed"] += 1
                 yield replace(r, npi_set=set_id)
 
-    return gen(), sources, (npi_sets, census, stats), release
+    return gen(), sources, (npi_sets, census, stats, flags), release
 
 
 def gov_rows(rows_file: Path, sources_yaml: Path, codes: set[str]):
@@ -324,7 +338,7 @@ def main() -> None:
         raise SystemExit("--hospital-build and --tic-root (or --from-extract)")
     codes = priced_codes()
     hrows, sources = hospital_rows(a.hospital_build, codes)
-    trows, tsources, (npi_sets, census, stats), release = tic_rows(a.tic_root, codes)
+    trows, tsources, (npi_sets, census, stats, flags), release = tic_rows(a.tic_root, codes)
     sources.update(tsources)
     rows: list[Row] = list(hrows)
     if a.gov_root:
@@ -345,7 +359,8 @@ def main() -> None:
     loaded = target_codes()
     status = refresh_status([a.hospital_build, a.tic_root, a.gov_root])
     n = write_pack(a.out, rows=all_rows(), sources=sources, version=version, codes=loaded,
-                   npi_sets=npi_sets, census_tins=census, refresh_status=status)  # fmt: skip
+                   npi_sets=npi_sets, census_tins=census, refresh_status=status,
+                   flags=flags)  # fmt: skip
     # (npi_sets / census are filled while write_pack streams the TiC rows, before it writes them)
     mb = a.out.stat().st_size / 1e6
     by_kind: dict[str, int] = {}

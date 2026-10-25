@@ -186,12 +186,19 @@ class QuoteRequest(_Strict):
         le=MAX_SITES,
         description="With `near`: at most this many (the closest) sites. Ignored without `near`",
     )
+    order_by: Literal["distance", "price"] | None = Field(
+        default=None,
+        description="C4b (D-UI-1): for a care path with entry options, sites are grouped by option "
+        "and ordered by distance (None = distance) or by price (rank_key). Paths without options "
+        "keep `rank` (with `near` / site_ids) or `kind_then_distance`",
+    )
     full_receipts: int = Field(
         default=DEFAULT_FULL_RECEIPTS,
         ge=0,
         le=MAX_SITES,
-        description="C3: without `near` and `site_ids`, the first N sites carry their full receipt; "
-        "the rest carry the summary (headline + steps) and are fetched by `site_ids`",
+        description="C3: without `near` and `site_ids`, the first N sites carry their full receipt "
+        "(C4b: the first N of each entry option); the rest carry the summary (headline + steps) "
+        "and are fetched by `site_ids`",
     )
 
     @model_validator(mode="after")
@@ -257,6 +264,7 @@ ExcludedReason = Literal[
     "reference_only",  # doctor-fee rung 7 or 8
     "availability_unknown",  # C3 R2: no evidence this site does it (never summed)
     "unusual",  # C3 P8: outside 1/3x-3x of the peer median (being checked)
+    "flat_visit_rate",  # C4b: the insurer pays one amount per visit; counted once, on the visit
 ]
 
 PriceNote = Literal[
@@ -264,6 +272,8 @@ PriceNote = Literal[
     "price.anesthesia_base_units_only",
     "price.group_consistently_higher",
     "price.group_consistently_lower",
+    "price.flat_visit_rate",
+    "price.several_rates_same_doctors",
 ]
 """Fixed explanation keys for how a line's number was made (copy lives with the glossary).
 national_unadjusted: a Medicare OPPS / ASC national rate; a Boston facility is paid this times a
@@ -271,7 +281,11 @@ wage adjustment we have not loaded. anesthesia_base_units_only: the anesthesia f
 only; the time units depend on the case and are not included. group_consistently_higher /
 lower (Austin 2026-10-25, O contract_level): outside 1/3x-3x of its peers, but the same group is
 >= 2x (<= 0.5x) its peers on >= 5 other codes in the same network: its contract, summed, with
-"This group's prices are consistently higher (lower) than similar places here"."""
+"This group's prices are consistently higher (lower) than similar places here". C4b:
+flat_visit_rate: "This insurer pays this place one amount per visit; the test may be included"
+(the amount is the visit's, counted once, on the visit; this line is never summed).
+several_rates_same_doctors: the insurer's file lists several rates for the same doctors at the
+same kind of place (A6 flag same_npi_pos_multi_rate); the line shows the whole range."""
 
 SiteKind = Literal["urgent_care", "office", "hospital_outpatient", "ambulatory_surgery_center"]
 """X2: the kind of site a peer set is drawn from (engine.yaml: urgent care by site_type, else by
@@ -284,10 +298,15 @@ KIND_ORDER: dict[str, int] = {
 
 PeerScope = Literal["same_kind", "same_system"]
 
-AvailabilityReason = Literal["insurer_lists_rate", "no_evidence", "site_says_not_offered"]
+AvailabilityReason = Literal[
+    "insurer_lists_rate", "price_file_lists_rate", "no_evidence", "site_says_not_offered"
+]
 """Why a line is not ``offered`` (C3 R1, P6). insurer_lists_rate: "Your insurer lists a rate for
 this group, but this place doesn't say it offers this. Call to check." no_evidence: nothing says
-this place does it. site_says_not_offered: the site's own page says it does not (site facts)."""
+this place does it. site_says_not_offered: the site's own page says it does not (site facts).
+price_file_lists_rate (C4b 3e, self-pay / Medicare / MassHealth): "An insurer's price file lists
+this group for it, but this place doesn't say it offers this. Call to check." (not "your
+insurer": the person is not paying with insurance)."""
 
 TierBasis = Literal["guideline", "plan_rule", "our_judgment", "picked"]
 """P11: what the line's likelihood rests on, so the gradient does not look like data.
@@ -578,6 +597,10 @@ class ReceiptLine(_Strict):
             raise ValueError(f"{self.line_id}: national_unadjusted is a Medicare OPPS / ASC rate")
         if self.doctor_fee is not None and (self.doctor_fee.rung == 6) != estimated:
             raise ValueError(f"{self.line_id}: doctor-fee rung 6 <=> an estimated cell")
+        if "price.flat_visit_rate" in self.price_notes and (
+            self.in_total or not isinstance(self.cell, Money)
+        ):  # fmt: skip
+            raise ValueError(f"{self.line_id}: a flat visit rate is shown, never summed (C4b)")
         return self
 
 
@@ -716,11 +739,16 @@ class Receipt(_Strict):
         missing = {ln.line_id for ln in self.lines if not ln.in_total} - excluded
         if missing:
             raise ValueError(f"lines neither in the total nor excluded: {sorted(missing)}")
+        flat = {e.line_id for e in self.totals.excluded if e.reason == "flat_visit_rate"}
+        for ln in self.lines:
+            if (ln.line_id in flat) != ("price.flat_visit_rate" in ln.price_notes):
+                raise ValueError(f"{ln.line_id}: excluded as flat_visit_rate <=> its price note")
         partial = any(
             ln.likelihood in ("certain", "likely")
             and ln.availability != "not_offered"
             and not ln.in_total
             and not ln.ai_suggested
+            and ln.line_id not in flat  # C4b: its amount is the visit's, already summed
             for ln in self.lines
         )
         if self.totals.complete == partial:
@@ -797,6 +825,9 @@ class SiteSummary(_Strict):
     chain_id: str | None = Field(
         default=None, pattern=ID_RE, description="C3 R12: the chain whose posted prices apply here"
     )
+    chain_name: str | None = Field(
+        default=None, description="C4b: the chain's name as a person reads it, e.g. 'AFC Urgent Care'"
+    )
     children_only: bool = Field(default=False, description="Pediatric-only site (D27)")
     data_notices: list[DataNotice] = Field(
         default_factory=list,
@@ -817,6 +848,7 @@ class StepSummary(_Strict):
 
     key: str = Field(description="care path step id, or the codes of a manual pick")
     step_id: str | None = Field(default=None, pattern=ID_RE)
+    plain_name: str = Field(default="", description="C4b: the step's plain name (map label)")
     likelihood: Likelihood
     availability: Literal["offered", "not_offered", "unknown"]
     figure: StepFigure
@@ -832,6 +864,11 @@ class StepSummary(_Strict):
     line_ids: list[str]
     elsewhere: PeerRange | None = Field(
         default=None, description="P4: the step's price at sites that do it (same payer)"
+    )
+    flat_visit_rate: bool = Field(
+        default=False,
+        description="C4b: this insurer pays this place one amount per visit and lists it on this "
+        "step's code too: the step adds $0 here (low = high = 0), 'the test may be included'",
     )
 
     @model_validator(mode="after")
@@ -849,6 +886,85 @@ class StepSummary(_Strict):
             raise ValueError(f"{self.key}: a step with a figure is not missing")
         if self.in_total and self.availability != "offered":
             raise ValueError(f"{self.key}: only an offered step is summed")
+        if self.flat_visit_rate and (self.figure != "own" or self.low != 0 or self.high != 0
+                                     or self.in_total):  # fmt: skip
+            raise ValueError(f"{self.key}: a flat-rate step is the site's own, at $0, unsummed")
+        return self
+
+
+class Subtotal(_Strict):
+    """C4b (D-UI-2): one scenario of the breakdown. low / high = the first visit's low / high plus
+    the low / high of every step in ``step_keys`` (its StepSummary figure: this site's own price,
+    an estimate, or the elsewhere range; a flat-rate step adds $0)."""
+
+    low: float = Field(ge=0)
+    high: float = Field(ge=0)
+    step_keys: list[str] = Field(description="the steps counted on top of the first visit")
+    includes: list[str] = Field(
+        description="their plain names, in the same order: 'includes: belly CT, blood tests'"
+    )
+    not_priced: list[str] = Field(
+        default_factory=list, description="steps of this scenario with no figure (not counted)"
+    )
+    alternatives: list[str] = Field(
+        default_factory=list,
+        description="exclusive_group members left out because a dearer alternative is counted",
+    )
+    estimated: bool = Field(description="an estimate or an elsewhere range is in it")
+
+    @model_validator(mode="after")
+    def _shape(self) -> Subtotal:
+        if self.low > self.high or len(self.step_keys) != len(self.includes):
+            raise ValueError("Subtotal: low <= high and one plain name per counted step")
+        return self
+
+
+class MayAlsoOrder(_Strict):
+    """C4b (Austin 2026-10-25): a possible step, listed on its own under the headline: 'the doctor
+    may also order'. Never in the headline range."""
+
+    step_key: str
+    plain_name: str
+    why: str | None = Field(description="its plain purpose, from the care path")
+    low: float | None = Field(ge=0)
+    high: float | None = Field(ge=0)
+    figure: Literal["own", "estimate", "elsewhere", "none"]
+    exclusive_group: str | None = None
+
+
+class HeadlineRange(_Strict):
+    """C4b item 1 (Austin 2026-10-25): what seeing a doctor for this probably costs here. The range
+    covers the certain and likely steps only: low = the sum of their lows, high = the sum of their
+    highs (this site's own price, or the elsewhere range where it does not do the step). Possible
+    steps are not in it: they are listed in ``may_also_order``. Three subtotals for the breakdown:
+    visit_only (the first visit with all its bills), with_likely (= this range), with_possible
+    (+ possible steps; of one exclusive_group only the dearest member counts)."""
+
+    low: float = Field(ge=0)
+    high: float = Field(ge=0)
+    includes: list[str] = Field(description="= with_likely.includes")
+    from_only: bool = Field(
+        description="C4b 3b: the visit's doctor fee has no public source (self-pay at a hospital "
+        "clinic): show 'from $low', with note_keys"
+    )
+    note_keys: list[Literal["headline.doctor_bills_separately"]] = Field(default_factory=list)
+    visit_step_keys: list[str] = Field(min_length=1, description="the first visit's step(s)")
+    visit_only: Subtotal
+    with_likely: Subtotal
+    with_possible: Subtotal
+    may_also_order: list[MayAlsoOrder] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _shape(self) -> HeadlineRange:
+        v, lk, ps = self.visit_only, self.with_likely, self.with_possible
+        if (self.low, self.high, self.includes) != (lk.low, lk.high, lk.includes):
+            raise ValueError("headline_range is with_likely (Austin 2026-10-25)")
+        if v.step_keys:
+            raise ValueError("visit_only counts the first visit only")
+        if not (v.low <= lk.low <= ps.low and v.high <= lk.high <= ps.high):
+            raise ValueError("visit_only <= with_likely <= with_possible")
+        if self.from_only != bool(self.note_keys):
+            raise ValueError("from_only <=> the doctor-bills-separately note")
         return self
 
 
@@ -868,7 +984,14 @@ class Headline(_Strict):
 
 class SiteQuote(_Strict):
     site: SiteSummary
+    option_id: str | None = Field(
+        default=None, pattern=r"^[a-z]$", description="C4b: the entry option this site is in"
+    )
     headline: Headline
+    headline_range: HeadlineRange | None = Field(
+        default=None,
+        description="C4b: the range a person reads first; None when the first visit has no figure",
+    )
     steps: list[StepSummary] = Field(
         default_factory=list, description="C3 (P3): one per step of the quote, in path order"
     )
@@ -890,6 +1013,7 @@ class SiteQuote(_Strict):
             raise ValueError(f"{self.site.site_id}: duplicate step key")
         if self.headline.missing != sum(1 for st in self.steps if st.missing):
             raise ValueError(f"{self.site.site_id}: headline.missing = the missing steps")
+        self._check_range()
         if self.receipt is None:
             if self.other_payers:
                 raise ValueError(f"{self.site.site_id}: other_payers come with the receipt")
@@ -909,6 +1033,40 @@ class SiteQuote(_Strict):
             if not set(st.line_ids) <= ids:
                 raise ValueError(f"{self.site.site_id}: step {st.key} names an unknown line")
         return self
+
+    def _check_range(self) -> None:
+        """C4b: every subtotal is the first visit plus its steps' figures, exactly."""
+        hr = self.headline_range
+        if hr is None:
+            return
+        by = {st.key: st for st in self.steps}
+        for k in hr.visit_step_keys:
+            if k not in by:
+                raise ValueError(f"{self.site.site_id}: headline visit step {k} is not a step")
+        if not hr.from_only:
+            vis = [by[k] for k in hr.visit_step_keys]
+            if any(st.low is None for st in vis) or (
+                round(sum(st.low or 0 for st in vis), 2), round(sum(st.high or 0 for st in vis), 2)
+            ) != (hr.visit_only.low, hr.visit_only.high):  # fmt: skip
+                raise ValueError(f"{self.site.site_id}: visit_only is the first visit's figure")
+        for sub in (hr.with_likely, hr.with_possible):
+            for k in sub.step_keys:
+                st = by.get(k)
+                if st is None or st.low is None or k in hr.visit_step_keys:
+                    raise ValueError(f"{self.site.site_id}: subtotal step {k} has no figure")
+            lo = round(hr.visit_only.low + sum(by[k].low or 0 for k in sub.step_keys), 2)
+            hi = round(hr.visit_only.high + sum(by[k].high or 0 for k in sub.step_keys), 2)
+            if (lo, hi) != (sub.low, sub.high):
+                raise ValueError(f"{self.site.site_id}: subtotal {sub.low}-{sub.high} != visit + "
+                                 f"steps {lo}-{hi}")  # fmt: skip
+        for k in hr.with_likely.step_keys:
+            if by[k].likelihood not in ("certain", "likely"):
+                raise ValueError(f"{self.site.site_id}: the headline has only certain / likely "
+                                 f"steps, not {k}")  # fmt: skip
+        for m in hr.may_also_order:
+            st = by.get(m.step_key)
+            if st is None or st.likelihood not in ("possible", "rare"):
+                raise ValueError(f"{self.site.site_id}: may_also_order lists possible steps")
 
 
 class OurDataResponse(_Strict):
@@ -970,9 +1128,10 @@ PRICE_MATRIX: dict[str, frozenset[tuple[str, str]]] = {
 (Medicare reference) is checked separately: it is shown, never summed."""
 
 RUNGS_BY_PAYMENT: dict[str, set[int | None]] = {
-    "insurance": {1, 2, 3, 6, 7, 8},
+    # C4b 3d: rung 7 (a Medicare figure as a reference) is never sent for a non-Medicare payment
+    "insurance": {1, 2, 3, 6, 8},
     "medicare": {5},
-    "masshealth": {4, 7, 8},
+    "masshealth": {4, 8},
     "cash": {None, 6},
 }
 REFERENCE_PAIR = ("medicare_pfs", "fee_schedule")  # rung 7
@@ -1039,7 +1198,7 @@ def missing_for(sq: SiteQuote) -> int:
     return sum(1 for st in sq.steps if st.missing)
 
 
-Ordering = Literal["rank", "kind_then_distance"]
+Ordering = Literal["rank", "kind_then_distance", "option_then_distance", "option_then_price"]
 
 
 class ChainSpread(_Strict):
@@ -1058,6 +1217,90 @@ class ChainSpread(_Strict):
 class LocalLabel(_Strict):
     en: str
     zh: str
+
+
+class OptionSpan(_Strict):
+    """min low .. max high of one subtotal over an option's sites in this response."""
+
+    low: float = Field(ge=0)
+    high: float = Field(ge=0)
+    includes: list[str] = Field(description="plain names any of its sites counts, path order")
+
+
+class QuoteOption(_Strict):
+    """C4b (D-UI-3): where to go first, option A or B (e.g. urgent care vs a skin doctor), each
+    with its own range. ``priced: false`` = listed but not priced yet (no sites)."""
+
+    id: str = Field(pattern=r"^[a-z]$")
+    label: LocalLabel
+    visit_step: str | None
+    specialist: bool = Field(description="a specialist visit: an HMO may need a referral first")
+    priced: bool
+    missing_reason: str | None
+    site_count: int = Field(ge=0, description="sites of this option in this response")
+    sites_with_range: int = Field(ge=0, description="of them, with a headline_range")
+    low: float | None = Field(ge=0, description="= with_likely.low")
+    high: float | None = Field(ge=0, description="= with_likely.high")
+    includes: list[str]
+    visit_only: OptionSpan | None
+    with_likely: OptionSpan | None
+    with_possible: OptionSpan | None
+    cheapest_site_id: str | None = Field(
+        pattern=ID_RE,
+        description="Austin 2026-10-25: the site with the lowest headline low (ties: nearest)",
+    )
+
+
+ErStatus = Literal["priced", "not_published", "not_loaded"]
+
+
+class ErLevel(_Strict):
+    code: str = Field(pattern=CODE_RE, description="ED visit level (99283 = 3 ... 99285 = 5)")
+    facility: Cell
+    doctor: Cell
+
+
+class ErHospital(_Strict):
+    site_id: str = Field(pattern=ID_RE)
+    name: str
+    distance_km: float = Field(ge=0)
+    levels: list[ErLevel]
+
+
+class ErReference(_Strict):
+    """C4b item 7 (Austin: "急诊应该是一上来医生就贵"): the nearest hospitals' ER visit levels 3-5,
+    facility + doctor, under this payment. Response level only: never ranked, never a site's
+    price. low = the cheapest level-3 sum, high = the dearest level-5 sum (doctor part only where
+    it is published: includes_doctor)."""
+
+    status: ErStatus
+    note_key: Literal["er.visit_alone_costs_more"]
+    codes: list[str]
+    low: float | None = Field(ge=0)
+    high: float | None = Field(ge=0)
+    includes_doctor: bool
+    hospitals: list[ErHospital] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _shape(self) -> ErReference:
+        if (self.status == "priced") != (self.low is not None and self.high is not None):
+            raise ValueError("an ER range exactly when priced")
+        if self.low is not None and self.high is not None and self.low > self.high:
+            raise ValueError("ER low <= high")
+        if self.status == "not_loaded" and self.hospitals:
+            raise ValueError("not_loaded: the codes are not in the pack, no hospitals")
+        return self
+
+
+def _er_moneys(er: ErReference | None) -> Iterator[Money]:
+    for h in er.hospitals if er else []:
+        for lv in h.levels:
+            for c in (lv.facility, lv.doctor):
+                if isinstance(c, Money):
+                    yield c
+                elif isinstance(c, Conflict):
+                    yield c.a
+                    yield c.b
 
 
 class QuoteResponse(_Strict):
@@ -1103,8 +1346,19 @@ class QuoteResponse(_Strict):
             "masshealth_aco_may_differ",
             "medicare_advantage_is_insurance",
             "chain_price_spread",
+            "hmo_referral_for_specialist",
         ]
-    ] = Field(default_factory=list)
+    ] = Field(
+        default_factory=list,
+        description="C4b hmo_referral_for_specialist: the person's plan may need a referral (Q14) "
+        "and an option is a specialist visit: shown at the top, not inside a receipt",
+    )
+    options: list[QuoteOption] = Field(
+        default_factory=list, description="C4b: entry options A / B (empty: one option)"
+    )
+    er_reference: ErReference | None = Field(
+        default=None, description="C4b: the ER visit for comparison (care path quotes)"
+    )
 
     @model_validator(mode="after")
     def _rules(self) -> QuoteResponse:
@@ -1114,6 +1368,7 @@ class QuoteResponse(_Strict):
         _check_sources(self.sources, self.as_of)
         self._check_source_refs()
         self._check_payment_matrix()
+        self._check_er_matrix()
         self._check_totals_flags()
         self._check_ranking()
         f = [s.freshness for s in self.sources.values()]
@@ -1131,6 +1386,7 @@ class QuoteResponse(_Strict):
             raise ValueError(f"copy_keys must be {want_copy} (D33)")
         if bool(self.chain_spreads) != ("chain_price_spread" in self.notices):
             raise ValueError("notice chain_price_spread <=> chain_spreads")
+        self._check_options()
         if self.picked_by == "assistant":
             if self.care_path is not None:
                 raise ValueError("assistant picks are catalog services, never a care path")
@@ -1138,6 +1394,47 @@ class QuoteResponse(_Strict):
                        for ln in sq.receipt.lines):  # fmt: skip
                 raise ValueError("every line the assistant picked is ai_suggested")
         return self
+
+    def _check_options(self) -> None:
+        ids = [o.id for o in self.options]
+        for sq in self.sites:
+            if (sq.option_id is None) != (not self.options) or (
+                sq.option_id is not None and sq.option_id not in ids
+            ):  # fmt: skip
+                raise ValueError(f"{sq.site.site_id}: option_id names one of the options")
+        for o in self.options:
+            mine = [sq for sq in self.sites if sq.option_id == o.id]
+            if not o.priced and mine:
+                raise ValueError(f"option {o.id}: an unpriced option has no sites")
+            ranged = [sq for sq in mine if sq.headline_range is not None]
+            if (o.site_count, o.sites_with_range) != (len(mine), len(ranged)):
+                raise ValueError(f"option {o.id}: site counts")
+            if not ranged:
+                if o.low is not None or o.cheapest_site_id is not None:
+                    raise ValueError(f"option {o.id}: no range without sites that have one")
+                continue
+            lows = [sq.headline_range.low for sq in ranged]  # type: ignore[union-attr]
+            highs = [sq.headline_range.high for sq in ranged]  # type: ignore[union-attr]
+            if (o.low, o.high) != (min(lows), max(highs)):
+                raise ValueError(f"option {o.id}: range is min low .. max high over its sites")
+            best = min(ranged, key=lambda sq: (sq.headline_range.low,  # type: ignore[union-attr]
+                                               sq.distance_km or 0.0, sq.site.site_id))  # fmt: skip
+            if o.cheapest_site_id != best.site.site_id:
+                raise ValueError(f"option {o.id}: cheapest_site_id is the lowest headline low")
+        if self.ordering.startswith("option_then_"):
+            if not self.options:
+                raise ValueError("option ordering needs options")
+            pos = [ids.index(sq.option_id) for sq in self.sites]  # type: ignore[arg-type]
+            if pos != sorted(pos):
+                raise ValueError("sites are grouped by option, A first")
+            for oid in ids:
+                mine = [sq for sq in self.sites if sq.option_id == oid]
+                keys = ([rank_key(sq) for sq in mine] if self.ordering == "option_then_price"
+                        else [sq.distance_km or 0.0 for sq in mine])  # fmt: skip
+                if keys != sorted(keys):
+                    raise ValueError(f"option {oid}: sites out of {self.ordering} order")
+        elif self.options:
+            raise ValueError("a quote with options is ordered by option")
 
     def _check_source_refs(self) -> None:
         used: set[str] = set()
@@ -1158,6 +1455,18 @@ class QuoteResponse(_Strict):
                             f"{p.source_id} is {info.source_kind}"
                         )
                     used.add(p.source_id)
+        er = self.er_reference
+        for h in er.hospitals if er else []:
+            for lv in h.levels:
+                for c in (lv.facility, lv.doctor):
+                    if isinstance(c, (NotPublished, PercentOnly)):
+                        used.add(c.searched.source_id)
+        for m in _er_moneys(er):
+            for p in m.provs():
+                info = self.sources.get(p.source_id)
+                if info is None or info.source_kind != p.source_kind:
+                    raise ValueError(f"ER {p.row_ref}: source {p.source_id} not in sources")
+                used.add(p.source_id)
         if used != set(self.sources):
             missing, extra = sorted(used - set(self.sources)), sorted(set(self.sources) - used)
             raise ValueError(
@@ -1200,6 +1509,16 @@ class QuoteResponse(_Strict):
                                 f"{ln.line_id}: {p.row_ref} is {p.payer_id}'s rate, not {payer}'s"
                             )
 
+    def _check_er_matrix(self) -> None:
+        kind, payer = self.payment.kind, _payer_of(self.payment)
+        for m in _er_moneys(self.er_reference):
+            pair = (m.prov.source_kind.value, m.basis.value)
+            if pair not in PRICE_MATRIX[kind] or m.basis == PriceBasis.estimate:
+                raise ValueError(f"ER: {pair} is not a {kind} price")
+            for p in m.provs():
+                if m.basis == PriceBasis.negotiated and p.payer_id != payer:
+                    raise ValueError(f"ER: {p.row_ref} is {p.payer_id}'s rate, not {payer}'s")
+
     def _check_totals_flags(self) -> None:
         for sq in self.sites:
             t = sq.receipt.totals.likely if sq.receipt else None
@@ -1236,6 +1555,9 @@ class QuoteResponse(_Strict):
             keys = [rank_key(sq) for sq in self.sites]
             if keys != sorted(keys):
                 raise ValueError("sites must be ordered by rank_key: missing steps, then price")
+        elif self.ordering.startswith("option_then_"):
+            if self.origin is None:
+                raise ValueError("option ordering needs its origin")  # order: _check_options
         else:
             if self.origin is None:
                 raise ValueError("kind_then_distance needs its origin")

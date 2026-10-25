@@ -166,15 +166,47 @@ export interface ElsewhereOption {
   cell: Money | NotPublished | NotLoaded | NoSource | PercentOnly | Conflict;
 }
 
+export interface ErHospital {
+  site_id: string;
+  name: string;
+  distance_km: number;
+  levels: ErLevel[];
+}
+
+export interface ErLevel {
+  /**
+   * ED visit level (99283 = 3 ... 99285 = 5)
+   */
+  code: string;
+  facility: Money | NotPublished | NotLoaded | NoSource | PercentOnly | Conflict;
+  doctor: Money | NotPublished | NotLoaded | NoSource | PercentOnly | Conflict;
+}
+
+/**
+ * C4b item 7 (Austin: "急诊应该是一上来医生就贵"): the nearest hospitals' ER visit levels 3-5,
+ * facility + doctor, under this payment. Response level only: never ranked, never a site's
+ * price. low = the cheapest level-3 sum, high = the dearest level-5 sum (doctor part only where
+ * it is published: includes_doctor).
+ */
+export interface ErReference {
+  status: "priced" | "not_published" | "not_loaded";
+  note_key: "er.visit_alone_costs_more";
+  codes: string[];
+  low: number | null;
+  high: number | null;
+  includes_doctor: boolean;
+  hospitals: ErHospital[];
+}
+
 export interface ExcludedLine {
   line_id: string;
-  reason: "possible_tier" | "ai_suggested" | "no_dollar_amount" | "conflict" | "not_offered_here" | "repeats" | "reference_only" | "availability_unknown" | "unusual";
+  reason: "possible_tier" | "ai_suggested" | "no_dollar_amount" | "conflict" | "not_offered_here" | "repeats" | "reference_only" | "availability_unknown" | "unusual" | "flat_visit_rate";
 }
 
 /**
  * why a line is not summed
  */
-export type ExcludedReason = "possible_tier" | "ai_suggested" | "no_dollar_amount" | "conflict" | "not_offered_here" | "repeats" | "reference_only" | "availability_unknown" | "unusual";
+export type ExcludedReason = "possible_tier" | "ai_suggested" | "no_dollar_amount" | "conflict" | "not_offered_here" | "repeats" | "reference_only" | "availability_unknown" | "unusual" | "flat_visit_rate";
 
 /**
  * How current one source is, from two sides that must never be confused (Austin, 2026-10-24).
@@ -232,6 +264,36 @@ export interface Headline {
   comparable: number | null;
   real_steps: number;
   might_add: MightAdd | null;
+}
+
+/**
+ * C4b item 1 (Austin 2026-10-25): what seeing a doctor for this probably costs here. The range
+ * covers the certain and likely steps only: low = the sum of their lows, high = the sum of their
+ * highs (this site's own price, or the elsewhere range where it does not do the step). Possible
+ * steps are not in it: they are listed in ``may_also_order``. Three subtotals for the breakdown:
+ * visit_only (the first visit with all its bills), with_likely (= this range), with_possible
+ * (+ possible steps; of one exclusive_group only the dearest member counts).
+ */
+export interface HeadlineRange {
+  low: number;
+  high: number;
+  /**
+   * = with_likely.includes
+   */
+  includes: string[];
+  /**
+   * C4b 3b: the visit's doctor fee has no public source (self-pay at a hospital clinic): show 'from $low', with note_keys
+   */
+  from_only: boolean;
+  note_keys: "headline.doctor_bills_separately"[];
+  /**
+   * the first visit's step(s)
+   */
+  visit_step_keys: string[];
+  visit_only: Subtotal;
+  with_likely: Subtotal;
+  with_possible: Subtotal;
+  may_also_order: MayAlsoOrder[];
 }
 
 export interface Hours {
@@ -295,6 +357,23 @@ export interface LocalLabel {
  */
 export interface MassHealthPayment {
   kind: "masshealth";
+}
+
+/**
+ * C4b (Austin 2026-10-25): a possible step, listed on its own under the headline: 'the doctor
+ * may also order'. Never in the headline range.
+ */
+export interface MayAlsoOrder {
+  step_key: string;
+  plain_name: string;
+  /**
+   * its plain purpose, from the care path
+   */
+  why: string | null;
+  low: number | null;
+  high: number | null;
+  figure: "own" | "estimate" | "elsewhere" | "none";
+  exclusive_group: string | null;
 }
 
 /**
@@ -377,6 +456,18 @@ export interface NpiPrice {
    */
   display_name: string | null;
   money: Money;
+}
+
+/**
+ * min low .. max high of one subtotal over an option's sites in this response.
+ */
+export interface OptionSpan {
+  low: number;
+  high: number;
+  /**
+   * plain names any of its sites counts, path order
+   */
+  includes: string[];
 }
 
 /**
@@ -511,6 +602,46 @@ export interface Provenance {
   row_id: string | null;
 }
 
+/**
+ * C4b (D-UI-3): where to go first, option A or B (e.g. urgent care vs a skin doctor), each
+ * with its own range. ``priced: false`` = listed but not priced yet (no sites).
+ */
+export interface QuoteOption {
+  id: string;
+  label: LocalLabel;
+  visit_step: string | null;
+  /**
+   * a specialist visit: an HMO may need a referral first
+   */
+  specialist: boolean;
+  priced: boolean;
+  missing_reason: string | null;
+  /**
+   * sites of this option in this response
+   */
+  site_count: number;
+  /**
+   * of them, with a headline_range
+   */
+  sites_with_range: number;
+  /**
+   * = with_likely.low
+   */
+  low: number | null;
+  /**
+   * = with_likely.high
+   */
+  high: number | null;
+  includes: string[];
+  visit_only: OptionSpan | null;
+  with_likely: OptionSpan | null;
+  with_possible: OptionSpan | null;
+  /**
+   * Austin 2026-10-25: the site with the lowest headline low (ties: nearest)
+   */
+  cheapest_site_id: string | null;
+}
+
 export interface QuoteRequest {
   payment: InsurancePayment | MedicarePayment | MassHealthPayment | CashPayment;
   care_path_id: string | null;
@@ -536,7 +667,11 @@ export interface QuoteRequest {
    */
   max_sites?: number;
   /**
-   * C3: without `near` and `site_ids`, the first N sites carry their full receipt; the rest carry the summary (headline + steps) and are fetched by `site_ids`
+   * C4b (D-UI-1): for a care path with entry options, sites are grouped by option and ordered by distance (None = distance) or by price (rank_key). Paths without options keep `rank` (with `near` / site_ids) or `kind_then_distance`
+   */
+  order_by?: "distance" | "price" | null;
+  /**
+   * C3: without `near` and `site_ids`, the first N sites carry their full receipt (C4b: the first N of each entry option); the rest carry the summary (headline + steps) and are fetched by `site_ids`
    */
   full_receipts?: number;
 }
@@ -566,7 +701,7 @@ export interface QuoteResponse {
   /**
    * C3 P7: rank with a point or named sites, else by kind
    */
-  ordering: "rank" | "kind_then_distance";
+  ordering: "rank" | "kind_then_distance" | "option_then_distance" | "option_then_price";
   /**
    * where distance_km is measured from (the point, or City Hall)
    */
@@ -583,7 +718,18 @@ export interface QuoteResponse {
    * D33: a quote reached from a care path carries both fixed lines (common causes, not a diagnosis; when to see a doctor); a manual pick carries none (P1 problem 13)
    */
   copy_keys: ("copy.not_a_diagnosis" | "copy.when_to_see_a_doctor")[];
-  notices: ("care_path_draft" | "tic_not_loaded" | "late_to_refresh_sources" | "stale_on_our_side_sources" | "masshealth_aco_may_differ" | "medicare_advantage_is_insurance" | "chain_price_spread")[];
+  /**
+   * C4b hmo_referral_for_specialist: the person's plan may need a referral (Q14) and an option is a specialist visit: shown at the top, not inside a receipt
+   */
+  notices: ("care_path_draft" | "tic_not_loaded" | "late_to_refresh_sources" | "stale_on_our_side_sources" | "masshealth_aco_may_differ" | "medicare_advantage_is_insurance" | "chain_price_spread" | "hmo_referral_for_specialist")[];
+  /**
+   * C4b: entry options A / B (empty: one option)
+   */
+  options: QuoteOption[];
+  /**
+   * C4b: the ER visit for comparison (care path quotes)
+   */
+  er_reference: ErReference | null;
 }
 
 export interface Receipt {
@@ -627,7 +773,7 @@ export interface ReceiptLine {
   /**
    * C3 P6: why the line is not offered; None exactly when offered
    */
-  availability_reason: "insurer_lists_rate" | "no_evidence" | "site_says_not_offered" | null;
+  availability_reason: "insurer_lists_rate" | "price_file_lists_rate" | "no_evidence" | "site_says_not_offered" | null;
   /**
    * None only when availability == not_offered
    */
@@ -648,7 +794,7 @@ export interface ReceiptLine {
   /**
    * C2: fixed copy keys that explain how the line's number was made (e.g. a Medicare national rate not adjusted for Boston wages). Empty = nothing to add
    */
-  price_notes: ("price.national_unadjusted" | "price.anesthesia_base_units_only" | "price.group_consistently_higher" | "price.group_consistently_lower")[];
+  price_notes: ("price.national_unadjusted" | "price.anesthesia_base_units_only" | "price.group_consistently_higher" | "price.group_consistently_lower" | "price.flat_visit_rate" | "price.several_rates_same_doctors")[];
   /**
    * C3 (P5): the peer range behind an estimated cell (basis estimate); None otherwise
    */
@@ -682,7 +828,15 @@ export interface Searched {
 
 export interface SiteQuote {
   site: SiteSummary;
+  /**
+   * C4b: the entry option this site is in
+   */
+  option_id: string | null;
   headline: Headline;
+  /**
+   * C4b: the range a person reads first; None when the first visit has no figure
+   */
+  headline_range: HeadlineRange | null;
   /**
    * C3 (P3): one per step of the quote, in path order
    */
@@ -730,6 +884,10 @@ export interface SiteSummary {
    */
   chain_id: string | null;
   /**
+   * C4b: the chain's name as a person reads it, e.g. 'AFC Urgent Care'
+   */
+  chain_name: string | null;
+  /**
    * Pediatric-only site (D27)
    */
   children_only: boolean;
@@ -772,6 +930,10 @@ export interface StepSummary {
    */
   key: string;
   step_id: string | null;
+  /**
+   * C4b: the step's plain name (map label)
+   */
+  plain_name: string;
   likelihood: "certain" | "likely" | "possible" | "rare";
   availability: "offered" | "not_offered" | "unknown";
   figure: "own" | "estimate" | "elsewhere" | "none";
@@ -799,6 +961,40 @@ export interface StepSummary {
    * P4: the step's price at sites that do it (same payer)
    */
   elsewhere: PeerRange | null;
+  /**
+   * C4b: this insurer pays this place one amount per visit and lists it on this step's code too: the step adds $0 here (low = high = 0), 'the test may be included'
+   */
+  flat_visit_rate: boolean;
+}
+
+/**
+ * C4b (D-UI-2): one scenario of the breakdown. low / high = the first visit's low / high plus
+ * the low / high of every step in ``step_keys`` (its StepSummary figure: this site's own price,
+ * an estimate, or the elsewhere range; a flat-rate step adds $0).
+ */
+export interface Subtotal {
+  low: number;
+  high: number;
+  /**
+   * the steps counted on top of the first visit
+   */
+  step_keys: string[];
+  /**
+   * their plain names, in the same order: 'includes: belly CT, blood tests'
+   */
+  includes: string[];
+  /**
+   * steps of this scenario with no figure (not counted)
+   */
+  not_priced: string[];
+  /**
+   * exclusive_group members left out because a dearer alternative is counted
+   */
+  alternatives: string[];
+  /**
+   * an estimate or an elsewhere range is in it
+   */
+  estimated: boolean;
 }
 
 /**

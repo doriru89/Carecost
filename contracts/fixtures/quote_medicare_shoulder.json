@@ -105,9 +105,11 @@
         ],
         "kind": "hospital_outpatient",
         "chain_id": null,
+        "chain_name": null,
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": 310.22,
         "likely_high": 310.22,
@@ -126,10 +128,107 @@
           ]
         }
       },
+      "headline_range": {
+        "low": 310.22,
+        "high": 310.22,
+        "includes": [
+          "Quick picture of the shoulder bones"
+        ],
+        "from_only": false,
+        "note_keys": [],
+        "visit_step_keys": [
+          "visit"
+        ],
+        "visit_only": {
+          "low": 211.56,
+          "high": 211.56,
+          "step_keys": [],
+          "includes": [],
+          "not_priced": [],
+          "alternatives": [],
+          "estimated": false
+        },
+        "with_likely": {
+          "low": 310.22,
+          "high": 310.22,
+          "step_keys": [
+            "xray"
+          ],
+          "includes": [
+            "Quick picture of the shoulder bones"
+          ],
+          "not_priced": [
+            "Guided exercise program for the shoulder"
+          ],
+          "alternatives": [],
+          "estimated": false
+        },
+        "with_possible": {
+          "low": 1187.04,
+          "high": 1187.04,
+          "step_keys": [
+            "xray",
+            "steroid_injection",
+            "tendon_scan_ultrasound",
+            "tendon_scan_mri"
+          ],
+          "includes": [
+            "Quick picture of the shoulder bones",
+            "Shot of anti-inflammatory and numbing medicine",
+            "Live sound-wave picture of the tendons",
+            "Detailed scan of tendons & cartilage"
+          ],
+          "not_priced": [
+            "Guided exercise program for the shoulder",
+            "Detailed scan with dye in the joint"
+          ],
+          "alternatives": [],
+          "estimated": false
+        },
+        "may_also_order": [
+          {
+            "step_key": "steroid_injection",
+            "plain_name": "Shot of anti-inflammatory and numbing medicine",
+            "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
+            "low": 392.72,
+            "high": 392.72,
+            "figure": "own",
+            "exclusive_group": null
+          },
+          {
+            "step_key": "tendon_scan_ultrasound",
+            "plain_name": "Live sound-wave picture of the tendons",
+            "why": "If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear is.",
+            "low": 172.41,
+            "high": 172.41,
+            "figure": "own",
+            "exclusive_group": null
+          },
+          {
+            "step_key": "tendon_scan_mri",
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
+            "low": 311.69,
+            "high": 311.69,
+            "figure": "own",
+            "exclusive_group": null
+          },
+          {
+            "step_key": "mr_arthrogram",
+            "plain_name": "Detailed scan with dye in the joint",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "low": null,
+            "high": null,
+            "figure": "none",
+            "exclusive_group": null
+          }
+        ]
+      },
       "steps": [
         {
           "key": "visit",
           "step_id": "visit",
+          "plain_name": "Visit with a bone & joint doctor",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "own",
@@ -144,11 +243,13 @@
             "visit_facility",
             "visit_doctor"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "xray",
           "step_id": "xray",
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "likely",
           "availability": "offered",
           "figure": "own",
@@ -163,11 +264,13 @@
             "xray_facility",
             "xray_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "physical_therapy",
           "step_id": "physical_therapy",
+          "plain_name": "Guided exercise program for the shoulder",
           "likelihood": "likely",
           "availability": "offered",
           "figure": "none",
@@ -182,11 +285,13 @@
             "physical_therapy_facility",
             "physical_therapy_sessions_facility"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "steroid_injection",
           "step_id": "steroid_injection",
+          "plain_name": "Shot of anti-inflammatory and numbing medicine",
           "likelihood": "possible",
           "availability": "offered",
           "figure": "own",
@@ -202,11 +307,13 @@
             "steroid_injection_doctor",
             "steroid_injection_drug_ai"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "tendon_scan_ultrasound",
           "step_id": "tendon_scan_ultrasound",
+          "plain_name": "Live sound-wave picture of the tendons",
           "likelihood": "possible",
           "availability": "offered",
           "figure": "own",
@@ -221,11 +328,13 @@
             "tendon_scan_ultrasound_facility",
             "tendon_scan_ultrasound_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "tendon_scan_mri",
           "step_id": "tendon_scan_mri",
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "possible",
           "availability": "offered",
           "figure": "own",
@@ -240,11 +349,13 @@
             "tendon_scan_mri_facility",
             "tendon_scan_mri_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "mr_arthrogram",
           "step_id": "mr_arthrogram",
+          "plain_name": "Detailed scan with dye in the joint",
           "likelihood": "rare",
           "availability": "offered",
           "figure": "none",
@@ -263,7 +374,8 @@
             "mr_arthrogram_77002_facility",
             "mr_arthrogram_77002_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 4.83,
@@ -2380,5 +2492,19 @@
   "notices": [
     "care_path_draft",
     "medicare_advantage_is_insurance"
-  ]
+  ],
+  "options": [],
+  "er_reference": {
+    "status": "not_loaded",
+    "note_key": "er.visit_alone_costs_more",
+    "codes": [
+      "99283",
+      "99284",
+      "99285"
+    ],
+    "low": null,
+    "high": null,
+    "includes_doctor": false,
+    "hospitals": []
+  }
 }

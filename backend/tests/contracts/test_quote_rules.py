@@ -187,17 +187,19 @@ def test_bcbs_receipt_cannot_sum_a_medicare_rate():
     """Challenger F1/P1: rung 5 (Medicare's rate) in a BCBS total."""
     doc = _fx("quote_bcbs_hmo_shoulder")
     ln = _line(doc, MA, "visit_doctor")
-    ln["doctor_fee"].update(rung=5, explanation_key="fee.rung_5_medicare")
+    ln["doctor_fee"] = {"rung": 5, "explanation_key": "fee.rung_5_medicare"}
     _bad(doc, "rung 5 is not for insurance")
 
 
-def test_rung_7_shows_only_the_medicare_reference():
+def test_rung_7_is_never_sent_for_a_non_medicare_payment():
+    """C4b 3d (rule changed): a Medicare figure (rung 7, reference) is never sent for a person
+    whose payment is not Medicare. The handmade BCBS fixture's Mount Auburn doctor line, a rung-7
+    PFS reference before C4b, is now the gap the engine sends."""
     doc = _fx("quote_bcbs_hmo_shoulder")
     ln = _line(doc, MA, "visit_doctor")
-    assert ln["doctor_fee"]["rung"] == 7
-    ln["cell"] = copy.deepcopy(_line(doc, MA, "visit_facility")["cell"])  # a BCBS MRF rate
-    del doc["sources"]["cms_pfs_rvu26d"]  # no other line uses the PFS file now
-    _bad(doc, "rung 7 is the Medicare reference")
+    assert ln["doctor_fee"] is None and ln["cell"]["kind"] == "not_published"
+    ln["doctor_fee"] = {"rung": 7, "explanation_key": "fee.rung_7_medicare_reference"}
+    _bad(doc, "rung 7 is not for insurance")
 
 
 def test_bcbs_receipt_cannot_use_another_payers_rate():

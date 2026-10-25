@@ -116,9 +116,11 @@
         ],
         "kind": "urgent_care",
         "chain_id": "afc_urgent_care",
+        "chain_name": "AFC Urgent Care",
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": 27.31,
         "likely_high": 27.31,
@@ -129,10 +131,12 @@
         "real_steps": 1,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "own",
@@ -146,11 +150,13 @@
           "line_ids": [
             "svc_73030"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "unknown",
           "figure": "none",
@@ -164,7 +170,8 @@
           "line_ids": [
             "svc_73221"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 1.48,
@@ -354,9 +361,11 @@
         ],
         "kind": "urgent_care",
         "chain_id": "afc_urgent_care",
+        "chain_name": "AFC Urgent Care",
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": 27.31,
         "likely_high": 27.31,
@@ -367,10 +376,12 @@
         "real_steps": 1,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "own",
@@ -384,11 +395,13 @@
           "line_ids": [
             "svc_73030"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "unknown",
           "figure": "none",
@@ -402,7 +415,8 @@
           "line_ids": [
             "svc_73221"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 1.76,
@@ -483,7 +497,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "insurer_lists_rate",
+            "availability_reason": "price_file_lists_rate",
             "cell": {
               "kind": "money",
               "low": 273.77,
@@ -593,9 +607,11 @@
         ],
         "kind": "hospital_outpatient",
         "chain_id": null,
+        "chain_name": null,
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": 54.86,
         "likely_high": 54.86,
@@ -606,10 +622,12 @@
         "real_steps": 0,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -624,11 +642,13 @@
             "svc_73030_facility",
             "svc_73030_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -643,7 +663,8 @@
             "svc_73221_facility",
             "svc_73221_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 0.77,
@@ -1177,9 +1198,11 @@
         ],
         "kind": "hospital_outpatient",
         "chain_id": null,
+        "chain_name": null,
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": 54.86,
         "likely_high": 54.86,
@@ -1190,10 +1213,12 @@
         "real_steps": 0,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -1208,11 +1233,13 @@
             "svc_73030_facility",
             "svc_73030_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -1227,7 +1254,8 @@
             "svc_73221_facility",
             "svc_73221_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 0.98,
@@ -1736,9 +1764,11 @@
         ],
         "kind": "hospital_outpatient",
         "chain_id": null,
+        "chain_name": null,
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": 54.86,
         "likely_high": 54.86,
@@ -1749,10 +1779,12 @@
         "real_steps": 0,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -1767,11 +1799,13 @@
             "svc_73030_facility",
             "svc_73030_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -1786,7 +1820,8 @@
             "svc_73221_facility",
             "svc_73221_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 1.14,
@@ -2321,9 +2356,11 @@
         ],
         "kind": "hospital_outpatient",
         "chain_id": null,
+        "chain_name": null,
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": 54.86,
         "likely_high": 54.86,
@@ -2334,10 +2371,12 @@
         "real_steps": 0,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -2352,11 +2391,13 @@
             "svc_73030_facility",
             "svc_73030_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -2371,7 +2412,8 @@
             "svc_73221_facility",
             "svc_73221_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 1.17,
@@ -2907,9 +2949,11 @@
         ],
         "kind": "hospital_outpatient",
         "chain_id": null,
+        "chain_name": null,
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": 54.86,
         "likely_high": 54.86,
@@ -2920,10 +2964,12 @@
         "real_steps": 0,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -2938,11 +2984,13 @@
             "svc_73030_facility",
             "svc_73030_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -2957,7 +3005,8 @@
             "svc_73221_facility",
             "svc_73221_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 1.28,
@@ -3727,9 +3776,11 @@
         ],
         "kind": "hospital_outpatient",
         "chain_id": null,
+        "chain_name": null,
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": 54.86,
         "likely_high": 54.86,
@@ -3740,10 +3791,12 @@
         "real_steps": 0,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -3758,11 +3811,13 @@
             "svc_73030_facility",
             "svc_73030_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -3777,7 +3832,8 @@
             "svc_73221_facility",
             "svc_73221_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 1.38,
@@ -4545,9 +4601,11 @@
         ],
         "kind": "urgent_care",
         "chain_id": null,
+        "chain_name": null,
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": 54.86,
         "likely_high": 54.86,
@@ -4558,10 +4616,12 @@
         "real_steps": 0,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -4576,11 +4636,13 @@
             "svc_73030_facility",
             "svc_73030_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -4595,7 +4657,8 @@
             "svc_73221_facility",
             "svc_73221_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 1.94,
@@ -5365,9 +5428,11 @@
         ],
         "kind": "hospital_outpatient",
         "chain_id": null,
+        "chain_name": null,
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": 54.86,
         "likely_high": 54.86,
@@ -5378,10 +5443,12 @@
         "real_steps": 0,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -5396,11 +5463,13 @@
             "svc_73030_facility",
             "svc_73030_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "offered",
           "figure": "none",
@@ -5415,7 +5484,8 @@
             "svc_73221_facility",
             "svc_73221_reading"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 2.06,
@@ -6183,9 +6253,11 @@
         ],
         "kind": "urgent_care",
         "chain_id": null,
+        "chain_name": null,
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": null,
         "likely_high": null,
@@ -6196,10 +6268,12 @@
         "real_steps": 0,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "unknown",
           "figure": "none",
@@ -6213,11 +6287,13 @@
           "line_ids": [
             "svc_73030"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "unknown",
           "figure": "none",
@@ -6231,7 +6307,8 @@
           "line_ids": [
             "svc_73221"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 2.64,
@@ -6254,7 +6331,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "insurer_lists_rate",
+            "availability_reason": "price_file_lists_rate",
             "cell": {
               "kind": "money",
               "low": 27.31,
@@ -6312,7 +6389,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "insurer_lists_rate",
+            "availability_reason": "price_file_lists_rate",
             "cell": {
               "kind": "money",
               "low": 273.77,
@@ -6410,9 +6487,11 @@
         ],
         "kind": "office",
         "chain_id": null,
+        "chain_name": null,
         "children_only": false,
         "data_notices": []
       },
+      "option_id": null,
       "headline": {
         "likely_low": null,
         "likely_high": null,
@@ -6423,10 +6502,12 @@
         "real_steps": 0,
         "might_add": null
       },
+      "headline_range": null,
       "steps": [
         {
           "key": "73030",
           "step_id": null,
+          "plain_name": "Quick picture of the shoulder bones",
           "likelihood": "certain",
           "availability": "unknown",
           "figure": "none",
@@ -6440,11 +6521,13 @@
           "line_ids": [
             "svc_73030"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         },
         {
           "key": "73221",
           "step_id": null,
+          "plain_name": "Detailed scan of tendons & cartilage",
           "likelihood": "certain",
           "availability": "unknown",
           "figure": "none",
@@ -6458,7 +6541,8 @@
           "line_ids": [
             "svc_73221"
           ],
-          "elsewhere": null
+          "elsewhere": null,
+          "flat_visit_rate": false
         }
       ],
       "distance_km": 2.7,
@@ -6481,7 +6565,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "insurer_lists_rate",
+            "availability_reason": "price_file_lists_rate",
             "cell": {
               "kind": "money",
               "low": 27.31,
@@ -6539,7 +6623,7 @@
             "component_confirmed": true,
             "unit": "once",
             "availability": "unknown",
-            "availability_reason": "insurer_lists_rate",
+            "availability_reason": "price_file_lists_rate",
             "cell": {
               "kind": "money",
               "low": 273.77,
@@ -6690,5 +6774,7 @@
   "copy_keys": [],
   "notices": [
     "masshealth_aco_may_differ"
-  ]
+  ],
+  "options": [],
+  "er_reference": null
 }

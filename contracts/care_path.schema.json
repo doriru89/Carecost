@@ -278,6 +278,86 @@
       "title": "Entry",
       "type": "object"
     },
+    "EntryOption": {
+      "additionalProperties": false,
+      "description": "C4b (D-UI-3): where a person may go first. Option A (e.g. urgent care / primary care) and\noption B (e.g. a skin doctor) each have their own first visit and their own price range. A\nsite gets the first option whose kind, type or service area it matches. An option with\n``priced: false`` is listed (so the person knows it exists) but has no sites yet.",
+      "properties": {
+        "id": {
+          "pattern": "^[a-z]$",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/Title"
+        },
+        "visit_step": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "this option's first visit (a step id); None when not priced",
+          "title": "Visit Step"
+        },
+        "site_kinds": {
+          "description": "engine X2 kinds",
+          "items": {
+            "type": "string"
+          },
+          "title": "Site Kinds",
+          "type": "array"
+        },
+        "site_types": {
+          "description": "sites.yaml site_type",
+          "items": {
+            "type": "string"
+          },
+          "title": "Site Types",
+          "type": "array"
+        },
+        "service_areas": {
+          "description": "sites.yaml service_areas",
+          "items": {
+            "type": "string"
+          },
+          "title": "Service Areas",
+          "type": "array"
+        },
+        "specialist": {
+          "default": false,
+          "description": "a specialist visit (an HMO may need a referral first)",
+          "title": "Specialist",
+          "type": "boolean"
+        },
+        "priced": {
+          "default": true,
+          "title": "Priced",
+          "type": "boolean"
+        },
+        "missing_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Missing Reason"
+        }
+      },
+      "required": [
+        "id",
+        "label"
+      ],
+      "title": "EntryOption",
+      "type": "object"
+    },
     "Exit": {
       "additionalProperties": false,
       "properties": {
@@ -784,6 +864,20 @@
           ],
           "default": null,
           "title": "Reviewer Note"
+        },
+        "exclusive_group": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9_]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C4b: steps that are alternatives of each other (e.g. belly ultrasound or belly CT). In the headline's high end only the most expensive member counts",
+          "title": "Exclusive Group"
         }
       },
       "required": [
@@ -949,6 +1043,14 @@
         "$ref": "#/$defs/TierModifier"
       },
       "title": "Tier Modifiers",
+      "type": "array"
+    },
+    "entry_options": {
+      "description": "C4b: option A / B first visits; empty = one option",
+      "items": {
+        "$ref": "#/$defs/EntryOption"
+      },
+      "title": "Entry Options",
       "type": "array"
     },
     "exits": {

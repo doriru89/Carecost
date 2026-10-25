@@ -232,7 +232,10 @@ steps:
     why: If the exam points to a specific organ, a picture helps check it.
     when_skipped: The exam and simple tests already explain the pain.
   when_skipped_basis: logic
-  reviewer_note: Usually done at a hospital or imaging center, not at urgent care.
+  reviewer_note: Usually done at a hospital or imaging center, not at urgent care. C4b exclusive_group belly_imaging
+    with belly_ct, because a person usually gets one picture or the other; the headline's high end counts only the
+    dearer of the two.
+  exclusive_group: belly_imaging
   citations:
   - doc: medlineplus_abdominal_pain
     year: 2026
@@ -277,6 +280,7 @@ steps:
   when_skipped_basis: logic
   reviewer_note: '[我判断] Possible, not rare: common when belly pain stays unexplained, but done at a hospital or
     imaging center.'
+  exclusive_group: belly_imaging
   citations:
   - doc: nhs_appendicitis
     year: 2024
@@ -289,6 +293,26 @@ steps:
     role: primary
     mapping: asserted
     note: CT abdomen and pelvis with contrast
+# C4b (D-UI-3): where to go first. A = urgent care or a primary-care office. B = a GI doctor, listed but not
+# priced yet (a GI first visit for belly pain is not modelled on this path). pending_austin.
+entry_options:
+- id: a
+  label:
+    en: Urgent care or primary care
+    zh: 急诊诊所（urgent care）或家庭医生
+  visit_step: visit
+  site_kinds: [urgent_care]
+  site_types: [primary_care_office]
+  service_areas: [urgent_care]
+- id: b
+  label:
+    en: Stomach and bowel doctor (GI)
+    zh: 消化科医生
+  site_types: [specialist_office, hospital_outpatient]
+  service_areas: [gi]
+  specialist: true
+  priced: false
+  missing_reason: A first visit with a GI doctor for belly pain is not priced on this path yet.
 exits:
 - when: The pain is mainly burning in the upper belly or chest after meals
   text: That fits the heartburn path better. Answer again and choose heartburn or upper-belly pain.
