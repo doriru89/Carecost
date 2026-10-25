@@ -10,7 +10,7 @@ import { KIND_LABEL_KEY, NOTICE_KEY } from "@/contracts/exhaustive";
 import type { QuoteOption, QuoteResponse, SiteQuote } from "@/generated/contracts/quote_api";
 import { cn } from "@/lib/utils";
 import { milesText } from "../lib/geo";
-import { cheapestText, optionGroups, optionLetter, optionRangeText, type OptionGroup } from "../lib/headline";
+import { cheapestText, optionGroups, optionLetter, optionRangeCount, optionRangeText, partialMoreText, type OptionGroup } from "../lib/headline";
 import { hoursSourceKey } from "../lib/hours";
 import { totalText } from "../lib/receipt";
 import type { SiteScope, SiteView } from "../lib/sites";
@@ -32,7 +32,9 @@ function PickCard({
   cheapest,
   option,
   onOpen,
+  payment,
 }: {
+  payment: QuoteResponse["payment"];
   sq: SiteQuote;
   v: SiteView | undefined;
   cheapest?: boolean;
@@ -80,7 +82,7 @@ function PickCard({
         </div>
         <div className="ml-auto max-w-[16rem] text-right">
           {hr ? (
-            <HeadlineFigure hr={hr} />
+            <HeadlineFigure hr={hr} steps={sq.steps} />
           ) : totalText(sq) ? (
             // a quote without a headline range (a manual pick): this place's own bills, added up
             <p className="text-lg font-bold tabular-nums text-ink" data-testid="pick-total">
@@ -94,7 +96,7 @@ function PickCard({
           )}
         </div>
       </div>
-      {cheapest && hr && <MayAlsoOrderList hr={hr} compact />}
+      {cheapest && hr && <MayAlsoOrderList hr={hr} payment={payment} compact />}
     </button>
   );
 }
@@ -116,15 +118,27 @@ function OptionBlock({
   const letter = o ? optionLetter(quote, o.id) : null;
   const referral = o?.specialist && quote.notices.includes("hmo_referral_for_specialist");
   const rangeText = o ? optionRangeText(o) : null;
+  // C4c: a path without entry options has one implicit option: no "Option A" label, just its range and cheapest
+  const labelled = !!o && !o.implicit;
+  const more = o ? partialMoreText(o) : null;
   return (
     <section className="space-y-2 rounded-2xl border border-border bg-background p-3" data-testid="option-block" data-option={o?.id ?? "all"}>
       <header>
-        <h3 className="text-sm font-bold" data-testid="option-label">
-          {o ? t("option.label", { letter: letter ?? "", label: o.label.en }) : t("overview.no_options")}
-        </h3>
+        {labelled ? (
+          <h3 className="text-sm font-bold" data-testid="option-label">
+            {t("option.label", { letter: letter ?? "", label: o!.label.en })}
+          </h3>
+        ) : (
+          <h3 className="text-sm font-bold">{t("overview.no_options")}</h3>
+        )}
         {o && o.priced && (
           <p className="text-xs text-muted-foreground" data-testid="option-range">
-            {rangeText ? t("option.range", { range: rangeText, n: o.sites_with_range }) : t("option.no_range")}
+            {rangeText ? t("option.range", { range: rangeText, n: optionRangeCount(o) }) : t("option.no_range")}
+          </p>
+        )}
+        {more && (
+          <p className="text-[11px] text-muted-foreground" data-testid="option-partial-more">
+            {more}
           </p>
         )}
       </header>
@@ -144,13 +158,13 @@ function OptionBlock({
             <p className="text-[11px] text-muted-foreground">{t("option.cheapest_not_here")}</p>
           )}
           {g.cheapest && (
-            <PickCard sq={g.cheapest} v={views.get(g.cheapest.site.site_id)} cheapest option={o} onOpen={() => onOpen(g.cheapest!.site.site_id)} />
+            <PickCard sq={g.cheapest} v={views.get(g.cheapest.site.site_id)} cheapest option={o} payment={quote.payment} onOpen={() => onOpen(g.cheapest!.site.site_id)} />
           )}
           {g.alternates.length > 0 && (
             <div className="space-y-1.5">
               {g.cheapest && <p className="pt-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{t("option.alternates")}</p>}
               {g.alternates.map((sq) => (
-                <PickCard key={sq.site.site_id} sq={sq} v={views.get(sq.site.site_id)} option={o} onOpen={() => onOpen(sq.site.site_id)} />
+                <PickCard key={sq.site.site_id} sq={sq} v={views.get(sq.site.site_id)} option={o} payment={quote.payment} onOpen={() => onOpen(sq.site.site_id)} />
               ))}
             </div>
           )}
@@ -192,7 +206,7 @@ export function Overview({
         <p className="text-xs text-muted-foreground">{t("overview.lead")}</p>
         {scope && <ScopeNote scope={scope} count={quote.sites.length} />}
       </div>
-      {quote.options.length > 0 && onOrderBy && (
+      {quote.options.some((o) => !o.implicit) && onOrderBy && (
         <div className="flex flex-wrap items-center gap-1 text-xs" role="radiogroup" aria-label={t("order.label")} data-testid="order-by">
           <span className="mr-1 text-muted-foreground">{t("order.label")}</span>
           {(["distance", "price"] as const).map((o) => (

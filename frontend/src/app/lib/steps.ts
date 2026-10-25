@@ -81,7 +81,8 @@ export type StepPin =
  */
 export function stepPin(st: StepSummary | undefined): StepPin | null {
   if (!st || st.availability !== "offered") return null;
+  // C4c: a from step (the doctor's bill has no number) reads "from $X", never a full price
   if ((st.figure === "own" || st.figure === "estimate") && st.low != null && st.high != null)
-    return { kind: "price", text: range(st.low, st.high, false), estimated: st.estimated };
+    return { kind: "price", text: st.from_only ? `from ${range(st.low, st.low, false)}` : range(st.low, st.high, false), estimated: st.estimated };
   return { kind: "no_price", unusual: st.unusual };
 }

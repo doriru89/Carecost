@@ -81,7 +81,7 @@ export function SiteCard({
           {hr ? (
             // C4b: the same headline as the first screen (certain + likely; possible steps are in the breakdown)
             <div className="ml-auto max-w-[16rem] shrink-0 text-right">
-              <HeadlineFigure hr={hr} />
+              <HeadlineFigure hr={hr} steps={v.sq.steps} />
             </div>
           ) : (
           <div className="text-right shrink-0">

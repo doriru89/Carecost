@@ -12,6 +12,7 @@ import type {
   HeadlineRange,
   MayAlsoOrder,
   Money,
+  Payment,
   QuoteOption,
   QuoteResponse,
   ReceiptLine,
@@ -23,8 +24,28 @@ import { range } from "./format";
 
 /** "$193–$207", or "from $149 — the doctor bills separately" (whole dollars: a headline, not a line). */
 export function headlineText(hr: HeadlineRange): string {
-  if (hr.from_only) return t("headline.from", { low: range(hr.low, hr.low, false), note: t("headline.doctor_bills_separately") });
+  if (hr.from_only) {
+    // C4c: self-pay -> "the doctor bills separately"; insured with no rate in the file -> "isn't published"
+    const note = hr.note_keys.includes("headline.doctor_bill_not_published") ? "headline.doctor_bill_not_published" : "headline.doctor_bills_separately";
+    return fromText(hr.low, note);
+  }
   return range(hr.low, hr.high, false);
+}
+
+type FromNote = "headline.doctor_bills_separately" | "headline.doctor_bill_not_published";
+
+/** "from $X — the doctor bills separately" (or "— the doctor's bill isn't published"). */
+export function fromText(low: number, note: FromNote): string {
+  return t("headline.from", { low: range(low, low, false), note: t(note) });
+}
+
+/**
+ * C4c: a step's own `from_only` (the hospital's bill is priced, the doctor's has no number). `figure` stays
+ * own / estimate on such a step, so it is never trusted alone. Self-pay: the doctor bills separately (no public
+ * source); insured: the doctor's bill isn't published.
+ */
+export function fromNoteFor(payment: Payment): FromNote {
+  return payment.kind === "cash" ? "headline.doctor_bills_separately" : "headline.doctor_bill_not_published";
 }
 
 const lower = (s: string) => (s ? s[0].toLowerCase() + s.slice(1) : s);
@@ -36,9 +57,15 @@ export function plainList(items: string[]): string {
   return `${xs.slice(0, -1).join(", ")} and ${xs[xs.length - 1]}`;
 }
 
-/** The one plain line under a headline: what the range covers. No `includes` = the doctor visit only. */
-export function includesText(hr: HeadlineRange): string {
-  return hr.includes.length ? t("headline.includes", { items: plainList(hr.includes) }) : t("headline.visit_only");
+/**
+ * The one plain line under a headline: what the range covers, starting from the first visit's own step(s)
+ * (`visit_step_keys`: a visit, or the procedure itself for a colonoscopy, C4c). No step names known = "the
+ * doctor visit".
+ */
+export function includesText(hr: HeadlineRange, steps: StepSummary[] = []): string {
+  const names = hr.visit_step_keys.map((k) => steps.find((s) => s.key === k)?.plain_name).filter((n): n is string => !!n);
+  const base = names.length ? plainList(names) : t("headline.visit_only");
+  return hr.includes.length ? t("headline.includes", { base, items: plainList(hr.includes) }) : t("headline.includes_base", { base });
 }
 
 /** The basis line under a headline, or null when the figure is the place's own prices (complete). */
@@ -52,9 +79,10 @@ export function nearbyText(low: number, high: number, cents = false): string {
   return t("nearby.about", { range: range(low, high, cents) });
 }
 
-/** One possible step's figure in plain words, by where it comes from (MayAlsoOrder.figure). */
-export function mayAlsoFigure(m: MayAlsoOrder): string {
+/** One possible step's figure in plain words, by where it comes from (MayAlsoOrder.figure, from_only first). */
+export function mayAlsoFigure(m: MayAlsoOrder, payment: Payment): string {
   if (m.low == null || m.high == null) return t("may_also.no_price");
+  if (m.from_only) return fromText(m.low, fromNoteFor(payment));
   switch (STEP_FIGURE[m.figure]) {
     case "own":
       return m.figure === "estimate" ? `${range(m.low, m.high, false)} · ${t("receipt.estimate_tag").toLowerCase()}` : range(m.low, m.high, false);
@@ -131,13 +159,24 @@ export function byOption(quote: QuoteResponse): boolean {
 /** "A: Urgent care or primary care" etc. Options are lettered in the server's order. */
 export function optionLetter(quote: QuoteResponse, optionId: string | null): string | null {
   if (!optionId) return null;
-  const i = quote.options.findIndex((o) => o.id === optionId);
+  const i = quote.options.filter((o) => !o.implicit).findIndex((o) => o.id === optionId);
   return i < 0 ? null : String.fromCharCode(65 + i);
 }
 
 /** The option a site is in, when the quote has options. */
 export function siteOption(quote: QuoteResponse, sq: SiteQuote): QuoteOption | null {
-  return quote.options.find((o) => o.id === sq.option_id) ?? null;
+  return quote.options.find((o) => o.id === sq.option_id && !o.implicit) ?? null;
+}
+
+/** C4c: "plus N places with only partial prices" under an option's range (its range is its best basis only). */
+export function partialMoreText(o: QuoteOption): string | null {
+  if (o.partial_site_count <= 0 || o.basis === "partial" || o.basis == null) return null;
+  return t("option.partial_more", { n: o.partial_site_count, places: o.partial_site_count === 1 ? "place" : "places" });
+}
+
+/** Sites behind an option's range: those of its best basis (C4c), else every site with a range. */
+export function optionRangeCount(o: QuoteOption): number {
+  return o.basis ? (o.sites_by_basis[o.basis] ?? o.sites_with_range) : o.sites_with_range;
 }
 
 /** An option's own range, "$136–$413", or null when it has none (unpriced, or no site with a range). */
@@ -185,6 +224,7 @@ export function lineFootnote(line: ReceiptLine, sources: Record<string, SourceIn
 /** A step's figure as a footnote (subtotal rows, the map): own / estimate / typical nearby / none. */
 export function stepFootnote(st: StepSummary): Footnote {
   if (st.flat_visit_rate) return { kind: "fact", text: t("flat.adds_zero") };
+  if (st.from_only) return { kind: "none", text: t("footnote.from_only") };
   switch (st.figure) {
     case "own":
       return { kind: "fact", text: t("footnote.own_figure") };
@@ -231,6 +271,7 @@ export function mapItemId(item: MapItem): string {
 export function headlineMapChoices(quote: QuoteResponse): MapChoice[] {
   if (!quote.care_path || !quote.sites.some((s) => s.headline_range)) return [];
   if (quote.options.length === 0) return [{ id: "option:*", label: t("map.item_headline"), item: { kind: "headline", optionId: null } }];
+  if (quote.options.every((o) => o.implicit)) return [{ id: "option:*", label: t("map.item_headline"), item: { kind: "headline", optionId: null } }];
   return quote.options
     .filter((o) => o.priced && o.sites_with_range > 0)
     .map((o) => ({

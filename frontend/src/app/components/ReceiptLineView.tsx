@@ -227,7 +227,9 @@ function EstimateBasis({ peer }: { peer: PeerRange }) {
     <p className="mt-1 text-[11px] text-amber-900" data-testid="estimate-basis">
       {peer.scope === "same_system"
         ? t("receipt.estimate_basis_system", { n: peer.n_groups })
-        : t("receipt.estimate_basis", { n: peer.n_groups, kind: peer.kind ? PEER_KIND[peer.kind] : "places" })}
+        : peer.scope === "payer_network"
+          ? t("receipt.estimate_basis_network", { n: peer.n_groups })
+          : t("receipt.estimate_basis", { n: peer.n_groups, kind: peer.kind ? PEER_KIND[peer.kind] : "places" })}
     </p>
   );
 }

@@ -10,6 +10,9 @@
  * Mock mode writes docs/frontend/<screen>-<width>.png and switch-timing.json; api mode writes
  * <screen>-api-<width>.png and switch-timing-api.json.
  *
+ * D6: a care-path quote opens on the first screen ("Where to go": options, cheapest, alternates), shot as
+ * first-screen-bcbs; the breakdown of one place is the "Breakdown" tab (was "Receipt").
+ *
  * Api mode (D3, wave2/base 9c54616: C2's contract, Chat merged): the shoulder path with BCBS HMO and no
  * location ("best value overall"), then ZIP 02138 ("nearest"), Medicare near ZIP 02115 at Brigham
  * (price_notes on the OPPS facility lines, G0463; unknown availability) and BIDMC (a data notice),
@@ -43,7 +46,11 @@ async function toPrices(page, width) {
 async function waitQuote(page) {
   await page.waitForFunction(() => {
     const el = document.querySelector('[data-testid="results-pane"]');
-    return el && !el.textContent.includes("Pricing…") && (el.querySelector('[data-testid="receipt"]') || el.querySelector('[data-testid="quote-unavailable"]'));
+    return (
+      el &&
+      !el.textContent.includes("Pricing…") &&
+      (el.querySelector('[data-testid="overview"]') || el.querySelector('[data-testid="receipt"]') || el.querySelector('[data-testid="quote-unavailable"]'))
+    );
   });
 }
 
@@ -53,6 +60,13 @@ async function openReceiptByChat(page, mode, width) {
   await page.getByTestId("chip").filter({ hasText: "No, it came on gradually" }).click();
   await page.getByText("Because you said").waitFor();
   await toPrices(page, width);
+  // D6: a care path opens on the first screen ("Where to go"); the breakdown is one tab away
+  await page.getByTestId("overview").waitFor();
+}
+
+/** D6: from the first screen to the breakdown tab (one site's receipt). */
+async function toBreakdown(page) {
+  await page.getByRole("tab", { name: "Breakdown" }).click();
   await page.getByTestId("receipt").waitFor();
 }
 
@@ -80,7 +94,8 @@ const ZIPS = JSON.parse(readFileSync(resolve(here, "../src/app/content/ma_zips.j
 async function setZip(page, zip) {
   const [lat, lon] = ZIPS[zip];
   await page.getByTestId("zip-input").fill(zip);
-  await page.locator(`[data-testid="results-pane"][data-quote-key$="|${lat},${lon}"]`).waitFor();
+  // the request key is payment|query|picked_by|<near>|<order_by> (D6 added order_by)
+  await page.locator(`[data-testid="results-pane"][data-quote-key*="|${lat},${lon}|"]`).waitFor();
 }
 
 const browser = await chromium.launch();
@@ -109,6 +124,9 @@ try {
 
       if (mode === "mock") await openReceiptByChat(page, mode, width);
       else await openReceiptByBrowse(page, mode, width, "Shoulder pain that came on gradually");
+      await page.getByTestId("overview").waitFor();
+      await shot("first-screen-bcbs");
+      await toBreakdown(page);
       await shot("receipt-bcbs");
 
       if (mode === "api") {
@@ -116,7 +134,7 @@ try {
         await page.getByRole("tab", { name: "List" }).click();
         await page.getByTestId("site-list").waitFor();
         await shot("list-overall");
-        await page.getByRole("tab", { name: "Receipt" }).click();
+        await page.getByRole("tab", { name: "Breakdown" }).click();
         await setZip(page, "02138");
       }
 
@@ -150,24 +168,26 @@ try {
       if (mode === "api") {
         // Medicare near Longwood: Brigham's facility lines are OPPS national rates (price_notes), its
         // visit looks up G0463, and several lines have no evidence either way (availability unknown)
-        await page.getByRole("tab", { name: "Receipt" }).click();
+        await page.getByRole("tab", { name: "Breakdown" }).click();
         await page.locator("#payment-switch").selectOption("medicare");
         await waitQuote(page);
         await setZip(page, "02115");
         await pickSite(page, "Brigham and Women's Hospital");
-        await page.getByTestId("price-note").first().waitFor();
-        await page.getByTestId("availability-unknown").first().waitFor();
+        // data-dependent probes (C4c changed Brigham's lines): wait briefly, never fail the run on them
+        await page.getByTestId("price-note").first().waitFor({ timeout: 5000 }).catch(() => console.log("note: no price_notes line at Brigham"));
+        await page.getByTestId("availability-unknown").first().waitFor({ timeout: 5000 }).catch(() => console.log("note: no availability-unknown line at Brigham"));
         await shot("receipt-medicare-brigham");
         await page.getByRole("tab", { name: "List" }).click();
         await page.getByTestId("site-list").waitFor();
         await shot("list-medicare-02115");
-        await page.getByRole("tab", { name: "Receipt" }).click();
+        await page.getByRole("tab", { name: "Breakdown" }).click();
         await pickSite(page, "Beth Israel Deaconess Medical Center");
         await shot("receipt-medicare-bidmc");
 
         // chat without a provider key: the merged Chat service answers ai_paused(provider_unavailable)
         await startChat(page, mode, "My shoulder clicks when I lift my arm");
-        await page.getByText("isn't available right now").waitFor();
+        // Chat2 (R18): without a key the server answers with the chips copy (ai.paused_provider_chips) or ai.paused_provider
+        await page.getByText(/isn't available right now|can't read typed messages/).first().waitFor();
         await shot("chat-paused", { fullPage: false });
       } else {
         await page.getByRole("tab", { name: "Map" }).click();
@@ -177,7 +197,7 @@ try {
         await shot("map", { fullPage: false });
 
         if (width >= 768) {
-          await page.getByRole("tab", { name: "Receipt" }).click();
+          await page.getByRole("tab", { name: "Breakdown" }).click();
           await page.getByRole("button", { name: /Stacked/ }).click();
           await page.getByRole("button", { name: /Flip/ }).click();
           await shot("split-stacked-flipped", { fullPage: false });

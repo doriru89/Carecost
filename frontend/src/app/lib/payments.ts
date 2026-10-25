@@ -63,13 +63,3 @@ export function paymentLabel(p: Payment): string {
   return choiceFor(p)?.label ?? paymentId(p);
 }
 
-/**
- * C4b 3c: the engine shows `hmo_referral_for_specialist` when Q14 ("What kind of plan do you have?") is
- * `hmo_referral_required` or `unsure`. A person who chose an HMO product under "How are you paying" has
- * said which kind of plan it is, so a quote they ask for without the chat sends that answer. An answer the
- * person gave in the chat always wins. Nothing else is derived.
- */
-export function quoteAnswers(p: Payment, answers: Record<string, string[]>): Record<string, string[]> {
-  if (answers.Q14?.length || p.kind !== "insurance" || p.product !== "HMO") return answers;
-  return { ...answers, Q14: ["hmo_referral_required"] };
-}
