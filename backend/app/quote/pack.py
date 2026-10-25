@@ -47,6 +47,7 @@ from app.quote.store import (
     pack_from_extract,
     standard_ref,
     tin_digits,
+    valid_npi,
     write_pack,
 )
 from app.registries import all_hospitals
@@ -155,7 +156,12 @@ def tic_rows(
 
     npi_sets: dict[int, tuple[str, ...]] = {}
     census: dict[str, set[str]] = {}
-    stats = {"tic_rows_read": 0, "tic_rows_kept": 0, "tic_rows_packed": 0}
+    stats = {
+        "tic_rows_read": 0,
+        "tic_rows_kept": 0,
+        "tic_rows_packed": 0,
+        "tic_placeholder_npis_dropped": 0,
+    }
 
     def gen() -> Iterator[Row]:
         set_ids: dict[tuple[str, ...], int] = {}
@@ -186,7 +192,12 @@ def tic_rows(
             for rec in g.to_pylist():
                 k2 = (rec["provider_group_id"], rec["group_ordinal"])
                 ok = 0 < rec["n_npi"] <= MAX_GROUP_NPIS
-                gnpis[k2] = tuple(tin_digits(n) for n in rec["npis"]) if ok else None
+                got = tuple(tin_digits(n) for n in rec["npis"]) if ok else None
+                if got is not None:  # R10: "0" and other placeholders are "unknown", not an NPI
+                    keep = tuple(n for n in got if valid_npi(n))
+                    stats["tic_placeholder_npis_dropped"] += len(got) - len(keep)
+                    got = keep or None
+                gnpis[k2] = got
             for r, grps in sorted(bunch.values(), key=lambda b: (b[0].stage_row, b[0].row_id)):
                 npis: set[str] | None = set()
                 for grp in grps:

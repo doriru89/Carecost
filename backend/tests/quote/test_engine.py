@@ -52,7 +52,7 @@ def test_runtime_pack_loads_into_in_memory_indexes(store):
     assert store.version.tic_release == "tic-2026-10"
     kinds = {m.source_kind for m in store.sources.values()}
     assert kinds == {"hospital_mrf", "insurer_tic", "medicare_pfs", "medicare_opps",
-                     "masshealth_fs"}  # fmt: skip
+                     "medicare_asc", "masshealth_fs"}  # fmt: skip
     assert any(k[0] == "tic_bcbs_ma_hmo_blue_fi" for k in store.tic)
     assert any(k[0] == "tufts_mrf" for k in store.cash)
     assert store.npi_sets, "D6 needs the NPIs of small TiC provider groups"
@@ -135,8 +135,12 @@ def test_e2e_cash(engine):
     doctor = _line(r, TUFTS, "visit_doctor")
     assert doctor.cell.kind == "no_source" and doctor.doctor_fee.rung is None
     bilh = next(s for s in r.sites if s.site.site_id == "bilh_urgent_care_watertown")
-    assert bilh.site.price_source_id is None  # P1 #9: shown, every line not_loaded
-    assert {ln.cell.kind for ln in bilh.receipt.lines if ln.at == "this_site"} == {"not_loaded"}
+    assert bilh.site.price_source_id is None  # P1 #9: shown, no line has a number
+    # P9: its billing type is unknown, so it is priced as a hospital clinic: the facility side is
+    # not loaded and the doctor's own self-pay fee has no public source
+    assert bilh.site.billing_type == "unknown"
+    assert {ln.cell.kind for ln in bilh.receipt.lines if ln.at == "this_site" and ln.cell} <= {
+        "not_loaded", "no_source"}  # fmt: skip
 
 
 def test_e2e_medicare(engine):
@@ -190,15 +194,18 @@ def test_e2e_masshealth(engine):
 # --------------------------------------------------------------------------- ladder (§2.4, D5, D6)
 
 
-def test_rung_6_estimate_is_in_the_total_and_flagged(engine):
+def test_afc_physical_therapy_is_not_summed_without_evidence(engine):
+    """C3 R1 / R2 (was: the rung-6 multiple put AFC's PT evaluation in the total). AFC's registry
+    entry says visit + imaging + lab; an insurer row for 97161 is not evidence AFC does PT, so
+    the line is 'unknown' with the P6 reason and stays out of the total."""
     r = _quote(engine, BCBS_HMO)
     pt = _line(r, AFC, "physical_therapy")
-    assert pt.doctor_fee.rung == 6 and pt.in_total
-    m = pt.doctor_fee.multiple
-    assert m.n_codes >= 5 and m.payer_id == "BCBS_MA"
+    assert pt.availability == "unknown" and pt.availability_reason == "insurer_lists_rate"
+    assert not pt.in_total and pt.estimate is None
     afc = next(s for s in r.sites if s.site.site_id == AFC)
-    assert afc.receipt.totals.likely.includes_estimate  # D20
-    assert pt.cell.prov.source_kind.value == "medicare_pfs"
+    assert "physical_therapy" not in afc.receipt.totals.likely.line_ids
+    reasons = {e.line_id: e.reason for e in afc.receipt.totals.excluded}
+    assert reasons["physical_therapy"] == "availability_unknown"
 
 
 def test_by_npi_when_prices_differ_else_range(engine):
@@ -320,12 +327,15 @@ def test_unknown_payer_site_or_path_is_a_value_error(engine):
 def test_manual_pick_and_assistant_pick(engine):
     r = _quote(engine, BCBS_HMO, path=None, codes=["73030"])
     assert all(ln.tier_basis == "picked" for s in r.sites for ln in s.receipt.lines)
+    assert all(st.step_id is None and st.key == "73030" for s in r.sites for st in s.steps)
     req = QuoteRequest.model_validate({
         "payment": BCBS_HMO, "care_path_id": None, "answers": {}, "service_codes": ["73030"],
         "picked_by": "assistant", "site_ids": None,
     })  # fmt: skip
     a = engine.quote(req, AS_OF)
-    assert all(ln.ai_suggested and not ln.in_total for s in a.sites for ln in s.receipt.lines)
+    assert all(ln.ai_suggested and not ln.in_total for s in a.sites if s.receipt
+               for ln in s.receipt.lines)  # fmt: skip
+    assert any(s.receipt for s in a.sites)
 
 
 def test_elsewhere_suggests_cheaper_sites_for_a_gap(engine):

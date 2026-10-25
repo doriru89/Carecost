@@ -129,7 +129,9 @@
           "skin",
           "gi"
         ],
-        "listing_status": "web_verified"
+        "listing_status": "web_verified",
+        "kind": "hospital_outpatient",
+        "chain_id": null
       },
       "receipt": {
         "lines": [
@@ -175,7 +177,12 @@
             "ai_suggested": false,
             "in_total": true,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "visit_facility",
@@ -216,7 +223,12 @@
             "ai_suggested": false,
             "in_total": true,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "visit_doctor",
@@ -259,14 +271,18 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "xray_facility",
@@ -318,7 +334,12 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "xray_reading",
@@ -359,7 +380,12 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "physical_therapy_eval",
@@ -402,7 +428,12 @@
             "ai_suggested": false,
             "in_total": true,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "physical_therapy_sessions",
@@ -445,7 +476,12 @@
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "steroid_injection",
@@ -489,7 +525,12 @@
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "injection_drug_ai",
@@ -523,7 +564,12 @@
             "ai_suggested": true,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "ultrasound",
@@ -576,7 +622,12 @@
                 "label": "RadiologyInfo: musculoskeletal ultrasound",
                 "url": "https://www.radiologyinfo.org/en/info/genus"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "mri",
@@ -629,7 +680,12 @@
                 "label": "RadiologyInfo: shoulder MRI",
                 "url": "https://www.radiologyinfo.org/en/info/shouldermr"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           }
         ],
         "totals": {
@@ -647,7 +703,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 3,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "visit_doctor",
@@ -683,7 +739,10 @@
             "note_key": "youpay.copay_or_deductible",
             "portal_label": "Check my deductible at MyBlue",
             "portal_url": "https://www.bluecrossma.org/myblue"
-          }
+          },
+          "comparable": 390.3,
+          "real_steps": 2,
+          "might_add": null
         }
       },
       "other_payers": [
@@ -815,7 +874,150 @@
           },
           "yours": "in_points"
         }
-      ]
+      ],
+      "steps": [
+        {
+          "key": "referral",
+          "step_id": "referral",
+          "likelihood": "certain",
+          "availability": "offered",
+          "figure": "own",
+          "low": 143.97,
+          "high": 143.97,
+          "rank_value": 143.97,
+          "estimated": false,
+          "unusual": false,
+          "in_total": true,
+          "missing": false,
+          "line_ids": [
+            "referral_visit"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "visit",
+          "step_id": "visit",
+          "likelihood": "certain",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "visit_facility",
+            "visit_doctor"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "xray",
+          "step_id": "xray",
+          "likelihood": "likely",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "xray_facility",
+            "xray_reading"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "physical_therapy",
+          "step_id": "physical_therapy",
+          "likelihood": "likely",
+          "availability": "offered",
+          "figure": "own",
+          "low": 246.33,
+          "high": 246.33,
+          "rank_value": 246.33,
+          "estimated": false,
+          "unusual": false,
+          "in_total": true,
+          "missing": false,
+          "line_ids": [
+            "physical_therapy_eval",
+            "physical_therapy_sessions"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "steroid_injection",
+          "step_id": "steroid_injection",
+          "likelihood": "possible",
+          "availability": "offered",
+          "figure": "own",
+          "low": 483.38,
+          "high": 483.38,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "steroid_injection",
+            "injection_drug_ai"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "tendon_scan_ultrasound",
+          "step_id": "tendon_scan_ultrasound",
+          "likelihood": "possible",
+          "availability": "offered",
+          "figure": "own",
+          "low": 199.42,
+          "high": 199.42,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "ultrasound"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "tendon_scan_mri",
+          "step_id": "tendon_scan_mri",
+          "likelihood": "possible",
+          "availability": "offered",
+          "figure": "own",
+          "low": 659.15,
+          "high": 659.15,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "mri"
+          ],
+          "elsewhere": null
+        }
+      ],
+      "distance_km": 1.0,
+      "headline": {
+        "likely_low": 715.65,
+        "likely_high": 715.65,
+        "includes_estimate": false,
+        "complete": false,
+        "missing": 2,
+        "comparable": 390.3,
+        "real_steps": 2,
+        "might_add": null
+      }
     },
     {
       "site": {
@@ -850,7 +1052,9 @@
           "skin",
           "gi"
         ],
-        "listing_status": "web_verified"
+        "listing_status": "web_verified",
+        "kind": "hospital_outpatient",
+        "chain_id": null
       },
       "receipt": {
         "lines": [
@@ -889,7 +1093,12 @@
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "visit_facility",
@@ -923,7 +1132,12 @@
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "visit_doctor",
@@ -978,7 +1192,6 @@
               "group_name": "Brigham and Women's Physicians Organization",
               "group_tin": "04-3466314",
               "npi_count": 1892,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": [
                 {
@@ -1028,7 +1241,12 @@
             "ai_suggested": false,
             "in_total": true,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "xray_facility",
@@ -1073,7 +1291,12 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "steroid_injection",
@@ -1117,7 +1340,12 @@
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           }
         ],
         "totals": {
@@ -1132,7 +1360,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 4,
+          "missing": 3,
           "excluded": [
             {
               "line_id": "referral_visit",
@@ -1156,10 +1384,99 @@
             "note_key": "youpay.copay_or_deductible",
             "portal_label": "Check my deductible at MyBlue",
             "portal_url": "https://www.bluecrossma.org/myblue"
-          }
+          },
+          "comparable": null,
+          "real_steps": 0,
+          "might_add": null
         }
       },
-      "other_payers": []
+      "other_payers": [],
+      "steps": [
+        {
+          "key": "referral",
+          "step_id": "referral",
+          "likelihood": "certain",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "referral_visit"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "visit",
+          "step_id": "visit",
+          "likelihood": "certain",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "visit_facility",
+            "visit_doctor"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "xray",
+          "step_id": "xray",
+          "likelihood": "likely",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "xray_facility"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "steroid_injection",
+          "step_id": "steroid_injection",
+          "likelihood": "possible",
+          "availability": "offered",
+          "figure": "own",
+          "low": 424.52,
+          "high": 424.52,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "steroid_injection"
+          ],
+          "elsewhere": null
+        }
+      ],
+      "distance_km": 2.0,
+      "headline": {
+        "likely_low": 80.0,
+        "likely_high": 328.84,
+        "includes_estimate": false,
+        "complete": false,
+        "missing": 3,
+        "comparable": null,
+        "real_steps": 0,
+        "might_add": null
+      }
     },
     {
       "site": {
@@ -1185,7 +1502,9 @@
         "service_areas": [
           "ortho"
         ],
-        "listing_status": "web_verified"
+        "listing_status": "web_verified",
+        "kind": "hospital_outpatient",
+        "chain_id": null
       },
       "receipt": {
         "lines": [
@@ -1230,7 +1549,12 @@
             "ai_suggested": false,
             "in_total": true,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "physical_therapy_sessions",
@@ -1266,7 +1590,12 @@
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "xray_facility",
@@ -1326,7 +1655,12 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": "site_says_not_offered"
           },
           {
             "line_id": "mri",
@@ -1387,7 +1721,12 @@
                 "label": "RadiologyInfo: shoulder MRI",
                 "url": "https://www.radiologyinfo.org/en/info/shouldermr"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": "site_says_not_offered"
           }
         ],
         "totals": {
@@ -1402,7 +1741,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 4,
+          "missing": 1,
           "excluded": [
             {
               "line_id": "xray_facility",
@@ -1422,10 +1761,81 @@
             "note_key": "youpay.copay_or_deductible",
             "portal_label": "Check my deductible at MyBlue",
             "portal_url": "https://www.bluecrossma.org/myblue"
-          }
+          },
+          "comparable": 97.76,
+          "real_steps": 1,
+          "might_add": null
         }
       },
-      "other_payers": []
+      "other_payers": [],
+      "steps": [
+        {
+          "key": "physical_therapy",
+          "step_id": "physical_therapy",
+          "likelihood": "likely",
+          "availability": "offered",
+          "figure": "own",
+          "low": 97.76,
+          "high": 97.76,
+          "rank_value": 97.76,
+          "estimated": false,
+          "unusual": false,
+          "in_total": true,
+          "missing": false,
+          "line_ids": [
+            "physical_therapy_eval",
+            "physical_therapy_sessions"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "xray",
+          "step_id": "xray",
+          "likelihood": "likely",
+          "availability": "not_offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "xray_facility"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "tendon_scan_mri",
+          "step_id": "tendon_scan_mri",
+          "likelihood": "possible",
+          "availability": "not_offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "mri"
+          ],
+          "elsewhere": null
+        }
+      ],
+      "distance_km": 3.0,
+      "headline": {
+        "likely_low": 97.76,
+        "likely_high": 97.76,
+        "includes_estimate": false,
+        "complete": false,
+        "missing": 1,
+        "comparable": 97.76,
+        "real_steps": 1,
+        "might_add": null
+      }
     }
   ],
   "sites_without_service": [],
@@ -1436,5 +1846,15 @@
   "notices": [
     "care_path_draft",
     "late_to_refresh_sources"
-  ]
+  ],
+  "payment_label": {
+    "en": "test",
+    "zh": "test"
+  },
+  "ordering": "kind_then_distance",
+  "origin": {
+    "lat": 42.3603,
+    "lon": -71.058
+  },
+  "chain_spreads": []
 }

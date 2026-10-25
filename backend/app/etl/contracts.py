@@ -52,16 +52,17 @@ class SourceKind(StrEnum):
 
 # AI never produces dollars: there is no AI source kind and no AI method, so no Money can say
 # "an AI wrote this number" (the old ai_potential / ai_drafted members are gone on purpose).
-# A rung-6 estimate is not a source either: it is Medicare PFS data (source_kind medicare_pfs)
-# with method estimate_medicare_multiple and basis estimate.
+# A peer estimate (rung 6, C3) is not a source either: it cites the real rows of other sites'
+# prices for the same line (source_kind insurer_tic / hospital_mrf / clinic_posted) with method
+# estimate_peer_range and basis estimate.
 
 
 FEE_SCHEDULE_KINDS = frozenset(
     {SourceKind.medicare_pfs, SourceKind.medicare_opps, SourceKind.medicare_asc,
      SourceKind.masshealth_fs}
 )  # fmt: skip
-"""Government fee schedules: a number read from them is basis ``fee_schedule`` (or a rung-6
-``estimate`` built on the Medicare PFS) and belongs to no payer (it is a published schedule, not a
+"""Government fee schedules: a number read from them is basis ``fee_schedule`` and belongs to no
+payer (it is a published schedule, not a
 negotiated rate)."""
 
 
@@ -71,7 +72,7 @@ class Method(StrEnum):
     stated = "stated"  # copied as published
     derived_pct_x_gross = "derived_pct_x_gross"  # negotiated % x the same line's gross charge
     computed_fee_schedule = "computed_fee_schedule"  # e.g. RVU x GPCI x CF (Medicare PFS)
-    estimate_medicare_multiple = "estimate_medicare_multiple"  # ladder step 6
+    estimate_peer_range = "estimate_peer_range"  # C3 ladder step 6: p25-p75 of peer sites' prices
 
 
 class PriceBasis(StrEnum):
@@ -269,7 +270,7 @@ class Money(BaseModel):
             fs_kind = p.source_kind in FEE_SCHEDULE_KINDS
             if self.basis == PriceBasis.fee_schedule and not fs_kind:
                 raise ValueError(f"{p.row_ref}: basis fee_schedule needs a fee-schedule source")
-            if fs_kind and self.basis not in (PriceBasis.fee_schedule, PriceBasis.estimate):
+            if fs_kind and self.basis != PriceBasis.fee_schedule:
                 raise ValueError(f"{p.row_ref}: a fee-schedule number is basis fee_schedule")
             if fs_kind and p.payer_id is not None:
                 raise ValueError(

@@ -237,51 +237,63 @@ def test_you_pay_kind_matches_the_payment():
 # --------------------------------------------------------------------------- I7 ranking
 
 
-def test_sites_are_ranked_by_completeness_then_price():
-    doc = _fx("quote_bcbs_hmo_shoulder")
-    doc["sites"] = doc["sites"][::-1]  # Franciscan (cheap, gappy) first
+def test_sites_are_ranked_by_missing_steps_then_comparable():
+    """C3 I7: with a point, by (missing steps, comparable figure)."""
+    doc = _fx("quote_bcbs_hmo_shoulder", real=True)
+    assert doc["ordering"] == "rank"
+    keys = [(s["headline"]["missing"], s["headline"]["comparable"]) for s in doc["sites"]]
+    assert len(set(keys)) > 1
+    doc["sites"] = doc["sites"][::-1]
     _bad(doc, "rank_key")
 
 
-def test_missing_is_derived_and_counts_skipped_steps():
+def test_no_location_list_is_grouped_by_kind_then_distance():
+    """C3 P7: no point -> by kind of site, then distance from City Hall; never by price."""
     doc = _fx("quote_bcbs_hmo_shoulder")
-    _site(doc, BWH)["receipt"]["totals"]["missing"] -= 1
-    _bad(doc, "totals.missing must be")
-    # dropping a line from a site (the engine 'forgets' it) does not lower its missing count
+    assert doc["ordering"] == "kind_then_distance"
+    doc["sites"] = doc["sites"][::-1]
+    _bad(doc, "grouped by kind")
     doc = _fx("quote_bcbs_hmo_shoulder")
-    resp = _ok(doc)
-    steps = {q._step_key(ln) for sq in resp.sites for ln in sq.receipt.lines if q._expected(ln)}
-    bwh = next(sq for sq in resp.sites if sq.site.site_id == BWH)
-    before = q.missing_for(bwh, steps)
-    gone = bwh.model_copy(
-        update={
-            "receipt": bwh.receipt.model_copy(
-                update={"lines": [ln for ln in bwh.receipt.lines if ln.line_id != "referral_visit"]}
-            )
-        }
-    )
-    assert q.missing_for(gone, steps) == before
+    doc["sites"][0]["distance_km"] = None
+    _bad(doc, "distance_km is measured from origin")
 
 
-def test_losing_a_price_never_improves_rank():
-    """I7 property: turning any summed line into a gap makes the site's key strictly worse,
-    whatever it does to the price."""
-    for name, real in [(n, r) for n in QUOTES for r in (False, True)]:
-        resp = _ok(_fx(name, real))
-        steps = {q._step_key(ln) for sq in resp.sites for ln in sq.receipt.lines if q._expected(ln)}
-        for sq in resp.sites:
-            key = q.rank_key(sq)
-            for ln in sq.receipt.lines:
-                if not ln.in_total:
-                    continue
-                lines = [
-                    x.model_copy(update={"in_total": x.in_total and x is not ln})
-                    for x in sq.receipt.lines
-                ]
-                gapped = sq.model_copy(
-                    update={"receipt": sq.receipt.model_copy(update={"lines": lines})}
-                )
-                assert q.missing_for(gapped, steps) == key[0] + 1, (name, ln.line_id)
+def test_missing_is_one_per_step_and_derived():
+    """C3 I7: totals.missing is the number of steps flagged missing (per step, not per line); a
+    missing step adds nothing to the ranking figure."""
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    sq = _site(doc, BWH)
+    sq["receipt"]["totals"]["missing"] -= 1
+    sq["headline"]["missing"] -= 1
+    _bad(doc, "missing")
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    sq = _site(doc, BWH)
+    st = next(x for x in sq["steps"] if x["missing"])
+    st["rank_value"] = 1.0
+    _bad(doc, "has a rank value")
+    # BWH's visit has two lines (facility + doctor); one priced, one not: still ONE missing step
+    resp = _ok(_fx("quote_bcbs_hmo_shoulder"))
+    bwh = next(s for s in resp.sites if s.site.site_id == BWH)
+    visit = next(st for st in bwh.steps if st.key == "visit")
+    assert len(visit.line_ids) == 2 and visit.missing
+    assert q.missing_for(bwh) == sum(1 for st in bwh.steps if st.missing)
+
+
+def test_headline_copies_the_receipt_totals():
+    doc = _fx("quote_bcbs_hmo_shoulder", real=True)
+    doc["sites"][0]["headline"]["likely_low"] = 1.0
+    _bad(doc, "headline must copy receipt.totals")
+
+
+def test_a_step_figure_needs_its_shape():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    st = next(x for x in _site(doc, MA)["steps"] if x["figure"] == "own")
+    st["figure"] = "none"
+    _bad(doc, "low/high exactly when it has a figure")
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    st = next(x for x in _site(doc, FR)["steps"] if x["availability"] != "offered")
+    st["in_total"] = True
+    _bad(doc, "only an offered step is summed")
 
 
 # --------------------------------------------------------------------------- receipt line rules

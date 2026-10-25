@@ -1,5 +1,45 @@
 {
   "$defs": {
+    "AnesthesiaTime": {
+      "additionalProperties": false,
+      "description": "C3 item 12: 'with typical time, about $Y'. Anesthesia is paid (base units + minutes / 15)\nx a conversion factor; the summed line has the base units only. Never summed.",
+      "properties": {
+        "base_units": {
+          "exclusiveMinimum": 0,
+          "title": "Base Units",
+          "type": "number"
+        },
+        "high": {
+          "minimum": 0,
+          "title": "High",
+          "type": "number"
+        },
+        "low": {
+          "minimum": 0,
+          "title": "Low",
+          "type": "number"
+        },
+        "minutes": {
+          "exclusiveMinimum": 0,
+          "title": "Minutes",
+          "type": "integer"
+        },
+        "source": {
+          "description": "the public CMS file the typical minutes come from",
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "minutes",
+        "base_units",
+        "low",
+        "high",
+        "source"
+      ],
+      "title": "AnesthesiaTime",
+      "type": "object"
+    },
     "BillComponent": {
       "description": "which part of the bill",
       "enum": [
@@ -161,6 +201,58 @@
         "not_in_public_data"
       ],
       "type": "string"
+    },
+    "ChainSpread": {
+      "additionalProperties": false,
+      "description": "C3 R12: within one chain, the same line under the same payer differs by more than the\nengine.yaml limit (1.5x): flagged for review, both ends named.",
+      "properties": {
+        "chain_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Chain Id",
+          "type": "string"
+        },
+        "high": {
+          "minimum": 0,
+          "title": "High",
+          "type": "number"
+        },
+        "high_site_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "High Site Id",
+          "type": "string"
+        },
+        "key": {
+          "description": "step key / component / code / modifier",
+          "title": "Key",
+          "type": "string"
+        },
+        "low": {
+          "minimum": 0,
+          "title": "Low",
+          "type": "number"
+        },
+        "low_site_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Low Site Id",
+          "type": "string"
+        },
+        "ratio": {
+          "exclusiveMinimum": 1,
+          "title": "Ratio",
+          "type": "number"
+        }
+      },
+      "required": [
+        "chain_id",
+        "key",
+        "low_site_id",
+        "low",
+        "high_site_id",
+        "high",
+        "ratio"
+      ],
+      "title": "ChainSpread",
+      "type": "object"
     },
     "ChiaBadge": {
       "additionalProperties": false,
@@ -437,17 +529,6 @@
           "default": null,
           "title": "Group Tin"
         },
-        "multiple": {
-          "anyOf": [
-            {
-              "$ref": "#/$defs/Multiple"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null
-        },
         "npi_count": {
           "anyOf": [
             {
@@ -482,7 +563,6 @@
         "group_name",
         "group_tin",
         "npi_count",
-        "multiple",
         "chia_badge",
         "by_npi"
       ],
@@ -570,7 +650,9 @@
             "conflict",
             "not_offered_here",
             "repeats",
-            "reference_only"
+            "reference_only",
+            "availability_unknown",
+            "unusual"
           ],
           "title": "Reason",
           "type": "string"
@@ -592,7 +674,9 @@
         "conflict",
         "not_offered_here",
         "repeats",
-        "reference_only"
+        "reference_only",
+        "availability_unknown",
+        "unusual"
       ],
       "type": "string"
     },
@@ -710,6 +794,89 @@
           "$ref": "#/$defs/Conflict"
         }
       ]
+    },
+    "Headline": {
+      "additionalProperties": false,
+      "description": "C3 (item 9): what a list row shows without the full receipt (receipt.totals when it is\npresent, copied).",
+      "properties": {
+        "comparable": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Comparable"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        },
+        "includes_estimate": {
+          "title": "Includes Estimate",
+          "type": "boolean"
+        },
+        "likely_high": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Likely High"
+        },
+        "likely_low": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Likely Low"
+        },
+        "might_add": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MightAdd"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "missing": {
+          "minimum": 0,
+          "title": "Missing",
+          "type": "integer"
+        },
+        "real_steps": {
+          "minimum": 0,
+          "title": "Real Steps",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "likely_low",
+        "likely_high",
+        "includes_estimate",
+        "complete",
+        "missing",
+        "comparable",
+        "real_steps",
+        "might_add"
+      ],
+      "title": "Headline",
+      "type": "object"
     },
     "Hours": {
       "additionalProperties": false,
@@ -891,6 +1058,25 @@
       ],
       "type": "string"
     },
+    "LocalLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "en": {
+          "title": "En",
+          "type": "string"
+        },
+        "zh": {
+          "title": "Zh",
+          "type": "string"
+        }
+      },
+      "required": [
+        "en",
+        "zh"
+      ],
+      "title": "LocalLabel",
+      "type": "object"
+    },
     "MassHealthPayment": {
       "additionalProperties": false,
       "description": "MassHealth fee-for-service rates. ACO / MCO plans may pay differently (shown as a note).",
@@ -929,10 +1115,40 @@
         "stated",
         "derived_pct_x_gross",
         "computed_fee_schedule",
-        "estimate_medicare_multiple"
+        "estimate_peer_range"
       ],
       "title": "Method",
       "type": "string"
+    },
+    "MightAdd": {
+      "additionalProperties": false,
+      "properties": {
+        "high": {
+          "minimum": 0,
+          "title": "High",
+          "type": "number"
+        },
+        "low": {
+          "minimum": 0,
+          "title": "Low",
+          "type": "number"
+        },
+        "step_keys": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Step Keys",
+          "type": "array"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "step_keys"
+      ],
+      "title": "MightAdd",
+      "type": "object"
     },
     "Money": {
       "additionalProperties": false,
@@ -982,40 +1198,6 @@
         "prov_high"
       ],
       "title": "Money",
-      "type": "object"
-    },
-    "Multiple": {
-      "additionalProperties": false,
-      "description": "Rung 6: Medicare x the same group's own typical multiple (>= 5 matched codes, D5).",
-      "properties": {
-        "high": {
-          "exclusiveMinimum": 0,
-          "title": "High",
-          "type": "number"
-        },
-        "low": {
-          "exclusiveMinimum": 0,
-          "title": "Low",
-          "type": "number"
-        },
-        "n_codes": {
-          "minimum": 5,
-          "title": "N Codes",
-          "type": "integer"
-        },
-        "payer_id": {
-          "pattern": "^[A-Z][A-Z0-9_]*$",
-          "title": "Payer Id",
-          "type": "string"
-        }
-      },
-      "required": [
-        "low",
-        "high",
-        "n_codes",
-        "payer_id"
-      ],
-      "title": "Multiple",
       "type": "object"
     },
     "Near": {
@@ -1349,6 +1531,84 @@
         }
       ]
     },
+    "PeerRange": {
+      "additionalProperties": false,
+      "description": "C3 (R4, P4, P5, X2): the same line's (or step's) real prices at other sites of the same\nkind, under the same payer and plan product, one value per distinct billing group (TIN).\nlow / high = p25 / p75 (nearest rank, so each end is a real price); median = the neutral\nfigure ranking uses, so an estimate can neither help nor hurt a site.",
+      "properties": {
+        "high": {
+          "minimum": 0,
+          "title": "High",
+          "type": "number"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "urgent_care",
+                "office",
+                "hospital_outpatient",
+                "ambulatory_surgery_center"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "kind of the peer sites; None = every kind (P4)",
+          "title": "Kind"
+        },
+        "low": {
+          "minimum": 0,
+          "title": "Low",
+          "type": "number"
+        },
+        "median": {
+          "minimum": 0,
+          "title": "Median",
+          "type": "number"
+        },
+        "n_groups": {
+          "description": "distinct billing groups (TINs / files) behind it",
+          "minimum": 1,
+          "title": "N Groups",
+          "type": "integer"
+        },
+        "payer_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z][A-Z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "whose rates; None for self-pay / fee schedules",
+          "title": "Payer Id"
+        },
+        "scope": {
+          "description": "same_system: the site's own health system's groups",
+          "enum": [
+            "same_kind",
+            "same_system"
+          ],
+          "title": "Scope",
+          "type": "string"
+        }
+      },
+      "required": [
+        "low",
+        "high",
+        "median",
+        "n_groups",
+        "kind",
+        "scope",
+        "payer_id"
+      ],
+      "title": "PeerRange",
+      "type": "object"
+    },
     "PercentOnly": {
       "additionalProperties": false,
       "description": "Only 'X% of charges' is published and the base charge is not.",
@@ -1546,9 +1806,17 @@
           ],
           "title": "Care Path Id"
         },
+        "full_receipts": {
+          "default": 12,
+          "description": "C3: without `near` and `site_ids`, the first N sites carry their full receipt; the rest carry the summary (headline + steps) and are fetched by `site_ids`",
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Full Receipts",
+          "type": "integer"
+        },
         "max_sites": {
           "default": 12,
-          "description": "C2: at most this many sites in the response; I7 ranks inside the chosen set",
+          "description": "With `near`: at most this many (the closest) sites. Ignored without `near`",
           "maximum": 50,
           "minimum": 1,
           "title": "Max Sites",
@@ -1564,7 +1832,7 @@
             }
           ],
           "default": null,
-          "description": "C2: quote the max_sites sites closest to this point (straight-line distance). None = the max_sites best-ranked sites (I7) of the whole set"
+          "description": "C2: quote the max_sites sites closest to this point (straight-line distance), ranked (I7). None (P7) = every admitted site, grouped by kind of site and ordered by distance from Boston City Hall"
         },
         "payment": {
           "discriminator": {
@@ -1656,6 +1924,14 @@
             }
           ]
         },
+        "chain_spreads": {
+          "description": "C3 R12: same chain, same line, prices > 1.5x apart",
+          "items": {
+            "$ref": "#/$defs/ChainSpread"
+          },
+          "title": "Chain Spreads",
+          "type": "array"
+        },
         "copy_keys": {
           "description": "D33: a quote reached from a care path carries both fixed lines (common causes, not a diagnosis; when to see a doctor); a manual pick carries none (P1 problem 13)",
           "items": {
@@ -1679,12 +1955,35 @@
               "late_to_refresh_sources",
               "stale_on_our_side_sources",
               "masshealth_aco_may_differ",
-              "medicare_advantage_is_insurance"
+              "medicare_advantage_is_insurance",
+              "chain_price_spread"
             ],
             "type": "string"
           },
           "title": "Notices",
           "type": "array"
+        },
+        "ordering": {
+          "default": "rank",
+          "description": "C3 P7: rank with a point or named sites, else by kind",
+          "enum": [
+            "rank",
+            "kind_then_distance"
+          ],
+          "title": "Ordering",
+          "type": "string"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Near"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "where distance_km is measured from (the point, or City Hall)"
         },
         "payment": {
           "discriminator": {
@@ -1712,6 +2011,10 @@
           ],
           "title": "Payment"
         },
+        "payment_label": {
+          "$ref": "#/$defs/LocalLabel",
+          "description": "P2: how the payment is named to a person; cash is 'Self-pay (no insurance)'"
+        },
         "picked_by": {
           "enum": [
             "person",
@@ -1728,7 +2031,7 @@
           "type": "array"
         },
         "sites": {
-          "description": "Ordered by rank_key (I7)",
+          "description": "ordering rank: by rank_key (I7); kind_then_distance: by kind_distance_key (P7)",
           "items": {
             "$ref": "#/$defs/SiteQuote"
           },
@@ -1754,6 +2057,7 @@
       },
       "required": [
         "payment",
+        "payment_label",
         "care_path",
         "service_codes",
         "picked_by",
@@ -1761,6 +2065,9 @@
         "data_version",
         "sources",
         "sites",
+        "ordering",
+        "origin",
+        "chain_spreads",
         "sites_without_service",
         "copy_keys",
         "notices"
@@ -1797,6 +2104,18 @@
           "title": "Ai Suggested",
           "type": "boolean"
         },
+        "anesthesia_time": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AnesthesiaTime"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C3: the anesthesia fee with a typical time (never summed)"
+        },
         "at": {
           "default": "this_site",
           "description": "Where this part of the care happens. your_primary_care: an HMO referral visit happens at the person's own primary care office, not at this site; the price is a range over the primary care groups we have, never this site's (P1 problem 15)",
@@ -1816,6 +2135,24 @@
           ],
           "title": "Availability",
           "type": "string"
+        },
+        "availability_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "insurer_lists_rate",
+                "no_evidence",
+                "site_says_not_offered"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C3 P6: why the line is not offered; None exactly when offered",
+          "title": "Availability Reason"
         },
         "cell": {
           "anyOf": [
@@ -1858,6 +2195,20 @@
           ],
           "description": "None only when availability == not_offered",
           "title": "Cell"
+        },
+        "chain_price_from": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C3 R12: the price is the chain's posted self-pay price, published on this site's page (it applies at every location of the chain)",
+          "title": "Chain Price From"
         },
         "codes": {
           "description": "technical detail only, never the label",
@@ -1902,6 +2253,18 @@
           },
           "title": "Elsewhere",
           "type": "array"
+        },
+        "estimate": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PeerRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C3 (P5): the peer range behind an estimated cell (basis estimate); None otherwise"
         },
         "glossary_keys": {
           "items": {
@@ -2027,6 +2390,18 @@
           "title": "Unit",
           "type": "string"
         },
+        "unusual": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/UnusualPrice"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C3 (P8): rows outside 1/3x-3x of the peer median"
+        },
         "why": {
           "anyOf": [
             {
@@ -2055,6 +2430,7 @@
         "component_confirmed",
         "unit",
         "availability",
+        "availability_reason",
         "cell",
         "list_price",
         "tier_basis",
@@ -2064,6 +2440,10 @@
         "elsewhere",
         "learn_more",
         "price_notes",
+        "estimate",
+        "unusual",
+        "anesthesia_time",
+        "chain_price_from",
         "at"
       ],
       "title": "ReceiptLine",
@@ -2093,6 +2473,23 @@
     "SiteQuote": {
       "additionalProperties": false,
       "properties": {
+        "distance_km": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "From the request's point, or from Boston City Hall when there is none (P7)",
+          "title": "Distance Km"
+        },
+        "headline": {
+          "$ref": "#/$defs/Headline"
+        },
         "other_payers": {
           "items": {
             "$ref": "#/$defs/OtherPayerRange"
@@ -2101,14 +2498,33 @@
           "type": "array"
         },
         "receipt": {
-          "$ref": "#/$defs/Receipt"
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Receipt"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "C3: None for a site past `full_receipts` in a no-location list; ask for it with `site_ids`"
         },
         "site": {
           "$ref": "#/$defs/SiteSummary"
+        },
+        "steps": {
+          "description": "C3 (P3): one per step of the quote, in path order",
+          "items": {
+            "$ref": "#/$defs/StepSummary"
+          },
+          "title": "Steps",
+          "type": "array"
         }
       },
       "required": [
         "site",
+        "headline",
+        "steps",
+        "distance_km",
         "receipt",
         "other_payers"
       ],
@@ -2138,6 +2554,20 @@
           },
           "title": "Booking",
           "type": "array"
+        },
+        "chain_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C3 R12: the chain whose posted prices apply here",
+          "title": "Chain Id"
         },
         "children_only": {
           "default": false,
@@ -2174,6 +2604,17 @@
             "unknown"
           ],
           "title": "Hours Label",
+          "type": "string"
+        },
+        "kind": {
+          "description": "X2 / P7: the kind of site (engine.yaml site_kinds)",
+          "enum": [
+            "urgent_care",
+            "office",
+            "hospital_outpatient",
+            "ambulatory_surgery_center"
+          ],
+          "title": "Kind",
           "type": "string"
         },
         "listing_status": {
@@ -2290,6 +2731,8 @@
         "price_source_id",
         "listing_status",
         "service_areas",
+        "kind",
+        "chain_id",
         "children_only",
         "data_notices"
       ],
@@ -2347,6 +2790,152 @@
       "title": "SourceKind",
       "type": "string"
     },
+    "StepSummary": {
+      "additionalProperties": false,
+      "description": "C3 (P3, item 10): one step at one site, so the map can show one selected service's price.\nlow / high: the step's summed lines here (own / estimate) or the elsewhere range.",
+      "properties": {
+        "availability": {
+          "enum": [
+            "offered",
+            "not_offered",
+            "unknown"
+          ],
+          "title": "Availability",
+          "type": "string"
+        },
+        "elsewhere": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PeerRange"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "P4: the step's price at sites that do it (same payer)"
+        },
+        "estimated": {
+          "title": "Estimated",
+          "type": "boolean"
+        },
+        "figure": {
+          "enum": [
+            "own",
+            "estimate",
+            "elsewhere",
+            "none"
+          ],
+          "title": "Figure",
+          "type": "string"
+        },
+        "high": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "High"
+        },
+        "in_total": {
+          "description": "the step's lines are in totals.likely",
+          "title": "In Total",
+          "type": "boolean"
+        },
+        "key": {
+          "description": "care path step id, or the codes of a manual pick",
+          "title": "Key",
+          "type": "string"
+        },
+        "likelihood": {
+          "enum": [
+            "certain",
+            "likely",
+            "possible",
+            "rare"
+          ],
+          "title": "Likelihood",
+          "type": "string"
+        },
+        "line_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Line Ids",
+          "type": "array"
+        },
+        "low": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Low"
+        },
+        "missing": {
+          "description": "counted in totals.missing",
+          "title": "Missing",
+          "type": "boolean"
+        },
+        "rank_value": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "the neutral figure in `comparable` (None: not counted)",
+          "title": "Rank Value"
+        },
+        "step_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Step Id"
+        },
+        "unusual": {
+          "description": "a line of the step was set aside as unusual (P8)",
+          "title": "Unusual",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "key",
+        "step_id",
+        "likelihood",
+        "availability",
+        "figure",
+        "low",
+        "high",
+        "rank_value",
+        "estimated",
+        "unusual",
+        "in_total",
+        "missing",
+        "line_ids",
+        "elsewhere"
+      ],
+      "title": "StepSummary",
+      "type": "object"
+    },
     "SummedAmount": {
       "additionalProperties": false,
       "description": "A sum of line Money values. Not a ``Money``: a sum has no single Provenance; each part's\nprovenance stays on its line (``line_ids``).",
@@ -2357,7 +2946,7 @@
           "type": "number"
         },
         "includes_estimate": {
-          "description": "Derived: a rung-6 estimate (estimate_medicare_multiple) is in the sum",
+          "description": "Derived: a peer estimate (estimate_peer_range) is in the sum",
           "title": "Includes Estimate",
           "type": "boolean"
         },
@@ -2409,6 +2998,19 @@
     "Totals": {
       "additionalProperties": false,
       "properties": {
+        "comparable": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C3 (P1, P4): the ranking figure: this site's real prices (each line's median row) plus estimates and steps done elsewhere at their neutral peer median; steps with no figure are left out (they count in `missing`). None when no step has a figure",
+          "title": "Comparable"
+        },
         "complete": {
           "description": "False when a certain/likely line has no dollar amount (the total is a floor)",
           "title": "Complete",
@@ -2432,10 +3034,29 @@
           ],
           "description": "certain + likely Money lines with in_total; None when nothing can be summed. Shown as what the care is billed at (you plus your plan), not as what you owe."
         },
+        "might_add": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MightAdd"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "C3 (P9): possible steps this site offers, 'might add $X-$Y' (X = the cheapest one, Y = all of them); never in `likely`"
+        },
         "missing": {
-          "description": "Derived (I7): certain/likely, non-AI lines here that are not in the total, plus certain/likely steps another site in this quote lists and this site does not",
+          "description": "Derived (I7, C3): expected (certain/likely, non-AI) steps with no figure here (no own price, no estimate, no 'elsewhere' range) although some admitted site has a price for that step: one per step, not per line. A step nobody has a price for is not counted (it is the same everywhere). Counted over every admitted site, never over the response",
           "minimum": 0,
           "title": "Missing",
+          "type": "integer"
+        },
+        "real_steps": {
+          "default": 0,
+          "description": "C3: expected steps priced from this site's own real prices",
+          "minimum": 0,
+          "title": "Real Steps",
           "type": "integer"
         },
         "you_pay": {
@@ -2447,9 +3068,48 @@
         "complete",
         "missing",
         "excluded",
-        "you_pay"
+        "you_pay",
+        "comparable",
+        "real_steps",
+        "might_add"
       ],
       "title": "Totals",
+      "type": "object"
+    },
+    "UnusualPrice": {
+      "additionalProperties": false,
+      "description": "C3 P8: a price more than 3x or less than 1/3x the same line's peer median (same payer,\nsame kind of site). Rows outside the band are set aside (shown, never summed); when every row\nis outside, the whole line is unusual and not summed: \"price looks unusual, being checked\".",
+      "properties": {
+        "n_groups": {
+          "minimum": 1,
+          "title": "N Groups",
+          "type": "integer"
+        },
+        "peer_median": {
+          "exclusiveMinimum": 0,
+          "title": "Peer Median",
+          "type": "number"
+        },
+        "set_aside": {
+          "description": "the rows left out of the line's range (cited)",
+          "items": {
+            "$ref": "#/$defs/Money"
+          },
+          "title": "Set Aside",
+          "type": "array"
+        },
+        "whole_line": {
+          "title": "Whole Line",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "peer_median",
+        "n_groups",
+        "whole_line",
+        "set_aside"
+      ],
+      "title": "UnusualPrice",
       "type": "object"
     },
     "YouPay": {

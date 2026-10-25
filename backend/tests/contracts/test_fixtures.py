@@ -237,6 +237,12 @@ def _features(quotes) -> set[str]:
         f.add("ai_suggested")
     if any(ln.availability == "not_offered" and ln.elsewhere for ln in lines):
         f.add("not_offered_elsewhere")
+    if any(ln.estimate is not None for ln in lines):
+        f.add("estimate")  # C3 P5
+    if any(ln.availability == "unknown" for ln in lines):
+        f.add("availability_unknown")  # C3 R1
+    if any(st.figure == "elsewhere" for qr in quotes for sq in qr.sites for st in sq.steps):
+        f.add("step_elsewhere")  # C3 P4
     fresh = [s.freshness for qr in quotes for s in qr.sources.values()]
     # (a) publisher late without (b), (b) we are stale without (a), and current
     if any(x.late_to_refresh and not x.stale_on_our_side for x in fresh):
@@ -267,6 +273,9 @@ CONTRACT_FEATURES = {
     "by_npi",
     "ai_suggested",
     "not_offered_elsewhere",
+    "estimate",
+    "availability_unknown",
+    "step_elsewhere",
     "late_to_refresh",
     "stale_on_our_side",
     "fresh_source",
@@ -287,8 +296,6 @@ CONTRACT_FEATURES = {
 NOT_IN_REAL_DATA = {
     "cell:percent_only": "no BCBS HMO / cash row of the golden quotes' sites is percent-only for "
     "these codes",
-    "cell:conflict": "no hospital file of the 12 sites closest to Harvard Square disagrees with "
-    "BCBS's TiC file by more than 10% for these codes (Tufts 20610 does: tests/quote/test_engine)",
     "not_offered_elsewhere": "Site.offered holds positive evidence only (A3); no evidence is "
     "availability 'unknown', never 'not offered'",
     "late_to_refresh": "no source the fixture quotes use is past its publisher deadline on "
@@ -473,7 +480,11 @@ def _tic_candidates(rows, ln, site_id, payment, billing_class) -> list[dict]:
     networks; professional rows at the site's place of service (any POS for a modifier-26 reading,
     Austin 2026-10-24), preferring facility-only rows on a hospital line."""
     site = SITES[site_id]
-    pos = set(ENGINE_RULES["place_of_service"][site["billing_type"]])
+    billing = site["billing_type"]
+    if billing == "unknown":  # P9: priced as a hospital clinic (an ASC site as an ASC)
+        billing = "asc" if site["site_type"] == "ambulatory_surgery_center" else (
+            ENGINE_RULES["unknown_billing_priced_as"])  # fmt: skip
+    pos = set(ENGINE_RULES["place_of_service"][billing])
     nets = _networks(payment)
     own = (
         set(site.get("tins", [])) | set(site.get("tin_npis", [])) | set(site.get("type_2_npis", []))
@@ -512,12 +523,38 @@ def _tic_rows_for(rows, ln, nets, billing_class, keep, pos=None) -> list[dict]:
     return cands
 
 
+def _check_estimate(rows, m, ln, sq, payment, where):
+    """C3 P5: an estimate is the PeerRange's p25-p75 (>= min_groups groups); each end is a real
+    row's number for the same code, from the payment's own rates, never this site's own TIN."""
+    est = ln.estimate
+    assert est is not None and est.n_groups >= ENGINE_RULES["peers"]["min_groups"], where
+    assert (m.low, m.high) == (est.low, est.high) and est.low <= est.median <= est.high, where
+    want = payment.payer_id if payment.kind == "insurance" else None
+    assert est.payer_id == want and all(p.payer_id == want for p in m.provs()), where
+    if m.prov.source_kind.value == "clinic_posted":
+        return
+    col = "discounted_cash" if payment.kind == "cash" else "amount"
+    site = SITES[sq.site.site_id]
+    own = (
+        set(site.get("tins", [])) | set(site.get("tin_npis", [])) | set(site.get("type_2_npis", []))
+    )
+    for p, v in ((m.prov, m.low), (m.prov_high or m.prov, m.high)):
+        r = _cited(rows, p, v, "estimate", ln.codes, ln.modifier)
+        assert _num(r[col]) == v, (*where, "an estimate end is a real row's number")
+        if r["source_kind"] == "insurer_tic":
+            assert r["source_id"] in _networks(payment) and r["tin"] not in own, where
+        elif payment.kind == "insurance":
+            assert _payer_ok(r, payment), where
+
+
 def _check_money(rows, m, ln, sq, payment, where):
+    if m.basis.value == "estimate":
+        _check_estimate(rows, m, ln, sq, payment, where)
+        return
     kind = m.prov.source_kind.value
     if kind == "clinic_posted":
-        posted = [
-            p for p in SITES[sq.site.site_id]["cash_prices"] if set(p["codes"]) & set(ln.codes)
-        ]
+        page = SITES[ln.chain_price_from or sq.site.site_id]  # R12: the chain's posted page
+        posted = [p for p in page["cash_prices"] if set(p.get("codes", [])) & set(ln.codes)]
         assert m.low == m.high == min(p["amount"] for p in posted), where
         return
     lo = _cited(rows, m.prov, m.low, m.basis.value, ln.codes, ln.modifier)
@@ -532,14 +569,14 @@ def _check_money(rows, m, ln, sq, payment, where):
     elif kind == "insurer_tic":
         bc = "facility" if ln.component == "facility" else "professional"
         cands = _tic_candidates(rows, ln, sq.site.site_id, payment, bc)
-    elif m.basis.value == "estimate":
-        mult = ln.doctor_fee.multiple
-        base = _num(lo["amount"])
-        assert (m.low, m.high) == (round(base * mult.low, 2), round(base * mult.high, 2)), where
-        return
     else:  # fee schedule: one row per code / modifier / setting
         assert m.low == m.high == _num(lo["amount"]), where
         return
+    un = ln.unusual
+    if un is not None and not un.whole_line and m is ln.cell:  # P8: rows outside the band set aside
+        band = (float(ENGINE_RULES["outliers"]["low"]) * un.peer_median,
+                float(ENGINE_RULES["outliers"]["high"]) * un.peer_median)  # fmt: skip
+        cands = [x for x in cands if band[0] <= _num(x[col]) <= band[1]]
     assert any(x["row_ref"] == m.prov.row_ref for x in cands), where
     assert m.low == min(_num(x[col]) for x in cands), where
     assert m.high == max(_num(x[col]) for x in cands), where

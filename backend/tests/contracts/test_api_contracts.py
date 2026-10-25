@@ -351,15 +351,12 @@ def test_doctor_fee_rules():
         "group_name": None,
         "group_tin": None,
         "npi_count": None,
-        "multiple": None,
         "chia_badge": None,
         "by_npi": None,
     }
     q.DoctorFee.model_validate(ok)
     with pytest.raises(ValidationError):
         q.DoctorFee.model_validate({**ok, "explanation_key": "fee.rung_5_medicare"})
-    with pytest.raises(ValidationError, match="rung 6"):
-        q.DoctorFee.model_validate({**ok, "rung": 6, "explanation_key": "fee.rung_6_estimate"})
     with pytest.raises(ValidationError):
         q.DoctorFee.model_validate({**ok, "rung": None})
     by_npi = _line(_bcbs_site(1)["receipt"], "visit_doctor")["doctor_fee"]["by_npi"]
@@ -371,27 +368,30 @@ def test_doctor_fee_rules():
 
 
 def _rung6(site: _Site) -> dict:
-    """Brigham's doctor fee as a rung-6 estimate: Medicare PFS x BCBS's own multiple."""
+    """C3: Brigham's doctor fee as a peer estimate (rung 6): p25-p75 of BCBS's own rates for the
+    same line at >= 5 groups of hospital doctors, both ends cited, the PeerRange on the line."""
+    from tests.contracts.migrate_c3 import derive_site
+
     ln = _line(site["receipt"], "visit_doctor")
-    pfs = copy.deepcopy(_line(_bcbs_site(0)["receipt"], "visit_doctor")["cell"])  # PFS 99203
-    pfs.update(low=90.66, high=135.97, basis="estimate")
-    pfs["prov"]["method"] = "estimate_medicare_multiple"
-    pfs["prov_high"] = pfs["prov"]  # both ends: the same Medicare row x the multiple's ends
-    ln["cell"] = pfs
-    ln["doctor_fee"] = {
-        **ln["doctor_fee"],
-        "rung": 6,
-        "explanation_key": "fee.rung_6_estimate",
-        "by_npi": None,
-        "multiple": {"low": 2.4, "high": 3.6, "n_codes": 5, "payer_id": "BCBS_MA"},
+    cell = copy.deepcopy(ln["cell"])
+    cell.update(low=90.66, high=135.97, basis="estimate")
+    for k in ("prov", "prov_high"):
+        cell[k] = {**(cell.get(k) or cell["prov"]), "method": "estimate_peer_range"}
+    ln["cell"] = cell
+    ln["estimate"] = {
+        "low": 90.66,
+        "high": 135.97,
+        "median": 110.0,
+        "n_groups": 5,
+        "kind": "hospital_outpatient",
+        "scope": "same_kind",
+        "payer_id": "BCBS_MA",
     }
+    ln["doctor_fee"] = {**ln["doctor_fee"], "rung": 6, "explanation_key": "fee.rung_6_estimate",
+                        "by_npi": None, "npi_count": None}  # fmt: skip
     t = site["receipt"]["totals"]["likely"]
-    t.update(low=90.66, high=135.97, includes_estimate=True, includes_late_source=False)
-    site.resp["sources"]["cms_pfs_rvu26d"] = copy.deepcopy(
-        _fixture("quote_bcbs_hmo_shoulder")["sources"]["cms_pfs_rvu26d"]
-    )
-    del site.resp["sources"]["bcbs_ma_tic_hmo"]
-    site.resp["notices"].remove("late_to_refresh_sources")
+    t.update(low=90.66, high=135.97, includes_estimate=True)
+    derive_site(site)
     return ln
 
 
@@ -401,19 +401,25 @@ def test_rung_6_money_must_be_marked_estimate():
     _check(site)
     site = _bcbs_site(1)
     ln = _rung6(site)
-    ln["cell"]["prov"]["method"] = "computed_fee_schedule"
-    ln["cell"]["prov_high"] = ln["cell"]["prov"]
-    with pytest.raises(ValidationError, match="basis estimate <=> estimate_medicare_multiple"):
+    ln["cell"]["prov"]["method"] = "stated"
+    with pytest.raises(ValidationError, match="basis estimate <=> estimate_peer_range"):
         _check(site)
-    # a plain negotiated rate labelled rung 6 (the old TiC cell) is not an estimate
+    # an estimate needs its peer range, and a rung-6 doctor fee needs an estimated cell
+    site = _bcbs_site(1)
+    ln = _rung6(site)
+    ln["estimate"] = None
+    with pytest.raises(ValidationError, match="estimated cell <=> its PeerRange"):
+        _check(site)
     site = _bcbs_site(1)
     tic_cell = copy.deepcopy(_line(site["receipt"], "visit_doctor")["cell"])
     ln = _rung6(site)
-    ln["cell"] = tic_cell
-    site.resp["sources"]["bcbs_ma_tic_hmo"] = _fixture("quote_bcbs_hmo_shoulder")["sources"][
-        "bcbs_ma_tic_hmo"
-    ]
-    with pytest.raises(ValidationError, match="rung 6 Money must be estimate_medicare_multiple"):
+    ln["cell"], ln["estimate"] = tic_cell, None
+    with pytest.raises(ValidationError, match="rung 6 <=> an estimated cell"):
+        _check(site)
+    site = _bcbs_site(1)
+    ln = _rung6(site)
+    ln["estimate"]["low"] = 80.0
+    with pytest.raises(ValidationError, match="p25-p75"):
         _check(site)
 
 
@@ -425,19 +431,47 @@ def test_includes_estimate_is_derived_from_the_summed_lines():
         _check(site)
 
 
-def test_rung_6_multiple_must_be_the_same_payers():
+def test_an_estimate_must_be_built_from_the_same_payers_rates():
+    """P5: same payer only. The PeerRange and the rows it cites must be BCBS's own."""
     site = _bcbs_site(1)
     ln = _rung6(site)
-    ln["doctor_fee"]["multiple"]["payer_id"] = "AETNA"
-    with pytest.raises(ValidationError, match="multiple must be BCBS_MA"):
+    ln["estimate"]["payer_id"] = "AETNA"
+    with pytest.raises(ValidationError, match="built from BCBS_MA's rates"):
+        _check(site)
+    site = _bcbs_site(1)
+    ln = _rung6(site)
+    ln["cell"]["prov"]["payer_id"] = "AETNA"
+    ln["cell"]["prov_high"]["payer_id"] = "AETNA"
+    with pytest.raises(ValidationError, match="not BCBS_MA's"):
         _check(site)
 
 
-def test_not_offered_needs_elsewhere_and_no_cell():
+def test_unknown_availability_is_never_summed():
+    """C3 R2: a line without offer evidence cannot be in the total."""
+    site = _bcbs_site(0)
+    ln = _line(site["receipt"], "xray_facility")
+    ln["availability"], ln["availability_reason"] = "unknown", "insurer_lists_rate"
+    with pytest.raises(ValidationError, match="only an offered line is summed"):
+        _check(site)
+    site = _bcbs_site(0)
+    _line(site["receipt"], "xray_facility")["availability_reason"] = "no_evidence"
+    with pytest.raises(ValidationError, match="availability_reason exactly when not offered"):
+        _check(site)
+
+
+def test_an_unusual_line_is_never_summed():
+    site = _bcbs_site(0)
+    ln = _line(site["receipt"], "xray_facility")
+    ln["unusual"] = {"peer_median": 400.0, "n_groups": 6, "whole_line": True, "set_aside": []}
+    with pytest.raises(ValidationError, match="unusual price is never summed"):
+        _check(site)
+
+
+def test_not_offered_needs_no_cell():
     site = _bcbs_site(2)
     ln = _line(site["receipt"], "mri")
-    ln["elsewhere"] = []
-    with pytest.raises(ValidationError, match="not_offered"):
+    ln["cell"] = copy.deepcopy(_line(_bcbs_site(0)["receipt"], "mri")["cell"])
+    with pytest.raises(ValidationError, match="not_offered needs cell=None"):
         _check(site)
 
 

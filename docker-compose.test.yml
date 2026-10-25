@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        CARECOST_ALLOW_EXTRACT: "1"  # tests read the committed extract; no real pack here
     command: >
       sh -c "pip install --no-cache-dir pytest pytest-asyncio pyarrow &&
              cd /repo/backend && pytest -q -p no:cacheprovider"

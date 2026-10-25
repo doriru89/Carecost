@@ -2,6 +2,21 @@
 // A drift test (backend/tests/contracts) fails when this file is stale.
 
 /**
+ * C3 item 12: 'with typical time, about $Y'. Anesthesia is paid (base units + minutes / 15)
+ * x a conversion factor; the summed line has the base units only. Never summed.
+ */
+export interface AnesthesiaTime {
+  minutes: number;
+  base_units: number;
+  low: number;
+  high: number;
+  /**
+   * the public CMS file the typical minutes come from
+   */
+  source: string;
+}
+
+/**
  * which part of the bill
  */
 export type BillComponent = "facility" | "professional" | "drug" | "supply" | "unknown";
@@ -40,6 +55,23 @@ export type Cell = Money | NotPublished | NotLoaded | NoSource | PercentOnly | C
  * D8 display gradient
  */
 export type CertaintyTier = "certain" | "likely" | "possible" | "not_in_public_data";
+
+/**
+ * C3 R12: within one chain, the same line under the same payer differs by more than the
+ * engine.yaml limit (1.5x): flagged for review, both ends named.
+ */
+export interface ChainSpread {
+  chain_id: string;
+  /**
+   * step key / component / code / modifier
+   */
+  key: string;
+  low_site_id: string;
+  low: number;
+  high_site_id: string;
+  high: number;
+  ratio: number;
+}
 
 /**
  * Rung 8: ordering only, no dollars (CHIA relative price).
@@ -116,7 +148,6 @@ export interface DoctorFee {
   group_name: string | null;
   group_tin: string | null;
   npi_count: number | null;
-  multiple: Multiple | null;
   chia_badge: ChiaBadge | null;
   /**
    * D6: per doctor when the NPI is known and prices differ
@@ -137,13 +168,13 @@ export interface ElsewhereOption {
 
 export interface ExcludedLine {
   line_id: string;
-  reason: "possible_tier" | "ai_suggested" | "no_dollar_amount" | "conflict" | "not_offered_here" | "repeats" | "reference_only";
+  reason: "possible_tier" | "ai_suggested" | "no_dollar_amount" | "conflict" | "not_offered_here" | "repeats" | "reference_only" | "availability_unknown" | "unusual";
 }
 
 /**
  * why a line is not summed
  */
-export type ExcludedReason = "possible_tier" | "ai_suggested" | "no_dollar_amount" | "conflict" | "not_offered_here" | "repeats" | "reference_only";
+export type ExcludedReason = "possible_tier" | "ai_suggested" | "no_dollar_amount" | "conflict" | "not_offered_here" | "repeats" | "reference_only" | "availability_unknown" | "unusual";
 
 /**
  * How current one source is, from two sides that must never be confused (Austin, 2026-10-24).
@@ -187,6 +218,21 @@ export interface Freshness {
 }
 
 export type Gap = NotPublished | NotLoaded | NoSource | PercentOnly | Conflict;
+
+/**
+ * C3 (item 9): what a list row shows without the full receipt (receipt.totals when it is
+ * present, copied).
+ */
+export interface Headline {
+  likely_low: number | null;
+  likely_high: number | null;
+  includes_estimate: boolean;
+  complete: boolean;
+  missing: number;
+  comparable: number | null;
+  real_steps: number;
+  might_add: MightAdd | null;
+}
 
 export interface Hours {
   source: "on_my_way" | "operator_html" | "operator_schema_org" | "manual";
@@ -239,6 +285,11 @@ export interface LearnMore {
  */
 export type Likelihood = "certain" | "likely" | "possible" | "rare";
 
+export interface LocalLabel {
+  en: string;
+  zh: string;
+}
+
 /**
  * MassHealth fee-for-service rates. ACO / MCO plans may pay differently (shown as a note).
  */
@@ -256,7 +307,13 @@ export interface MedicarePayment {
 /**
  * How the number in a ``Money`` was obtained.
  */
-export type Method = "stated" | "derived_pct_x_gross" | "computed_fee_schedule" | "estimate_medicare_multiple";
+export type Method = "stated" | "derived_pct_x_gross" | "computed_fee_schedule" | "estimate_peer_range";
+
+export interface MightAdd {
+  low: number;
+  high: number;
+  step_keys: string[];
+}
 
 export interface Money {
   kind: "money";
@@ -271,16 +328,6 @@ export interface Money {
    * The row the high end comes from. Required on a range (low < high), absent on a point, so both ends of every range are cited (P1 problem 2). May name another file of the same kind (BCBS publishes HMO Blue as a fully- and a self-insured file).
    */
   prov_high: Provenance | null;
-}
-
-/**
- * Rung 6: Medicare x the same group's own typical multiple (>= 5 matched codes, D5).
- */
-export interface Multiple {
-  low: number;
-  high: number;
-  n_codes: number;
-  payer_id: string;
 }
 
 /**
@@ -379,6 +426,34 @@ export interface PayerPoint {
 export type Payment = InsurancePayment | MedicarePayment | MassHealthPayment | CashPayment;
 
 /**
+ * C3 (R4, P4, P5, X2): the same line's (or step's) real prices at other sites of the same
+ * kind, under the same payer and plan product, one value per distinct billing group (TIN).
+ * low / high = p25 / p75 (nearest rank, so each end is a real price); median = the neutral
+ * figure ranking uses, so an estimate can neither help nor hurt a site.
+ */
+export interface PeerRange {
+  low: number;
+  high: number;
+  median: number;
+  /**
+   * distinct billing groups (TINs / files) behind it
+   */
+  n_groups: number;
+  /**
+   * kind of the peer sites; None = every kind (P4)
+   */
+  kind: "urgent_care" | "office" | "hospital_outpatient" | "ambulatory_surgery_center" | null;
+  /**
+   * same_system: the site's own health system's groups
+   */
+  scope: "same_kind" | "same_system";
+  /**
+   * whose rates; None for self-pay / fee schedules
+   */
+  payer_id: string | null;
+}
+
+/**
  * Only 'X% of charges' is published and the base charge is not.
  */
 export interface PercentOnly {
@@ -453,17 +528,25 @@ export interface QuoteRequest {
    */
   site_ids: string[] | null;
   /**
-   * C2: quote the max_sites sites closest to this point (straight-line distance). None = the max_sites best-ranked sites (I7) of the whole set
+   * C2: quote the max_sites sites closest to this point (straight-line distance), ranked (I7). None (P7) = every admitted site, grouped by kind of site and ordered by distance from Boston City Hall
    */
   near?: Near | null;
   /**
-   * C2: at most this many sites in the response; I7 ranks inside the chosen set
+   * With `near`: at most this many (the closest) sites. Ignored without `near`
    */
   max_sites?: number;
+  /**
+   * C3: without `near` and `site_ids`, the first N sites carry their full receipt; the rest carry the summary (headline + steps) and are fetched by `site_ids`
+   */
+  full_receipts?: number;
 }
 
 export interface QuoteResponse {
   payment: InsurancePayment | MedicarePayment | MassHealthPayment | CashPayment;
+  /**
+   * P2: how the payment is named to a person; cash is 'Self-pay (no insurance)'
+   */
+  payment_label: LocalLabel;
   care_path: CarePathRef | null;
   service_codes: string[];
   picked_by: "person" | "assistant";
@@ -477,9 +560,21 @@ export interface QuoteResponse {
    */
   sources: Record<string, SourceInfo>;
   /**
-   * Ordered by rank_key (I7)
+   * ordering rank: by rank_key (I7); kind_then_distance: by kind_distance_key (P7)
    */
   sites: SiteQuote[];
+  /**
+   * C3 P7: rank with a point or named sites, else by kind
+   */
+  ordering: "rank" | "kind_then_distance";
+  /**
+   * where distance_km is measured from (the point, or City Hall)
+   */
+  origin: Near | null;
+  /**
+   * C3 R12: same chain, same line, prices > 1.5x apart
+   */
+  chain_spreads: ChainSpread[];
   /**
    * Sites filtered out because they offer none of it
    */
@@ -488,7 +583,7 @@ export interface QuoteResponse {
    * D33: a quote reached from a care path carries both fixed lines (common causes, not a diagnosis; when to see a doctor); a manual pick carries none (P1 problem 13)
    */
   copy_keys: ("copy.not_a_diagnosis" | "copy.when_to_see_a_doctor")[];
-  notices: ("care_path_draft" | "tic_not_loaded" | "late_to_refresh_sources" | "stale_on_our_side_sources" | "masshealth_aco_may_differ" | "medicare_advantage_is_insurance")[];
+  notices: ("care_path_draft" | "tic_not_loaded" | "late_to_refresh_sources" | "stale_on_our_side_sources" | "masshealth_aco_may_differ" | "medicare_advantage_is_insurance" | "chain_price_spread")[];
 }
 
 export interface Receipt {
@@ -530,6 +625,10 @@ export interface ReceiptLine {
   unit: "once" | "per_visit" | "per_15_minutes";
   availability: "offered" | "not_offered" | "unknown";
   /**
+   * C3 P6: why the line is not offered; None exactly when offered
+   */
+  availability_reason: "insurer_lists_rate" | "no_evidence" | "site_says_not_offered" | null;
+  /**
    * None only when availability == not_offered
    */
   cell: Money | NotPublished | NotLoaded | NoSource | PercentOnly | Conflict | null;
@@ -551,6 +650,22 @@ export interface ReceiptLine {
    */
   price_notes: ("price.national_unadjusted" | "price.anesthesia_base_units_only")[];
   /**
+   * C3 (P5): the peer range behind an estimated cell (basis estimate); None otherwise
+   */
+  estimate: PeerRange | null;
+  /**
+   * C3 (P8): rows outside 1/3x-3x of the peer median
+   */
+  unusual: UnusualPrice | null;
+  /**
+   * C3: the anesthesia fee with a typical time (never summed)
+   */
+  anesthesia_time: AnesthesiaTime | null;
+  /**
+   * C3 R12: the price is the chain's posted self-pay price, published on this site's page (it applies at every location of the chain)
+   */
+  chain_price_from: string | null;
+  /**
    * Where this part of the care happens. your_primary_care: an HMO referral visit happens at the person's own primary care office, not at this site; the price is a range over the primary care groups we have, never this site's (P1 problem 15)
    */
   at: "this_site" | "your_primary_care";
@@ -567,7 +682,19 @@ export interface Searched {
 
 export interface SiteQuote {
   site: SiteSummary;
-  receipt: Receipt;
+  headline: Headline;
+  /**
+   * C3 (P3): one per step of the quote, in path order
+   */
+  steps: StepSummary[];
+  /**
+   * From the request's point, or from Boston City Hall when there is none (P7)
+   */
+  distance_km: number | null;
+  /**
+   * C3: None for a site past `full_receipts` in a no-location list; ask for it with `site_ids`
+   */
+  receipt: Receipt | null;
   other_payers: OtherPayerRange[];
 }
 
@@ -594,6 +721,14 @@ export interface SiteSummary {
    */
   listing_status: "web_verified" | "multi_registry";
   service_areas: ("ortho" | "skin" | "gi" | "urgent_care")[];
+  /**
+   * X2 / P7: the kind of site (engine.yaml site_kinds)
+   */
+  kind: "urgent_care" | "office" | "hospital_outpatient" | "ambulatory_surgery_center";
+  /**
+   * C3 R12: the chain whose posted prices apply here
+   */
+  chain_id: string | null;
   /**
    * Pediatric-only site (D27)
    */
@@ -628,6 +763,45 @@ export interface SourceInfo {
 export type SourceKind = "hospital_mrf" | "insurer_tic" | "medicare_pfs" | "medicare_opps" | "medicare_asc" | "masshealth_fs" | "clinic_posted" | "chia_rp";
 
 /**
+ * C3 (P3, item 10): one step at one site, so the map can show one selected service's price.
+ * low / high: the step's summed lines here (own / estimate) or the elsewhere range.
+ */
+export interface StepSummary {
+  /**
+   * care path step id, or the codes of a manual pick
+   */
+  key: string;
+  step_id: string | null;
+  likelihood: "certain" | "likely" | "possible" | "rare";
+  availability: "offered" | "not_offered" | "unknown";
+  figure: "own" | "estimate" | "elsewhere" | "none";
+  low: number | null;
+  high: number | null;
+  /**
+   * the neutral figure in `comparable` (None: not counted)
+   */
+  rank_value: number | null;
+  estimated: boolean;
+  /**
+   * a line of the step was set aside as unusual (P8)
+   */
+  unusual: boolean;
+  /**
+   * the step's lines are in totals.likely
+   */
+  in_total: boolean;
+  /**
+   * counted in totals.missing
+   */
+  missing: boolean;
+  line_ids: string[];
+  /**
+   * P4: the step's price at sites that do it (same payer)
+   */
+  elsewhere: PeerRange | null;
+}
+
+/**
  * A sum of line Money values. Not a ``Money``: a sum has no single Provenance; each part's
  * provenance stays on its line (``line_ids``).
  */
@@ -636,7 +810,7 @@ export interface SummedAmount {
   high: number;
   line_ids: string[];
   /**
-   * Derived: a rung-6 estimate (estimate_medicare_multiple) is in the sum
+   * Derived: a peer estimate (estimate_peer_range) is in the sum
    */
   includes_estimate: boolean;
   /**
@@ -664,11 +838,38 @@ export interface Totals {
    */
   complete: boolean;
   /**
-   * Derived (I7): certain/likely, non-AI lines here that are not in the total, plus certain/likely steps another site in this quote lists and this site does not
+   * Derived (I7, C3): expected (certain/likely, non-AI) steps with no figure here (no own price, no estimate, no 'elsewhere' range) although some admitted site has a price for that step: one per step, not per line. A step nobody has a price for is not counted (it is the same everywhere). Counted over every admitted site, never over the response
    */
   missing: number;
   excluded: ExcludedLine[];
   you_pay: YouPay;
+  /**
+   * C3 (P1, P4): the ranking figure: this site's real prices (each line's median row) plus estimates and steps done elsewhere at their neutral peer median; steps with no figure are left out (they count in `missing`). None when no step has a figure
+   */
+  comparable: number | null;
+  /**
+   * C3: expected steps priced from this site's own real prices
+   */
+  real_steps: number;
+  /**
+   * C3 (P9): possible steps this site offers, 'might add $X-$Y' (X = the cheapest one, Y = all of them); never in `likely`
+   */
+  might_add: MightAdd | null;
+}
+
+/**
+ * C3 P8: a price more than 3x or less than 1/3x the same line's peer median (same payer,
+ * same kind of site). Rows outside the band are set aside (shown, never summed); when every row
+ * is outside, the whole line is unusual and not summed: "price looks unusual, being checked".
+ */
+export interface UnusualPrice {
+  peer_median: number;
+  n_groups: number;
+  whole_line: boolean;
+  /**
+   * the rows left out of the line's range (cited)
+   */
+  set_aside: Money[];
 }
 
 /**

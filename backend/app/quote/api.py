@@ -82,13 +82,30 @@ def our_data(request: Request) -> Response:
 
 @router.get("/health")
 def health(request: Request) -> dict:
+    """R11: what is loaded, not just "ok": the pack build, rows per source and per kind, whether
+    this is the test extract, and which sources are late (publisher) or stale (our side)."""
     eng = _engine(request)
+    as_of = request.app.state.today()
+    metas = {**eng.store.sources, **eng.posted_by_source}
+    fresh = {sid: eng.freshness(m, as_of) for sid, m in sorted(metas.items())}
+    by_kind: dict[str, int] = {}
+    for sid, n in eng.store.counts().items():
+        k = eng.store.sources[sid].source_kind
+        by_kind[k] = by_kind.get(k, 0) + n
+    stale = sorted(s for s, f in fresh.items() if f.stale_on_our_side)
+    late = sorted(s for s, f in fresh.items() if f.late_to_refresh)
     return {
-        "ok": True,
+        "ok": not stale,
         "rows": len(eng.store.rows),
         "rows_by_source": eng.store.counts(),
+        "rows_by_kind": dict(sorted(by_kind.items())),
         "build_id": eng.store.version.build_id,
+        "build_date": eng.store.version.build_date,
         "tic_release": eng.store.version.tic_release,
+        "test_extract": getattr(request.app.state, "test_extract", False),
+        "as_of": as_of.isoformat(),
+        "stale_on_our_side": stale,
+        "late_to_refresh": late,
         "sites": len(eng.reg.sites),
         "sites_version": eng.reg.sites_version,
         "care_paths": len(eng.reg.paths),

@@ -117,7 +117,9 @@
           "urgent_care",
           "ortho"
         ],
-        "listing_status": "web_verified"
+        "listing_status": "web_verified",
+        "kind": "urgent_care",
+        "chain_id": null
       },
       "receipt": {
         "lines": [
@@ -160,7 +162,12 @@
             "ai_suggested": false,
             "in_total": true,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "xray",
@@ -212,7 +219,12 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "physical_therapy_eval",
@@ -263,7 +275,12 @@
                 }
               }
             ],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": "site_says_not_offered"
           },
           {
             "line_id": "steroid_injection",
@@ -300,7 +317,12 @@
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": "no_evidence"
           },
           {
             "line_id": "mri",
@@ -361,7 +383,12 @@
                 "label": "RadiologyInfo: shoulder MRI",
                 "url": "https://www.radiologyinfo.org/en/info/shouldermr"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": "site_says_not_offered"
           }
         ],
         "totals": {
@@ -397,10 +424,116 @@
             "note_key": "youpay.cash_full_amount",
             "portal_label": null,
             "portal_url": null
-          }
+          },
+          "comparable": 329.0,
+          "real_steps": 2,
+          "might_add": null
         }
       },
-      "other_payers": []
+      "other_payers": [],
+      "steps": [
+        {
+          "key": "visit",
+          "step_id": "visit",
+          "likelihood": "certain",
+          "availability": "offered",
+          "figure": "own",
+          "low": 179.0,
+          "high": 179.0,
+          "rank_value": 179.0,
+          "estimated": false,
+          "unusual": false,
+          "in_total": true,
+          "missing": false,
+          "line_ids": [
+            "visit"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "xray",
+          "step_id": "xray",
+          "likelihood": "likely",
+          "availability": "offered",
+          "figure": "own",
+          "low": 150.0,
+          "high": 150.0,
+          "rank_value": 150.0,
+          "estimated": false,
+          "unusual": false,
+          "in_total": true,
+          "missing": false,
+          "line_ids": [
+            "xray"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "physical_therapy",
+          "step_id": "physical_therapy",
+          "likelihood": "likely",
+          "availability": "not_offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "physical_therapy_eval"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "steroid_injection",
+          "step_id": "steroid_injection",
+          "likelihood": "possible",
+          "availability": "unknown",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "steroid_injection"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "tendon_scan_mri",
+          "step_id": "tendon_scan_mri",
+          "likelihood": "possible",
+          "availability": "not_offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "mri"
+          ],
+          "elsewhere": null
+        }
+      ],
+      "distance_km": null,
+      "headline": {
+        "likely_low": 329.0,
+        "likely_high": 329.0,
+        "includes_estimate": false,
+        "complete": true,
+        "missing": 1,
+        "comparable": 329.0,
+        "real_steps": 2,
+        "might_add": null
+      }
     },
     {
       "site": {
@@ -435,7 +568,9 @@
           "skin",
           "gi"
         ],
-        "listing_status": "web_verified"
+        "listing_status": "web_verified",
+        "kind": "hospital_outpatient",
+        "chain_id": null
       },
       "receipt": {
         "lines": [
@@ -493,7 +628,12 @@
             "ai_suggested": false,
             "in_total": true,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "visit_doctor",
@@ -525,14 +665,18 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "xray_facility",
@@ -599,7 +743,12 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "xray_reading",
@@ -633,7 +782,6 @@
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
-              "multiple": null,
               "chia_badge": null,
               "by_npi": null
             },
@@ -649,7 +797,12 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "physical_therapy_eval",
@@ -707,7 +860,12 @@
             "ai_suggested": false,
             "in_total": true,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           },
           {
             "line_id": "mri",
@@ -775,7 +933,12 @@
                 "label": "RadiologyInfo: shoulder MRI",
                 "url": "https://www.radiologyinfo.org/en/info/shouldermr"
               }
-            ]
+            ],
+            "estimate": null,
+            "unusual": null,
+            "anesthesia_time": null,
+            "chain_price_from": null,
+            "availability_reason": null
           }
         ],
         "totals": {
@@ -812,10 +975,100 @@
             "note_key": "youpay.cash_full_amount",
             "portal_label": null,
             "portal_url": null
-          }
+          },
+          "comparable": 365.0,
+          "real_steps": 1,
+          "might_add": null
         }
       },
-      "other_payers": []
+      "other_payers": [],
+      "steps": [
+        {
+          "key": "visit",
+          "step_id": "visit",
+          "likelihood": "certain",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "visit_facility",
+            "visit_doctor"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "xray",
+          "step_id": "xray",
+          "likelihood": "likely",
+          "availability": "offered",
+          "figure": "none",
+          "low": null,
+          "high": null,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": true,
+          "line_ids": [
+            "xray_facility",
+            "xray_reading"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "physical_therapy",
+          "step_id": "physical_therapy",
+          "likelihood": "likely",
+          "availability": "offered",
+          "figure": "own",
+          "low": 365.0,
+          "high": 365.0,
+          "rank_value": 365.0,
+          "estimated": false,
+          "unusual": false,
+          "in_total": true,
+          "missing": false,
+          "line_ids": [
+            "physical_therapy_eval"
+          ],
+          "elsewhere": null
+        },
+        {
+          "key": "tendon_scan_mri",
+          "step_id": "tendon_scan_mri",
+          "likelihood": "possible",
+          "availability": "offered",
+          "figure": "own",
+          "low": 2741.0,
+          "high": 2741.0,
+          "rank_value": null,
+          "estimated": false,
+          "unusual": false,
+          "in_total": false,
+          "missing": false,
+          "line_ids": [
+            "mri"
+          ],
+          "elsewhere": null
+        }
+      ],
+      "distance_km": null,
+      "headline": {
+        "likely_low": 1095.0,
+        "likely_high": 1095.0,
+        "includes_estimate": false,
+        "complete": false,
+        "missing": 2,
+        "comparable": 365.0,
+        "real_steps": 1,
+        "might_add": null
+      }
     }
   ],
   "sites_without_service": [],
@@ -826,5 +1079,12 @@
   "notices": [
     "care_path_draft",
     "stale_on_our_side_sources"
-  ]
+  ],
+  "payment_label": {
+    "en": "test",
+    "zh": "test"
+  },
+  "ordering": "rank",
+  "origin": null,
+  "chain_spreads": []
 }

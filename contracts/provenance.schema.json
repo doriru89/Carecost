@@ -6,7 +6,7 @@
         "stated",
         "derived_pct_x_gross",
         "computed_fee_schedule",
-        "estimate_medicare_multiple"
+        "estimate_peer_range"
       ],
       "title": "Method",
       "type": "string"
