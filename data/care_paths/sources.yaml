@@ -704,6 +704,8 @@ sources:
     fetched_text_sha256: b538bd9ed9868284d44f3eabca9b0c94ae2692db358dd0984e68e48547a12692
     excerpts:
     - you should call 911, even if you are not sure it is a heart attack.
+    - pain or discomfort in one or both arms, the back, shoulders, neck, jaw
+    - palpitations (racing or pounding heart), and lightheadedness
   medlineplus_cellulitis:
     title: 'MedlinePlus: Cellulitis'
     publisher: MedlinePlus, National Library of Medicine
@@ -1034,3 +1036,33 @@ sources:
     excerpts:
     - is not breathing
     - cannot be woken up within 1 minute
+    - a pounding, fluttering or irregular heartbeat (heart palpitations)
+  nhs_head_injury:
+    title: 'NHS: Head injury and concussion'
+    publisher: NHS website (England)
+    year: 2026
+    url: https://www.nhs.uk/conditions/head-injury-and-concussion/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 312ef275bfadf1f8af497b4a32d16249ee4786e205656dc6dff10372409f2981
+    excerpts:
+    - has been knocked out and has not woken up
+    - cannot stay awake or keep their eyes open
+    - has problems with walking, balance, understanding, speaking or writing
+    - are being sick (vomiting)
+  nhs_sepsis:
+    title: 'NHS: Sepsis'
+    publisher: NHS website (England)
+    year: 2026
+    url: https://www.nhs.uk/conditions/sepsis/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: f112cd120e278256451416ceaca1718380ad752f1aad9bb238d67d382ed11bfd
+    excerpts:
+    - is not responding like they normally do, is not feeding, is difficult to wake
