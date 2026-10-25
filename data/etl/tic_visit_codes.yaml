@@ -1,0 +1,31 @@
+# How each payer prices an office / urgent-care *visit* in its TiC file (research-v3/pro-fees.md,
+# insurer-tic.md, tic-structure.md). The quote engine reads this through
+# app.etl.tic.visits.visit_codes(payer_id) so a payer whose visit lives on another code (Aetna:
+# S9083) is not shown as a gap. Every code here is also added to the TiC code filter.
+#
+# shape:
+#   per_code         E/M level by level (99202-99215), one rate per code
+#   per_code_by_pos  E/M by level, and the rate differs by place of service (non-facility vs facility)
+#   flat_visit       one rate for every E/M level (MGB HP: 99203 = 99204 = 99213 = 99214)
+#   global_code      one global urgent-care code (S9083) instead of E/M rows
+# add_ons: billed on top of the visit when they apply (after-hours 99051, UC services S9088).
+
+version: 1
+
+em_codes: ["99202", "99203", "99204", "99205", "99211", "99212", "99213", "99214", "99215"]
+add_ons: ["99051", "S9088"]
+
+payers:
+  BCBS_MA:          {shape: per_code, visit_codes: em, evidence: "pro-fees.md 2.5; insurer-tic.md (AFC 99203 $135.61)"}
+  HARVARD_PILGRIM:  {shape: per_code_by_pos, visit_codes: em, evidence: "insurer-tic.md: AFC 99203 $140.91 non-facility / $85.66 facility"}
+  TUFTS_HP:         {shape: per_code, visit_codes: em, evidence: "assumed same as Harvard Pilgrim (Point32); not verified"}
+  MGB_HP:           {shape: flat_visit, visit_codes: em, evidence: "insurer-tic.md: AFC $175.89 for 99203 = 99204 = 99213 = 99214"}
+  AETNA:            {shape: global_code, visit_codes: ["S9083"], evidence: "insurer-tic.md: AFC S9083 $173, CareWell $186; no E/M rows"}
+  UHC:              {shape: per_code, visit_codes: em, evidence: "tic-structure.md: AFC 99203 $108.53, 99213 $72.69; S9083 present but not for these TINs"}
+
+# Place-of-service buckets for per_code_by_pos (CMS POS codes). A rate whose POS list includes
+# office POS 11 is non-facility; otherwise one listing a facility POS is facility
+# (VisitMap.pos_bucket). HP lists overlapping sets, so membership of 11 decides.
+pos_buckets:
+  non_facility: ["02", "10", "11", "12", "13", "14", "15", "16", "17", "18", "20", "49", "50", "53", "71", "72", "81", "99"]
+  facility: ["19", "21", "22", "23", "24", "26", "31", "34", "41", "42", "51", "52", "56", "61"]

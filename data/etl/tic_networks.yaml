@@ -1,0 +1,194 @@
+# TiC networks read by the A2 pipeline (python -m app.etl tic ...). One entry per in-network
+# file = one payer x network job; each is built and released on its own (a failing one falls
+# back to its last good release and never blocks the others).
+#
+#   source_id   sources.d/tic.yaml id (registered) - or, for zip files that config.py cannot
+#               register yet, `unregistered: zip_container` plus url / discovery / container here.
+#   label       network name shown in plan_raw (rate_row) and in the coverage report.
+#   product     HMO / PPO / POS / EPO / INDEMNITY ('' when the file does not say).
+#   lob         rate_row.line_of_business.
+#   discover    how the monthly job finds next month's file: `toc` = a tic_table_of_contents
+#               source id, `match` = regex on the file name in that TOC / listing. The newest
+#               match whose host is already allowlisted wins; other hosts are reported only.
+#               `rewrite: [from, to]` is applied to every TOC URL first (BCBS lists three self-
+#               insured files only under a `_Third-Party` name that is a 3 KB placeholder; the
+#               real file is the same name without it, verified by download 2026-10-24).
+#   why         why this file was picked (TOC evidence, 2026-10).
+#
+# Picked from the October 2026 TOCs (fetched 2026-10-24). Files listed in those TOCs that are
+# NOT here, and why: BCBS `*_Third-Party_*` (3,475-byte placeholder gzips) and the BlueCard
+# host-plan files on bcbsma.mrf.bcbs.com (other Blues' networks, incl. 700_23C0 "MA-HMO Blue"
+# host file); dental / vision / chiro / behavioral vendor files; MGB CAP_* capitation files and
+# MultiPlan PHCS; HP NH/ME networks (A025 A035 A043 A061 A075 A081 A087 A088) and the Best Buy
+# employer networks (A010 A020); Aetna Exchange (individual market, not sold in MA) and the
+# thousands of per-employer `pl-xxx-<hash>` copies; UHC/UMR wrap files used by HP and MGB for
+# out-of-area members (15 GB each, same national network as Options PPO / Choice Plus).
+
+version: 1
+
+networks:
+  # ---------------------------------------------------------------- BCBS MA (12 TOC entries -> 8 medical files)
+  - {source_id: tic_bcbs_ma_hmo_blue_fi, label: "HMO Blue (fully insured)", product: HMO, lob: commercial,
+     discover: {toc: tic_toc_bcbs_ma_hmo_blue, match: '_HMO-Blue-Fully-Insured_in-network-rates\.json\.gz$'},
+     why: "HMO Blue is BCBS MA's largest commercial network; fully insured group + individual (Connector) plans."}
+  - {source_id: tic_bcbs_ma_hmo_blue_si, label: "HMO Blue (self insured)", product: HMO, lob: commercial,
+     discover: {toc: tic_toc_bcbs_ma_inc, match: '_HMO-Blue-Self-Insured_in-network-rates\.json\.gz$', rewrite: ['_Third-Party-in-network-rates', '_in-network-rates']},
+     why: "Self-insured employer HMO Blue plans (TOC lists the Third-Party name, which is a 3 KB placeholder; this is the real file)."}
+  - {source_id: tic_bcbs_ma_bce_fi, label: "Blue Care Elect PPO (fully insured)", product: PPO, lob: commercial,
+     discover: {toc: tic_toc_bcbs_ma_hmo_blue, match: '_Blue-Care-Elect-Fully-Insured_in-network-rates\.json\.gz$'},
+     why: "Blue Care Elect is the BCBS MA PPO network (provider refs say network_name PPO)."}
+  - {source_id: tic_bcbs_ma_bce_si, label: "Blue Care Elect PPO (self insured)", product: PPO, lob: commercial,
+     discover: {toc: tic_toc_bcbs_ma_hmo_blue, match: '_Blue-Care-Elect-Self-Insured_in-network-rates\.json\.gz$'},
+     why: "Self-insured PPO; 39 TOC structures point here (most-referenced BCBS file)."}
+  - {source_id: tic_bcbs_ma_nemc_fi, label: "New England Managed Care (fully insured)", product: HMO, lob: commercial,
+     discover: {toc: tic_toc_bcbs_ma_hmo_blue, match: '_New-England-Managed-Care-Fully-Insured_in-network-rates\.json\.gz$'},
+     why: "Managed-care (HMO/POS) network for New England plans; provider refs say HMO."}
+  - {source_id: tic_bcbs_ma_nemc_si, label: "New England Managed Care (self insured)", product: HMO, lob: commercial,
+     discover: {toc: tic_toc_bcbs_ma_inc, match: '_New-England-Managed-Care-Self-Insured_in-network-rates\.json\.gz$', rewrite: ['_Third-Party-in-network-rates', '_in-network-rates']},
+     why: "Self-insured variant of the NEMC network."}
+  - {source_id: tic_bcbs_ma_bhp, label: "Blue High Performance Network", product: PPO, lob: commercial,
+     discover: {toc: tic_toc_bcbs_ma_inc, match: '_Blue-High-Performance_in-network-rates\.json\.gz$', rewrite: ['_Third-Party-in-network-rates', '_in-network-rates']},
+     why: "Narrow (tiered) network; smaller file, different provider set."}
+  - {source_id: tic_bcbs_ma_par, label: "PAR Providers (indemnity)", product: INDEMNITY, lob: commercial,
+     discover: {toc: tic_toc_bcbs_ma_hmo_blue, match: '_PAR-Providers_in-network-rates\.json\.gz$'},
+     why: "Participating-provider (indemnity / Medex-style) fee schedule; network_name Indemnity."}
+
+  # ---------------------------------------------------------------- Harvard Pilgrim (Point32Health)
+  # All HP in-network files are .zip -> unregistered until config.py allows zip for tic_in_network.
+  - {source_id: tic_hphc_a008_p1, label: "HPHC HMO (A008, fully insured)", product: HMO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A008-P1_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_inc, match: '_A008-P1_in-network-rates\.zip$'},
+     why: "Plan 'HMO' (group, individual, HIOS) in the HPHC Inc TOC; 12 employer TOCs."}
+  - {source_id: tic_hphc_a008_fs, label: "HPHC HMO (A008, self funded)", product: HMO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A008-FS_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_house_hphc, match: '_A008-FS_in-network-rates\.zip$'},
+     why: "Most-referenced HP file (37 employer TOCs): self-funded HMO."}
+  - {source_id: tic_hphc_a013_p1, label: "HPHC Focus Network MA HMO (A013, fully insured)", product: HMO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A013-P1_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_inc, match: '_A013-P1_in-network-rates\.zip$'},
+     why: "Focus Network - MA HMO (narrower MA network)."}
+  - {source_id: tic_hphc_a013_fs, label: "HPHC Focus Network MA HMO (A013, self funded)", product: HMO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A013-FS_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_clark_university_hphc, match: '_A013-FS_in-network-rates\.zip$'},
+     why: "12 employer TOCs."}
+  - {source_id: tic_hphc_a009_p1, label: "HPHC POS (A009)", product: POS, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A009-P1_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_inc, match: '_A009-P1_in-network-rates\.zip$'},
+     why: "Plan 'POS' in the HPHC Inc TOC."}
+  - {source_id: tic_hphc_a002_p1, label: "HPHC PPO (A002, fully insured)", product: PPO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A002-P1_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_inc, match: '_A002-P1_in-network-rates\.zip$'},
+     why: "Plan 'Harvard Pilgrim PPO'."}
+  - {source_id: tic_hphc_a002_fs, label: "HPHC PPO (A002, self funded)", product: PPO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A002-FS_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_boston_college_hpic, match: '_A002-FS_in-network-rates\.zip$'},
+     why: "22 employer TOCs (second most referenced)."}
+  - {source_id: tic_hphc_a067_p1, label: "HPHC HMO Flex (A067)", product: HMO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A067-P1_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_inc, match: '_A067-P1_in-network-rates\.zip$'},
+     why: "Plan 'HMO - Flex' (individual + group, HIOS)."}
+  - {source_id: tic_hphc_a068_p1, label: "HPHC PPO Flex (A068)", product: PPO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A068-P1_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_inc, match: '_A068-P1_in-network-rates\.zip$'},
+     why: "Plan 'PPO - Flex'."}
+  - {source_id: tic_hphc_a095_p1, label: "HPHC PPO Access Flex (A095)", product: PPO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A095-P1_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_inc, match: '_A095-P1_in-network-rates\.zip$'},
+     why: "Plan 'PPO Access - Flex' (HIOS)."}
+  - {source_id: tic_hphc_a102_p1, label: "HPHC National Access EPO (A102)", product: EPO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A102-P1_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_inc, match: '_A102-P1_in-network-rates\.zip$'},
+     why: "Plan 'National Access EPO'."}
+  - {source_id: tic_hphc_a014_p1, label: "HPHC ChoiceNet HMO (A014)", product: HMO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A014-P1_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_inc, match: '_A014-P1_in-network-rates\.zip$'},
+     why: "Plan 'ChoiceNet HMO'."}
+  - {source_id: tic_hphc_a001_fs, label: "HPHC House Account Access (A001, self funded)", product: PPO, lob: commercial,
+     unregistered: zip_container, container: zip, payer_id: HARVARD_PILGRIM,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/hphc/2026-10-01_A001-FS_in-network-rates.zip",
+     discover: {toc: tic_toc_hphc_house_hpic, match: '_A001-FS_in-network-rates\.zip$'},
+     why: "HPIC house account 'Access' plans; 19 employer TOCs."}
+
+  # ---------------------------------------------------------------- Tufts Health Plan (Point32Health)
+  # Only Tufts Health Public Plans (Direct = Health Connector QHPs) has a TOC. No Tufts commercial
+  # TOC exists on the Tufts or Point32 plan lists (2026-10-24).
+  - {source_id: tic_tufts_direct_nonsub_group, label: "Tufts Health Direct (non-subsidized, group)", product: HMO, lob: connector,
+     unregistered: zip_container, container: zip, payer_id: TUFTS_HP,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/thp/2026-10-01_TuftsHealthPublicPlans_DirectNonSubsidizedGroup_in-network-rates.zip",
+     discover: {toc: tic_toc_tufts_public, match: '_DirectNonSubsidizedGroup_in-network-rates\.zip$'},
+     why: "Tufts Health Direct small-group Connector plans."}
+  - {source_id: tic_tufts_direct_nonsub_indiv, label: "Tufts Health Direct (non-subsidized, individual)", product: HMO, lob: connector,
+     unregistered: zip_container, container: zip, payer_id: TUFTS_HP,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/thp/2026-10-01_TuftsHealthPublicPlans_DirectNonSubsidizedIndividual_in-network-rates.zip",
+     discover: {toc: tic_toc_tufts_public, match: '_DirectNonSubsidizedIndividual_in-network-rates\.zip$'},
+     why: "Tufts Health Direct individual Connector plans."}
+  - {source_id: tic_tufts_direct_sub_indiv, label: "Tufts Health Direct (ConnectorCare, subsidized)", product: HMO, lob: connector,
+     unregistered: zip_container, container: zip, payer_id: TUFTS_HP,
+     url: "https://eusprdtransparencymrfp32.blob.core.windows.net/thp/2026-10-01_TuftsHealthPublicPlans_DirectSubsidizedIndividual_in-network-rates.zip",
+     discover: {toc: tic_toc_tufts_public, match: '_DirectSubsidizedIndividual_in-network-rates\.zip$'},
+     why: "ConnectorCare (subsidized) plans."}
+
+  # ---------------------------------------------------------------- Mass General Brigham Health Plan
+  - {source_id: tic_mgb_hp_commercial_hmo, label: "MGB Health Plan Commercial HMO", product: HMO, lob: commercial,
+     discover: {toc: tic_toc_mgb_hp, match: '/INN_COMMERCIAL_HMO_\d{4}-\d{2}-\d{2}\.json\.gz$'}, why: "Main commercial HMO."}
+  - {source_id: tic_mgb_hp_commercial_ppo, label: "MGB Health Plan Commercial PPO", product: PPO, lob: commercial,
+     discover: {toc: tic_toc_mgb_hp, match: '/INN_COMMERCIAL_PPO_\d{4}-\d{2}-\d{2}\.json\.gz$'}, why: "Commercial PPO."}
+  - {source_id: tic_mgb_hp_select_hmo, label: "MGB Health Plan Select HMO", product: HMO, lob: commercial,
+     discover: {toc: tic_toc_mgb_hp, match: '/INN_SELECT_HMO_\d{4}-\d{2}-\d{2}\.json\.gz$'}, why: "Select HMO (GIC / narrower)."}
+  - {source_id: tic_mgb_hp_allies_hmo, label: "MGB Health Plan Allies HMO", product: HMO, lob: commercial,
+     discover: {toc: tic_toc_mgb_hp, match: '/INN_ALLIES_HMO_\d{4}-\d{2}-\d{2}\.json\.gz$'}, why: "Allies HMO network."}
+  - {source_id: tic_mgb_hp_value_hmo, label: "MGB Health Plan Value HMO", product: HMO, lob: commercial,
+     discover: {toc: tic_toc_mgb_hp, match: '/INN_VALUE_HMO_\d{4}-\d{2}-\d{2}\.json\.gz$'}, why: "Value HMO."}
+  - {source_id: tic_mgb_hp_mgb_aso, label: "MGB Health Plan ASO (MGB employees)", product: "", lob: commercial,
+     discover: {toc: tic_toc_mgb_hp, match: '/INN_MGB_ASO_\d{4}-\d{2}-\d{2}\.json\.gz$'}, why: "Self-funded plan for MGB's own employees."}
+
+  # ---------------------------------------------------------------- Aetna (national networks; no MA-specific file)
+  - {source_id: tic_aetna_ppo_pl_3j4, label: "Aetna PPO (pl-3j4)", product: PPO, lob: commercial,
+     discover: {toc: tic_toc_aetna_alicfi, match: '_pl-3j4-hr23(-[0-9a-f]{64})?_Aetna-Life-Insurance-Company\.json\.gz$'},
+     why: "Fully insured Aetna PPO; research-v3 verified AFC/CareWell S9083 here."}
+  - {source_id: tic_aetna_choice_pos2_pl_1s7, label: "Aetna Choice POS II (pl-1s7)", product: POS, lob: commercial,
+     discover: {toc: tic_toc_aetna_alicsi, match: '/2026-\d{2}-\d{2}_pl-1s7-tr25_Aetna-Life-Insurance-Company\.json\.gz$'},
+     why: "Most-referenced self-insured file (547 plans; national employers incl. MA ones)."}
+  - {source_id: tic_aetna_oa_select_pl_41i, label: "Open Access Aetna Select (pl-41i)", product: EPO, lob: commercial,
+     discover: {toc: tic_toc_aetna_alicsi, match: '/2026-\d{2}-\d{2}_pl-41i-tr25_Aetna-Life-Insurance-Company\.json\.gz$'},
+     why: "Most-referenced Open Access Aetna Select file (207 plans)."}
+
+  # ---------------------------------------------------------------- UnitedHealthcare
+  - {source_id: tic_uhc_choice_hmo_560, label: "UHC Choice HMO (560, New England)", product: HMO, lob: commercial,
+     discover: {toc: tic_toc_uhc_blobs, match: '_UnitedHealthcare-of-New-England--Inc-_Insurer_Choice-HMO_560_in-network-rates\.json\.gz$'},
+     why: "UHC of New England non-gated HMO (research-v3 measured file)."}
+  - {source_id: tic_uhc_choice_plus_8, label: "UHC Choice Plus (8)", product: POS, lob: commercial,
+     discover: {toc: tic_toc_uhc_blobs, match: '_UnitedHealthcare-Insurance-Company_Insurer_Choice-Plus_8_in-network-rates\.json\.gz$'},
+     why: "Most MA UHC commercial members are on Choice Plus (D17: run it)."}
+  - {source_id: tic_uhc_navigate_hmo_637, label: "UHC Navigate HMO (637, New England)", product: HMO, lob: commercial,
+     discover: {toc: tic_toc_uhc_blobs, match: '_UnitedHealthcare-of-New-England--Inc-_Insurer_Navigate-HMO_637_in-network-rates\.json\.gz$'},
+     why: "UHC of New England gated HMO."}
+  - {source_id: tic_uhc_options_ppo_665, label: "UHC Options PPO (665)", product: PPO, lob: commercial,
+     discover: {toc: tic_toc_uhc_blobs, match: '_UnitedHealthcare-Insurance-Company_Insurer_Options-PPO_665_in-network-rates\.json\.gz$'},
+     why: "UHC national PPO (also the network behind the UMR wrap files HP and MGB use)."}
+
+  # ---------------------------------------------------------------- Fallon Health
+  # Fallon's TiC TOC (Zelis "Sapphire" hub, linked from fallonhealth.org) covers only its Community
+  # Care Connector QHPs (35 HIOS plans); one medical file. `month_url` moves both the
+  # tocs/YYYYMM/ directory and the YYYY-MM-01_ file prefix.
+  - {source_id: tic_fallon_community_care, label: "Fallon Community Care (Connector)", product: HMO, lob: connector,
+     discover: {toc: tic_toc_fallon, match: '_sapphire-fallon_in-network-rates\.json\.gz$'},
+     why: "The TOC's only medical network file (behavioral / dental / chiro / vision files skipped)."}
+
+# Payers checked and not loaded (2026-10-24):
+#   CIGNA     - TOC is a CloudFront-signed link fetched from cigna.com; the page returned no link to
+#               a non-browser client this session. Not loaded.
+#   WELLSENSE - QHP-only, provider_references are remote URLs (port 8443); not supported yet.
+#   HNE, WELLPOINT/UNICARE - not attempted (Western MA / GIC; small Greater Boston share).
