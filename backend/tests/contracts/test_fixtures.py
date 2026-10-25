@@ -61,12 +61,10 @@ PLACEHOLDERS = {"allow_placeholders": True}
 
 # Sources the fixtures cite that are not in data/etl/sources.yaml + sources.d/ yet. Each one is a
 # README-listed placeholder; a new unregistered id fails test_fixture_sources_are_registered.
-# Stream C: every golden quote is real engine output (python -m app.quote.fixtures_gen). Medicare
-# PFS comes from tests/quote/make_pfs_extract.py until A3 registers its reader. A clinic's posted
-# self-pay page is a source derived from sites.yaml (posted_<site id>), never from sources.yaml.
-UNREGISTERED_SOURCES = {
-    "cms_pfs_rvu26a": "Medicare PFS RVU26A; its format is added with the A3 reader (P3)",
-}
+# Stream C: every golden quote is real engine output (python -m app.quote.fixtures_gen). C2: the
+# Medicare / MassHealth fee schedules are A3's registered sources (sources.d/government.yaml). A
+# clinic's posted self-pay page is a source derived from sites.yaml (posted_<site id>).
+UNREGISTERED_SOURCES: dict[str, str] = {}  # C2: every fee schedule is A3's registered source
 QUOTES = (
     "quote_bcbs_hmo_shoulder",
     "quote_cash_shoulder",
@@ -139,18 +137,17 @@ def test_fixture_ids_resolve_against_registries(path):
         assert set(keys) <= GLOSSARY
     for cards in _walk(body, "card_ids"):
         assert set(cards) <= CARDS
-    site_ids = {s["id"] for s in json.loads((FIX / "sites.json").read_text())["sites"]}
+    site_ids = set(SITES) | {s["id"] for s in json.loads((FIX / "sites.json").read_text())["sites"]}
     for key in ("site_id",):
         for sid in _walk(body, key):
-            assert sid in site_ids, f"unknown site {sid} (not in fixtures/sites.json)"
+            assert sid in site_ids, f"unknown site {sid} (not in data/sites/sites.yaml)"
 
 
 def test_fixture_sources_are_registered():
     from app.etl.config import load_sources
 
     registered = {s.source_id for s in load_sources().sources}
-    sites = json.loads((FIX / "sites.json").read_text())["sites"]
-    registered |= {f"posted_{s['id']}" for s in sites if s.get("cash_prices")}
+    registered |= {f"posted_{sid}" for sid, s in SITES.items() if s.get("cash_prices")}
     used = set()
     for name in QUOTES:
         used |= set(_validated(name).sources)
@@ -183,6 +180,8 @@ def test_quote_lines_match_the_care_path():
                 tier, rating = _modified(path, st, req["answers"])
                 assert ln.likelihood == tier, (name, ln.line_id)
                 step_codes = st.all_codes()
+                if ln.component == "facility":  # P9 / C2: a clinic visit's facility fee (G0463)
+                    step_codes |= set(ENGINE_RULES["hospital_visit_facility_codes"])
                 assert set(ln.codes) <= step_codes, (name, ln.line_id, ln.codes)
                 if ln.ai_suggested:
                     assert set(ln.codes) <= {c.code for a in st.ai_potential for c in a.cpts}
@@ -286,11 +285,14 @@ CONTRACT_FEATURES = {
 # them (they stay the mutation base of the negative rule tests). When real data starts showing one,
 # test_real_fixtures_cover_what_real_data_can fails: drop it from here.
 NOT_IN_REAL_DATA = {
-    "cell:percent_only": "no BCBS HMO / cash row of the fixture sites is percent-only for these codes",
-    "not_offered_elsewhere": "sites.yaml has no offered-services list yet (A3); absence is "
-    "not_published, never 'not offered'",
+    "cell:percent_only": "no BCBS HMO / cash row of the golden quotes' sites is percent-only for "
+    "these codes",
+    "cell:conflict": "no hospital file of the 12 sites closest to Harvard Square disagrees with "
+    "BCBS's TiC file by more than 10% for these codes (Tufts 20610 does: tests/quote/test_engine)",
+    "not_offered_elsewhere": "Site.offered holds positive evidence only (A3); no evidence is "
+    "availability 'unknown', never 'not offered'",
     "late_to_refresh": "no source the fixture quotes use is past its publisher deadline on "
-    "2026-10-24 (Fallon's 2026-09-01 TiC file is, but no golden quote reads Fallon)",
+    "2026-10-25 (Fallon's 2026-09-01 TiC file is, but no golden quote reads Fallon)",
     "stale_on_our_side": "every source was fetched within our own schedule",
 }
 
@@ -338,7 +340,7 @@ def test_hospital_files_use_the_365_day_rule():
     Tufts' 2026-04-01 file is therefore not late on 2026-10-24 (the old 180-day rule said it was;
     the hand-made fixture checked MGB's 2026-03-27 file, which P1 does not quote)."""
     resp = _validated("quote_bcbs_hmo_shoulder")
-    f = resp.sources["tufts_mrf"].freshness
+    f = resp.sources["mtauburn_mrf"].freshness  # Mount Auburn's file is dated 2026-04-01 too
     assert f.source_rule == "hospital_mrf_365_days" and str(f.last_updated) == "2026-04-01"
     assert str(f.expected_by) == "2027-04-01" and not f.late_to_refresh
     assert not f.stale_on_our_side and f.our_rule == "hospital_monthly"
@@ -363,7 +365,16 @@ OFFICE_POS = set(
         "non_facility"
     ]
 )
-SITES = {s["id"]: s for s in json.loads((FIX / "sites.json").read_text())["sites"]}
+SITES = {
+    s["id"]: s
+    for s in yaml.safe_load((REPO / "data" / "sites" / "sites.yaml").read_text())["sites"]
+}  # C2: the registry the golden quotes use (208 sites)
+RADIOLOGY = {
+    h: sorted({str(t["tin"]) for g in groups for t in g["tins"]})
+    for h, groups in (yaml.safe_load(
+        (REPO / "data" / "sites" / "radiology_groups.yaml").read_text())["hospitals"] or {}).items()
+}  # fmt: skip
+CENSUS_TINS = yaml.safe_load((FIX / "rate_row_extract.sources.yaml").read_text())["census_tins"]
 
 
 def _extract() -> dict[str, dict]:
@@ -464,19 +475,36 @@ def _tic_candidates(rows, ln, site_id, payment, billing_class) -> list[dict]:
     site = SITES[site_id]
     pos = set(ENGINE_RULES["place_of_service"][site["billing_type"]])
     nets = _networks(payment)
-    tins = set(site["tins"]) | set(site.get("type_2_npis", []))
+    own = (
+        set(site.get("tins", [])) | set(site.get("tin_npis", [])) | set(site.get("type_2_npis", []))
+    )
+    cid = site.get("census_id") or ""
+    linked = set(CENSUS_TINS.get(cid, [])) - own
+    rad = set(RADIOLOGY.get(site.get("hospital_entity_id") or "", []))
+
+    def mine(r, tins) -> bool:
+        return r["tin"] in tins or (r["tin"] in linked and cid in r["site_ids"].split(";"))
+
+    if billing_class == "professional" and ln.modifier == "26" and rad:
+        first = _tic_rows_for(rows, ln, nets, billing_class, lambda r: r["tin"] in rad)
+        if first:  # C2: the hospital's radiology group first (radiology_groups.yaml)
+            return first
+    return _tic_rows_for(rows, ln, nets, billing_class, lambda r: mine(r, own), pos)
+
+
+def _tic_rows_for(rows, ln, nets, billing_class, keep, pos=None) -> list[dict]:
     cands = [
         r
         for r in rows.values()
         if r["source_id"] in nets
-        and r["tin"] in tins
+        and keep(r)
         and r["code"] in ln.codes
         and r["modifiers"] == ("" if billing_class == "facility" else (ln.modifier or ""))
         and r["billing_class"] == billing_class
         and r["amount"] != ""
         and r["negotiated_type"] != "percentage"
     ]
-    if billing_class == "professional" and ln.modifier != "26":
+    if billing_class == "professional" and ln.modifier != "26" and pos is not None:
         cands = [r for r in cands if set(r["service_codes"].split("|")) & pos]
         if not pos & OFFICE_POS:
             fac = [r for r in cands if not set(r["service_codes"].split("|")) & OFFICE_POS]

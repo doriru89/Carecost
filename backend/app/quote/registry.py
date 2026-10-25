@@ -1,8 +1,14 @@
 """Everything the quote engine reads besides rate rows: sites, care paths, payer networks, rules.
 
-* **Sites** (D27, P1 problem 12): ``CARECOST_SITES_PATH`` (A3's ``data/sites/sites.yaml`` once it
-  lands) or ``contracts/fixtures/sites.json`` by default. JSON or YAML; every entry is validated
-  with the ``Site`` contract, so A3's file drops in. Joined to TiC by ``Site.tins``.
+* **Sites** (D27, P1 problem 12): ``CARECOST_SITES_PATH`` or A3's ``data/sites/sites.yaml`` (208
+  sites) by default; ``contracts/fixtures/sites.json`` (6 sites) is the small test registry. JSON
+  or YAML; every entry is validated with the ``Site`` contract. Joined to TiC by ``Site.tins`` +
+  ``Site.tin_npis`` + ``Site.type_2_npis``, and by ``Site.census_id`` <-> the TiC rows'
+  ``tic_site_ids`` (the pack's ``census_tins``).
+* **Radiology groups** (P1 problem 6): ``data/sites/radiology_groups.yaml`` (A3), the billing
+  TINs of the radiologists who read at each hospital.
+* **Data-quality notices**: ``data/etl/data_quality_notices.yaml`` (A3), shown on the summary of
+  every site priced by the named file.
 * **Payment -> TiC networks** (P1 problem 3): ``data/etl/tic_networks.yaml`` (A2). An insurance
   payment ``{payer_id, product, network}`` reads every network file of that payer and product,
   or only the named network (``network`` matches the file id, e.g. ``hmo_blue`` selects
@@ -35,7 +41,10 @@ from app.quote.store import REPO_ROOT, SourceMeta
 from app.registries import all_hospitals
 from app.sites.contracts import Site, SitesFile
 
-DEFAULT_SITES = REPO_ROOT / "contracts" / "fixtures" / "sites.json"
+DEFAULT_SITES = REPO_ROOT / "data" / "sites" / "sites.yaml"
+FIXTURE_SITES = REPO_ROOT / "contracts" / "fixtures" / "sites.json"
+RADIOLOGY_GROUPS = REPO_ROOT / "data" / "sites" / "radiology_groups.yaml"
+DATA_NOTICES = REPO_ROOT / "data" / "etl" / "data_quality_notices.yaml"
 ENGINE_CONFIG = REPO_ROOT / "data" / "quote" / "engine.yaml"
 PAYER_ALIASES = REPO_ROOT / "data" / "etl" / "payer_aliases.yaml"
 GLOSSARY = REPO_ROOT / "content" / "glossary" / "glossary.yaml"
@@ -153,12 +162,62 @@ class Registry:
         return {k: v.name for k, v in all_hospitals().items()}
 
     @cached_property
+    def radiology_tins(self) -> dict[str, list[str]]:
+        """hospitals.yaml id -> the billing TINs of the radiologists who read there, most
+        radiologists first (radiology_groups.yaml; every listed TIN holds >= 25% of a group)."""
+        doc = yaml.safe_load(RADIOLOGY_GROUPS.read_text()) if RADIOLOGY_GROUPS.exists() else {}
+        out: dict[str, list[str]] = {}
+        for hosp, groups in (doc.get("hospitals") or {}).items():
+            share: dict[str, int] = {}
+            for g in groups:
+                for t in g["tins"]:
+                    tin = t["tin"]
+                    if not (isinstance(tin, str) and re.fullmatch(r"[0-9]{9}", tin)):
+                        raise ValueError(f"radiology_groups.yaml {hosp}: TIN {tin!r} (quote it)")
+                    share[tin] = share.get(tin, 0) + int(t["radiologists"])
+            out[hosp] = sorted(share, key=lambda t: (-share[t], t))
+        return out
+
+    @cached_property
+    def data_notices(self) -> dict[str, list[dict[str, Any]]]:
+        """source_id -> its data-quality notices (data_quality_notices.yaml)."""
+        doc = yaml.safe_load(DATA_NOTICES.read_text()) if DATA_NOTICES.exists() else {}
+        out: dict[str, list[dict[str, Any]]] = {}
+        for n in doc.get("notices") or []:
+            out.setdefault(n["source_id"], []).append({
+                "id": n["id"], "kind": n["kind"], "source_id": n["source_id"],
+                "observed": str(n["observed"]), "detail": n["detail"],
+                "effect": n.get("effect"),
+            })  # fmt: skip
+        return out
+
+    def site_tins(self, s: Site) -> list[str]:
+        """A site's own billing TINs / NPIs, in a stable order."""
+        out = [*s.tins, *s.tin_npis, *s.type_2_npis]
+        return list(dict.fromkeys(out))
+
+    @cached_property
     def tins(self) -> set[str]:
-        """Every billing TIN / NPI the registry links to a quotable site (the pack load filter)."""
+        """Every billing TIN / NPI the registry links to a quotable site, plus the hospitals'
+        radiology groups (the pack load filter; census-linked TINs are added by the loader)."""
         out: set[str] = set()
         for s in self.sites.values():
-            out |= set(s.tins) | set(s.type_2_npis)
+            out |= set(self.site_tins(s))
+            if s.hospital_entity_id:
+                out |= set(self.radiology_tins.get(s.hospital_entity_id, ()))
         return out
+
+    @cached_property
+    def census_ids(self) -> set[str]:
+        return {s.census_id for s in self.sites.values() if s.census_id}
+
+    def medicare_locality(self, site: Site) -> str:
+        """CMS PFS locality of a site: 01 Metropolitan Boston = Middlesex, Norfolk and Suffolk
+        counties (RVU26D 26LOCCO.csv line 84), else 99 rest of Massachusetts. engine.yaml lists
+        the registry's cities outside those counties."""
+        cfg = self.config["medicare_locality"]
+        return cfg["rest_of_state"] if site.address.city in cfg["rest_of_state_cities"] else (
+            cfg["default"])  # fmt: skip
 
     def networks_for(self, payer_id: str, product: str, network: str | None) -> list[str]:
         """TiC files for an insurance payment, in a stable order (P1 problem 3)."""

@@ -71,3 +71,40 @@ you_pay:
     kind: copay_or_deductible
     portal_label: Check my deductible at MyBlue
     portal_url: https://www.bluecrossma.org/myblue
+
+# Medicare PFS locality per site (C2). CMS RVU26D 26LOCCO.csv line 84: locality 01 "METROPOLITAN
+# BOSTON" = Middlesex, Norfolk and Suffolk counties; every other MA county is 99 "REST OF
+# MASSACHUSETTS". Cities in sites.yaml outside those three counties: Brockton (Plymouth), Lynn and
+# Saugus (Essex). A new city outside them must be added here.
+medicare_locality:
+  default: "01"
+  rest_of_state: "99"
+  rest_of_state_cities: [Brockton, Lynn, Saugus]
+
+# Site selection for one quote (C2). Without `near`, every eligible site is priced and the
+# max_sites best (I7) are returned, then ranked again inside that set.
+children_only_rule: named_only   # a children-only site is quoted only when site_ids names it
+
+# Positive evidence that a site offers a line (Site.offered, P1 #14): an `offered` entry naming
+# the code, or one whose service covers the code (below), or any rate row for the code in the
+# site's own hospital file or in a TiC file for the site's billing TINs. No evidence =
+# availability "unknown", never "not_offered" (absence of evidence is not evidence).
+offered_services:
+  visit: {classes: [visit]}
+  imaging: {classes: [imaging]}
+  xray: {classes: [imaging], words: ["X-ray"]}
+  mri: {classes: [imaging], words: ["MRI"]}
+  ct: {classes: [imaging], words: ["CT "]}
+  ultrasound: {classes: [imaging], words: ["Ultrasound"]}
+  physical_therapy: {classes: [therapy]}
+  lab: {classes: [lab]}
+  endoscopy: {ranges: [["43200", "43299"], ["45300", "45399"]]}
+  skin_biopsy: {ranges: [["11100", "11107"]]}
+  joint_injection: {ranges: [["20600", "20611"]]}
+
+# MassHealth payment: hospital-file MassHealth rows whose plan names one of these programs are not
+# the standard MassHealth plan and are never used for it (case-insensitive substring of plan_raw).
+# Tufts "HB XR MEDICAID LIMITED CMSP 100%" = MassHealth Limited / Children's Medical Security
+# Plan at 100% of charges (D2 found it pricing 73221 at the $1,631 gross); "OOS" = out-of-state
+# Medicaid; "DENTAL" = CHA's MassHealth dental contract.
+masshealth_plan_exclude: [LIMITED, CMSP, OOS, OUT OF STATE, DENTAL]

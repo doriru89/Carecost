@@ -4,7 +4,8 @@
     uv run --frozen --extra etl python -m app.quote.pack \\
         --hospital-build /path/to/data/build/20261024-10d8a893 \\
         --tic-root /path/to/data/intermediate/tic \\
-        [--gov-rows medicare_pfs.parquet --gov-sources gov_sources.yaml ...] \\
+        --gov-root /path/to/data/intermediate/gov \\
+        [--gov-rows extra.csv --gov-sources extra.sources.yaml ...] \\
         --out ../data/runtime/quote_pack.sqlite
 
     # or the committed extract (what CI and the default Docker image use)
@@ -13,9 +14,11 @@
 Reads with pyarrow (ETL side). The server reads the pack with stdlib sqlite3 (P1 problem 11).
 
 Kept: rows of the codes we price (codes.yaml + visit codes + every care-path code), modifiers
-none / 26 / TC, not ``excluded``. TiC NPIs only for provider groups with at most
-``MAX_GROUP_NPIS`` NPIs (D6). Government fee-schedule rows come in the RateRow contract (A3's
-readers) with a sources YAML in the extract's format (freshness inputs per source, D18).
+none / 26 / TC, not ``excluded``. TiC rows are aggregated (``AGG_KEY``, see ``app.quote.store``);
+NPIs only when every provider group folded into a packed row has at most ``MAX_GROUP_NPIS`` (D6).
+Government fee-schedule rows: A3's ``gov build`` output (``--gov-root``: ``LATEST.json`` -> one
+RateRow parquet + manifest per source, freshness inputs from the manifest, D18), or RateRow rows
+with a sources YAML in the extract's format (``--gov-rows`` / ``--gov-sources``).
 """
 
 from __future__ import annotations
@@ -24,6 +27,7 @@ import argparse
 import json
 import time
 from collections.abc import Iterator
+from dataclasses import replace
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -51,11 +55,17 @@ _HOSPITAL_COLS = [
     "row_ref", "row_id", "source_id", "source_kind", "row_kind", "code", "modifiers", "component",
     "billing_class", "setting", "rev_code", "payer_id", "product", "line_of_business", "plan_raw",
     "amount", "amount_method", "negotiated_pct", "discounted_cash", "gross", "stage_row",
+    "entity_id",
 ]  # fmt: skip
 _TIC_COLS = [
     *_HOSPITAL_COLS, "excluded", "tic_tin_value", "tic_tin_type", "tic_service_codes",
     "tic_business_name", "tic_negotiated_type", "tic_provider_group_id", "tic_group_ordinal",
+    "tic_site_ids",
 ]  # fmt: skip
+AGG_KEY = ("tin", "tin_type", "code", "modifiers", "service_codes", "amount", "negotiated_pct",
+           "billing_class", "negotiated_type", "business_name", "site_ids", "component",
+           "amount_method")  # fmt: skip
+"""TiC rows of one network file that agree on all of these are one packed row (C2 memory)."""
 
 
 def _date(iso: str) -> str:
@@ -111,7 +121,7 @@ def hospital_rows(build: Path, codes: set[str]) -> tuple[list[Row], dict[str, So
 
 def tic_rows(
     tic_root: Path, codes: set[str]
-) -> tuple[Iterator[Row], dict[str, SourceMeta], dict, str | None]:
+) -> tuple[Iterator[Row], dict[str, SourceMeta], tuple[dict, dict, dict], str | None]:
     import pyarrow.parquet as pq
 
     nets = {n.source_id: n for n in load_networks()}
@@ -143,30 +153,59 @@ def tic_rows(
         release = max(release or rel, rel)
         dirs.append((d.name, sd))
 
-    groups: dict[tuple[str, int, int], tuple[str, ...]] = {}
-    wanted: dict[str, set[tuple[int, int]]] = {}
+    npi_sets: dict[int, tuple[str, ...]] = {}
+    census: dict[str, set[str]] = {}
+    stats = {"tic_rows_read": 0, "tic_rows_kept": 0, "tic_rows_packed": 0}
 
     def gen() -> Iterator[Row]:
+        set_ids: dict[tuple[str, ...], int] = {}
         for sid, sd in dirs:
             t = pq.read_table(sd / "rate_row.parquet", columns=_TIC_COLS,
                               filters=[("code", "in", sorted(codes))])  # fmt: skip
             meta = sources[sid]
-            keys = wanted.setdefault(sid, set())
+            stats["tic_rows_read"] += t.num_rows
+            bunch: dict[tuple, tuple[Row, set[tuple[int, int]]]] = {}
             for d in t.to_pylist():
                 if d["excluded"] or d["modifiers"] not in PACKED_MODIFIERS:
                     continue
+                stats["tic_rows_kept"] += 1
                 d["ref"] = standard_ref(meta, d["row_ref"], d["stage_row"])
                 r = make_row(d)
-                keys.add((r.provider_group_id, r.group_ordinal))
-                yield r
+                k = tuple(getattr(r, c) for c in AGG_KEY)
+                grp = (d["tic_provider_group_id"] or 0, d["tic_group_ordinal"] or 0)
+                have = bunch.get(k)
+                if have is None:
+                    bunch[k] = (r, {grp})
+                else:
+                    if (r.stage_row, r.row_id) < (have[0].stage_row, have[0].row_id):
+                        bunch[k] = (r, have[1])
+                    bunch[k][1].add(grp)
             g = pq.read_table(sd / "groups.parquet",
                               columns=["provider_group_id", "group_ordinal", "npis", "n_npi"])  # fmt: skip
+            gnpis: dict[tuple[int, int], tuple[str, ...] | None] = {}
             for rec in g.to_pylist():
-                k = (rec["provider_group_id"], rec["group_ordinal"])
-                if k in keys and 0 < rec["n_npi"] <= MAX_GROUP_NPIS:
-                    groups[(sid, *k)] = tuple(sorted(tin_digits(n) for n in rec["npis"]))
+                k2 = (rec["provider_group_id"], rec["group_ordinal"])
+                ok = 0 < rec["n_npi"] <= MAX_GROUP_NPIS
+                gnpis[k2] = tuple(tin_digits(n) for n in rec["npis"]) if ok else None
+            for r, grps in sorted(bunch.values(), key=lambda b: (b[0].stage_row, b[0].row_id)):
+                npis: set[str] | None = set()
+                for grp in grps:
+                    got = gnpis.get(grp)
+                    if got is None:
+                        npis = None
+                        break
+                    npis |= set(got)  # type: ignore[operator]
+                set_id = 0
+                if npis and len(npis) <= MAX_GROUP_NPIS:
+                    key = tuple(sorted(npis))
+                    set_id = set_ids.setdefault(key, len(set_ids) + 1)
+                    npi_sets[set_id] = key
+                for c in r.site_ids.split(";") if r.site_ids else ():
+                    census.setdefault(c, set()).add(r.tin)
+                stats["tic_rows_packed"] += 1
+                yield replace(r, npi_set=set_id)
 
-    return gen(), sources, groups, release
+    return gen(), sources, (npi_sets, census, stats), release
 
 
 def gov_rows(rows_file: Path, sources_yaml: Path, codes: set[str]):
@@ -194,10 +233,55 @@ def gov_rows(rows_file: Path, sources_yaml: Path, codes: set[str]):
     return out, sources
 
 
+GOV_PUBLISHERS = {
+    "medicare_pfs": "CMS (Medicare physician fee schedule)",
+    "medicare_opps": "CMS (Medicare hospital outpatient, OPPS)",
+    "medicare_asc": "CMS (Medicare ambulatory surgery centers)",
+    "masshealth_fs": "MassHealth (EOHHS fee schedule)",
+}
+
+
+def gov_root_rows(gov_root: Path, codes: set[str]) -> tuple[list[Row], dict[str, SourceMeta]]:
+    """A3's ``gov build`` output: ``LATEST.json`` names one parquet + manifest per source."""
+    import pyarrow.parquet as pq
+
+    data_dir = gov_root.parents[1]  # <repo>/data/intermediate/gov -> <repo>/data
+    latest = json.loads((gov_root / "LATEST.json").read_text())
+    rows: list[Row] = []
+    sources: dict[str, SourceMeta] = {}
+    for sid, ent in sorted(latest.items()):
+        man = json.loads((data_dir / ent["manifest"]).read_text())
+        fi = man["freshness_inputs"]
+        recs = pq.read_table(data_dir / ent["parquet"]).to_pylist()
+        if not recs:
+            continue
+        first = recs[0]
+        label = man.get("regulation") or man.get("release") or ""
+        sources[sid] = SourceMeta(
+            source_id=sid, source_kind=man["kind"],
+            publisher=f"{GOV_PUBLISHERS[man['kind']]} · {label}".rstrip(" ·"),
+            source_file=first["source_file"], source_sha256=first["source_sha256"],
+            source_date=str(first["source_date"]) if first.get("source_date") else None,
+            last_updated=fi.get("last_updated"), fetched_at=fi["fetched_at"],
+            source_rule=fi["source_rule"], our_rule=fi["our_rule"],
+            expected_by=fi.get("expected_by"), our_refresh_due=fi.get("our_refresh_due"),
+        )  # fmt: skip
+        meta = sources[sid]
+        for d in recs:
+            if d["code"] not in codes or d.get("excluded"):
+                continue
+            if d["modifiers"] not in PACKED_MODIFIERS:
+                continue
+            d["ref"] = standard_ref(meta, d["row_ref"], int(d["stage_row"]))
+            rows.append(make_row(d))
+    return rows, sources
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--hospital-build", type=Path)
     ap.add_argument("--tic-root", type=Path)
+    ap.add_argument("--gov-root", type=Path, help="A3 data/intermediate/gov (LATEST.json)")
     ap.add_argument("--gov-rows", type=Path, action="append", default=[])
     ap.add_argument("--gov-sources", type=Path, action="append", default=[])
     ap.add_argument("--from-extract", action="store_true")
@@ -212,9 +296,13 @@ def main() -> None:
         raise SystemExit("--hospital-build and --tic-root (or --from-extract)")
     codes = priced_codes()
     hrows, sources = hospital_rows(a.hospital_build, codes)
-    trows, tsources, groups, release = tic_rows(a.tic_root, codes)
+    trows, tsources, (npi_sets, census, stats), release = tic_rows(a.tic_root, codes)
     sources.update(tsources)
     rows: list[Row] = list(hrows)
+    if a.gov_root:
+        grows, gs = gov_root_rows(a.gov_root, codes)
+        rows += grows
+        sources.update(gs)
     for f, s in zip(a.gov_rows, a.gov_sources, strict=True):
         grows, gs = gov_rows(f, s, codes)
         rows += grows
@@ -228,11 +316,17 @@ def main() -> None:
 
     loaded = target_codes()
     n = write_pack(a.out, rows=all_rows(), sources=sources, version=version, codes=loaded,
-                   group_npis=groups)  # fmt: skip
-    # (groups is filled while write_pack streams the TiC rows, before it writes group_npis)
+                   npi_sets=npi_sets, census_tins=census)  # fmt: skip
+    # (npi_sets / census are filled while write_pack streams the TiC rows, before it writes them)
     mb = a.out.stat().st_size / 1e6
-    print(f"{a.out}: {n} rows, {len(sources)} sources, {len(groups)} small TiC groups with NPIs, "
-          f"{mb:.0f} MB, {time.perf_counter() - t0:.0f} s")  # fmt: skip
+    by_kind: dict[str, int] = {}
+    for r in rows:
+        by_kind[r.source_kind] = by_kind.get(r.source_kind, 0) + 1
+    by_kind["insurer_tic"] = stats["tic_rows_packed"]
+    print(f"{a.out}: {n} rows, {len(sources)} sources, {len(npi_sets)} NPI sets, "
+          f"{len(census)} census ids linked, {mb:.0f} MB, {time.perf_counter() - t0:.0f} s")  # fmt: skip
+    print("rows by source kind:", json.dumps(dict(sorted(by_kind.items()))))
+    print("tic:", json.dumps(stats))
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -56,6 +56,15 @@ class SourceKind(StrEnum):
 # with method estimate_medicare_multiple and basis estimate.
 
 
+FEE_SCHEDULE_KINDS = frozenset(
+    {SourceKind.medicare_pfs, SourceKind.medicare_opps, SourceKind.medicare_asc,
+     SourceKind.masshealth_fs}
+)  # fmt: skip
+"""Government fee schedules: a number read from them is basis ``fee_schedule`` (or a rung-6
+``estimate`` built on the Medicare PFS) and belongs to no payer (it is a published schedule, not a
+negotiated rate)."""
+
+
 class Method(StrEnum):
     """How the number in a ``Money`` was obtained."""
 
@@ -163,6 +172,13 @@ def _check_basename(v: str) -> str:
     return v
 
 
+def fee_schedule_method(source_kind: str) -> Method:
+    """How a fee-schedule number was obtained: the Medicare PFS (and its anesthesia file) is
+    computed (RVU x GPCI x CF, base units x CF); OPPS / ASC / MassHealth amounts are copied from
+    the published table (app.etl.gov.common.fee_schedule_money uses the same split)."""
+    return Method.computed_fee_schedule if source_kind == "medicare_pfs" else Method.stated
+
+
 def number_payer(row_kind: str, payer_id: str | None, basis: PriceBasis) -> str | None:
     """Whose number this is (P1 problem 8). Only a negotiated rate on a payer row belongs to the
     row's payer; a cash price, gross charge or fee schedule read from the same row belongs to no
@@ -249,6 +265,17 @@ class Money(BaseModel):
                 raise ValueError("prov_high must be the same source kind as prov")
             if hi.payer_id != self.prov.payer_id:
                 raise ValueError("both ends of a range must be the same payer's")
+        for p in self.provs():
+            fs_kind = p.source_kind in FEE_SCHEDULE_KINDS
+            if self.basis == PriceBasis.fee_schedule and not fs_kind:
+                raise ValueError(f"{p.row_ref}: basis fee_schedule needs a fee-schedule source")
+            if fs_kind and self.basis not in (PriceBasis.fee_schedule, PriceBasis.estimate):
+                raise ValueError(f"{p.row_ref}: a fee-schedule number is basis fee_schedule")
+            if fs_kind and p.payer_id is not None:
+                raise ValueError(
+                    f"{p.row_ref}: a fee-schedule number carries no payer (it is not a "
+                    "negotiated rate)"
+                )
         return self
 
     def provs(self) -> tuple[Provenance, ...]:
@@ -383,7 +410,17 @@ class RateRow(BaseModel):
     component_rule: Literal["rev_code", "billing_class", "none"]
 
     payer_raw: str
-    plan_raw: str
+    plan_raw: str = Field(
+        description="The plan as the file names it (hospital / TiC); a fee schedule keeps the "
+        "published column it was read from. Never a machine field: see place_of_service"
+    )
+    place_of_service: Literal["non_facility", "facility"] | None = Field(
+        default=None,
+        description="Fee schedules: the place-of-service rate this row is (Medicare PFS / "
+        "MassHealth non-facility = office POS 11, facility = hospital / ASC POS 19/22/24). None "
+        "= the rate is not split by place of service (global, -26, -TC, OPPS, ASC, anesthesia) "
+        "or the row is a hospital / TiC row (TiC keeps its POS list in tic_service_codes)",
+    )
     payer_id: str | None
     line_of_business: LineOfBusiness
     product: str = Field(
@@ -469,11 +506,15 @@ class RateRow(BaseModel):
         """``basis`` is what the number read from this row is. Only a negotiated rate belongs to
         the row's payer: a cash price or gross charge read from a payer row has no payer (P1
         problem 8; tall CSVs repeat the hospital-wide cash price on every payer row)."""
-        method = (
-            Method.derived_pct_x_gross
-            if self.amount_method == AmountMethod.derived_pct_x_gross
-            else Method.stated
-        )
+        if self.source_kind in FEE_SCHEDULE_KINDS:
+            basis = PriceBasis.fee_schedule
+            method = fee_schedule_method(self.source_kind.value)
+        else:
+            method = (
+                Method.derived_pct_x_gross
+                if self.amount_method == AmountMethod.derived_pct_x_gross
+                else Method.stated
+            )
         return Provenance(
             source_id=self.source_id,
             source_kind=self.source_kind,
@@ -502,7 +543,12 @@ class RateRow(BaseModel):
                 searched=searched,
             )
         if self.amount is not None:
-            return Money.point(self.amount, basis=PriceBasis.negotiated, prov=self.provenance())
+            basis = (
+                PriceBasis.fee_schedule
+                if self.source_kind in FEE_SCHEDULE_KINDS
+                else PriceBasis.negotiated
+            )
+            return Money.point(self.amount, basis=basis, prov=self.provenance(basis))
         if self.negotiated_pct is not None:
             return PercentOnly(pct=self.negotiated_pct, of="gross charges", searched=searched)
         return NotPublished(

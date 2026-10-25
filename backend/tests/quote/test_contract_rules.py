@@ -11,7 +11,7 @@ from app.etl.contracts import Money, Provenance
 from app.quote.contracts import QuoteResponse
 from tests.quote.conftest import fixture_doc
 
-TUFTS = "tufts_medical_center"
+TUFTS = "mount_auburn_hospital"  # a hospital in the Cambridge golden quote
 
 
 def _ok(doc):
@@ -143,7 +143,7 @@ def test_engine_store_uses_the_same_payer_rule(store):
     so the rule cannot drift between them."""
     from app.etl.contracts import PriceBasis
 
-    payer_rows = [r for r in store.rows.values() if r.row_kind == "payer_rate" and r.payer_id
+    payer_rows = [r for r in store.rows if r.row_kind == "payer_rate" and r.payer_id
                   and r.discounted_cash is not None and r.gross is not None]  # fmt: skip
     assert payer_rows
     r = payer_rows[0]

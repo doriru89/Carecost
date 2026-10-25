@@ -28,8 +28,17 @@ Indexes (what a quote looks up):
   the hospital-wide cash price on every payer row);
 * ``tic[(source_id, tin, code)]``: TiC rows for one billing TIN (9 digits, or a 10-digit NPI when
   the TiC file keys the contract by NPI) and code;
-* ``group_npis[(source_id, provider_group_id, group_ordinal)]``: NPIs listed with a TiC provider
-  group (only small groups are packed, for D6 per-doctor prices).
+* ``npi_sets[id]``: the NPIs behind one packed TiC row (D6 per-doctor prices; only when every
+  provider group folded into the row lists at most ``MAX_GROUP_NPIS`` NPIs);
+* ``census_tins[census_id]``: billing TINs the TiC matcher linked to a clinic-census site
+  (``tic_site_ids``) that the site registry does not list in ``Site.tins``. Rows of such a TIN
+  count for that site only when they name the site (``Row.site_ids``).
+
+TiC rows are **aggregated at pack time** (C2, memory): rows of one network file that agree on
+billing TIN x code x modifier x place-of-service list x amount x percent x billing class x
+negotiated type x group name x linked sites are one packed row. The packed row keeps the identity
+(row_id, row_ref, stage_row) of the lowest staged row of the bunch, so its number still cites a real
+row with exactly that number, and the union of the bunch's NPIs.
 
 ``Recorder`` collects every row a lookup returned, so the fixture generator can write an extract
 that reproduces the same quotes exactly.
@@ -51,14 +60,22 @@ from typing import Any
 
 import yaml
 
-from app.etl.contracts import Method, PriceBasis, Provenance, SourceKind, number_payer
+from app.etl.contracts import FEE_SCHEDULE_KINDS as _FS_KINDS
+from app.etl.contracts import (
+    Method,
+    PriceBasis,
+    Provenance,
+    SourceKind,
+    fee_schedule_method,
+    number_payer,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 EXTRACT_CSV = REPO_ROOT / "contracts" / "fixtures" / "rate_row_extract.csv"
 EXTRACT_SOURCES = REPO_ROOT / "contracts" / "fixtures" / "rate_row_extract.sources.yaml"
-PACK_VERSION = 2
+PACK_VERSION = 3
 
-FEE_SCHEDULE_KINDS = frozenset({"medicare_pfs", "medicare_opps", "medicare_asc", "masshealth_fs"})
+FEE_SCHEDULE_KINDS = frozenset(k.value for k in _FS_KINDS)
 PACKED_MODIFIERS = frozenset({"", "26", "TC"})
 """Modifiers the engine prices with: none, professional component (26), technical component (TC).
 Every other modifier (52 reduced, 55 post-op only, 78 return to OR, 50 bilateral ...) describes a
@@ -94,13 +111,15 @@ class Row:
     negotiated_pct: float | None
     discounted_cash: float | None
     gross: float | None
+    entity_id: str = ""  # fee schedules: price area (medicare_ma_01, medicare_national, masshealth)
+    place_of_service: str = ""  # fee schedules: non_facility | facility | "" (not split)
     tin: str = ""  # TiC billing TIN (digits only) or NPI
     tin_type: str = ""  # TiC: ein | npi
     service_codes: str = ""  # TiC place-of-service codes, '|'-joined
     business_name: str = ""
     negotiated_type: str = ""  # TiC: negotiated | fee schedule | percentage | ...
-    provider_group_id: int = 0
-    group_ordinal: int = 0
+    site_ids: str = ""  # TiC: ';'-joined census ids the matcher linked the group to
+    npi_set: int = 0  # TiC: id into RateStore.npi_sets (0 = NPIs unknown or too many)
 
     @property
     def uid(self) -> str:
@@ -108,6 +127,9 @@ class Row:
 
     def pos(self) -> frozenset[str]:
         return frozenset(self.service_codes.split("|")) if self.service_codes else frozenset()
+
+    def names_site(self, census_id: str) -> bool:
+        return census_id in self.site_ids.split(";") if self.site_ids else False
 
 
 ROW_COLUMNS = [f.name for f in fields(Row)]
@@ -164,11 +186,12 @@ class Recorder:
 
 @dataclass
 class RateStore:
-    rows: dict[str, Row]
+    rows: list[Row]
     sources: dict[str, SourceMeta]
     version: DataVersionInfo
     codes: frozenset[str] = frozenset()  # codes the hospital / TiC ETL loads (codes.yaml)
-    group_npis: dict[tuple[str, int, int], tuple[str, ...]] = field(default_factory=dict)
+    npi_sets: dict[int, tuple[str, ...]] = field(default_factory=dict)
+    census_tins: dict[str, frozenset[str]] = field(default_factory=dict)
     by_code: dict[tuple[str, str], list[Row]] = field(default_factory=dict)
     hospital: dict[tuple[str, str, str], list[Row]] = field(default_factory=dict)
     cash: dict[tuple[str, str], list[Row]] = field(default_factory=dict)
@@ -183,7 +206,8 @@ class RateStore:
         hosp: dict[tuple[str, str, str], list[Row]] = defaultdict(list)
         cash_best: dict[tuple, Row] = {}
         tic: dict[tuple[str, str, str], list[Row]] = defaultdict(list)
-        for r in sorted(self.rows.values(), key=lambda r: (r.source_id, r.stage_row, r.row_id)):
+        self.rows.sort(key=lambda r: (r.source_id, r.stage_row, r.row_id))
+        for r in self.rows:
             if r.source_kind == "insurer_tic":
                 tic[(r.source_id, r.tin, r.code)].append(r)
                 continue
@@ -207,7 +231,11 @@ class RateStore:
         return rows
 
     def npis(self, r: Row) -> tuple[str, ...]:
-        return self.group_npis.get((r.source_id, r.provider_group_id, r.group_ordinal), ())
+        return self.npi_sets.get(r.npi_set, ()) if r.npi_set else ()
+
+    def by_uid(self) -> dict[str, Row]:
+        """uid -> Row (the fixture generator only; the server never builds it)."""
+        return {r.uid: r for r in self.rows}
 
     def has_kind(self, kind: str) -> bool:
         return any(m.source_kind == kind for m in self.sources.values())
@@ -217,7 +245,7 @@ class RateStore:
 
     def counts(self) -> dict[str, int]:
         out: dict[str, int] = defaultdict(int)
-        for r in self.rows.values():
+        for r in self.rows:
             out[r.source_id] += 1
         return dict(sorted(out.items()))
 
@@ -227,7 +255,7 @@ class RateStore:
         m = self.sources[r.source_id]
         if method is None:
             if r.source_kind in FEE_SCHEDULE_KINDS:
-                method = Method.computed_fee_schedule
+                method = fee_schedule_method(r.source_kind)
             elif r.amount_method == "derived_pct_x_gross" and basis == PriceBasis.negotiated:
                 method = Method.derived_pct_x_gross
             else:
@@ -294,14 +322,27 @@ def make_row(d: dict[str, Any]) -> Row:
         negotiated_pct=_f(d.get("negotiated_pct")),
         discounted_cash=_f(d.get("discounted_cash")),
         gross=_f(d.get("gross")),
+        entity_id=_intern(_s(d.get("entity_id"))),
+        place_of_service=_intern(_s(d.get("place_of_service", legacy_pos(d)))),
         tin=_intern(tin_digits(d.get("tin", d.get("tic_tin_value")))),
         tin_type=_intern(_s(d.get("tin_type", d.get("tic_tin_type")))),
         service_codes=_intern(_s(d.get("service_codes", d.get("tic_service_codes")))),
         business_name=_intern(_s(d.get("business_name", d.get("tic_business_name")))),
         negotiated_type=_intern(_s(d.get("negotiated_type", d.get("tic_negotiated_type")))),
-        provider_group_id=_i(d.get("provider_group_id", d.get("tic_provider_group_id"))),
-        group_ordinal=_i(d.get("group_ordinal", d.get("tic_group_ordinal"))),
+        site_ids=_intern(_s(d.get("site_ids", d.get("tic_site_ids")))),
+        npi_set=_i(d.get("npi_set")),
     )
+
+
+def legacy_pos(d: dict[str, Any]) -> str:
+    """Fee-schedule rows written before RateRow.place_of_service existed carried it in plan_raw
+    (A3's 2026-10-24 parquet). Hospital / TiC rows: ''."""
+    if _s(d.get("source_kind")) in FEE_SCHEDULE_KINDS and d.get("plan_raw") in (
+        "non_facility",
+        "facility",
+    ):
+        return _s(d["plan_raw"])
+    return ""
 
 
 def standard_ref(meta: SourceMeta, row_ref: str, stage_row: int) -> str:
@@ -314,7 +355,8 @@ def standard_ref(meta: SourceMeta, row_ref: str, stage_row: int) -> str:
 STRING_COLUMNS = (
     "source_id", "source_kind", "row_kind", "code", "modifiers", "component", "billing_class",
     "setting", "rev_code", "payer_id", "product", "line_of_business", "plan_raw", "amount_method",
-    "tin", "tin_type", "service_codes", "business_name", "negotiated_type",
+    "entity_id", "place_of_service", "tin", "tin_type", "service_codes", "business_name",
+    "negotiated_type", "site_ids",
 )  # fmt: skip
 """Low-cardinality text columns are stored as ids into ``strings`` (the pack is ~5x smaller and
 loading resolves each id to one shared Python string)."""
@@ -324,8 +366,8 @@ create table meta (key text primary key, value text not null);
 create table sources ({", ".join(f"{c} text" for c in SOURCE_COLUMNS)}, primary key (source_id));
 create table strings (id integer primary key, s text not null);
 create table rows ({", ".join(ROW_COLUMNS)});
-create table group_npis (source_id text, provider_group_id integer, group_ordinal integer,
-                         npi text);
+create table npi_sets (id integer, npi text);
+create table census_tins (census_id text, tin text);
 """
 
 
@@ -342,8 +384,11 @@ def write_pack(
     sources: dict[str, SourceMeta],
     version: DataVersionInfo,
     codes: Iterable[str],
-    group_npis: dict[tuple[str, int, int], tuple[str, ...]] | None = None,
+    npi_sets: dict[int, tuple[str, ...]] | None = None,
+    census_tins: dict[str, Iterable[str]] | None = None,
 ) -> int:
+    """``npi_sets`` / ``census_tins`` may be filled while ``rows`` streams (they are written after
+    the rows)."""
     """Write the runtime pack. Returns the number of rows written."""
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_suffix(".tmp")
@@ -386,8 +431,12 @@ def write_pack(
     db.executemany("insert into strings values (?, ?)",
                    [(i, v) for v, i in ids.items() if v is not None])  # fmt: skip
     db.executemany(
-        "insert into group_npis values (?, ?, ?, ?)",
-        [(s, g, o, npi) for (s, g, o), npis in (group_npis or {}).items() for npi in npis],
+        "insert into npi_sets values (?, ?)",
+        [(i, npi) for i, npis in (npi_sets or {}).items() for npi in npis],
+    )
+    db.executemany(
+        "insert into census_tins values (?, ?)",
+        [(c, t) for c, tins in sorted((census_tins or {}).items()) for t in sorted(tins)],
     )
     db.execute("create index rows_tin on rows (tin)")
     db.commit()
@@ -396,9 +445,12 @@ def write_pack(
     return n
 
 
-def load_pack(path: Path, *, tins: Iterable[str] | None = None) -> RateStore:
+def load_pack(
+    path: Path, *, tins: Iterable[str] | None = None, census_ids: Iterable[str] = ()
+) -> RateStore:
     """Load the pack into memory. ``tins``: keep only TiC rows of these billing TINs / NPIs (the
-    site registry's), so a registry of 6 sites does not hold 1.5 million TiC rows. None = all."""
+    site registry's) plus the TINs the TiC matcher linked to ``census_ids``, so a registry of 6
+    sites does not hold 1.5 million TiC rows. None = all."""
     db = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
     db.row_factory = sqlite3.Row
     meta = {k: v for k, v in db.execute("select key, value from meta")}
@@ -412,7 +464,13 @@ def load_pack(path: Path, *, tins: Iterable[str] | None = None) -> RateStore:
     coded = [c in STRING_COLUMNS for c in ROW_COLUMNS]
     sql = f"select {', '.join(ROW_COLUMNS)} from rows"
     args: list[Any] = []
+    census: dict[str, set[str]] = defaultdict(set)
+    for c, t in db.execute("select census_id, tin from census_tins"):
+        census[c].add(t)
     if tins is not None:
+        cids = set(census_ids)
+        tins = set(tins) | {t for c in cids for t in census.get(c, ())}
+        census = {c: v for c, v in census.items() if c in cids}
         inv = {v: k for k, v in strings.items()}
         tic = inv.get("insurer_tic", -1)
         want = sorted({inv[t] for t in tins if t in inv})
@@ -420,16 +478,18 @@ def load_pack(path: Path, *, tins: Iterable[str] | None = None) -> RateStore:
         db.executemany("insert into temp.want values (?)", [(t,) for t in want])
         sql += f" where source_kind != {tic} or tin in (select tin from temp.want)"
     db.row_factory = None
-    rows: dict[str, Row] = {}
+    rows: list[Row] = []
+    ip = ROW_COLUMNS.index("payer_id")
     for rec in db.execute(sql, args):
         vals = [strings.get(v, "") if c and v is not None else v for c, v in zip(coded, rec)]
-        if vals[ROW_COLUMNS.index("payer_id")] in ("", None):
-            vals[ROW_COLUMNS.index("payer_id")] = None
-        r = Row(*vals)
-        rows[r.uid] = r
-    npis: dict[tuple[str, int, int], list[str]] = defaultdict(list)
-    for s, g, o, npi in db.execute("select * from group_npis order by npi"):
-        npis[(s, g, o)].append(npi)
+        if vals[ip] in ("", None):
+            vals[ip] = None
+        rows.append(Row(*vals))
+    used = {r.npi_set for r in rows if r.npi_set}
+    npis: dict[int, list[str]] = defaultdict(list)
+    for i, npi in db.execute("select id, npi from npi_sets order by id, npi"):
+        if i in used:
+            npis[i].append(sys.intern(npi))
     db.close()
     version = DataVersionInfo(
         build_id=meta["build_id"],
@@ -441,7 +501,8 @@ def load_pack(path: Path, *, tins: Iterable[str] | None = None) -> RateStore:
         sources=sources,
         version=version,
         codes=frozenset(json.loads(meta["codes"])),
-        group_npis={k: tuple(v) for k, v in npis.items()},
+        npi_sets={k: tuple(v) for k, v in npis.items()},
+        census_tins={c: frozenset(v) for c, v in census.items()},
     )
 
 
@@ -458,7 +519,8 @@ def _csv_value(v: Any) -> str:
 
 def write_extract(store: RateStore, uids: Iterable[str], csv_path: Path, sources_path: Path) -> int:
     """Write the rows in ``uids`` (CSV, one per line, diffable) and their sources (YAML)."""
-    out = sorted({store.rows[u] for u in uids}, key=lambda r: (r.source_id, r.stage_row, r.row_id))
+    idx = store.by_uid()
+    out = sorted({idx[u] for u in uids}, key=lambda r: (r.source_id, r.stage_row, r.row_id))
     used = {r.source_id for r in out}
     with csv_path.open("w", newline="") as f:
         w = csv.DictWriter(f, ["row_ref", *ROW_COLUMNS, "npis"], lineterminator="\n")
@@ -467,6 +529,7 @@ def write_extract(store: RateStore, uids: Iterable[str], csv_path: Path, sources
             d = {c: _csv_value(getattr(r, c)) for c in ROW_COLUMNS}
             d["row_ref"] = store.sources[r.source_id].row_ref(r)
             d["ref"] = ""
+            d["npi_set"] = ""
             d["npis"] = "|".join(store.npis(r))
             w.writerow(d)
     doc = {
@@ -479,6 +542,11 @@ def write_extract(store: RateStore, uids: Iterable[str], csv_path: Path, sources
             "tic_release": store.version.tic_release,
         },
         "codes": sorted(store.codes),
+        "census_tins": {
+            c: sorted(t)
+            for c, t in sorted(store.census_tins.items())
+            if any(r.names_site(c) for r in out)
+        },
         "sources": {
             sid: {k: v for k, v in m.__dict__.items() if k != "source_id"}
             for sid, m in sorted(store.sources.items())
@@ -491,37 +559,37 @@ def write_extract(store: RateStore, uids: Iterable[str], csv_path: Path, sources
 
 def read_extract(
     csv_path: Path = EXTRACT_CSV, sources_path: Path = EXTRACT_SOURCES
-) -> tuple[list[Row], dict[str, SourceMeta], DataVersionInfo, list[str], dict]:
+) -> tuple[list[Row], dict[str, SourceMeta], DataVersionInfo, list[str], dict, dict]:
     doc = yaml.safe_load(sources_path.read_text())
     sources = {sid: SourceMeta(source_id=sid, **m) for sid, m in doc["sources"].items()}
     rows: list[Row] = []
-    npis: dict[tuple[str, int, int], tuple[str, ...]] = {}
+    npis: dict[int, tuple[str, ...]] = {}
+    set_ids: dict[tuple[str, ...], int] = {}
     with csv_path.open() as f:
         for d in csv.DictReader(f):
             meta = sources[d["source_id"]]
             d["ref"] = standard_ref(meta, d["row_ref"], int(d["stage_row"]))
-            r = make_row(d)
-            rows.append(r)
             if d.get("npis"):
-                npis[(r.source_id, r.provider_group_id, r.group_ordinal)] = tuple(
-                    d["npis"].split("|")
-                )
+                key = tuple(d["npis"].split("|"))
+                d["npi_set"] = set_ids.setdefault(key, len(set_ids) + 1)
+                npis[d["npi_set"]] = key
+            rows.append(make_row(d))
     dv = doc["data_version"]
     version = DataVersionInfo(
         build_id=str(dv["build_id"]),
         build_date=str(dv["build_date"]),
         tic_release=dv["tic_release"],
     )
-    return rows, sources, version, list(doc.get("codes") or []), npis
+    census = {c: list(t) for c, t in (doc.get("census_tins") or {}).items()}
+    return rows, sources, version, list(doc.get("codes") or []), npis, census
 
 
 def pack_from_extract(
     out: Path, csv_path: Path = EXTRACT_CSV, sources_path: Path = EXTRACT_SOURCES
 ) -> int:
-    rows, sources, version, codes, npis = read_extract(csv_path, sources_path)
-    return write_pack(
-        out, rows=rows, sources=sources, version=version, codes=codes, group_npis=npis
-    )
+    rows, sources, version, codes, npis, census = read_extract(csv_path, sources_path)
+    return write_pack(out, rows=rows, sources=sources, version=version, codes=codes,
+                      npi_sets=npis, census_tins=census)  # fmt: skip
 
 
 def store_from_extract(
@@ -537,9 +605,9 @@ def store_from_extract(
         return load_pack(p)
 
 
-def load_from_env(tins: Iterable[str] | None = None) -> RateStore:
+def load_from_env(tins: Iterable[str] | None = None, census_ids: Iterable[str] = ()) -> RateStore:
     """Server startup. ``CARECOST_QUOTE_PACK`` -> that pack; otherwise the committed extract."""
     pack = os.environ.get("CARECOST_QUOTE_PACK")
     if pack:
-        return load_pack(Path(pack), tins=tins)
+        return load_pack(Path(pack), tins=tins, census_ids=census_ids)
     return store_from_extract()

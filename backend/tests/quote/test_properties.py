@@ -21,6 +21,7 @@ import pytest
 from app.etl.contracts import Conflict, Money
 from app.quote.contracts import QuoteRequest
 from app.quote.engine import Engine
+from app.quote.fixtures_gen import KEY_SITES, NEAR
 from app.quote.store import RateStore
 from tests.quote.conftest import AS_OF
 
@@ -41,10 +42,11 @@ def _all_requests(registry):
         answer_sets = [*ANSWERS, *({**m.when} for m in path.tier_modifiers)]
         for pay in PAYMENTS:
             for ans in answer_sets:
-                yield QuoteRequest.model_validate({
-                    "payment": pay, "care_path_id": pid, "answers": ans, "service_codes": [],
-                    "picked_by": "person", "site_ids": None,
-                })  # fmt: skip
+                for where in ({"site_ids": None, "near": NEAR}, {"site_ids": KEY_SITES}):
+                    yield QuoteRequest.model_validate({
+                        "payment": pay, "care_path_id": pid, "answers": ans,
+                        "service_codes": [], "picked_by": "person", **where,
+                    })  # fmt: skip
 
 
 @pytest.fixture(scope="module")
@@ -86,9 +88,7 @@ def test_i2_no_negative_and_conflicts_never_summed(quotes):
 
 
 def test_i3_every_amount_cites_a_loaded_row(quotes, store, engine):
-    refs = {
-        (m.row_ref(r), r.row_id) for r in store.rows.values() for m in [store.sources[r.source_id]]
-    }
+    refs = {(m.row_ref(r), r.row_id) for r in store.rows for m in [store.sources[r.source_id]]}
     ref_only = {a for a, _ in refs}
     for _, r in quotes:
         for sq in r.sites:
@@ -129,11 +129,11 @@ def test_i5_only_your_payers_rates(quotes):
 
 def test_i5_row_order_does_not_change_the_answer(store, registry, quotes):
     rng = random.Random(20261024)
-    rows = list(store.rows.items())
+    rows = list(store.rows)
     rng.shuffle(rows)
     shuffled = RateStore(
-        rows=dict(rows), sources=store.sources, version=store.version, codes=store.codes,
-        group_npis=store.group_npis,
+        rows=rows, sources=store.sources, version=store.version, codes=store.codes,
+        npi_sets=store.npi_sets, census_tins=store.census_tins,
     )  # fmt: skip
     eng = Engine(shuffled, registry)
     for req, r in rng.sample(quotes, 30):

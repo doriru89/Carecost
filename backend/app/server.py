@@ -7,7 +7,7 @@ Data is loaded once at startup into memory:
 
 * rate rows: ``CARECOST_QUOTE_PACK`` (the runtime SQLite pack, ``python -m app.quote.pack``) or,
   when unset, the committed extract (``contracts/fixtures/rate_row_extract.csv``);
-* sites: ``CARECOST_SITES_PATH`` (A3's ``data/sites/sites.yaml``) or ``contracts/fixtures/sites.json``;
+* sites: ``CARECOST_SITES_PATH`` or A3's ``data/sites/sites.yaml`` (208 sites);
 * care paths, payer networks and rules from ``data/``.
 
 Only the TiC rows of billing TINs the site registry links are kept in memory.
@@ -26,7 +26,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 
 from app.chat.api import router as chat_router
 from app.quote.api import router as quote_router
-from app.quote.catalog import build_catalog
+from app.quote.catalog import build_catalog, path_service_names
 from app.quote.engine import Engine
 from app.quote.registry import Registry
 from app.quote.store import RateStore, load_from_env
@@ -49,10 +49,11 @@ def create_app(
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         reg = registry() if callable(registry) else registry
-        data = store(tins=reg.tins) if callable(store) else store
+        data = store(tins=reg.tins, census_ids=reg.census_ids) if callable(store) else store
         app.state.engine = Engine(data, reg)
         app.state.catalog = build_catalog(reg)
         app.state.catalog_json = app.state.catalog.model_dump_json()
+        app.state.catalog_names = path_service_names(reg)
         app.state.today = today
         yield
 

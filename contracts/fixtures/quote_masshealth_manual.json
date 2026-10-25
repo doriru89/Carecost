@@ -10,41 +10,55 @@
     "73221"
   ],
   "picked_by": "person",
-  "as_of": "2026-10-24",
+  "as_of": "2026-10-25",
   "data_version": {
-    "build_id": "20261024-10d8a893",
+    "build_id": "20261024-336340ed",
     "build_date": "2026-10-24",
     "tic_release": "tic-2026-10",
     "sites_version": 1,
     "care_paths_version": null
   },
   "sources": {
-    "brigham_mrf": {
+    "cha_mrf": {
       "source_kind": "hospital_mrf",
-      "publisher": "Brigham and Women's Hospital",
+      "publisher": "CHA Cambridge Hospital",
+      "freshness": {
+        "last_updated": "2026-03-20",
+        "expected_by": "2027-03-20",
+        "late_to_refresh": false,
+        "source_rule": "hospital_mrf_365_days",
+        "fetched_at": "2026-10-25",
+        "our_refresh_due": "2026-11-25",
+        "stale_on_our_side": false,
+        "our_rule": "hospital_monthly"
+      }
+    },
+    "masshealth_318_20261001": {
+      "source_kind": "masshealth_fs",
+      "publisher": "MassHealth (EOHHS fee schedule) \u00b7 101 CMR 318.00",
+      "freshness": {
+        "last_updated": "2026-10-01",
+        "expected_by": "2027-01-01",
+        "late_to_refresh": false,
+        "source_rule": "fee_schedule_annual",
+        "fetched_at": "2026-10-25",
+        "our_refresh_due": "2027-01-01",
+        "stale_on_our_side": false,
+        "our_rule": "fee_schedule_per_release"
+      }
+    },
+    "mgh_mrf": {
+      "source_kind": "hospital_mrf",
+      "publisher": "Massachusetts General Hospital",
       "freshness": {
         "last_updated": "2026-03-27",
         "expected_by": "2027-03-27",
         "late_to_refresh": false,
         "source_rule": "hospital_mrf_365_days",
-        "fetched_at": "2026-10-24",
-        "our_refresh_due": "2026-11-24",
+        "fetched_at": "2026-10-25",
+        "our_refresh_due": "2026-11-25",
         "stale_on_our_side": false,
         "our_rule": "hospital_monthly"
-      }
-    },
-    "cms_pfs_rvu26a": {
-      "source_kind": "medicare_pfs",
-      "publisher": "CMS (Medicare, Boston 2026)",
-      "freshness": {
-        "last_updated": "2026-01-01",
-        "expected_by": "2027-01-01",
-        "late_to_refresh": false,
-        "source_rule": "fee_schedule_annual",
-        "fetched_at": "2026-05-02",
-        "our_refresh_due": null,
-        "stale_on_our_side": false,
-        "our_rule": "fee_schedule_per_release"
       }
     },
     "mtauburn_mrf": {
@@ -55,22 +69,8 @@
         "expected_by": "2027-04-01",
         "late_to_refresh": false,
         "source_rule": "hospital_mrf_365_days",
-        "fetched_at": "2026-10-24",
-        "our_refresh_due": "2026-11-24",
-        "stale_on_our_side": false,
-        "our_rule": "hospital_monthly"
-      }
-    },
-    "tufts_mrf": {
-      "source_kind": "hospital_mrf",
-      "publisher": "Tufts Medical Center",
-      "freshness": {
-        "last_updated": "2026-04-01",
-        "expected_by": "2027-04-01",
-        "late_to_refresh": false,
-        "source_rule": "hospital_mrf_365_days",
-        "fetched_at": "2026-10-24",
-        "our_refresh_due": "2026-11-24",
+        "fetched_at": "2026-10-25",
+        "our_refresh_due": "2026-11-25",
         "stale_on_our_side": false,
         "our_rule": "hospital_monthly"
       }
@@ -79,17 +79,1516 @@
   "sites": [
     {
       "site": {
-        "site_id": "tufts_medical_center",
-        "name": "Tufts Medical Center",
-        "site_type": "hospital_outpatient",
-        "system_id": "tufts_medicine",
+        "site_id": "afc_urgent_care_cambridge_cambridge",
+        "name": "AFC Urgent Care Cambridge",
+        "site_type": "urgent_care",
+        "system_id": null,
         "coords": {
-          "lat": 42.3495,
-          "lon": -71.0636,
+          "lat": 42.389456,
+          "lon": -71.119121,
+          "geocoded_by": "operator_page",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "17 White Street, Cambridge, MA 02140",
+        "phone": null,
+        "billing_type": "office_visit",
+        "booking": [
+          {
+            "kind": "deep_link",
+            "provider": "solv",
+            "label": "Reserve a spot",
+            "url": "https://www.solvhealth.com/book-online/A2BDRN",
+            "phone": null
+          }
+        ],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "masshealth_318_20261001",
+        "listing_status": "web_verified",
+        "service_areas": [
+          "urgent_care"
+        ],
+        "children_only": false,
+        "data_notices": []
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "svc_73030",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 27.31,
+              "high": 27.31,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73221",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 273.77,
+              "high": 273.77,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 301.08,
+            "high": 301.08,
+            "line_ids": [
+              "svc_73030",
+              "svc_73221"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": true,
+          "missing": 0,
+          "excluded": [],
+          "you_pay": {
+            "kind": "masshealth_small_or_no_copay",
+            "note_key": "youpay.masshealth_small_or_no_copay",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
+        "site_id": "afc_urgent_care_cambridge_inman_square_cambridge",
+        "name": "AFC Urgent Care Cambridge Inman Square",
+        "site_type": "urgent_care",
+        "system_id": null,
+        "coords": {
+          "lat": 42.373615,
+          "lon": -71.101023,
+          "geocoded_by": "operator_page",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "1400 CAMBRIDGE ST, Cambridge, MA 02139",
+        "phone": null,
+        "billing_type": "office_visit",
+        "booking": [
+          {
+            "kind": "deep_link",
+            "provider": "solv",
+            "label": "Reserve a spot",
+            "url": "https://www.solvhealth.com/book-online/pDJ5Z9",
+            "phone": null
+          }
+        ],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "masshealth_318_20261001",
+        "listing_status": "web_verified",
+        "service_areas": [
+          "urgent_care"
+        ],
+        "children_only": false,
+        "data_notices": []
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "svc_73030",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "unknown",
+            "cell": {
+              "kind": "money",
+              "low": 27.31,
+              "high": 27.31,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73221",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "unknown",
+            "cell": {
+              "kind": "money",
+              "low": 273.77,
+              "high": 273.77,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 301.08,
+            "high": 301.08,
+            "line_ids": [
+              "svc_73030",
+              "svc_73221"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": true,
+          "missing": 0,
+          "excluded": [],
+          "you_pay": {
+            "kind": "masshealth_small_or_no_copay",
+            "note_key": "youpay.masshealth_small_or_no_copay",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
+        "site_id": "atrius_health_inc_somerville",
+        "name": "ATRIUS HEALTH INC",
+        "site_type": "specialist_office",
+        "system_id": null,
+        "coords": {
+          "lat": 42.39763,
+          "lon": -71.123529,
+          "geocoded_by": "census_batch",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "40 HOLLAND ST, Somerville, MA 02144",
+        "phone": null,
+        "billing_type": "office_visit",
+        "booking": [],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "masshealth_318_20261001",
+        "listing_status": "multi_registry",
+        "service_areas": [
+          "skin",
+          "gi",
+          "ortho"
+        ],
+        "children_only": false,
+        "data_notices": []
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "svc_73030",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 27.31,
+              "high": 27.31,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73221",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 273.77,
+              "high": 273.77,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 301.08,
+            "high": 301.08,
+            "line_ids": [
+              "svc_73030",
+              "svc_73221"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": true,
+          "missing": 0,
+          "excluded": [],
+          "you_pay": {
+            "kind": "masshealth_small_or_no_copay",
+            "note_key": "youpay.masshealth_small_or_no_copay",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
+        "site_id": "cambridge_public_health_commission_cambridge",
+        "name": "CAMBRIDGE PUBLIC HEALTH COMMISSION",
+        "site_type": "specialist_office",
+        "system_id": "cha",
+        "coords": {
+          "lat": 42.374133,
+          "lon": -71.103486,
+          "geocoded_by": "census_batch",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "1493 CAMBRIDGE ST, Cambridge, MA 02139",
+        "phone": null,
+        "billing_type": "unknown",
+        "booking": [],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "cha_mrf",
+        "listing_status": "multi_registry",
+        "service_areas": [
+          "skin",
+          "gi",
+          "ortho"
+        ],
+        "children_only": false,
+        "data_notices": []
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "svc_73030",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 27.31,
+              "high": 27.31,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73221",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 273.77,
+              "high": 273.77,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 301.08,
+            "high": 301.08,
+            "line_ids": [
+              "svc_73030",
+              "svc_73221"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": true,
+          "missing": 0,
+          "excluded": [],
+          "you_pay": {
+            "kind": "masshealth_small_or_no_copay",
+            "note_key": "youpay.masshealth_small_or_no_copay",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
+        "site_id": "cambridge_public_health_commission_somerville_gb0194",
+        "name": "CAMBRIDGE PUBLIC HEALTH COMMISSION",
+        "site_type": "specialist_office",
+        "system_id": "cha",
+        "coords": {
+          "lat": 42.390521,
+          "lon": -71.108818,
+          "geocoded_by": "census_batch",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "230 HIGHLAND AVE, Somerville, MA 02143",
+        "phone": null,
+        "billing_type": "unknown",
+        "booking": [],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "cha_mrf",
+        "listing_status": "multi_registry",
+        "service_areas": [
+          "skin",
+          "gi",
+          "ortho"
+        ],
+        "children_only": false,
+        "data_notices": []
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "svc_73030",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 27.31,
+              "high": 27.31,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73221",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 273.77,
+              "high": 273.77,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 301.08,
+            "high": 301.08,
+            "line_ids": [
+              "svc_73030",
+              "svc_73221"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": true,
+          "missing": 0,
+          "excluded": [],
+          "you_pay": {
+            "kind": "masshealth_small_or_no_copay",
+            "note_key": "youpay.masshealth_small_or_no_copay",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
+        "site_id": "cha_somerville_urgent_care_center_somerville",
+        "name": "CHA Somerville Urgent Care Center",
+        "site_type": "urgent_care",
+        "system_id": "cha",
+        "coords": {
+          "lat": 42.389587,
+          "lon": -71.10944,
+          "geocoded_by": "census_batch",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "33 TOWER ST, Somerville, MA 02143",
+        "phone": null,
+        "billing_type": "unknown",
+        "booking": [],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "cha_mrf",
+        "listing_status": "multi_registry",
+        "service_areas": [
+          "urgent_care"
+        ],
+        "children_only": false,
+        "data_notices": []
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "svc_73030",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 27.31,
+              "high": 27.31,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73221",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 273.77,
+              "high": 273.77,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 301.08,
+            "high": 301.08,
+            "line_ids": [
+              "svc_73030",
+              "svc_73221"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": true,
+          "missing": 0,
+          "excluded": [],
+          "you_pay": {
+            "kind": "masshealth_small_or_no_copay",
+            "note_key": "youpay.masshealth_small_or_no_copay",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
+        "site_id": "cvs_minuteclinic_cambridge_alewife_brook_parkway_cambrid",
+        "name": "CVS MinuteClinic - Cambridge (Alewife Brook Parkway)",
+        "site_type": "urgent_care",
+        "system_id": null,
+        "coords": {
+          "lat": 42.389808,
+          "lon": -71.142566,
+          "geocoded_by": "census_batch",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "215 ALEWIFE BROOK PKWY, Cambridge, MA 02138",
+        "phone": null,
+        "billing_type": "office_visit",
+        "booking": [],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "masshealth_318_20261001",
+        "listing_status": "multi_registry",
+        "service_areas": [
+          "urgent_care"
+        ],
+        "children_only": false,
+        "data_notices": []
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "svc_73030",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 27.31,
+              "high": 27.31,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73221",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 273.77,
+              "high": 273.77,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 301.08,
+            "high": 301.08,
+            "line_ids": [
+              "svc_73030",
+              "svc_73221"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": true,
+          "missing": 0,
+          "excluded": [],
+          "you_pay": {
+            "kind": "masshealth_small_or_no_copay",
+            "note_key": "youpay.masshealth_small_or_no_copay",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
+        "site_id": "massachusetts_general_physicians_organization_inc_cambri",
+        "name": "MASSACHUSETTS GENERAL PHYSICIANS ORGANIZATION INC",
+        "site_type": "specialist_office",
+        "system_id": "mgb",
+        "coords": {
+          "lat": 42.374593,
+          "lon": -71.107122,
+          "geocoded_by": "census_batch",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "1575 CAMBRIDGE ST, Cambridge, MA 02138",
+        "phone": null,
+        "billing_type": "unknown",
+        "booking": [],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "mgh_mrf",
+        "listing_status": "multi_registry",
+        "service_areas": [
+          "ortho"
+        ],
+        "children_only": false,
+        "data_notices": []
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "svc_73030",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 27.31,
+              "high": 27.31,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73221",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 273.77,
+              "high": 273.77,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 301.08,
+            "high": 301.08,
+            "line_ids": [
+              "svc_73030",
+              "svc_73221"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": true,
+          "missing": 0,
+          "excluded": [],
+          "you_pay": {
+            "kind": "masshealth_small_or_no_copay",
+            "note_key": "youpay.masshealth_small_or_no_copay",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
+        "site_id": "mount_auburn_professional_services_inc_cambridge_gb0165",
+        "name": "MOUNT AUBURN PROFESSIONAL SERVICES INC",
+        "site_type": "specialist_office",
+        "system_id": "bilh",
+        "coords": {
+          "lat": 42.374785,
+          "lon": -71.132823,
+          "geocoded_by": "census_batch",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "300 MOUNT AUBURN ST, Cambridge, MA 02138",
+        "phone": null,
+        "billing_type": "unknown",
+        "booking": [],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "mtauburn_mrf",
+        "listing_status": "multi_registry",
+        "service_areas": [
+          "gi",
+          "ortho"
+        ],
+        "children_only": false,
+        "data_notices": []
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "svc_73030",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 27.31,
+              "high": 27.31,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73221",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 273.77,
+              "high": 273.77,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:global",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 301.08,
+            "high": 301.08,
+            "line_ids": [
+              "svc_73030",
+              "svc_73221"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": true,
+          "missing": 0,
+          "excluded": [],
+          "you_pay": {
+            "kind": "masshealth_small_or_no_copay",
+            "note_key": "youpay.masshealth_small_or_no_copay",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
+        "site_id": "cha_cambridge_hospital",
+        "name": "CHA Cambridge Hospital",
+        "site_type": "hospital_outpatient",
+        "system_id": "cha",
+        "coords": {
+          "lat": 42.3667,
+          "lon": -71.105,
           "geocoded_by": "hospital_registry",
           "geocoded_at": "2026-10-24"
         },
-        "address_line": "800 Washington St, Boston, MA 02111",
+        "address_line": "1493 Cambridge St, Cambridge, MA 02139",
         "phone": null,
         "billing_type": "hospital_outpatient",
         "booking": [],
@@ -97,19 +1596,21 @@
         "hours": null,
         "hours_label": "unknown",
         "price_label": "price_file",
-        "price_source_id": "tufts_mrf",
+        "price_source_id": "cha_mrf",
         "listing_status": "web_verified",
         "service_areas": [
           "ortho",
           "skin",
           "gi"
-        ]
+        ],
+        "children_only": false,
+        "data_notices": []
       },
       "receipt": {
         "lines": [
           {
             "line_id": "svc_73030_facility",
-            "tier": "certain",
+            "tier": "not_in_public_data",
             "likelihood": "certain",
             "step_id": null,
             "codes": [
@@ -127,36 +1628,23 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "money",
-              "low": 333.0,
-              "high": 333.0,
-              "basis": "negotiated",
-              "prov": {
-                "source_id": "tufts_mrf",
-                "source_kind": "hospital_mrf",
-                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                "source_date": "2026-04-01",
-                "method": "stated",
-                "row_ref": "tufts_mrf:d16771049bc4:1590930",
-                "payer_id": "MASSHEALTH",
-                "row_id": null
-              },
-              "prov_high": null
+              "kind": "not_loaded",
+              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "eta": null
             },
             "list_price": {
               "kind": "money",
-              "low": 333.0,
-              "high": 333.0,
+              "low": 625.0,
+              "high": 625.0,
               "basis": "gross",
               "prov": {
-                "source_id": "tufts_mrf",
+                "source_id": "cha_mrf",
                 "source_kind": "hospital_mrf",
-                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                "source_date": "2026-04-01",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "tufts_mrf:d16771049bc4:73747",
+                "row_ref": "cha_mrf:2efdf1cef584:12589",
                 "payer_id": null,
                 "row_id": null
               },
@@ -165,9 +1653,10 @@
             "tier_basis": "picked",
             "doctor_fee": null,
             "ai_suggested": false,
-            "in_total": true,
+            "in_total": false,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -189,17 +1678,17 @@
             "availability": "offered",
             "cell": {
               "kind": "money",
-              "low": 9.75,
-              "high": 9.75,
+              "low": 6.75,
+              "high": 6.75,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8009",
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:professional",
                 "payer_id": null,
                 "row_id": null
               },
@@ -208,8 +1697,8 @@
             "list_price": null,
             "tier_basis": "picked",
             "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
@@ -218,14 +1707,15 @@
               "by_npi": null
             },
             "ai_suggested": false,
-            "in_total": false,
+            "in_total": true,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
             "line_id": "svc_73221_facility",
-            "tier": "certain",
+            "tier": "not_in_public_data",
             "likelihood": "certain",
             "step_id": null,
             "codes": [
@@ -243,36 +1733,23 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "money",
-              "low": 1631.0,
-              "high": 1631.0,
-              "basis": "negotiated",
-              "prov": {
-                "source_id": "tufts_mrf",
-                "source_kind": "hospital_mrf",
-                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                "source_date": "2026-04-01",
-                "method": "stated",
-                "row_ref": "tufts_mrf:d16771049bc4:1586428",
-                "payer_id": "MASSHEALTH",
-                "row_id": null
-              },
-              "prov_high": null
+              "kind": "not_loaded",
+              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "eta": null
             },
             "list_price": {
               "kind": "money",
-              "low": 1631.0,
-              "high": 1631.0,
+              "low": 1603.0,
+              "high": 1603.0,
               "basis": "gross",
               "prov": {
-                "source_id": "tufts_mrf",
+                "source_id": "cha_mrf",
                 "source_kind": "hospital_mrf",
-                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                "source_date": "2026-04-01",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "tufts_mrf:d16771049bc4:9943",
+                "row_ref": "cha_mrf:2efdf1cef584:23118",
                 "payer_id": null,
                 "row_id": null
               },
@@ -281,9 +1758,10 @@
             "tier_basis": "picked",
             "doctor_fee": null,
             "ai_suggested": false,
-            "in_total": true,
+            "in_total": false,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -305,17 +1783,17 @@
             "availability": "offered",
             "cell": {
               "kind": "money",
-              "low": 67.92,
-              "high": 67.92,
+              "low": 48.11,
+              "high": 48.11,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8075",
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:professional",
                 "payer_id": null,
                 "row_id": null
               },
@@ -324,8 +1802,8 @@
             "list_price": null,
             "tier_basis": "picked",
             "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
@@ -334,19 +1812,20 @@
               "by_npi": null
             },
             "ai_suggested": false,
-            "in_total": false,
+            "in_total": true,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           }
         ],
         "totals": {
           "likely": {
-            "low": 1964.0,
-            "high": 1964.0,
+            "low": 54.86,
+            "high": 54.86,
             "line_ids": [
-              "svc_73030_facility",
-              "svc_73221_facility"
+              "svc_73030_reading",
+              "svc_73221_reading"
             ],
             "includes_estimate": false,
             "includes_late_source": false,
@@ -356,12 +1835,12 @@
           "missing": 2,
           "excluded": [
             {
-              "line_id": "svc_73030_reading",
-              "reason": "reference_only"
+              "line_id": "svc_73030_facility",
+              "reason": "no_dollar_amount"
             },
             {
-              "line_id": "svc_73221_reading",
-              "reason": "reference_only"
+              "line_id": "svc_73221_facility",
+              "reason": "no_dollar_amount"
             }
           ],
           "you_pay": {
@@ -378,483 +1857,23 @@
           "code": "73030",
           "points": [
             {
-              "payer_id": "WELLSENSE",
-              "label": "WellSense Health Plan",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 87.45,
-                "high": 136.53,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:4627128",
-                  "payer_id": "WELLSENSE",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:4627129",
-                  "payer_id": "WELLSENSE",
-                  "row_id": null
-                }
-              }
-            },
-            {
-              "payer_id": "TUFTS_HP",
-              "label": "Tufts Health Plan (Point32Health)",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 94.57,
-                "high": 405.31,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:1938910",
-                  "payer_id": "TUFTS_HP",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:2609795",
-                  "payer_id": "TUFTS_HP",
-                  "row_id": null
-                }
-              }
-            },
-            {
-              "payer_id": "BCBS_MA",
-              "label": "Blue Cross Blue Shield of Massachusetts",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 110.42,
-                "high": 110.42,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:251735",
-                  "payer_id": "BCBS_MA",
-                  "row_id": null
-                },
-                "prov_high": null
-              }
-            },
-            {
-              "payer_id": "CIGNA",
-              "label": "Cigna",
-              "product": "PPO",
-              "money": {
-                "kind": "money",
-                "low": 166.5,
-                "high": 405.31,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:153408",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:153409",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                }
-              }
-            },
-            {
-              "payer_id": "HARVARD_PILGRIM",
-              "label": "Harvard Pilgrim (Point32Health)",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 177.56,
-                "high": 195.62,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:1203397",
-                  "payer_id": "HARVARD_PILGRIM",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:1203398",
-                  "payer_id": "HARVARD_PILGRIM",
-                  "row_id": null
-                }
-              }
-            },
-            {
-              "payer_id": "WELLPOINT",
-              "label": "Wellpoint / Unicare (GIC)",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 179.52,
-                "high": 179.52,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:5736274",
-                  "payer_id": "WELLPOINT",
-                  "row_id": null
-                },
-                "prov_high": null
-              }
-            },
-            {
-              "payer_id": "UHC",
-              "label": "UnitedHealthcare",
-              "product": "PPO",
-              "money": {
-                "kind": "money",
-                "low": 195.62,
-                "high": 333.0,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:2322720",
-                  "payer_id": "UHC",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:2322721",
-                  "payer_id": "UHC",
-                  "row_id": null
-                }
-              }
-            },
-            {
               "payer_id": "AETNA",
               "label": "Aetna",
               "product": null,
               "money": {
                 "kind": "money",
-                "low": 214.25,
-                "high": 214.25,
+                "low": 63.52,
+                "high": 63.52,
                 "basis": "negotiated",
                 "prov": {
-                  "source_id": "tufts_mrf",
+                  "source_id": "cha_mrf",
                   "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:240674",
+                  "row_ref": "cha_mrf:2efdf1cef584:56135",
                   "payer_id": "AETNA",
-                  "row_id": null
-                },
-                "prov_high": null
-              }
-            },
-            {
-              "payer_id": "HNE",
-              "label": "Health New England",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 269.73,
-                "high": 269.73,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:1284383",
-                  "payer_id": "HNE",
-                  "row_id": null
-                },
-                "prov_high": null
-              }
-            },
-            {
-              "payer_id": "MASSHEALTH",
-              "label": "MassHealth (Medicaid)",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 333.0,
-                "high": 333.0,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:1590930",
-                  "payer_id": "MASSHEALTH",
-                  "row_id": null
-                },
-                "prov_high": null
-              }
-            }
-          ],
-          "cash": {
-            "kind": "money",
-            "low": 233.1,
-            "high": 233.1,
-            "basis": "discounted_cash",
-            "prov": {
-              "source_id": "tufts_mrf",
-              "source_kind": "hospital_mrf",
-              "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-              "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-              "source_date": "2026-04-01",
-              "method": "stated",
-              "row_ref": "tufts_mrf:d16771049bc4:73747",
-              "payer_id": null,
-              "row_id": null
-            },
-            "prov_high": null
-          },
-          "yours": "in_points"
-        },
-        {
-          "line_id": "svc_73221_facility",
-          "code": "73221",
-          "points": [
-            {
-              "payer_id": "HARVARD_PILGRIM",
-              "label": "Harvard Pilgrim (Point32Health)",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 230.56,
-                "high": 230.56,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:773192",
-                  "payer_id": "HARVARD_PILGRIM",
-                  "row_id": null
-                },
-                "prov_high": null
-              }
-            },
-            {
-              "payer_id": "UHC",
-              "label": "UnitedHealthcare",
-              "product": "PPO",
-              "money": {
-                "kind": "money",
-                "low": 230.56,
-                "high": 1631.0,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:2342896",
-                  "payer_id": "UHC",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:2342897",
-                  "payer_id": "UHC",
-                  "row_id": null
-                }
-              }
-            },
-            {
-              "payer_id": "WELLSENSE",
-              "label": "WellSense Health Plan",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 428.3,
-                "high": 581.29,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:5398945",
-                  "payer_id": "WELLSENSE",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:5398946",
-                  "payer_id": "WELLSENSE",
-                  "row_id": null
-                }
-              }
-            },
-            {
-              "payer_id": "TUFTS_HP",
-              "label": "Tufts Health Plan (Point32Health)",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 463.2,
-                "high": 1631.0,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:4282771",
-                  "payer_id": "TUFTS_HP",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:1933202",
-                  "payer_id": "TUFTS_HP",
-                  "row_id": null
-                }
-              }
-            },
-            {
-              "payer_id": "CIGNA",
-              "label": "Cigna",
-              "product": "PPO",
-              "money": {
-                "kind": "money",
-                "low": 815.5,
-                "high": 1223.13,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:721868",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                },
-                "prov_high": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:721869",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                }
-              }
-            },
-            {
-              "payer_id": "WELLPOINT",
-              "label": "Wellpoint / Unicare (GIC)",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 879.27,
-                "high": 879.27,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:5213687",
-                  "payer_id": "WELLPOINT",
                   "row_id": null
                 },
                 "prov_high": null
@@ -866,17 +1885,17 @@
               "product": null,
               "money": {
                 "kind": "money",
-                "low": 891.43,
-                "high": 891.43,
+                "low": 71.24,
+                "high": 71.24,
                 "basis": "negotiated",
                 "prov": {
-                  "source_id": "tufts_mrf",
+                  "source_id": "cha_mrf",
                   "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:142112",
+                  "row_ref": "cha_mrf:2efdf1cef584:16353",
                   "payer_id": "BCBS_MA",
                   "row_id": null
                 },
@@ -884,888 +1903,115 @@
               }
             },
             {
-              "payer_id": "AETNA",
-              "label": "Aetna",
-              "product": null,
+              "payer_id": "WELLPOINT",
+              "label": "Wellpoint / Unicare (GIC)",
+              "product": "INDEMNITY",
               "money": {
                 "kind": "money",
-                "low": 1049.39,
-                "high": 1049.39,
+                "low": 72.29,
+                "high": 72.29,
                 "basis": "negotiated",
                 "prov": {
-                  "source_id": "tufts_mrf",
+                  "source_id": "cha_mrf",
                   "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:9943",
-                  "payer_id": "AETNA",
+                  "row_ref": "cha_mrf:2efdf1cef584:16940",
+                  "payer_id": "WELLPOINT",
                   "row_id": null
                 },
                 "prov_high": null
               }
             },
             {
-              "payer_id": "HNE",
-              "label": "Health New England",
+              "payer_id": "TUFTS_HP",
+              "label": "Tufts Health Plan (Point32Health)",
               "product": null,
               "money": {
                 "kind": "money",
-                "low": 1321.11,
-                "high": 1321.11,
+                "low": 165.39,
+                "high": 330.69,
                 "basis": "negotiated",
                 "prov": {
-                  "source_id": "tufts_mrf",
+                  "source_id": "cha_mrf",
                   "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:1482476",
-                  "payer_id": "HNE",
+                  "row_ref": "cha_mrf:2efdf1cef584:61486",
+                  "payer_id": "TUFTS_HP",
                   "row_id": null
                 },
-                "prov_high": null
-              }
-            },
-            {
-              "payer_id": "MASSHEALTH",
-              "label": "MassHealth (Medicaid)",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 1631.0,
-                "high": 1631.0,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "tufts_mrf",
+                "prov_high": {
+                  "source_id": "cha_mrf",
                   "source_kind": "hospital_mrf",
-                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                  "source_date": "2026-04-01",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "tufts_mrf:d16771049bc4:1586428",
-                  "payer_id": "MASSHEALTH",
+                  "row_ref": "cha_mrf:2efdf1cef584:531916",
+                  "payer_id": "TUFTS_HP",
                   "row_id": null
-                },
-                "prov_high": null
-              }
-            }
-          ],
-          "cash": {
-            "kind": "money",
-            "low": 1141.7,
-            "high": 1141.7,
-            "basis": "discounted_cash",
-            "prov": {
-              "source_id": "tufts_mrf",
-              "source_kind": "hospital_mrf",
-              "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-              "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-              "source_date": "2026-04-01",
-              "method": "stated",
-              "row_ref": "tufts_mrf:d16771049bc4:9943",
-              "payer_id": null,
-              "row_id": null
-            },
-            "prov_high": null
-          },
-          "yours": "in_points"
-        }
-      ]
-    },
-    {
-      "site": {
-        "site_id": "afc_watertown",
-        "name": "AFC Urgent Care Watertown",
-        "site_type": "urgent_care",
-        "system_id": null,
-        "coords": {
-          "lat": 42.3637,
-          "lon": -71.159,
-          "geocoded_by": "manual",
-          "geocoded_at": "2026-10-24"
-        },
-        "address_line": "376 Arsenal St, Watertown, MA 02472",
-        "phone": "617-923-2273",
-        "billing_type": "office_visit",
-        "booking": [
-          {
-            "kind": "deep_link",
-            "provider": "solv",
-            "label": "Reserve a spot",
-            "url": "https://www.solvhealth.com/book-online/AM731g",
-            "phone": null
-          },
-          {
-            "kind": "walk_in",
-            "provider": "none",
-            "label": "Walk in",
-            "url": null,
-            "phone": null
-          },
-          {
-            "kind": "call",
-            "provider": "phone",
-            "label": "Call",
-            "url": null,
-            "phone": "617-923-2273"
-          }
-        ],
-        "portal_links": [],
-        "hours": {
-          "source": "operator_schema_org",
-          "source_url": "https://www.afcurgentcare.com/watertown/",
-          "checked_at": "2026-10-24",
-          "weekly": [
-            {
-              "days": [
-                "mon",
-                "tue",
-                "wed",
-                "thu",
-                "fri"
-              ],
-              "opens": "08:00",
-              "closes": "20:00"
-            },
-            {
-              "days": [
-                "sat",
-                "sun"
-              ],
-              "opens": "08:00",
-              "closes": "17:00"
-            }
-          ],
-          "may_close_early": false
-        },
-        "hours_label": "posted_hours",
-        "price_label": "price_on_request",
-        "price_source_id": null,
-        "listing_status": "web_verified",
-        "service_areas": [
-          "urgent_care",
-          "ortho"
-        ]
-      },
-      "receipt": {
-        "lines": [
-          {
-            "line_id": "svc_73030",
-            "tier": "certain",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73030"
-            ],
-            "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones",
-            "technical_name": "Shoulder X-ray",
-            "why": null,
-            "glossary_keys": [],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "money",
-              "low": 41.55,
-              "high": 41.55,
-              "basis": "fee_schedule",
-              "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8008",
-                "payer_id": null,
-                "row_id": null
-              },
-              "prov_high": null
-            },
-            "list_price": null,
-            "tier_basis": "picked",
-            "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
-              "group_name": null,
-              "group_tin": null,
-              "npi_count": null,
-              "multiple": null,
-              "chia_badge": null,
-              "by_npi": null
-            },
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "at": "this_site"
-          },
-          {
-            "line_id": "svc_73221",
-            "tier": "certain",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73221"
-            ],
-            "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage",
-            "technical_name": "Shoulder MRI (no contrast)",
-            "why": null,
-            "glossary_keys": [],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "money",
-              "low": 237.21,
-              "high": 237.21,
-              "basis": "fee_schedule",
-              "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8074",
-                "payer_id": null,
-                "row_id": null
-              },
-              "prov_high": null
-            },
-            "list_price": null,
-            "tier_basis": "picked",
-            "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
-              "group_name": null,
-              "group_tin": null,
-              "npi_count": null,
-              "multiple": null,
-              "chia_badge": null,
-              "by_npi": null
-            },
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "at": "this_site"
-          }
-        ],
-        "totals": {
-          "likely": null,
-          "complete": false,
-          "missing": 2,
-          "excluded": [
-            {
-              "line_id": "svc_73030",
-              "reason": "reference_only"
-            },
-            {
-              "line_id": "svc_73221",
-              "reason": "reference_only"
-            }
-          ],
-          "you_pay": {
-            "kind": "masshealth_small_or_no_copay",
-            "note_key": "youpay.masshealth_small_or_no_copay",
-            "portal_label": null,
-            "portal_url": null
-          }
-        }
-      },
-      "other_payers": []
-    },
-    {
-      "site": {
-        "site_id": "bilh_urgent_care_watertown",
-        "name": "BILH Urgent Care Watertown",
-        "site_type": "urgent_care",
-        "system_id": "bilh",
-        "coords": {
-          "lat": 42.3646,
-          "lon": -71.1972,
-          "geocoded_by": "manual",
-          "geocoded_at": "2026-10-24"
-        },
-        "address_line": "480 Pleasant St, Watertown, MA 02472",
-        "phone": "857-760-7500",
-        "billing_type": "unknown",
-        "booking": [
-          {
-            "kind": "deep_link",
-            "provider": "on_my_way",
-            "label": "See live wait / reserve",
-            "url": "https://mychart.bilh.org/MyChart-BILH/scheduling/onmyway/?selDepId=50050001&dispGroups=100",
-            "phone": null
-          }
-        ],
-        "portal_links": [
-          {
-            "kind": "mychart",
-            "system_id": "bilh",
-            "label": "MyBILH Chart",
-            "url": "https://mychart.bilh.org/MyChart-BILH/"
-          }
-        ],
-        "hours": {
-          "source": "operator_html",
-          "source_url": null,
-          "checked_at": "2026-10-24",
-          "weekly": [
-            {
-              "days": [
-                "mon",
-                "tue",
-                "wed",
-                "thu",
-                "fri"
-              ],
-              "opens": "09:00",
-              "closes": "19:00"
-            },
-            {
-              "days": [
-                "sat",
-                "sun"
-              ],
-              "opens": "09:00",
-              "closes": "17:00"
-            }
-          ],
-          "may_close_early": true
-        },
-        "hours_label": "may_close_early",
-        "price_label": "price_on_request",
-        "price_source_id": null,
-        "listing_status": "web_verified",
-        "service_areas": [
-          "urgent_care"
-        ]
-      },
-      "receipt": {
-        "lines": [
-          {
-            "line_id": "svc_73030",
-            "tier": "certain",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73030"
-            ],
-            "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones",
-            "technical_name": "Shoulder X-ray",
-            "why": null,
-            "glossary_keys": [],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "money",
-              "low": 41.55,
-              "high": 41.55,
-              "basis": "fee_schedule",
-              "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8008",
-                "payer_id": null,
-                "row_id": null
-              },
-              "prov_high": null
-            },
-            "list_price": null,
-            "tier_basis": "picked",
-            "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
-              "group_name": null,
-              "group_tin": null,
-              "npi_count": null,
-              "multiple": null,
-              "chia_badge": null,
-              "by_npi": null
-            },
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "at": "this_site"
-          },
-          {
-            "line_id": "svc_73221",
-            "tier": "certain",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73221"
-            ],
-            "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage",
-            "technical_name": "Shoulder MRI (no contrast)",
-            "why": null,
-            "glossary_keys": [],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "money",
-              "low": 237.21,
-              "high": 237.21,
-              "basis": "fee_schedule",
-              "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8074",
-                "payer_id": null,
-                "row_id": null
-              },
-              "prov_high": null
-            },
-            "list_price": null,
-            "tier_basis": "picked",
-            "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
-              "group_name": null,
-              "group_tin": null,
-              "npi_count": null,
-              "multiple": null,
-              "chia_badge": null,
-              "by_npi": null
-            },
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "at": "this_site"
-          }
-        ],
-        "totals": {
-          "likely": null,
-          "complete": false,
-          "missing": 2,
-          "excluded": [
-            {
-              "line_id": "svc_73030",
-              "reason": "reference_only"
-            },
-            {
-              "line_id": "svc_73221",
-              "reason": "reference_only"
-            }
-          ],
-          "you_pay": {
-            "kind": "masshealth_small_or_no_copay",
-            "note_key": "youpay.masshealth_small_or_no_copay",
-            "portal_label": null,
-            "portal_url": null
-          }
-        }
-      },
-      "other_payers": []
-    },
-    {
-      "site": {
-        "site_id": "brigham_and_womens_hospital",
-        "name": "Brigham and Women's Hospital",
-        "site_type": "hospital_outpatient",
-        "system_id": "mgb",
-        "coords": {
-          "lat": 42.3358,
-          "lon": -71.1065,
-          "geocoded_by": "hospital_registry",
-          "geocoded_at": "2026-10-24"
-        },
-        "address_line": "75 Francis St, Boston, MA 02115",
-        "phone": null,
-        "billing_type": "hospital_outpatient",
-        "booking": [],
-        "portal_links": [
-          {
-            "kind": "patient_gateway",
-            "system_id": "mgb",
-            "label": "MGB Patient Gateway",
-            "url": "https://patientgateway.massgeneralbrigham.org/"
-          }
-        ],
-        "hours": null,
-        "hours_label": "unknown",
-        "price_label": "price_file",
-        "price_source_id": "brigham_mrf",
-        "listing_status": "web_verified",
-        "service_areas": [
-          "ortho",
-          "skin",
-          "gi"
-        ]
-      },
-      "receipt": {
-        "lines": [
-          {
-            "line_id": "svc_73030_facility",
-            "tier": "not_in_public_data",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73030"
-            ],
-            "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
-            "technical_name": "Shoulder X-ray (facility fee)",
-            "why": null,
-            "glossary_keys": [
-              "facility_fee"
-            ],
-            "component": "facility",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "MassHealth's facility fee schedule for the facility's own fee for this item (not loaded yet)",
-              "eta": null
-            },
-            "list_price": {
-              "kind": "money",
-              "low": 452.0,
-              "high": 452.0,
-              "basis": "gross",
-              "prov": {
-                "source_id": "brigham_mrf",
-                "source_kind": "hospital_mrf",
-                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-                "source_date": "2026-03-27",
-                "method": "stated",
-                "row_ref": "brigham_mrf:188337340e25:109098",
-                "payer_id": null,
-                "row_id": null
-              },
-              "prov_high": null
-            },
-            "tier_basis": "picked",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [
-              {
-                "site_id": "tufts_medical_center",
-                "site_name": "Tufts Medical Center",
-                "lat": 42.3495,
-                "lon": -71.0636,
-                "cell": {
-                  "kind": "money",
-                  "low": 333.0,
-                  "high": 333.0,
-                  "basis": "negotiated",
-                  "prov": {
-                    "source_id": "tufts_mrf",
-                    "source_kind": "hospital_mrf",
-                    "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                    "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                    "source_date": "2026-04-01",
-                    "method": "stated",
-                    "row_ref": "tufts_mrf:d16771049bc4:1590930",
-                    "payer_id": "MASSHEALTH",
-                    "row_id": null
-                  },
-                  "prov_high": null
                 }
               }
-            ],
-            "learn_more": [],
-            "at": "this_site"
-          },
-          {
-            "line_id": "svc_73030_reading",
-            "tier": "certain",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73030"
-            ],
-            "modifier": "26",
-            "plain_name": "Quick picture of the shoulder bones: the doctor's reading",
-            "technical_name": "Shoulder X-ray (professional fee)",
-            "why": null,
-            "glossary_keys": [],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "money",
-              "low": 9.75,
-              "high": 9.75,
-              "basis": "fee_schedule",
-              "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8009",
-                "payer_id": null,
-                "row_id": null
-              },
-              "prov_high": null
             },
-            "list_price": null,
-            "tier_basis": "picked",
-            "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
-              "group_name": null,
-              "group_tin": null,
-              "npi_count": null,
-              "multiple": null,
-              "chia_badge": null,
-              "by_npi": null
-            },
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "at": "this_site"
-          },
-          {
-            "line_id": "svc_73221_facility",
-            "tier": "not_in_public_data",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73221"
-            ],
-            "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
-            "technical_name": "Shoulder MRI (no contrast) (facility fee)",
-            "why": null,
-            "glossary_keys": [
-              "facility_fee"
-            ],
-            "component": "facility",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "MassHealth's facility fee schedule for the facility's own fee for this item (not loaded yet)",
-              "eta": null
-            },
-            "list_price": {
-              "kind": "money",
-              "low": 3595.0,
-              "high": 3595.0,
-              "basis": "gross",
-              "prov": {
-                "source_id": "brigham_mrf",
-                "source_kind": "hospital_mrf",
-                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-                "source_date": "2026-03-27",
-                "method": "stated",
-                "row_ref": "brigham_mrf:188337340e25:62308",
-                "payer_id": null,
-                "row_id": null
-              },
-              "prov_high": null
-            },
-            "tier_basis": "picked",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [
-              {
-                "site_id": "tufts_medical_center",
-                "site_name": "Tufts Medical Center",
-                "lat": 42.3495,
-                "lon": -71.0636,
-                "cell": {
-                  "kind": "money",
-                  "low": 1631.0,
-                  "high": 1631.0,
-                  "basis": "negotiated",
-                  "prov": {
-                    "source_id": "tufts_mrf",
-                    "source_kind": "hospital_mrf",
-                    "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                    "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                    "source_date": "2026-04-01",
-                    "method": "stated",
-                    "row_ref": "tufts_mrf:d16771049bc4:1586428",
-                    "payer_id": "MASSHEALTH",
-                    "row_id": null
-                  },
-                  "prov_high": null
-                }
+            {
+              "payer_id": "HARVARD_PILGRIM",
+              "label": "Harvard Pilgrim (Point32Health)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 179.42,
+                "high": 179.42,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:40915",
+                  "payer_id": "HARVARD_PILGRIM",
+                  "row_id": null
+                },
+                "prov_high": null
               }
-            ],
-            "learn_more": [],
-            "at": "this_site"
-          },
-          {
-            "line_id": "svc_73221_reading",
-            "tier": "certain",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73221"
-            ],
-            "modifier": "26",
-            "plain_name": "Detailed scan of tendons & cartilage: the doctor's reading",
-            "technical_name": "Shoulder MRI (no contrast) (professional fee)",
-            "why": null,
-            "glossary_keys": [],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "money",
-              "low": 67.92,
-              "high": 67.92,
-              "basis": "fee_schedule",
-              "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8075",
-                "payer_id": null,
-                "row_id": null
-              },
-              "prov_high": null
             },
-            "list_price": null,
-            "tier_basis": "picked",
-            "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
-              "group_name": null,
-              "group_tin": null,
-              "npi_count": null,
-              "multiple": null,
-              "chia_badge": null,
-              "by_npi": null
-            },
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "at": "this_site"
-          }
-        ],
-        "totals": {
-          "likely": null,
-          "complete": false,
-          "missing": 4,
-          "excluded": [
-            {
-              "line_id": "svc_73030_facility",
-              "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "svc_73030_reading",
-              "reason": "reference_only"
-            },
-            {
-              "line_id": "svc_73221_facility",
-              "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "svc_73221_reading",
-              "reason": "reference_only"
-            }
-          ],
-          "you_pay": {
-            "kind": "masshealth_small_or_no_copay",
-            "note_key": "youpay.masshealth_small_or_no_copay",
-            "portal_label": null,
-            "portal_url": null
-          }
-        }
-      },
-      "other_payers": [
-        {
-          "line_id": "svc_73030_facility",
-          "code": "73030",
-          "points": [
             {
               "payer_id": "UHC",
               "label": "UnitedHealthcare",
               "product": null,
               "money": {
                 "kind": "money",
-                "low": 102.46,
-                "high": 369.37,
+                "low": 179.42,
+                "high": 185.87,
                 "basis": "negotiated",
                 "prov": {
-                  "source_id": "brigham_mrf",
+                  "source_id": "cha_mrf",
                   "source_kind": "hospital_mrf",
-                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-                  "source_date": "2026-03-27",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "brigham_mrf:188337340e25:109099",
+                  "row_ref": "cha_mrf:2efdf1cef584:638485",
                   "payer_id": "UHC",
                   "row_id": null
                 },
                 "prov_high": {
-                  "source_id": "brigham_mrf",
+                  "source_id": "cha_mrf",
                   "source_kind": "hospital_mrf",
-                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-                  "source_date": "2026-03-27",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "brigham_mrf:188337340e25:109101",
+                  "row_ref": "cha_mrf:2efdf1cef584:45105",
                   "payer_id": "UHC",
                   "row_id": null
                 }
-              }
-            },
-            {
-              "payer_id": "AETNA",
-              "label": "Aetna",
-              "product": "HMO",
-              "money": {
-                "kind": "money",
-                "low": 315.5,
-                "high": 315.5,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "brigham_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-                  "source_date": "2026-03-27",
-                  "method": "stated",
-                  "row_ref": "brigham_mrf:188337340e25:109100",
-                  "payer_id": "AETNA",
-                  "row_id": null
-                },
-                "prov_high": null
               }
             },
             {
@@ -1774,18 +2020,51 @@
               "product": null,
               "money": {
                 "kind": "money",
-                "low": 359.34,
-                "high": 359.34,
+                "low": 238.97,
+                "high": 522.55,
                 "basis": "negotiated",
                 "prov": {
-                  "source_id": "brigham_mrf",
+                  "source_id": "cha_mrf",
                   "source_kind": "hospital_mrf",
-                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-                  "source_date": "2026-03-27",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "brigham_mrf:188337340e25:109098",
+                  "row_ref": "cha_mrf:2efdf1cef584:45104",
                   "payer_id": "CIGNA",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:61485",
+                  "payer_id": "CIGNA",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "MGB_HP",
+              "label": "Mass General Brigham Health Plan (formerly AllWays)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 397.5,
+                "high": 397.5,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:1007081",
+                  "payer_id": "MGB_HP",
                   "row_id": null
                 },
                 "prov_high": null
@@ -1794,17 +2073,17 @@
           ],
           "cash": {
             "kind": "money",
-            "low": 339.0,
-            "high": 339.0,
+            "low": 625.0,
+            "high": 625.0,
             "basis": "discounted_cash",
             "prov": {
-              "source_id": "brigham_mrf",
+              "source_id": "cha_mrf",
               "source_kind": "hospital_mrf",
-              "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-              "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-              "source_date": "2026-03-27",
+              "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+              "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+              "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "brigham_mrf:188337340e25:109098",
+              "row_ref": "cha_mrf:2efdf1cef584:12589",
               "payer_id": null,
               "row_id": null
             },
@@ -1817,49 +2096,59 @@
           "code": "73221",
           "points": [
             {
-              "payer_id": "HARVARD_PILGRIM",
-              "label": "Harvard Pilgrim (Point32Health)",
-              "product": "PPO",
+              "payer_id": "BCBS_MA",
+              "label": "Blue Cross Blue Shield of Massachusetts",
+              "product": null,
               "money": {
                 "kind": "money",
-                "low": 230.56,
-                "high": 230.56,
+                "low": 285.02,
+                "high": 285.02,
                 "basis": "negotiated",
                 "prov": {
-                  "source_id": "brigham_mrf",
+                  "source_id": "cha_mrf",
                   "source_kind": "hospital_mrf",
-                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-                  "source_date": "2026-03-27",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "brigham_mrf:188337340e25:62310",
-                  "payer_id": "HARVARD_PILGRIM",
+                  "row_ref": "cha_mrf:2efdf1cef584:228619",
+                  "payer_id": "BCBS_MA",
                   "row_id": null
                 },
                 "prov_high": null
               }
             },
             {
-              "payer_id": "UHC_HPHC_ALLIANCE",
-              "label": "UnitedHealthcare / Harvard Pilgrim Alliance",
-              "product": "PPO",
+              "payer_id": "TUFTS_HP",
+              "label": "Tufts Health Plan (Point32Health)",
+              "product": null,
               "money": {
                 "kind": "money",
-                "low": 230.56,
-                "high": 230.56,
+                "low": 462.36,
+                "high": 924.46,
                 "basis": "negotiated",
                 "prov": {
-                  "source_id": "brigham_mrf",
+                  "source_id": "cha_mrf",
                   "source_kind": "hospital_mrf",
-                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-                  "source_date": "2026-03-27",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "brigham_mrf:188337340e25:62311",
-                  "payer_id": "UHC_HPHC_ALLIANCE",
+                  "row_ref": "cha_mrf:2efdf1cef584:546569",
+                  "payer_id": "TUFTS_HP",
                   "row_id": null
                 },
-                "prov_high": null
+                "prov_high": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:242474",
+                  "payer_id": "TUFTS_HP",
+                  "row_id": null
+                }
               }
             },
             {
@@ -1868,18 +2157,153 @@
               "product": null,
               "money": {
                 "kind": "money",
-                "low": 281.29,
-                "high": 281.29,
+                "low": 528.75,
+                "high": 664.01,
                 "basis": "negotiated",
                 "prov": {
-                  "source_id": "brigham_mrf",
+                  "source_id": "cha_mrf",
                   "source_kind": "hospital_mrf",
-                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-                  "source_date": "2026-03-27",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
                   "method": "stated",
-                  "row_ref": "brigham_mrf:188337340e25:62308",
+                  "row_ref": "cha_mrf:2efdf1cef584:228620",
                   "payer_id": "UHC",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:242475",
+                  "payer_id": "UHC",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "WELLPOINT",
+              "label": "Wellpoint / Unicare (GIC)",
+              "product": "INDEMNITY",
+              "money": {
+                "kind": "money",
+                "low": 593.02,
+                "high": 593.02,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:253597",
+                  "payer_id": "WELLPOINT",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "HARVARD_PILGRIM",
+              "label": "Harvard Pilgrim (Point32Health)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 664.01,
+                "high": 664.01,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:511429",
+                  "payer_id": "HARVARD_PILGRIM",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "CIGNA",
+              "label": "Cigna",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 743.77,
+                "high": 1339.0,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:669964",
+                  "payer_id": "CIGNA",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:23118",
+                  "payer_id": "CIGNA",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "AETNA",
+              "label": "Aetna",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 990.98,
+                "high": 990.98,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:253461",
+                  "payer_id": "AETNA",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "MGB_HP",
+              "label": "Mass General Brigham Health Plan (formerly AllWays)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 1019.51,
+                "high": 1019.51,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "cha_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                  "source_date": "2026-03-20",
+                  "method": "stated",
+                  "row_ref": "cha_mrf:2efdf1cef584:662390",
+                  "payer_id": "MGB_HP",
                   "row_id": null
                 },
                 "prov_high": null
@@ -1888,17 +2312,17 @@
           ],
           "cash": {
             "kind": "money",
-            "low": 2696.25,
-            "high": 2696.25,
+            "low": 1603.0,
+            "high": 1603.0,
             "basis": "discounted_cash",
             "prov": {
-              "source_id": "brigham_mrf",
+              "source_id": "cha_mrf",
               "source_kind": "hospital_mrf",
-              "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-              "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-              "source_date": "2026-03-27",
+              "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+              "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+              "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "brigham_mrf:188337340e25:62308",
+              "row_ref": "cha_mrf:2efdf1cef584:23118",
               "payer_id": null,
               "row_id": null
             },
@@ -1907,289 +2331,6 @@
           "yours": "not_in_points"
         }
       ]
-    },
-    {
-      "site": {
-        "site_id": "franciscan_childrens",
-        "name": "Franciscan Children's",
-        "site_type": "hospital_outpatient",
-        "system_id": null,
-        "coords": {
-          "lat": 42.354,
-          "lon": -71.153,
-          "geocoded_by": "hospital_registry",
-          "geocoded_at": "2026-10-24"
-        },
-        "address_line": "30 Warren St, Brighton, MA 02135",
-        "phone": null,
-        "billing_type": "hospital_outpatient",
-        "booking": [],
-        "portal_links": [],
-        "hours": null,
-        "hours_label": "unknown",
-        "price_label": "price_on_request",
-        "price_source_id": null,
-        "listing_status": "web_verified",
-        "service_areas": [
-          "ortho"
-        ]
-      },
-      "receipt": {
-        "lines": [
-          {
-            "line_id": "svc_73030_facility",
-            "tier": "not_in_public_data",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73030"
-            ],
-            "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
-            "technical_name": "Shoulder X-ray (facility fee)",
-            "why": null,
-            "glossary_keys": [
-              "facility_fee"
-            ],
-            "component": "facility",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "MassHealth's facility fee schedule for the facility's own fee for this item (not loaded yet)",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "picked",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [
-              {
-                "site_id": "tufts_medical_center",
-                "site_name": "Tufts Medical Center",
-                "lat": 42.3495,
-                "lon": -71.0636,
-                "cell": {
-                  "kind": "money",
-                  "low": 333.0,
-                  "high": 333.0,
-                  "basis": "negotiated",
-                  "prov": {
-                    "source_id": "tufts_mrf",
-                    "source_kind": "hospital_mrf",
-                    "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                    "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                    "source_date": "2026-04-01",
-                    "method": "stated",
-                    "row_ref": "tufts_mrf:d16771049bc4:1590930",
-                    "payer_id": "MASSHEALTH",
-                    "row_id": null
-                  },
-                  "prov_high": null
-                }
-              }
-            ],
-            "learn_more": [],
-            "at": "this_site"
-          },
-          {
-            "line_id": "svc_73030_reading",
-            "tier": "certain",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73030"
-            ],
-            "modifier": "26",
-            "plain_name": "Quick picture of the shoulder bones: the doctor's reading",
-            "technical_name": "Shoulder X-ray (professional fee)",
-            "why": null,
-            "glossary_keys": [],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "money",
-              "low": 9.75,
-              "high": 9.75,
-              "basis": "fee_schedule",
-              "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8009",
-                "payer_id": null,
-                "row_id": null
-              },
-              "prov_high": null
-            },
-            "list_price": null,
-            "tier_basis": "picked",
-            "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
-              "group_name": null,
-              "group_tin": null,
-              "npi_count": null,
-              "multiple": null,
-              "chia_badge": null,
-              "by_npi": null
-            },
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "at": "this_site"
-          },
-          {
-            "line_id": "svc_73221_facility",
-            "tier": "not_in_public_data",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73221"
-            ],
-            "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
-            "technical_name": "Shoulder MRI (no contrast) (facility fee)",
-            "why": null,
-            "glossary_keys": [
-              "facility_fee"
-            ],
-            "component": "facility",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "not_loaded",
-              "what": "MassHealth's facility fee schedule for the facility's own fee for this item (not loaded yet)",
-              "eta": null
-            },
-            "list_price": null,
-            "tier_basis": "picked",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [
-              {
-                "site_id": "tufts_medical_center",
-                "site_name": "Tufts Medical Center",
-                "lat": 42.3495,
-                "lon": -71.0636,
-                "cell": {
-                  "kind": "money",
-                  "low": 1631.0,
-                  "high": 1631.0,
-                  "basis": "negotiated",
-                  "prov": {
-                    "source_id": "tufts_mrf",
-                    "source_kind": "hospital_mrf",
-                    "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                    "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                    "source_date": "2026-04-01",
-                    "method": "stated",
-                    "row_ref": "tufts_mrf:d16771049bc4:1586428",
-                    "payer_id": "MASSHEALTH",
-                    "row_id": null
-                  },
-                  "prov_high": null
-                }
-              }
-            ],
-            "learn_more": [],
-            "at": "this_site"
-          },
-          {
-            "line_id": "svc_73221_reading",
-            "tier": "certain",
-            "likelihood": "certain",
-            "step_id": null,
-            "codes": [
-              "73221"
-            ],
-            "modifier": "26",
-            "plain_name": "Detailed scan of tendons & cartilage: the doctor's reading",
-            "technical_name": "Shoulder MRI (no contrast) (professional fee)",
-            "why": null,
-            "glossary_keys": [],
-            "component": "professional",
-            "component_confirmed": true,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "money",
-              "low": 67.92,
-              "high": 67.92,
-              "basis": "fee_schedule",
-              "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8075",
-                "payer_id": null,
-                "row_id": null
-              },
-              "prov_high": null
-            },
-            "list_price": null,
-            "tier_basis": "picked",
-            "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
-              "group_name": null,
-              "group_tin": null,
-              "npi_count": null,
-              "multiple": null,
-              "chia_badge": null,
-              "by_npi": null
-            },
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": [],
-            "at": "this_site"
-          }
-        ],
-        "totals": {
-          "likely": null,
-          "complete": false,
-          "missing": 4,
-          "excluded": [
-            {
-              "line_id": "svc_73030_facility",
-              "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "svc_73030_reading",
-              "reason": "reference_only"
-            },
-            {
-              "line_id": "svc_73221_facility",
-              "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "svc_73221_reading",
-              "reason": "reference_only"
-            }
-          ],
-          "you_pay": {
-            "kind": "masshealth_small_or_no_copay",
-            "note_key": "youpay.masshealth_small_or_no_copay",
-            "portal_label": null,
-            "portal_url": null
-          }
-        }
-      },
-      "other_payers": []
     },
     {
       "site": {
@@ -2224,7 +2365,9 @@
           "ortho",
           "skin",
           "gi"
-        ]
+        ],
+        "children_only": false,
+        "data_notices": []
       },
       "receipt": {
         "lines": [
@@ -2249,7 +2392,7 @@
             "availability": "offered",
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's facility fee schedule for the facility's own fee for this item (not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -2274,33 +2417,9 @@
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [
-              {
-                "site_id": "tufts_medical_center",
-                "site_name": "Tufts Medical Center",
-                "lat": 42.3495,
-                "lon": -71.0636,
-                "cell": {
-                  "kind": "money",
-                  "low": 333.0,
-                  "high": 333.0,
-                  "basis": "negotiated",
-                  "prov": {
-                    "source_id": "tufts_mrf",
-                    "source_kind": "hospital_mrf",
-                    "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                    "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                    "source_date": "2026-04-01",
-                    "method": "stated",
-                    "row_ref": "tufts_mrf:d16771049bc4:1590930",
-                    "payer_id": "MASSHEALTH",
-                    "row_id": null
-                  },
-                  "prov_high": null
-                }
-              }
-            ],
+            "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -2322,17 +2441,17 @@
             "availability": "offered",
             "cell": {
               "kind": "money",
-              "low": 9.75,
-              "high": 9.75,
+              "low": 6.75,
+              "high": 6.75,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8009",
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:professional",
                 "payer_id": null,
                 "row_id": null
               },
@@ -2341,8 +2460,8 @@
             "list_price": null,
             "tier_basis": "picked",
             "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
@@ -2351,9 +2470,10 @@
               "by_npi": null
             },
             "ai_suggested": false,
-            "in_total": false,
+            "in_total": true,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -2377,7 +2497,7 @@
             "availability": "offered",
             "cell": {
               "kind": "not_loaded",
-              "what": "MassHealth's facility fee schedule for the facility's own fee for this item (not loaded yet)",
+              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
               "eta": null
             },
             "list_price": {
@@ -2402,33 +2522,9 @@
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [
-              {
-                "site_id": "tufts_medical_center",
-                "site_name": "Tufts Medical Center",
-                "lat": 42.3495,
-                "lon": -71.0636,
-                "cell": {
-                  "kind": "money",
-                  "low": 1631.0,
-                  "high": 1631.0,
-                  "basis": "negotiated",
-                  "prov": {
-                    "source_id": "tufts_mrf",
-                    "source_kind": "hospital_mrf",
-                    "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
-                    "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
-                    "source_date": "2026-04-01",
-                    "method": "stated",
-                    "row_ref": "tufts_mrf:d16771049bc4:1586428",
-                    "payer_id": "MASSHEALTH",
-                    "row_id": null
-                  },
-                  "prov_high": null
-                }
-              }
-            ],
+            "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           },
           {
@@ -2450,17 +2546,17 @@
             "availability": "offered",
             "cell": {
               "kind": "money",
-              "low": 67.92,
-              "high": 67.92,
+              "low": 48.11,
+              "high": 48.11,
               "basis": "fee_schedule",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8075",
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:professional",
                 "payer_id": null,
                 "row_id": null
               },
@@ -2469,8 +2565,8 @@
             "list_price": null,
             "tier_basis": "picked",
             "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
@@ -2479,32 +2575,35 @@
               "by_npi": null
             },
             "ai_suggested": false,
-            "in_total": false,
+            "in_total": true,
             "elsewhere": [],
             "learn_more": [],
+            "price_notes": [],
             "at": "this_site"
           }
         ],
         "totals": {
-          "likely": null,
+          "likely": {
+            "low": 54.86,
+            "high": 54.86,
+            "line_ids": [
+              "svc_73030_reading",
+              "svc_73221_reading"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
           "complete": false,
-          "missing": 4,
+          "missing": 2,
           "excluded": [
             {
               "line_id": "svc_73030_facility",
               "reason": "no_dollar_amount"
             },
             {
-              "line_id": "svc_73030_reading",
-              "reason": "reference_only"
-            },
-            {
               "line_id": "svc_73221_facility",
               "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "svc_73221_reading",
-              "reason": "reference_only"
             }
           ],
           "you_pay": {
@@ -2538,6 +2637,29 @@
                   "method": "stated",
                   "row_ref": "mtauburn_mrf:a9e5ac64beef:41010",
                   "payer_id": "WELLPOINT",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 104.29,
+                "high": 104.29,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "mtauburn_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41011",
+                  "payer_id": "UHC",
                   "row_id": null
                 },
                 "prov_high": null
@@ -2614,6 +2736,540 @@
           "line_id": "svc_73221_facility",
           "code": "73221",
           "points": [
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 285.95,
+                "high": 285.95,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "mtauburn_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:40091",
+                  "payer_id": "UHC",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "HARVARD_PILGRIM",
+              "label": "Harvard Pilgrim (Point32Health)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 567.18,
+                "high": 567.18,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "mtauburn_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:40089",
+                  "payer_id": "HARVARD_PILGRIM",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "WELLPOINT",
+              "label": "Wellpoint / Unicare (GIC)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 610.81,
+                "high": 610.81,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "mtauburn_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:40090",
+                  "payer_id": "WELLPOINT",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "BCBS_MA",
+              "label": "Blue Cross Blue Shield of Massachusetts",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 659.15,
+                "high": 659.15,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "mtauburn_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:40087",
+                  "payer_id": "BCBS_MA",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            }
+          ],
+          "cash": {
+            "kind": "money",
+            "low": 2741.0,
+            "high": 2741.0,
+            "basis": "discounted_cash",
+            "prov": {
+              "source_id": "mtauburn_mrf",
+              "source_kind": "hospital_mrf",
+              "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+              "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+              "source_date": "2026-04-01",
+              "method": "stated",
+              "row_ref": "mtauburn_mrf:a9e5ac64beef:4603",
+              "payer_id": null,
+              "row_id": null
+            },
+            "prov_high": null
+          },
+          "yours": "not_in_points"
+        }
+      ]
+    },
+    {
+      "site": {
+        "site_id": "mount_auburn_professional_services_inc_cambridge_gb0166",
+        "name": "MOUNT AUBURN PROFESSIONAL SERVICES INC",
+        "site_type": "hospital_outpatient",
+        "system_id": "bilh",
+        "coords": {
+          "lat": 42.374803,
+          "lon": -71.13314,
+          "geocoded_by": "census_batch",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "330 MOUNT AUBURN ST, Cambridge, MA 02138",
+        "phone": null,
+        "billing_type": "hospital_outpatient",
+        "booking": [],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "mtauburn_mrf",
+        "listing_status": "multi_registry",
+        "service_areas": [
+          "gi",
+          "ortho"
+        ],
+        "children_only": false,
+        "data_notices": []
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "svc_73030_facility",
+            "tier": "not_in_public_data",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "technical_name": "Shoulder X-ray (facility fee)",
+            "why": null,
+            "glossary_keys": [
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "eta": null
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 527.0,
+              "high": 527.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3235",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "tier_basis": "picked",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73030_reading",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73030"
+            ],
+            "modifier": "26",
+            "plain_name": "Quick picture of the shoulder bones: the doctor's reading",
+            "technical_name": "Shoulder X-ray (professional fee)",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 6.75,
+              "high": 6.75,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:567:professional",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73221_facility",
+            "tier": "not_in_public_data",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "technical_name": "Shoulder MRI (no contrast) (facility fee)",
+            "why": null,
+            "glossary_keys": [
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "MassHealth's hospital outpatient payment for the facility's own fee for this item (APAD; not loaded yet)",
+              "eta": null
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 2741.0,
+              "high": 2741.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4603",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "tier_basis": "picked",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "svc_73221_reading",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": null,
+            "codes": [
+              "73221"
+            ],
+            "modifier": "26",
+            "plain_name": "Detailed scan of tendons & cartilage: the doctor's reading",
+            "technical_name": "Shoulder MRI (no contrast) (professional fee)",
+            "why": null,
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 48.11,
+              "high": 48.11,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "masshealth_318_20261001",
+                "source_kind": "masshealth_fs",
+                "source_file": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5.pdf",
+                "source_sha256": "25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "masshealth_318_20261001:25dae5fffe70:589:professional",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "picked",
+            "doctor_fee": {
+              "rung": 4,
+              "explanation_key": "fee.rung_4_masshealth",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [],
+            "price_notes": [],
+            "at": "this_site"
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 54.86,
+            "high": 54.86,
+            "line_ids": [
+              "svc_73030_reading",
+              "svc_73221_reading"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": false,
+          "missing": 2,
+          "excluded": [
+            {
+              "line_id": "svc_73030_facility",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "svc_73221_facility",
+              "reason": "no_dollar_amount"
+            }
+          ],
+          "you_pay": {
+            "kind": "masshealth_small_or_no_copay",
+            "note_key": "youpay.masshealth_small_or_no_copay",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": [
+        {
+          "line_id": "svc_73030_facility",
+          "code": "73030",
+          "points": [
+            {
+              "payer_id": "WELLPOINT",
+              "label": "Wellpoint / Unicare (GIC)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 74.46,
+                "high": 74.46,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "mtauburn_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41010",
+                  "payer_id": "WELLPOINT",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 104.29,
+                "high": 104.29,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "mtauburn_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41011",
+                  "payer_id": "UHC",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "BCBS_MA",
+              "label": "Blue Cross Blue Shield of Massachusetts",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 110.42,
+                "high": 110.42,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "mtauburn_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41007",
+                  "payer_id": "BCBS_MA",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "HARVARD_PILGRIM",
+              "label": "Harvard Pilgrim (Point32Health)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 153.26,
+                "high": 153.26,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "mtauburn_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41009",
+                  "payer_id": "HARVARD_PILGRIM",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            }
+          ],
+          "cash": {
+            "kind": "money",
+            "low": 527.0,
+            "high": 527.0,
+            "basis": "discounted_cash",
+            "prov": {
+              "source_id": "mtauburn_mrf",
+              "source_kind": "hospital_mrf",
+              "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+              "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+              "source_date": "2026-04-01",
+              "method": "stated",
+              "row_ref": "mtauburn_mrf:a9e5ac64beef:3235",
+              "payer_id": null,
+              "row_id": null
+            },
+            "prov_high": null
+          },
+          "yours": "not_in_points"
+        },
+        {
+          "line_id": "svc_73221_facility",
+          "code": "73221",
+          "points": [
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 285.95,
+                "high": 285.95,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "mtauburn_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "mtauburn_mrf:a9e5ac64beef:40091",
+                  "payer_id": "UHC",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
             {
               "payer_id": "HARVARD_PILGRIM",
               "label": "Harvard Pilgrim (Point32Health)",
@@ -2707,7 +3363,73 @@
       ]
     }
   ],
-  "sites_without_service": [],
+  "sites_without_service": [
+    "adams_street_dermatology_assoc_pc_quincy",
+    "adult_and_pediatric_dermatology_pc_wellesley",
+    "associates_in_dermatology_llc_watertown",
+    "atrius_health_inc_boston_gb0096",
+    "atrius_health_inc_braintree",
+    "atrius_health_inc_chestnut_hill",
+    "atrius_health_inc_medford",
+    "atrius_health_inc_quincy_gb0188",
+    "atrius_health_inc_quincy_gb0189",
+    "atrius_health_inc_watertown",
+    "atrius_health_inc_wellesley",
+    "atrius_health_inc_weymouth_gb0139",
+    "barry_s_paul_m_d_arlington",
+    "boston_endoscopy_center_wellesley_hills",
+    "boston_food_allergy_center_llc_bi_network_boston_gb0098",
+    "boston_food_allergy_center_llc_bi_network_boston_gb0099",
+    "brigham_and_womens_gastroenterology_clinic_boston",
+    "brigham_dermatology_associates_chestnut_hill",
+    "cambridge_public_health_commission_somerville_gb0067",
+    "clinicians_at_1180_beacon_st_ste_6b_brookline",
+    "clinicians_at_147_milk_street_boston",
+    "clinicians_at_450_bedford_st_lexington",
+    "clinicians_at_588_providence_hwy_dedham",
+    "clinicians_at_60_dedham_ave_ste_201_needham",
+    "clinicians_at_77_warren_st_brighton",
+    "dermatology_and_skin_care_assoc_pc_wellesley",
+    "dermatology_associates_of_concord_inc_cambridge",
+    "dermatology_associates_pc_canton",
+    "dermatology_institute_of_boston_pc_boston",
+    "dermatology_partners_inc_wellesley",
+    "dermcare_physicians_and_surgeons_llc_waltham",
+    "dermphysicians_of_new_england_llc_burlington",
+    "dermwellesley_llc_wellesley",
+    "dothouse_health_inc_dorchester",
+    "forefront_dermatology_sc_woburn",
+    "hallmark_health_medical_associates_inc_melrose",
+    "hallmark_health_medical_associates_inc_stoneham",
+    "harbor_medical_associates_inc_south_weymouth",
+    "id_of_quincy_llc_quincy",
+    "krauss_dermatology_pc_wellesley",
+    "maritime_mohs_pc_wellesley_hills",
+    "mass_eye_and_ear_dermatology_clinic_boston",
+    "mass_general_brigham_endoscopy_clinic_braintree",
+    "mass_general_brigham_medical_group_northern_massachusett",
+    "massachusetts_general_dermatology_clinic_at_chelsea_comm",
+    "massachusetts_general_dermatology_clinic_boston",
+    "massachusetts_general_physicians_organization_inc_chelse",
+    "mystic_valley_dermatology_associates_pc_somerville",
+    "mystic_valley_dermatology_associates_pc_winchester",
+    "needham_gastroenterology_associates_pc_needham",
+    "new_england_baptist_surgery_center_llc_dedham",
+    "newton_watertown_dermatology_assoc_pc_brighton",
+    "newton_wellesley_outpatient_surgery_center_wellesley",
+    "northeast_ambulatory_center_inc_stoneham",
+    "northeast_dermatology_associates_pc_brookline",
+    "premier_dermatology_pllc_wellesley",
+    "robert_j_obrien_jr_md_and_assoc_pc_winchester",
+    "skincare_physicians_inc_chestnut_hill",
+    "south_shore_medical_center_inc_quincy",
+    "south_shore_skin_surgeons_pc_braintree",
+    "tang_benjes_and_associates_pc_wellesley",
+    "the_general_hospital_corporation_revere",
+    "vivaskin_dermatology_and_aesthetics_wellesley_hills",
+    "weymouth_endoscopy_llc_weymouth",
+    "winchester_hospital_endoscopy_cente_woburn"
+  ],
   "copy_keys": [],
   "notices": [
     "masshealth_aco_may_differ"

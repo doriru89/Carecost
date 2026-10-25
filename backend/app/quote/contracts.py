@@ -78,6 +78,8 @@ MAX_ANSWER_KEYS = 20
 MAX_VALUES_PER_ANSWER = 8
 MAX_SERVICE_CODES = 40
 MAX_SITE_IDS = 500
+DEFAULT_MAX_SITES = 12
+MAX_SITES = 50
 
 Answers = Annotated[
     dict[str, Annotated[list[str], Field(max_length=MAX_VALUES_PER_ANSWER)]],
@@ -135,6 +137,14 @@ Payment = Annotated[
 # --------------------------------------------------------------------------- request
 
 
+class Near(_Strict):
+    """Where to look from (C2, 208 sites). The browser sends the point the person chose; it is
+    used only to pick the closest sites and is never stored or logged."""
+
+    lat: float = Field(ge=41.0, le=43.5, description="Greater Boston scope guard (as Coordinates)")
+    lon: float = Field(ge=-72.5, le=-69.5)
+
+
 PickedBy = Literal["person", "assistant"]
 """Who chose the services: the person (D3 manual picker, or a care path) or the assistant
 (P5: the LLM pointed at catalog services). Assistant picks are shown, labelled, never summed."""
@@ -154,7 +164,19 @@ class QuoteRequest(_Strict):
     picked_by: PickedBy
     site_ids: list[str] | None = Field(
         max_length=MAX_SITE_IDS,
-        description="Only these sites; None = every site that offers the services",
+        description="Only these sites; None = every site that offers the services. A children-only "
+        "site is quoted only when named here (D27)",
+    )
+    near: Near | None = Field(
+        default=None,
+        description="C2: quote the max_sites sites closest to this point (straight-line distance). "
+        "None = the max_sites best-ranked sites (I7) of the whole set",
+    )
+    max_sites: int = Field(
+        default=DEFAULT_MAX_SITES,
+        ge=1,
+        le=MAX_SITES,
+        description="C2: at most this many sites in the response; I7 ranks inside the chosen set",
     )
 
     @model_validator(mode="after")
@@ -219,6 +241,15 @@ ExcludedReason = Literal[
     "repeats",  # per visit / per 15 minutes: count is unknown
     "reference_only",  # doctor-fee rung 7 or 8
 ]
+
+PriceNote = Literal[
+    "price.national_unadjusted",
+    "price.anesthesia_base_units_only",
+]
+"""Fixed explanation keys for how a line's number was made (copy lives with the glossary).
+national_unadjusted: a Medicare OPPS / ASC national rate; a Boston facility is paid this times a
+wage adjustment we have not loaded. anesthesia_base_units_only: the anesthesia fee's base units
+only; the time units depend on the case and are not included."""
 
 TierBasis = Literal["guideline", "plan_rule", "our_judgment", "picked"]
 """P11: what the line's likelihood rests on, so the gradient does not look like data.
@@ -388,6 +419,11 @@ class ReceiptLine(_Strict):
         default_factory=list, description="Cheapest sites that offer it, when not offered here"
     )
     learn_more: list[LearnMore] = Field(default_factory=list)
+    price_notes: list[PriceNote] = Field(
+        default_factory=list,
+        description="C2: fixed copy keys that explain how the line's number was made (e.g. a "
+        "Medicare national rate not adjusted for Boston wages). Empty = nothing to add",
+    )
     at: Literal["this_site", "your_primary_care"] = Field(
         default="this_site",
         description="Where this part of the care happens. your_primary_care: an HMO referral visit "
@@ -431,6 +467,11 @@ class ReceiptLine(_Strict):
                 raise ValueError(f"{self.line_id}: in_total needs certain/likely + Money + once")
             if self.doctor_fee is not None and (self.doctor_fee.rung or 0) not in range(1, 7):
                 raise ValueError(f"{self.line_id}: doctor-fee rungs 7-8 are reference only")
+        if "price.national_unadjusted" in self.price_notes and not (
+            isinstance(self.cell, Money)
+            and self.cell.prov.source_kind in (SourceKind.medicare_opps, SourceKind.medicare_asc)
+        ):
+            raise ValueError(f"{self.line_id}: national_unadjusted is a Medicare OPPS / ASC rate")
         if self.doctor_fee is not None and self.doctor_fee.rung == 6:
             if (
                 not isinstance(self.cell, Money)
@@ -591,6 +632,17 @@ class OtherPayerRange(_Strict):
 # --------------------------------------------------------------------------- site + response
 
 
+class DataNotice(_Strict):
+    """One entry of data/etl/data_quality_notices.yaml (written by people, never by the AI)."""
+
+    id: str = Field(pattern=ID_RE)
+    kind: str = Field(pattern=ID_RE, description="e.g. content_changed_date_unchanged")
+    source_id: str = Field(pattern=ID_RE)
+    observed: date
+    detail: str
+    effect: str | None = None
+
+
 class SiteSummary(_Strict):
     site_id: str = Field(pattern=ID_RE)
     name: str
@@ -616,6 +668,12 @@ class SiteSummary(_Strict):
         description="registry_only sites are never quoted (to-verify queue, D27)"
     )
     service_areas: list[ServiceArea]
+    children_only: bool = Field(default=False, description="Pediatric-only site (D27)")
+    data_notices: list[DataNotice] = Field(
+        default_factory=list,
+        description="C2: data-quality notices about this site's own price file "
+        "(data/etl/data_quality_notices.yaml), e.g. its content changed but its date did not",
+    )
 
 
 class SiteQuote(_Strict):
@@ -723,6 +781,9 @@ def rank_key(sq: SiteQuote) -> tuple[int, float]:
 
 
 def _expected(ln: ReceiptLine) -> bool:
+    """A line the quote expects a number for: certain / likely and not AI-suggested. An HMO
+    referral line (at: your_primary_care) counts too: it is the same at every site, so it never
+    changes the order, and leaving it out would let a dropped referral price lift one site (I7)."""
     return ln.likelihood in ("certain", "likely") and not ln.ai_suggested
 
 
@@ -733,6 +794,9 @@ def _step_key(ln: ReceiptLine) -> str:
 
 
 def missing_for(sq: SiteQuote, expected_steps: set[str]) -> int:
+    """I7 ``missing``: expected lines (``_expected``) with no number that counts in the total
+    (a Gap, a conflict, a repeating unit, or a rung-7/8 reference-only number), plus expected
+    steps another site in the quote lists and this one does not."""
     lines = sq.receipt.lines
     unpriced = sum(1 for ln in lines if _expected(ln) and not ln.in_total)
     absent = expected_steps - {_step_key(ln) for ln in lines}

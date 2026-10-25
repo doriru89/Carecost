@@ -1,14 +1,13 @@
 """Regenerate the golden quote fixtures from the engine on REAL data, plus the committed extract.
 
     cd backend
-    # 1. a real pack (hospital build + TiC + the Medicare PFS extract until A3's reader lands)
+    # 1. a real pack (hospital build + TiC + A3's government fee schedules)
     uv run --frozen --extra etl python -m app.quote.pack \\
-        --hospital-build /path/to/data/build/20261024-10d8a893 \\
+        --hospital-build /path/to/data/build/20261024-336340ed \\
         --tic-root /path/to/data/intermediate/tic \\
-        --gov-rows ../contracts/fixtures/gov_pfs_extract.csv \\
-        --gov-sources ../contracts/fixtures/gov_pfs_extract.sources.yaml --out /tmp/quote_pack.sqlite
-    # 2. fixtures + extract from it
-    uv run --frozen python -m app.quote.fixtures_gen --pack /tmp/quote_pack.sqlite --as-of 2026-10-24
+        --gov-root /path/to/data/intermediate/gov --out /tmp/quote_pack.sqlite
+    # 2. fixtures + extract from it (registry: data/sites/sites.yaml)
+    uv run --frozen python -m app.quote.fixtures_gen --pack /tmp/quote_pack.sqlite --as-of 2026-10-25
 
 Writes
   contracts/fixtures/quote_<name>.json             engine output for each quote_request_<name>.json
@@ -58,6 +57,9 @@ RECORDED: list[dict[str, Any]] = [
     {"kind": "medicare"},
     {"kind": "masshealth"},
 ]
+NEAR = {"lat": 42.3736, "lon": -71.119}
+"""Harvard Square, Cambridge: the point the golden and recorded requests quote from (the 12
+closest sites; a no-point request prices every site, which the extract cannot hold)."""
 """Payments recorded for every care path, so the end-to-end and property tests in CI run on real
 rows for all ten paths (and BCBS PPO shows a second network family)."""
 
@@ -73,15 +75,29 @@ def fixture_text(resp_json: dict[str, Any]) -> str:
     return json.dumps({"_fixture": True, "_schema": "QuoteResponse", **resp_json}, indent=2) + "\n"
 
 
+KEY_SITES = [
+    "afc_watertown", "bilh_urgent_care_watertown", "brigham_and_womens_hospital",
+    "franciscan_childrens", "mount_auburn_hospital", "tufts_medical_center",
+]  # fmt: skip
+"""The six P1 sites (contracts/fixtures/sites.json), recorded by name for every path and payment,
+so tests/quote can check named numbers (Tufts, Mount Auburn ...) on the extract."""
+
+
 def recorded_requests(reg: Registry) -> list[QuoteRequest]:
     out = []
     for pid in sorted(reg.paths):
         for pay in RECORDED:
             for answers in ({}, {"Q14": ["hmo_referral_required"]}):
-                out.append(QuoteRequest.model_validate({
-                    "payment": pay, "care_path_id": pid, "answers": answers,
-                    "service_codes": [], "picked_by": "person", "site_ids": None,
-                }))  # fmt: skip
+                for where in ({"site_ids": None, "near": NEAR}, {"site_ids": KEY_SITES}):
+                    out.append(QuoteRequest.model_validate({
+                        "payment": pay, "care_path_id": pid, "answers": answers,
+                        "service_codes": [], "picked_by": "person", **where,
+                    }))  # fmt: skip
+    for pay in RECORDED:  # manual picks at the key sites (the MassHealth golden's codes)
+        out.append(QuoteRequest.model_validate({
+            "payment": pay, "care_path_id": None, "answers": {},
+            "service_codes": ["73030", "73221"], "picked_by": "person", "site_ids": KEY_SITES,
+        }))  # fmt: skip
     return out
 
 
@@ -114,7 +130,7 @@ def main() -> None:
     a = ap.parse_args()
 
     reg = Registry.load()
-    store = load_pack(a.pack, tins=reg.tins)
+    store = load_pack(a.pack, tins=reg.tins, census_ids=reg.census_ids)
     store.recorder = Recorder()
     engine = Engine(store, reg)
     texts = {fx: fixture_text(engine.quote(request(n), a.as_of).model_dump(mode="json"))
@@ -124,7 +140,7 @@ def main() -> None:
         docs.append(engine.quote(req, a.as_of).model_dump(mode="json"))
     keep = set(store.recorder.refs)
     searched = searched_files(docs)
-    keep |= {r.uid for r in store.rows.values() if (r.source_id, r.code) in searched}
+    keep |= {r.uid for r in store.rows if (r.source_id, r.code) in searched}
     n = write_extract(store, keep, EXTRACT_CSV, EXTRACT_SOURCES)
     for fx, text in texts.items():
         (FIX / f"{fx}.json").write_text(text)

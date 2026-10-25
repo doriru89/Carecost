@@ -14,7 +14,7 @@ from app.quote.store import store_from_extract
 
 REPO = Path(__file__).resolve().parents[3]
 FIX = REPO / "contracts" / "fixtures"
-AS_OF = date(2026, 10, 24)  # the day the golden fixtures were generated
+AS_OF = date(2026, 10, 25)  # the day the golden fixtures were generated (A3 fetched 10-25 UTC)
 
 
 def fixture_doc(name: str) -> dict:

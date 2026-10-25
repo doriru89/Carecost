@@ -1,7 +1,9 @@
 """The quote engine end to end on the committed extract (real rows; written by
-``python -m app.quote.fixtures_gen`` from hospital build 20261024-10d8a893, the 2026-10 TiC files
-and the Medicare PFS extract). One end-to-end test per payment kind, plus the doctor-fee ladder,
-the imaging-read ruling, D20 conflicts, freshness and the P1 problems C fixed."""
+``python -m app.quote.fixtures_gen`` from hospital build 20261024-336340ed, the 2026-10 TiC files
+and A3's fee schedules: Medicare PFS RVU26D + anesthesia, OPPS and ASC October 2026, MassHealth
+101 CMR 316/317/318). Registry: data/sites/sites.yaml (208 sites); the tests quote the six P1
+sites by name (fixtures_gen.KEY_SITES). One end-to-end test per payment kind, plus the doctor-fee
+ladder, the imaging-read ruling, D20 conflicts, freshness and the P1 problems C / C2 fixed."""
 
 from __future__ import annotations
 
@@ -13,7 +15,7 @@ import pytest
 
 from app.quote.contracts import QuoteRequest, QuoteResponse
 from app.quote.engine import Engine
-from app.quote.fixtures_gen import GOLDEN, fixture_text, request
+from app.quote.fixtures_gen import GOLDEN, KEY_SITES, fixture_text, request
 from app.quote.store import EXTRACT_CSV, load_pack
 from tests.quote.conftest import AS_OF, FIX, fixture_doc
 
@@ -26,11 +28,11 @@ MA, TUFTS, AFC, BWH = (
 )
 
 
-def _quote(engine, payment, path="shoulder_chronic_clicking_v1", answers=None, codes=(), sites=None,
-           as_of=AS_OF) -> QuoteResponse:  # fmt: skip
+def _quote(engine, payment, path="shoulder_chronic_clicking_v1", answers=None, codes=(),
+           sites=KEY_SITES, as_of=AS_OF, **more) -> QuoteResponse:  # fmt: skip
     req = QuoteRequest.model_validate({
         "payment": payment, "care_path_id": path, "answers": answers or {},
-        "service_codes": list(codes), "picked_by": "person", "site_ids": sites,
+        "service_codes": list(codes), "picked_by": "person", "site_ids": sites, **more,
     })  # fmt: skip
     return engine.quote(req, as_of)
 
@@ -46,13 +48,17 @@ def _line(resp: QuoteResponse, site: str, line_id: str):
 def test_runtime_pack_loads_into_in_memory_indexes(store):
     """P1 #11: one runtime format (SQLite pack, stdlib), loaded once into dicts."""
     assert len(store.rows) == sum(1 for _ in EXTRACT_CSV.open()) - 1
-    assert store.version.build_id == "20261024-10d8a893"
+    assert store.version.build_id == "20261024-336340ed"
     assert store.version.tic_release == "tic-2026-10"
     kinds = {m.source_kind for m in store.sources.values()}
-    assert kinds == {"hospital_mrf", "insurer_tic", "medicare_pfs"}
+    assert kinds == {"hospital_mrf", "insurer_tic", "medicare_pfs", "medicare_opps",
+                     "masshealth_fs"}  # fmt: skip
     assert any(k[0] == "tic_bcbs_ma_hmo_blue_fi" for k in store.tic)
     assert any(k[0] == "tufts_mrf" for k in store.cash)
-    assert store.group_npis, "D6 needs the NPIs of small TiC provider groups"
+    assert store.npi_sets, "D6 needs the NPIs of small TiC provider groups"
+    pfs = [r for r in store.rows if r.source_kind == "medicare_pfs"]
+    assert {r.place_of_service for r in pfs} >= {"facility", "non_facility"}  # not plan_raw
+    assert {r.entity_id for r in pfs} >= {"medicare_ma_01"}
 
 
 def test_runtime_needs_no_pyarrow():
@@ -71,7 +77,8 @@ def test_runtime_needs_no_pyarrow():
 
 @pytest.mark.skipif(not os.environ.get("CARECOST_QUOTE_PACK"), reason="real pack not built here")
 def test_real_pack_loads(registry):
-    store = load_pack(Path(os.environ["CARECOST_QUOTE_PACK"]), tins=registry.tins)
+    store = load_pack(Path(os.environ["CARECOST_QUOTE_PACK"]), tins=registry.tins,
+                      census_ids=registry.census_ids)  # fmt: skip
     assert len(store.rows) > 10_000
     _quote(Engine(store, registry), BCBS_HMO)
 
@@ -93,7 +100,9 @@ def test_e2e_insurance_bcbs_hmo(engine):
     from app.quote.contracts import rank_key
 
     assert [rank_key(s) for s in r.sites] == sorted(rank_key(s) for s in r.sites)  # I7
-    # Austin 2026-10-24 (P1 #6): readings use the group's POS-11 TiC rate at the hospital
+    # Austin 2026-10-24 (P1 #6): readings use the group's POS-11 TiC rate at the hospital. C2:
+    # Mount Auburn's radiology group (Schatzki Associates, TIN 042482067, radiology_groups.yaml)
+    # has no row in any loaded TiC file, so the site's own billing groups price the reading.
     assert (_line(r, MA, "xray_reading").cell.low, _line(r, MA, "xray_reading").cell.high) == (
         12.04,
         17.33,
@@ -104,6 +113,18 @@ def test_e2e_insurance_bcbs_hmo(engine):
     assert mri.doctor_fee.group_name.startswith("HARVARD MEDICAL FACULTY")  # HMFP only
     assert r.copy_keys == ["copy.not_a_diagnosis", "copy.when_to_see_a_doctor"]  # P1 #13
     assert _line(r, MA, "referral").at == "your_primary_care"  # P1 #15
+
+
+def test_hospital_reading_prefers_the_radiology_group(engine, registry):
+    """C2 (P1 #6): Tufts' readings come from the TINs radiology_groups.yaml lists for Tufts
+    (042704683 ... ) before Tufts' own billing TIN 043400617."""
+    r = _quote(engine, BCBS_HMO)
+    ln = _line(r, TUFTS, "xray_reading")
+    rad = set(registry.radiology_tins["tufts"])
+    cited = {(p.source_id, p.row_id) for p in ln.cell.provs()}  # row_ref is shared (P1 #1)
+    rows = [x for x in engine.store.rows if (x.source_id, x.row_id) in cited]
+    assert rows and {x.tin for x in rows} <= rad
+    assert (ln.cell.low, ln.cell.high) == (9.88, 17.33)
 
 
 def test_e2e_cash(engine):
@@ -121,22 +142,48 @@ def test_e2e_cash(engine):
 def test_e2e_medicare(engine):
     r = _quote(engine, {"kind": "medicare"}, sites=[BWH])
     v = _line(r, BWH, "visit_doctor")
-    assert (v.cell.low, v.doctor_fee.rung) == (75.54, 5)  # PFS 99203, Boston, facility
+    assert (v.cell.low, v.doctor_fee.rung) == (75.54, 5)  # PFS RVU26D 99203, locality 01, facility
+    assert v.cell.prov.row_ref == "cms_pfs_rvu26d:521ff0f4ecbf:13010:facility:01"
+    assert v.cell.prov.method.value == "computed_fee_schedule" and v.cell.prov.payer_id is None
     assert _line(r, BWH, "xray_reading").cell.low == 9.75  # PFS 73030-26
-    # OPPS is not loaded (A3): the facility side is not_loaded unless the hospital's own
-    # Medicare row exists (Brigham 20610)
-    assert _line(r, BWH, "xray_facility").cell.kind == "not_loaded"
+    # the hospital's own Medicare row wins (Brigham 20610), else OPPS national unadjusted
     assert _line(r, BWH, "steroid_injection_facility").cell.low == 350.52
+    x = _line(r, BWH, "xray_facility")
+    assert (x.cell.low, x.cell.prov.source_id) == (88.91, "cms_opps_addb_2026q4")
+    assert x.price_notes == ["price.national_unadjusted"]
     assert "medicare_advantage_is_insurance" in r.notices
 
 
+def test_e2e_medicare_line_with_an_opps_facility_fee(engine):
+    """C2: a hospital clinic visit's facility fee is OPPS G0463 ($136.02, APC 5012, national
+    unadjusted), cited to its Addendum B row; the line names G0463 and says it is unadjusted."""
+    r = _quote(engine, {"kind": "medicare"}, sites=[BWH])
+    ln = _line(r, BWH, "visit_facility")
+    assert ln.cell.kind == "money" and (ln.cell.low, ln.cell.high) == (136.02, 136.02)
+    assert ln.cell.prov.row_ref == "cms_opps_addb_2026q4:2fc507a1fa67:14751:opps"
+    assert ln.cell.basis.value == "fee_schedule" and ln.cell.prov.payer_id is None
+    assert ln.codes == ["99203", "G0463"] and ln.price_notes == ["price.national_unadjusted"]
+    assert ln.in_total
+    sq = r.sites[0]
+    assert "visit_facility" in sq.receipt.totals.likely.line_ids
+
+
 def test_e2e_masshealth(engine):
+    """C2: MassHealth 101 CMR 318 prices the reading (rung 4) and an office's global fee; the
+    hospital facility fee (APAD) is not loaded. Tufts' only MassHealth rows for these codes are
+    its 'MEDICAID LIMITED CMSP 100%' plan (MassHealth Limited / CMSP at 100% of charges), which
+    is not the standard plan (engine.yaml masshealth_plan_exclude)."""
     r = _quote(engine, {"kind": "masshealth"}, path=None, codes=["73030", "73221"])
     assert r.care_path is None and r.copy_keys == []
     x = _line(r, TUFTS, "svc_73030_facility")
-    assert x.cell.low == 333.0 and x.cell.prov.payer_id == "MASSHEALTH"
-    ref = _line(r, TUFTS, "svc_73030_reading")  # no MassHealth fee schedule yet: rung 7
-    assert ref.doctor_fee.rung == 7 and not ref.in_total and ref.cell.low == 9.75
+    assert x.cell.kind == "not_loaded" and "APAD" in x.cell.what
+    ref = _line(r, TUFTS, "svc_73030_reading")
+    assert (ref.doctor_fee.rung, ref.cell.low, ref.in_total) == (4, 6.75, True)
+    assert ref.cell.prov.row_ref == "masshealth_318_20261001:25dae5fffe70:567:professional"
+    office = _line(r, AFC, "svc_73030")
+    assert (office.cell.low, office.doctor_fee.rung) == (27.31, 4)  # 318.00 global column
+    tufts = next(s for s in r.sites if s.site.site_id == TUFTS)
+    assert tufts.receipt.totals.missing == 2  # the two facility fees, nothing else
     assert "masshealth_aco_may_differ" in r.notices
 
 
@@ -156,7 +203,7 @@ def test_rung_6_estimate_is_in_the_total_and_flagged(engine):
 
 def test_by_npi_when_prices_differ_else_range(engine):
     r = _quote(engine, BCBS_HMO)
-    read = _line(r, TUFTS, "xray_reading")
+    read = _line(r, TUFTS, "steroid_injection_doctor")
     prices = {(p.money.low, p.money.high) for p in read.doctor_fee.by_npi}
     assert len(prices) >= 2  # D6
     assert read.cell.low == min(p[0] for p in prices) and read.cell.high == max(
@@ -201,11 +248,7 @@ def test_cash_price_carries_no_payer(engine, store):
     ln = _line(r, TUFTS, "visit_facility")
     for m in (ln.cell, ln.list_price):
         assert m.basis.value in ("discounted_cash", "gross") and m.prov.payer_id is None
-        cited = [
-            x
-            for x in store.rows.values()
-            if store.sources[x.source_id].row_ref(x) == m.prov.row_ref
-        ]
+        cited = [x for x in store.rows if store.sources[x.source_id].row_ref(x) == m.prov.row_ref]
         assert cited and all(x.row_kind == "payer_rate" and x.payer_id == "AETNA" for x in cited)
 
 
@@ -240,9 +283,14 @@ def test_codes_outside_the_etl_list_are_not_loaded(engine):
     assert ln.cell.kind == "not_loaded"
 
 
-def test_visit_facility_fee_g0463_is_not_loaded_for_medicare(engine):
-    """P9: G0463 (OPPS clinic visit) is not loaded -> not_loaded, never a silent 0."""
-    r = _quote(engine, {"kind": "medicare"}, sites=[BWH])
+def test_visit_facility_fee_g0463_is_not_loaded_without_opps(engine, store, registry):
+    """P9: without an OPPS file, G0463 is not_loaded, never a silent 0."""
+    from dataclasses import replace as dc_replace
+
+    bare = dc_replace(store, rows=[r for r in store.rows if r.source_kind != "medicare_opps"],
+                      sources={k: m for k, m in store.sources.items()
+                               if m.source_kind != "medicare_opps"})  # fmt: skip
+    r = _quote(Engine(bare, registry), {"kind": "medicare"}, sites=[BWH])
     ln = _line(r, BWH, "visit_facility")
     assert ln.cell.kind == "not_loaded" and "G0463" in ln.cell.what
 
@@ -250,7 +298,10 @@ def test_visit_facility_fee_g0463_is_not_loaded_for_medicare(engine):
 def test_freshness_is_computed_per_request(engine):
     later = date(2026, 12, 1)
     r = _quote(engine, BCBS_HMO, as_of=later)
-    assert all(s.freshness.stale_on_our_side for k, s in r.sources.items() if k != "cms_pfs_rvu26a")
+    monthly = [
+        s for s in r.sources.values() if s.source_kind.value in ("hospital_mrf", "insurer_tic")
+    ]
+    assert monthly and all(s.freshness.stale_on_our_side for s in monthly)
     assert "stale_on_our_side_sources" in r.notices
     assert any(
         sq.receipt.totals.likely.includes_stale_source for sq in r.sites if sq.receipt.totals.likely
@@ -279,8 +330,8 @@ def test_manual_pick_and_assistant_pick(engine):
 
 def test_elsewhere_suggests_cheaper_sites_for_a_gap(engine):
     r = _quote(engine, BCBS_HMO)
-    ln = _line(r, "bilh_urgent_care_watertown", "visit")  # its doctor groups are not linked
-    assert ln.cell.kind == "not_loaded"
+    ln = _line(r, "franciscan_childrens", "xray_facility")  # no BCBS row in its own file
+    assert ln.cell.kind == "not_published"
     assert ln.elsewhere and ln.elsewhere[0].cell.kind == "money"
     lows = [e.cell.low for e in ln.elsewhere]
     assert lows == sorted(lows)

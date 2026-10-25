@@ -2,8 +2,10 @@
 
     uv run --frozen python -m app.quote.bench --url http://127.0.0.1:8100 -n 200
 
-Sends N sequential requests per payment (after 10 warm-up requests), timing each from send to the
-full response body read (gzip on), then N requests spread over 8 threads for throughput.
+Sends N sequential requests per case (after 10 warm-up requests), timing each from send to the
+full response body read (gzip on), then N requests spread over 8 threads for throughput. Cases:
+the golden BCBS HMO and cash shoulder requests (12 sites nearest Harvard Square) and the BCBS one
+without ``near`` (every eligible site priced, the best 12 returned).
 """
 
 from __future__ import annotations
@@ -40,8 +42,10 @@ def main() -> None:
     url = a.url + "/api/quote"
     headers = {"Accept-Encoding": "gzip"}
     with httpx.Client(headers=headers, timeout=30) as c:
-        for name in ("bcbs_hmo", "cash"):
-            body = _req(name)
+        cases = [(n, _req(n)) for n in ("bcbs_hmo", "cash")]
+        whole = {k: v for k, v in _req("bcbs_hmo").items() if k != "near"}
+        cases.append(("bcbs_hmo_no_near", whole))  # every eligible site priced, best 12 returned
+        for name, body in cases:
             for _ in range(10):
                 c.post(url, json=body).raise_for_status()
             ms = []
