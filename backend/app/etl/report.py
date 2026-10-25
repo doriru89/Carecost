@@ -177,7 +177,7 @@ def build_report(
             L.append(f"| {s.hospital_entity} | — | — | not built | — | — | — | — | — | — |")
             continue
         fb = m.get("fallback")
-        fetched = f"{str(m.get('fetched_at', ''))[:10]} ({m.get('fetch_method', '?')}"
+        fetched = f"{str(m.get('fetched_at') or m.get('imported_at') or '')[:10]} ({m.get('fetch_method', '?')}"
         fetched += f", fallback: {fb['used']})" if fb else ")"
         L.append(
             f"| {s.hospital_entity} | {m['last_updated_on']} | {fetched} | {m['staged_rows']:,} (= {m['independent_count']:,}) | "

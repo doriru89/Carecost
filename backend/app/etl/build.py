@@ -160,6 +160,7 @@ def _info(
         "fetch_method": rec.method,
         "url": rec.url,
         "fetched_at": rec.fetched_at,
+        "imported_at": rec.imported_at,  # set instead of fetched_at for --import-dir copies
         "http_last_modified": rec.http_last_modified,
         "raw_file": smeta["raw_file"],
         # D18 side (a): the publisher's own date, from the file header (never our fetch date)
@@ -352,7 +353,8 @@ def run_build(
         {
             sid: (
                 date.fromisoformat(p["last_updated_on"]) if p["last_updated_on"] else None,
-                datetime.fromisoformat(p["fetched_at"]).date(),
+                # our side = when we last obtained a copy: a fetch, or an import of a manual download
+                datetime.fromisoformat(p["fetched_at"] or p["imported_at"]).date(),
             )
             for sid, p in present.items()
         },
