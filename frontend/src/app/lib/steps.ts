@@ -19,17 +19,19 @@ const humanize = (key: string) => {
 };
 
 /** The base name of a line: the engine names hospital lines "<step>: the hospital's fee" etc. */
-const baseName = (l: ReceiptLine) => l.plain_name.split(/: the (?:hospital's|center's|doctor's) /)[0].replace(/ \(at your primary care office\)$/, "");
+export const baseName = (l: ReceiptLine) => l.plain_name.split(/: the (?:hospital's|center's|doctor's) /)[0].replace(/ \(at your primary care office\)$/, "");
 
 /**
- * A readable name per step key. StepSummary carries no label (asked of C3), so the name comes from the
- * receipts in the response: the line whose id is the step key (an office line, named after the step),
- * else any line of the step without its "the hospital's fee" suffix, else the key itself.
+ * A readable name per step key. C4b: `StepSummary.plain_name` (the map label). Older responses without it
+ * fall back to the receipts: the line whose id is the step key, else any line of the step without its "the
+ * hospital's fee" suffix, else the key itself.
  */
 export function stepLabels(quote: QuoteResponse): Record<string, string> {
   const out: Record<string, string> = {};
   const lines = quote.sites.flatMap((sq) => sq.receipt?.lines ?? []);
+  for (const sq of quote.sites) for (const st of sq.steps) if (st.plain_name && !out[st.key]) out[st.key] = st.plain_name;
   for (const key of stepKeys(quote)) {
+    if (out[key]) continue;
     const own = lines.filter((l) => l.step_id === key || (quote.care_path == null && l.codes.join(",") === key));
     const exact = own.find((l) => l.line_id === key);
     out[key] = exact ? baseName(exact) : own[0] ? baseName(own[0]) : humanize(key);
@@ -44,9 +46,13 @@ export function stepOf(sq: SiteQuote, key: string): StepSummary | undefined {
 /** Expected steps (certain / likely). Possible ones are never in the headline (P9). */
 export const isExpected = (st: StepSummary) => st.likelihood === "certain" || st.likelihood === "likely";
 
-/** P4: steps this site does not do (or does not say it does), priced at the places that do. */
+/**
+ * P4: steps this site does not do (or does not say it does), priced at the places that do; and (C4b)
+ * `elsewhere_estimate` steps: offered here with no own price, shown at the typical price nearby. Neither is
+ * ever this place's own price.
+ */
 export function elsewhereSteps(sq: SiteQuote): StepSummary[] {
-  return sq.steps.filter((st) => st.figure === "elsewhere");
+  return sq.steps.filter((st) => st.figure === "elsewhere" || st.figure === "elsewhere_estimate");
 }
 
 /**

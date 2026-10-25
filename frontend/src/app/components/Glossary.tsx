@@ -1,7 +1,10 @@
 import { TERMS } from "../lib/glossary";
 import { InfoTip } from "./InfoTip";
 
-/** Glossary chips for a line (hover on by default, plan §4.2). Text comes only from content/glossary. */
+/**
+ * Glossary chips for a line (hover on by default, plan §4.2). Text comes only from content/glossary.
+ * D6: the chip shows the plain name; the technical term is one tap away, inside the tip.
+ */
 export function GlossaryChips({ keys }: { keys: string[] }) {
   const known = keys.filter((k) => TERMS[k]);
   if (!known.length) return null;
@@ -15,7 +18,7 @@ export function GlossaryChips({ keys }: { keys: string[] }) {
             label={`What is ${term.technical_name}?`}
             trigger={
               <span className="rounded-full border border-border bg-card px-2 py-0.5 text-[11px] text-muted-foreground hover:text-foreground">
-                ⓘ {term.technical_name.split(" (")[0]}
+                ⓘ {term.plain_name}
               </span>
             }
           >

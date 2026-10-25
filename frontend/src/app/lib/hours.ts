@@ -2,7 +2,7 @@
  * Open-now / open-today from a site's posted weekly hours, in Boston time (sites are all in MA).
  * Hours are the operator's posted hours, not live: the label says so (hours_label).
  */
-import type { Hours, HoursSpan } from "@/generated/contracts/quote_api";
+import type { Hours, HoursSpan, SiteSummary } from "@/generated/contracts/quote_api";
 
 type Day = HoursSpan["days"][number];
 const DAYS: Day[] = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
@@ -69,4 +69,21 @@ function nextOpenDay(hours: Hours, from: Day): string | null {
     if (span) return `${k === 1 ? "tomorrow" : d[0].toUpperCase() + d.slice(1)} ${clock(span.opens)}`;
   }
   return null;
+}
+
+/**
+ * D6 item 8: which field an "open now" comes from. The quote carries `SiteSummary.hours` (weekly spans) and
+ * `hours_label`; nothing else. `unknown` = no hours in the quote (we never guess them).
+ */
+export function hoursSourceKey(label: SiteSummary["hours_label"]): string {
+  switch (label) {
+    case "live_by_operator":
+      return "hours.from_live";
+    case "posted_hours":
+      return "hours.from_posted";
+    case "may_close_early":
+      return "hours.may_close_early";
+    case "unknown":
+      return "hours.unknown";
+  }
 }

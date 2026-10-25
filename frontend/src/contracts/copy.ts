@@ -10,11 +10,14 @@
  * person owes). The UI never shows the review flag; `copy.test.ts` lists them.
  */
 import type { AiPausedReply, CarePathsReply, ClarifyReply, LlmInvalidReply } from "@/generated/contracts/chat_api";
-import type { ReceiptLine, SourceKind } from "@/generated/contracts/quote_api";
+import type { ErReference, HeadlineRange, ReceiptLine, SourceKind } from "@/generated/contracts/quote_api";
 import {
+  AVAILABILITY_REASON_KEY,
+  CHEAPEST_BASIS_KEY,
   COMPONENT_LABEL_KEY,
   EXCLUDED_REASON_KEY,
   GAP_COPY_KEY,
+  HEADLINE_BASIS_KEY,
   KIND_LABEL_KEY,
   LADDER_COPY_KEYS,
   NOTICE_KEY,
@@ -57,7 +60,13 @@ export type ContractCopyKey =
   | CarePathsReply["copy_keys"][number]
   | NonNullable<ClarifyReply["fixed_text_key"] | CarePathsReply["fixed_text_key"]>
   | ValueOf<typeof KIND_LABEL_KEY>
-  | ReceiptLine["price_notes"][number];
+  | ReceiptLine["price_notes"][number]
+  // C4b
+  | NonNullable<ValueOf<typeof HEADLINE_BASIS_KEY>>
+  | ValueOf<typeof CHEAPEST_BASIS_KEY>
+  | ValueOf<typeof AVAILABILITY_REASON_KEY>
+  | HeadlineRange["note_keys"][number]
+  | ErReference["note_key"];
 
 export const CONTRACT_COPY = {
   // ---- C2 price notes: how a line's number was made (ReceiptLine.price_notes)
@@ -78,6 +87,33 @@ export const CONTRACT_COPY = {
     en: "This group's prices are consistently lower than similar places here.",
     review: true,
   },
+  // C4b item 5: the same group/payer/amount on the visit code and on this test's code: counted once, on the visit
+  "price.flat_visit_rate": {
+    en: "This insurer pays this place one amount per visit. The test may be included in the visit, so it adds $0 here.",
+    review: true,
+  },
+  // C4b item 4 (A6 flag same_npi_pos_multi_rate): the insurer's file lists several rates for the same doctors here
+  "price.several_rates_same_doctors": {
+    en: "Your insurer's file lists more than one rate for the same doctors here, so we show the range.",
+    review: true,
+  },
+
+  // ---- C4b headline (HeadlineRange): from_only, basis
+  // shown as "from $X — the doctor bills separately"; never as the full price
+  "headline.doctor_bills_separately": { en: "the doctor bills separately", review: true },
+  "headline.basis.includes_estimate": { en: "Includes an estimate", review: true },
+  "headline.basis.partial": { en: "Only partial prices found here", review: true },
+
+  // ---- C4b cheapest_basis (Austin 2026-10-25): honest wording next to "cheapest place for this"
+  "cheapest.complete": { en: "Cheapest, from their own published prices", review: true },
+  "cheapest.includes_estimate": { en: "Cheapest; part of this is an estimate", review: true },
+  "cheapest.partial": { en: "Only partial prices found here", review: true },
+
+  // ---- C4b item 7: the ER for comparison (never ranked, never a place in the list)
+  "er.visit_alone_costs_more": {
+    en: "At the ER, the visit alone usually costs much more than urgent care, before any tests.",
+    review: true,
+  },
 
   // ---- Gap kinds (plan §2.5): one fixed sentence each, plus the line's own `what` / `ask`
   "gap.not_published": { en: "Not published. This kind of price file exists, but this place did not list this item." },
@@ -87,7 +123,7 @@ export const CONTRACT_COPY = {
   "gap.conflict": { en: "Two public files disagree. We show both numbers and leave this line out of the total." },
 
   // ---- Bill components
-  "component.facility": { en: "Facility fee (the building, staff and equipment)" },
+  "component.facility": { en: "The hospital's or center's own bill (the building, staff and equipment)" },
   "component.professional": { en: "Doctor's fee" },
   "component.drug": { en: "Medicine" },
   "component.supply": { en: "Supplies" },
@@ -127,6 +163,7 @@ export const CONTRACT_COPY = {
     review: true,
   },
   "total.excluded.unusual": { en: "Price looks unusual, being checked, so not in the total", review: true },
+  "total.excluded.flat_visit_rate": { en: "Paid as part of the visit, so it adds $0", review: true },
 
   // ---- Freshness (a) publisher side: "late to refresh"
   "fresh.source.hospital_mrf_365_days": { en: "Hospitals must update their price file at least once a year." },
@@ -204,10 +241,30 @@ export const CONTRACT_COPY = {
   "notice.medicare_advantage_is_insurance": {
     en: "Medicare Advantage plans are private insurance: pick your insurer above instead of Medicare.",
   },
+  "notice.hmo_referral_for_specialist": {
+    en: "Your plan may need a referral from your primary care doctor before you see a specialist. Check with your plan or your doctor first.",
+    review: true,
+  },
   "notice.chain_price_spread": {
     en: "Some locations of the same chain list the same item at prices more than 1.5× apart. Each location shows its own price; we are checking why.",
     review: true,
   },
+
+  // ---- P6 (Austin, 2026-10-25): an insurer's file is never evidence that a place offers a service
+  "receipt.availability.insurer_lists_rate": {
+    en: "Your insurer lists a rate for this group, but this place doesn't say it offers this. Call to check.",
+    review: true,
+  },
+  // C4b 3e: the same for a person without insurance (a price file row, not an insurer's rate)
+  "receipt.availability.price_file_lists_rate": {
+    en: "A price file lists a price for this here, but this place doesn't say it offers it. Call to check.",
+    review: true,
+  },
+  "receipt.availability.no_evidence": {
+    en: "This place doesn't say whether it offers this. Call to check.",
+    review: true,
+  },
+  "receipt.availability.site_says_not_offered": { en: "This place says it doesn't offer this.", review: true },
 
   // ---- X2 / P7: the kind of site, the group headers of a list with no location
   "kind.urgent_care": { en: "Urgent care" },
@@ -309,23 +366,19 @@ export const APP_COPY = {
   "receipt.per_visit": { en: "per session; repeats are not in the total" },
   "receipt.not_offered": { en: "Not offered here" },
   "receipt.availability_unknown": { en: "Not known whether this place offers it" },
-  // P6 (Austin, 2026-10-25): an insurer's file is never evidence that a place offers a service
-  "receipt.availability.insurer_lists_rate": {
-    en: "Your insurer lists a rate for this group, but this place doesn't say it offers this. Call to check.",
-    review: true,
-  },
-  "receipt.availability.no_evidence": {
-    en: "This place doesn't say whether it offers this. Call to check.",
-    review: true,
-  },
-  "receipt.availability.site_says_not_offered": { en: "This place says it doesn't offer this.", review: true },
   "receipt.listed_rate": { en: "The rate your insurer's file lists for this group (not counted)" },
   "receipt.listed_price": { en: "The price in the file (not counted)" },
   "receipt.medicare_reference": { en: "For reference: what Medicare pays (not your plan's price)" },
   "receipt.no_plan_price": { en: "No price for your plan" },
   // P4: a step this place doesn't do is its own line, priced at the places that do
-  "receipt.elsewhere_section": { en: "Not done here, or not confirmed" },
-  "receipt.elsewhere_about": { en: "Elsewhere, about {range}" },
+  "receipt.elsewhere_section": { en: "Not done here, not confirmed, or no price here" },
+  // C4b elsewhere_estimate: this place does the step but publishes no price for it
+  "receipt.elsewhere_estimate_why": {
+    en: "This place does this, but we found no price for it here. The typical price nearby is used in the range, marked as an estimate.",
+    review: true,
+  },
+  // C4b: an elsewhere / elsewhere_estimate figure is never this place's own price
+  "receipt.elsewhere_about": { en: "About {range} (typical price nearby)", review: true },
   "receipt.elsewhere_basis": {
     en: "The middle half of prices at {n} places that do it, with the same way of paying. Not in this place's total.",
     review: true,
@@ -358,7 +411,7 @@ export const APP_COPY = {
   "receipt.loading": { en: "Loading this place's receipt…" },
   "receipt.load_failed": { en: "Could not load this place's receipt. Try again in a moment." },
   "list.no_total": { en: "No price here in public data for this way of paying" },
-  "list.done_elsewhere": { en: "{step}: elsewhere, about {range}" },
+  "list.done_elsewhere": { en: "{step}: about {range} (typical price nearby)" },
   // P3: on the map, one step's price at a time
   "map.pick_step": { en: "Show the price of one step on the map:" },
   "map.no_step": { en: "Places only" },
@@ -398,18 +451,100 @@ export const APP_COPY = {
   "fresh.late_label": { en: "Late to refresh" },
   "fresh.stale_label": { en: "Stale on our side" },
   "fresh.current_label": { en: "Current" },
-  "billing.office_visit": { en: "Billed as an office visit (no hospital facility fee)" },
-  "billing.hospital_outpatient": { en: "Billed as a hospital outpatient department: expect a separate facility fee" },
+  "billing.office_visit": { en: "Billed as an office visit (no separate hospital bill)" },
+  "billing.hospital_outpatient": { en: "Billed as a hospital clinic: expect a hospital bill, and the doctor bills separately" },
   "billing.asc": { en: "Billed as a surgery center" },
   // P9: unknown billing is priced as a hospital clinic, never as an office
   "billing.unknown": {
-    en: "Billing type not confirmed: priced as a hospital clinic. This place may also charge a hospital facility fee.",
+    en: "Billing type not confirmed: priced as a hospital clinic. This place may also send a separate hospital bill.",
     review: true,
   },
   "receipt.facility_fee_possible": {
-    en: "This place may also charge a hospital facility fee. We could not confirm how it bills.",
+    en: "This place may also send a separate hospital bill. We could not confirm how it bills.",
     review: true,
   },
+
+  // ---- C4b / D6: the first screen (D-UI-1, D-UI-3). Plain words; every distinction is one tap away.
+  "headline.from": { en: "from {low} — {note}", review: true },
+  "headline.includes": { en: "Includes the visit, plus: {items}", review: true },
+  "headline.visit_only": { en: "The doctor visit", review: true },
+  "headline.not_priced": { en: "Not in this figure, no price found: {items}", review: true },
+  "overview.title": { en: "Where to go, and roughly what it costs" },
+  "overview.lead": {
+    en: "What seeing a doctor for this probably costs at each place: the visit and what usually happens. Tap a place to see every bill.",
+    review: true,
+  },
+  "overview.no_options": { en: "Places for this" },
+  "option.label": { en: "Option {letter}: {label}" },
+  "option.range": { en: "{range} across {n} places with a price" },
+  "option.no_range": { en: "No place in this option has a price yet" },
+  "option.unpriced": { en: "We don't have prices for this yet.", review: true },
+  "option.cheapest": { en: "Cheapest place for this" },
+  "option.cheapest_not_here": { en: "The cheapest place for this is not among the places shown." },
+  "option.alternates": { en: "Other places" },
+  "option.see_all": { en: "See all {n} places in the list" },
+  "order.label": { en: "Order:" },
+  "order.distance": { en: "Nearest first" },
+  "order.price": { en: "Cheapest first" },
+  "order.price_note": { en: "Places with their own complete prices come first.", review: true },
+  "order.distance_from_city_hall": { en: "Distances are from Boston City Hall. Add a ZIP to see the places nearest you." },
+  "nearby.about": { en: "about {range} (typical price nearby)", review: true },
+  "may_also.heading": { en: "The doctor may also order (not in the price above)", review: true },
+  "may_also.one_of": { en: "One of these, if needed:", review: true },
+  "may_also.no_price": { en: "no price found" },
+  "flat.adds_zero": { en: "Adds $0: paid as part of the visit", review: true },
+  // D-UI-2: the breakdown on tap, how the range was built
+  "breakdown.heading": { en: "How this range was built" },
+  "breakdown.visit_only": { en: "The visit alone (every bill)" },
+  "breakdown.with_likely": { en: "The visit and what usually happens (the price shown above)" },
+  "breakdown.with_possible": { en: "If the doctor also orders everything possible" },
+  "breakdown.counts": { en: "Counts: {items}" },
+  "breakdown.not_priced": { en: "No price found, not counted: {items}", review: true },
+  "breakdown.alternatives": { en: "Not counted, a dearer alternative is: {items}", review: true },
+  "breakdown.own_total": { en: "This place's own bills, added up" },
+  // plain source footnote per number (Fact / Inferred / Assumed in plain words)
+  "footnote.own_published": { en: "Fact: their own published price" },
+  "footnote.insurer_file": { en: "Fact: from your insurer's price file" },
+  "footnote.government": { en: "Fact: the government-set fee" },
+  "footnote.own_figure": { en: "Fact: this place's own price" },
+  "footnote.estimate": { en: "Estimate: from similar places nearby", review: true },
+  "footnote.nearby": { en: "Typical price nearby, not this place's own price", review: true },
+  "footnote.not_published": { en: "Not published" },
+  "doctor.bills_separately": { en: "The doctor bills separately", review: true },
+  // cheap win (06-coherent-story-v6.md:35): fixed copy, the same for every place
+  "call.heading": { en: "3 questions to ask when you call", review: true },
+  "call.q_self_pay": { en: "What is your self-pay price for this visit?", review: true },
+  "call.q_doctor": { en: "Will the doctor send a separate bill?", review: true },
+  "call.q_plan": { en: "Do you take my plan ({plan})?", review: true },
+  "call.q_plan_none": { en: "If I have insurance later, which plans do you take?", review: true },
+  // C4b item 7: the ER reference, collapsed, never ranked
+  "er.summary": { en: "For comparison: the ER" },
+  "er.range": { en: "At the ER the visit alone usually costs {range}, before any tests.", review: true },
+  "er.hospital_part_only": {
+    en: "This covers the hospital's part; the doctor's part is not published for every level here, so the real cost is higher.",
+    review: true,
+  },
+  "er.not_published": { en: "ER prices for this way of paying are not published.", review: true },
+  "er.never_ranked": { en: "Shown for comparison only. The ER is not one of the places above.", review: true },
+  "er.level": { en: "Level {n}" },
+  "er.hospital_part": { en: "hospital" },
+  "er.doctor_part": { en: "doctor" },
+  // item 8: open now, and which field it comes from
+  "hours.from_posted": { en: "Hours: the place's posted hours" },
+  "hours.from_live": { en: "Hours: live from the place's own check-in page" },
+  "hours.may_close_early": { en: "Hours: posted, but the place says it may close early" },
+  "hours.unknown": { en: "Hours not listed. Call before you go." },
+  "map.item_headline": { en: "Whole visit" },
+  "map.item_option": { en: "Option {letter}: whole visit" },
+  "map.headline_for": {
+    en: "Prices on the map: what seeing a doctor for this costs at each place ({option}). One item at a time.",
+    review: true,
+  },
+  "tab.pick": { en: "Where to go" },
+  "tab.receipt": { en: "Breakdown" },
+  "tab.list": { en: "List" },
+  "tab.map": { en: "Map" },
+  "tab.browse": { en: "Browse" },
 
   "chat.unreachable": { en: "The AI helper could not answer (server error {status}). You can still browse prices." },
   "chat.unreachable_network": { en: "The AI helper could not be reached. You can still browse prices." },

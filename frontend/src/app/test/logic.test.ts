@@ -17,7 +17,9 @@ import { ALL_QUOTES, BCBS, CASH } from "./fixtures";
 
 describe("receipt sections (D8)", () => {
   it("orders tiers strongest first, keeps every line once, drops empty tiers", () => {
-    const lines = BCBS.sites[0].receipt.lines;
+    // Data change (C4b, 1a7d986): AFC Inman (sites[0]) has no possible-tier line any more (its possible
+    // steps are availability unknown, so not_in_public_data); CHA's hospital has all four tiers.
+    const lines = BCBS.sites.find((s) => s.site.site_id === "cha_cambridge_hospital")!.receipt.lines;
     const s = sections(lines);
     expect(s.map((x) => x.tier)).toEqual(["certain", "likely", "possible", "not_in_public_data"]);
     expect(s.flatMap((x) => x.lines).length).toBe(lines.length);

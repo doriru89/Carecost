@@ -8,8 +8,10 @@ import { mapService } from "../lib/mapPrice";
 import { paymentLabel } from "../lib/payments";
 import { zipToLocation, type UserLocation } from "../lib/geo";
 import { bostonNow } from "../lib/hours";
-import { siteViews, sortSites, sortWithinKinds, type SiteScope, type SortMode } from "../lib/sites";
+import { siteViews, sortSites, sortWithinKinds, sortWithinOptions, type SiteScope, type SortMode } from "../lib/sites";
 import { mapStepKeys, stepLabels } from "../lib/steps";
+import { byOption, headlineMapChoices, type MapChoice } from "../lib/headline";
+import { Overview, type OrderBy } from "./Overview";
 import { BrowsePicker } from "./BrowsePicker";
 import { PaymentSelect } from "./PaymentSelect";
 import { Receipt } from "./Receipt";
@@ -37,7 +39,8 @@ export interface SitePick {
   selected: string | null;
 }
 
-export type ResultsView = "receipt" | "list" | "map" | "browse";
+/** pick: the first screen (D-UI-1); receipt: the breakdown of one place (D-UI-2) */
+export type ResultsView = "pick" | "receipt" | "list" | "map" | "browse";
 
 export function ResultsPane({
   payment,
@@ -55,6 +58,8 @@ export function ResultsPane({
   pick,
   onPick,
   loadSite,
+  orderBy = "distance",
+  onOrderBy,
 }: {
   payment: Payment;
   onPayment: (p: Payment) => void;
@@ -76,6 +81,9 @@ export function ResultsPane({
    * other site's receipt is asked for by `site_ids` when the person opens it (same payment and query).
    */
   loadSite?: (siteId: string) => Promise<QuoteResponse>;
+  /** C4b (D-UI-1): distance (default) or price; a change re-asks the server with `order_by` */
+  orderBy?: OrderBy;
+  onOrderBy?: (o: OrderBy) => void;
 }) {
   const { sort, selected } = pick;
   const setSort = (s: SortMode) => onPick({ ...pick, sort: s });
@@ -89,17 +97,28 @@ export function ResultsPane({
   const now = useMemo(() => bostonNow(), [quote]); // eslint-disable-line react-hooks/exhaustive-deps
   const views = useMemo(() => (quote ? siteViews(quote.sites, location, now) : []), [quote, location, now]);
   const byKind = quote?.ordering === "kind_then_distance";
-  const sorted = useMemo(() => (byKind ? sortWithinKinds(views, sort) : sortSites(views, sort)), [views, sort, byKind]);
+  const byOpt = quote ? byOption(quote) : false;
+  const sorted = useMemo(
+    () => (byOpt ? sortWithinOptions(views, sort) : byKind ? sortWithinKinds(views, sort) : sortSites(views, sort)),
+    [views, sort, byKind, byOpt],
+  );
   const current = views.find((v) => v.sq.site.site_id === selected) ?? sorted[0];
   const labels = useMemo(() => (quote ? stepLabels(quote) : {}), [quote]);
 
-  // P3: the map prices one step at a time. A manual pick of one service has one step: it is selected.
+  // P3 / D-UI-3: the map prices one item at a time: an option's headline per site, or one step. A manual
+  // pick of one service has one step: it is selected.
   const stepChoices = useMemo(() => (quote ? mapStepKeys(quote) : []), [quote]);
+  const headlineChoices = useMemo(() => (quote ? headlineMapChoices(quote) : []), [quote]);
+  const choices = useMemo<MapChoice[]>(
+    () => [...headlineChoices, ...stepChoices.map((k) => ({ id: k, label: labels[k] ?? k, item: { kind: "step" as const, key: k } }))],
+    [headlineChoices, stepChoices, labels],
+  );
   const [mapStep, setMapStep] = useState<string | null>(null);
   const shownKey = shown?.key ?? "";
   useEffect(() => setMapStep(null), [shownKey]);
   const onlyStep = quote && !quote.care_path && stepChoices.length === 1 ? stepChoices[0] : null;
-  const step = mapStep && stepChoices.includes(mapStep) ? mapStep : onlyStep;
+  const chosen = choices.find((c) => c.id === mapStep) ?? (onlyStep ? choices.find((c) => c.id === onlyStep) : undefined) ?? null;
+  const step = chosen?.id ?? null;
 
   // C3 item 9: fetch the opened site's receipt when the list carries only its summary
   const [fetched, setFetched] = useState<Record<string, { status: "loading" } | { status: "error" } | { status: "ok"; quote: QuoteResponse }>>({});
@@ -147,15 +166,15 @@ export function ResultsPane({
       </div>
 
       <div className="flex gap-1 rounded-xl bg-muted p-1 text-sm" role="tablist">
-        {(["receipt", "list", "map", "browse"] as const).map((v) => (
+        {(["pick", "receipt", "list", "map", "browse"] as const).map((v) => (
           <button
             key={v}
             role="tab"
             aria-selected={view === v}
             onClick={() => onView(v)}
-            className={cn("flex-1 rounded-lg px-2 py-1.5 font-medium", view === v ? "bg-card shadow-sm text-ink" : "text-muted-foreground")}
+            className={cn("flex-1 rounded-lg px-1.5 py-1.5 font-medium leading-tight", view === v ? "bg-card shadow-sm text-ink" : "text-muted-foreground")}
           >
-            {v === "receipt" ? "Receipt" : v === "list" ? "List" : v === "map" ? "Map" : "Browse"}
+            {t(`tab.${v}`)}
           </button>
         ))}
       </div>
@@ -181,7 +200,17 @@ export function ResultsPane({
           </p>
         )}
         <div className={cn(updating && "pointer-events-none select-none opacity-40")}>
-        {view === "receipt" ? (
+        {view === "pick" ? (
+          <Overview
+            quote={quote}
+            views={views}
+            scope={scope}
+            orderBy={orderBy}
+            onOrderBy={onOrderBy}
+            onOpen={open}
+            onSeeAll={() => onView("list")}
+          />
+        ) : view === "receipt" ? (
           <div className="space-y-2">
             {scope && <ScopeNote scope={scope} count={sorted.length} />}
             {sorted.length > 1 && (
@@ -225,33 +254,37 @@ export function ResultsPane({
             scope={scope}
             ordering={quote.ordering}
             labels={labels}
+            options={quote.options}
           />
         ) : (
           <div className="space-y-2">
-            {stepChoices.length > (onlyStep ? 1 : 0) && (
+            {choices.length > (onlyStep ? 1 : 0) && (
               <div className="flex flex-wrap items-center gap-1 text-xs" role="radiogroup" aria-label={t("map.pick_step")} data-testid="map-steps">
                 <span className="mr-1 text-muted-foreground">{t("map.pick_step")}</span>
-                {[null, ...stepChoices].map((k) => (
+                {[null, ...choices].map((c) => (
                   <button
-                    key={k ?? "none"}
+                    key={c?.id ?? "none"}
                     type="button"
                     role="radio"
-                    aria-checked={step === k}
-                    onClick={() => setMapStep(k)}
-                    className={cn("rounded-full border px-2.5 py-1", step === k ? "border-ink bg-ink text-white" : "border-border bg-card")}
+                    aria-checked={step === (c?.id ?? null)}
+                    onClick={() => setMapStep(c?.id ?? null)}
+                    data-item={c?.item.kind ?? "none"}
+                    className={cn("rounded-full border px-2.5 py-1", step === (c?.id ?? null) ? "border-ink bg-ink text-white" : "border-border bg-card")}
                   >
-                    {k == null ? t("map.no_step") : labels[k] ?? k}
+                    {c == null ? t("map.no_step") : c.label}
                   </button>
                 ))}
               </div>
             )}
             <p className="text-xs text-muted-foreground" data-testid="map-price-note">
-              {step
-                ? t("map.step_price_for", { step: (onlyStep && priced ? priced.plain_name : labels[step]) ?? step })
+              {chosen
+                ? chosen.item.kind === "headline"
+                  ? t("map.headline_for", { option: chosen.label })
+                  : t("map.step_price_for", { step: (onlyStep && priced ? priced.plain_name : labels[chosen.item.key]) ?? chosen.item.key })
                 : t("map.places_only")}
             </p>
             <Suspense fallback={<p className="p-6 text-center text-sm text-muted-foreground">Loading map…</p>}>
-              <SiteMap views={sorted} selectedId={current.sq.site.site_id} onOpen={open} location={location} step={step} />
+              <SiteMap views={sorted} selectedId={current.sq.site.site_id} onOpen={open} location={location} item={chosen?.item ?? null} />
             </Suspense>
           </div>
         )}

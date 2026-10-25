@@ -56,9 +56,34 @@ export function kindGroups(views: SiteView[]): KindGroup[] {
 
 /** Sort inside each kind group, keeping the groups in the server's order (P7). */
 export function sortWithinKinds(views: SiteView[], mode: SortMode): SiteView[] {
+  return sortWithinGroups(views, mode, (v) => v.sq.site.kind);
+}
+
+/** C4b: sort inside each entry option (option_then_*), keeping the options in the server's order. */
+export function sortWithinOptions(views: SiteView[], mode: SortMode): SiteView[] {
+  return sortWithinGroups(views, mode, (v) => v.sq.option_id ?? "");
+}
+
+function sortWithinGroups(views: SiteView[], mode: SortMode, key: (v: SiteView) => string): SiteView[] {
   const order = new Map<string, number>();
-  for (const v of views) if (!order.has(v.sq.site.kind)) order.set(v.sq.site.kind, order.size);
-  return sortSites(views, mode).sort((a, b) => order.get(a.sq.site.kind)! - order.get(b.sq.site.kind)!);
+  for (const v of views) if (!order.has(key(v))) order.set(key(v), order.size);
+  return sortSites(views, mode).sort((a, b) => order.get(key(a))! - order.get(key(b))!);
+}
+
+export interface OptionRun {
+  optionId: string | null;
+  views: SiteView[];
+}
+
+/** Consecutive runs of one entry option (the list's group headers for option_then_* orderings). */
+export function optionRuns(views: SiteView[]): OptionRun[] {
+  const out: OptionRun[] = [];
+  for (const v of views) {
+    const last = out[out.length - 1];
+    if (last && last.optionId === v.sq.option_id) last.views.push(v);
+    else out.push({ optionId: v.sq.option_id, views: [v] });
+  }
+  return out;
 }
 
 /**

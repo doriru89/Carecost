@@ -1,9 +1,10 @@
 import { t } from "@/contracts/copy";
 import { COMPONENT_LABEL_KEY, EXCLUDED_REASON_KEY, TIER_BASIS_KEY } from "@/contracts/exhaustive";
-import type { ExcludedLine, OtherPayerRange, Payment, PeerRange, QuoteResponse, ReceiptLine, SiteSummary } from "@/generated/contracts/quote_api";
+import type { ExcludedLine, OtherPayerRange, Payment, PeerRange, QuoteResponse, ReceiptLine, SiteQuote, SiteSummary } from "@/generated/contracts/quote_api";
 import { cn } from "@/lib/utils";
 import { range } from "../lib/format";
 import { miles, milesText, type UserLocation } from "../lib/geo";
+import { doctorBillsSeparately, isFlatVisitRate, lineFootnote } from "../lib/headline";
 import { availabilityKey, cellHasDollars, chainName, noCashDiscount, priceHidden } from "../lib/receipt";
 import { CellView, GapDetail, MoneyChips } from "./CellView";
 import { DoctorFeeNote } from "./DoctorFeeNote";
@@ -33,6 +34,7 @@ export function ReceiptLineView({
   otherPayers,
   location,
   site,
+  sq,
 }: {
   line: ReceiptLine;
   sources: QuoteResponse["sources"];
@@ -40,14 +42,20 @@ export function ReceiptLineView({
   excluded?: ExcludedLine;
   otherPayers?: OtherPayerRange;
   location: UserLocation | null;
-  /** the site the receipt is for (P9 facility-fee note, R12 chain line) */
+  /** the site the receipt is for (P9 hospital-bill note, R12 chain line) */
   site?: SiteSummary;
+  /** the site's quote: "the doctor bills separately" at a place that sends two bills */
+  sq?: SiteQuote;
 }) {
   // Rung 6 (plan §2.4, D5): an estimate, in the total but marked. Rung 7: Medicare as a reference, never summed.
   const estimate = line.cell?.kind === "money" && line.cell.basis === "estimate";
   const reference = excluded?.reason === "reference_only" || line.doctor_fee?.explanation_key === "fee.rung_7_medicare_reference";
   // P2 / P6 / P8: a number that must not read as this place's price is folded away, labelled (lib/receipt.ts)
   const hidden = priceHidden(line, payment);
+  // C4b item 5: a flat visit rate keeps its amount but adds $0 (it is the visit's own amount)
+  const flat = isFlatVisitRate(line) || excluded?.reason === "flat_visit_rate";
+  const foot = lineFootnote(line, sources);
+  const doctorSeparate = sq ? doctorBillsSeparately(line, sq) : false;
   const body = (
     <div className={cn("pl-3 pr-2 py-2.5 rounded-r-md", TIER_CLASS[line.tier])} data-testid="receipt-line" data-tier={line.tier}>
       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
@@ -72,11 +80,12 @@ export function ReceiptLineView({
               {t("receipt.at_your_primary_care")}
             </p>
           )}
-          <p className="text-[11px] text-muted-foreground">
-            {line.technical_name}
-            {line.codes.length > 0 && <> · {line.codes.join(", ")}{line.modifier ? `-${line.modifier}` : ""}</>}
-            {!line.component_confirmed && <> · {t(COMPONENT_LABEL_KEY.unknown)}</>}
-          </p>
+          {doctorSeparate && (
+            <p className="mt-0.5 text-[11px] font-medium text-foreground/80" data-testid="doctor-bills-separately">
+              {t("doctor.bills_separately")}
+            </p>
+          )}
+          {!line.component_confirmed && <p className="text-[11px] text-muted-foreground">{t(COMPONENT_LABEL_KEY.unknown)}</p>}
         </div>
         <div className={cn("ml-auto max-w-full shrink-0 text-right sm:max-w-[18rem]", reference && "opacity-70")}>
           {hidden ? (
@@ -101,6 +110,18 @@ export function ReceiptLineView({
               )}
             </>
           )}
+          {flat && (
+            <p className="text-[11px] font-medium text-foreground/80" data-testid="flat-adds-zero">
+              {t("flat.adds_zero")}
+            </p>
+          )}
+          <p
+            className={cn("text-[10px]", foot.kind === "estimate" ? "text-amber-900" : foot.kind === "none" ? "text-muted-foreground" : "text-foreground/70")}
+            data-testid="line-footnote"
+            data-kind={foot.kind}
+          >
+            {foot.text}
+          </p>
           {line.price_notes.map((k) => (
             <p key={k} className="text-[11px] text-muted-foreground" data-testid="price-note" data-note={k}>
               {t(k)}
@@ -127,7 +148,7 @@ export function ReceiptLineView({
       )}
       {line.chain_price_from && (
         <p className="mt-1 text-[11px] text-muted-foreground" data-testid="chain-price">
-          {t("receipt.chain_price", { chain: chainName(site?.chain_id ?? null) })}
+          {t("receipt.chain_price", { chain: site?.chain_name ?? chainName(site?.chain_id ?? null) })}
         </p>
       )}
       {site?.billing_type === "unknown" && line.component === "facility" && !cellHasDollars(line) && (
@@ -138,7 +159,15 @@ export function ReceiptLineView({
 
       {line.why && <p className="mt-1 text-xs text-muted-foreground"><span className="font-medium text-foreground/80">Why:</span> {line.why}</p>}
 
-      {line.cell && <GapDetail cell={line.cell} sources={sources} />}
+      {/* every distinction stays one tap away: technical name, codes, which part of the bill, the file's own words */}
+      <details className="mt-1 text-[11px] text-muted-foreground" data-testid="line-details">
+        <summary className="cursor-pointer select-none">Technical details</summary>
+        <p data-testid="line-technical">
+          {line.technical_name}
+          {line.codes.length > 0 && <> · {line.codes.join(", ")}{line.modifier ? `-${line.modifier}` : ""}</>}
+        </p>
+        {line.cell && <GapDetail cell={line.cell} sources={sources} />}
+      </details>
 
       {line.availability === "not_offered" && line.elsewhere.length > 0 && (
         <Elsewhere line={line} sources={sources} location={location} />
