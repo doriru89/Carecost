@@ -240,7 +240,15 @@ class Registry:
         out: set[str] = set()
         for d in self.codes.domains_for(code):
             out |= set(self.config["code_domains"][d])
+        if self.pctc.get(code) == "9" and code[:1] == "8":  # C4b item 6: a clinical lab code
+            out |= set(self.config.get("clinical_lab_areas") or ())
         return out
+
+    @cached_property
+    def pctc(self) -> dict[str, str]:
+        from app.quote.pctc import load_pctc
+
+        return load_pctc(REPO_ROOT / self.config["pctc_file"])
 
     def describe(self, code: str) -> str | None:
         return self.codes.description(code) or None

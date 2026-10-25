@@ -287,7 +287,9 @@ CONTRACT_FEATURES = {
     *(f"payment:{p}" for p in ("insurance", "cash", "medicare")),
     "billing:office_visit",
     "billing:hospital_outpatient",
-    *(f"rung:{r}" for r in (2, 5, 6, 7, None)),
+    # C4b 3d: rung 7 (a Medicare reference) is never sent for a non-Medicare payment, and a
+    # Medicare payment prices at rung 5, so no quote can show it any more
+    *(f"rung:{r}" for r in (2, 5, 6, None)),
 }
 
 # Shapes the real P1 quotes cannot show yet, and why. Only the hand-made quotes in handmade/ show

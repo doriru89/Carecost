@@ -167,3 +167,47 @@ Numbers (Austin's Mac, 2026-10-25, full real data, registry of 208 sites):
 Numbers (A5 pack `a5.sqlite`, 1,812,636 rows; in-process, Austin's Mac): BCBS HMO shoulder with no
 location: 133 sites, 12 receipts, 963,417 B raw / 60,408 B gzip, p50 63 ms, p95 175 ms (HTTP via
 TestClient: p50 69 ms, p95 95 ms). Near Harvard Square (12 sites): 584,133 B / 45,244 B, p50 17 ms.
+
+## C4b: what a person reads first (Austin 2026-10-25), aggregation fixes
+
+**Headline range** (`SiteQuote.headline_range`). Austin: the range covers the **certain and likely**
+steps only. Low = the sum of their lows, high = the sum of their highs; each step's figure is this
+site's own price (or estimate), or the step's elsewhere range where this site has no evidence it
+does it. `includes` names the steps counted on top of the first visit ("includes: urine test").
+Possible steps are never in it: `may_also_order` lists each with its own figure and plain purpose.
+Three subtotals for the breakdown: `visit_only` (the first visit, every bill), `with_likely` (= the
+headline), `with_possible` (+ possible steps; of one care-path `exclusive_group`, e.g. belly
+ultrasound / belly CT, only the dearest counts, the other is in `alternatives`). The contract checks
+every subtotal equals the visit plus its steps' figures. Self-pay at a hospital clinic with no
+public doctor fee: `from_only` + `headline.doctor_bills_separately` ("from $203").
+
+**Entry options** (`CarePath.entry_options`, `QuoteResponse.options`, `SiteQuote.option_id`). A
+path may say where to go first: rash A = urgent care / primary care (`visit`), B = skin doctor
+(`skin_doctor_visit`); stomach A = urgent care, B = GI listed with `priced: false`. A site gets
+the first option whose kind, site type or service area it matches; the other options' first visits
+are not steps there (AFC no longer shows its $135.61 visit twice). Peers and elsewhere ranges still
+come from the whole path pool. Per option: subtotal spans (min low .. max high over its sites) and
+`cheapest_site_id` (lowest headline low, ties nearest). Ordering `option_then_distance` (default)
+or `option_then_price` (`order_by: price`); with `near`, `max_sites` per option; without, the first
+`full_receipts` of each option carry receipts.
+
+**Aggregation**: (a) CMS PC/TC indicator (`data/quote/pctc.yaml`, `python -m app.quote.pctc
+--rvu-zip <RVU26D zip>`): 3/4/7/9 = no doctor line at a hospital (clinical labs); (b) above; (c)
+notice `hmo_referral_for_specialist` when Q14 may need a referral and a specialist option has sites;
+(d) no rung 7 / Medicare number for a non-Medicare payment (a gap stays a gap, the peer estimate may
+fill it); (e) `availability_reason: price_file_lists_rate` for non-insurance payments.
+
+**A6 TiC flags** (`flags.parquet` -> pack table `row_flags`, `RateStore.flags`, extract column
+`flags`): `institutional_on_physician_npi` rows never price a line; `anesthesia_per_unit` goes to the
+per-unit rule even without a twin; `same_npi_pos_multi_rate` keeps the range with
+`price.several_rates_same_doctors`. **Flat visit rate**: a non-visit TiC row whose group has the
+same amount on a visit code in the same file is the visit's amount: the line keeps it, is never
+gated or summed (`price.flat_visit_rate`, excluded `flat_visit_rate`), its step adds $0.
+
+**ER reference** (`QuoteResponse.er_reference`, never ranked): the 3 nearest hospitals' ED levels
+3-5 (99283-99285), facility + doctor, under the payment; `not_loaded` until the pack has the codes.
+
+New copy keys for the frontend (all `review: true`): `headline.doctor_bills_separately`,
+`price.flat_visit_rate`, `price.several_rates_same_doctors`, `total.excluded.flat_visit_rate`,
+`notice.hmo_referral_for_specialist`, `er.visit_alone_costs_more`, and the availability wording for
+`price_file_lists_rate`.

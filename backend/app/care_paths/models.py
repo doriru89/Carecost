@@ -216,6 +216,12 @@ class Step(_Strict):
     learn_more: list[LearnMore] = Field(default_factory=list)
     ai_potential: list[AiPotential] = Field(default_factory=list)
     reviewer_note: str | None = None
+    exclusive_group: str | None = Field(
+        default=None,
+        pattern=r"^[a-z0-9_]+$",
+        description="C4b: steps that are alternatives of each other (e.g. belly ultrasound or "
+        "belly CT). In the headline's high end only the most expensive member counts",
+    )
 
     def all_codes(self) -> set[str]:
         codes = {c.code for c in self.cpts}
@@ -245,6 +251,37 @@ class GoldenCase(_Strict):
     answers: dict[str, str | list[str]]
     expect: str
     expect_tiers: dict[str, Tier] = Field(default_factory=dict)
+
+
+class EntryOption(_Strict):
+    """C4b (D-UI-3): where a person may go first. Option A (e.g. urgent care / primary care) and
+    option B (e.g. a skin doctor) each have their own first visit and their own price range. A
+    site gets the first option whose kind, type or service area it matches. An option with
+    ``priced: false`` is listed (so the person knows it exists) but has no sites yet."""
+
+    id: str = Field(pattern=r"^[a-z]$")
+    label: Title
+    visit_step: str | None = Field(
+        default=None, description="this option's first visit (a step id); None when not priced"
+    )
+    site_kinds: list[str] = Field(default_factory=list, description="engine X2 kinds")
+    site_types: list[str] = Field(default_factory=list, description="sites.yaml site_type")
+    service_areas: list[str] = Field(default_factory=list, description="sites.yaml service_areas")
+    specialist: bool = Field(
+        default=False, description="a specialist visit (an HMO may need a referral first)"
+    )
+    priced: bool = True
+    missing_reason: str | None = None
+
+    @model_validator(mode="after")
+    def _shape(self) -> EntryOption:
+        if self.priced and not self.visit_step:
+            raise ValueError(f"option {self.id}: a priced option needs its visit_step")
+        if not self.priced and not self.missing_reason:
+            raise ValueError(f"option {self.id}: an unpriced option says why (missing_reason)")
+        if not (self.site_kinds or self.site_types or self.service_areas):
+            raise ValueError(f"option {self.id}: which sites? (kinds, types or service areas)")
+        return self
 
 
 class Exit(_Strict):
@@ -312,6 +349,9 @@ class CarePath(_Strict):
     intro_citations: list[Citation] = Field(min_length=1)
     steps: list[Step] = Field(min_length=1)
     tier_modifiers: list[TierModifier] = Field(default_factory=list)
+    entry_options: list[EntryOption] = Field(
+        default_factory=list, description="C4b: option A / B first visits; empty = one option"
+    )
     exits: list[Exit] = Field(default_factory=list)
     coverage_note: str | None = None
     coverage_citations: list[Citation] = Field(default_factory=list)
@@ -332,6 +372,16 @@ class CarePath(_Strict):
         for m in self.tier_modifiers:
             if m.step not in known:
                 raise ValueError(f"{self.id}: modifier targets unknown step {m.step!r}")
+        oids = [o.id for o in self.entry_options]
+        if len(oids) != len(set(oids)):
+            raise ValueError(f"{self.id}: duplicate entry option ids")
+        visits = [o.visit_step for o in self.entry_options if o.visit_step]
+        if len(visits) != len(set(visits)):
+            raise ValueError(f"{self.id}: two entry options share a visit step")
+        by_id = {s.id: s for s in self.steps}
+        for v in visits:
+            if v not in known or by_id[v].kind != "visit":
+                raise ValueError(f"{self.id}: entry option visit {v!r} is not a visit step")
         return self
 
 

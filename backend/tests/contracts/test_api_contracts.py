@@ -336,10 +336,15 @@ def test_complete_flag_is_honest():
 
 
 def test_reference_rungs_are_never_summed():
-    site = _bcbs_site()
-    ln = _line(site["receipt"], "visit_doctor")
-    assert ln["doctor_fee"]["rung"] == 7
-    ln["in_total"] = True
+    """C4b 3d: rung 7 is no longer sent for BCBS (the handmade line is a gap now); rung 8, the
+    other reference rung, is still never summed."""
+    i, ln = next((i, x) for i in range(3) for x in _bcbs_site(i)["receipt"]["lines"]
+                 if x["in_total"] and x["doctor_fee"])  # fmt: skip
+    site = _bcbs_site(i)
+    ln = _line(site["receipt"], ln["line_id"])
+    ln["doctor_fee"] = {"rung": 8, "explanation_key": "fee.rung_8_chia_badge",
+                        "chia_badge": {"payer_id": "BCBS_MA", "band": "above_median",
+                                       "report_year": 2024}}  # fmt: skip
     with pytest.raises(ValidationError, match="rungs 7-8"):
         _check(site)
 

@@ -198,6 +198,9 @@ class RateStore:
     cash: dict[tuple[str, str], list[Row]] = field(default_factory=dict)
     tic: dict[tuple[str, str, str], list[Row]] = field(default_factory=dict)
     recorder: Recorder | None = None
+    flags: dict[str, frozenset[str]] = field(default_factory=dict)
+    """C4b item 4: A6's TiC row flags (``flags.parquet``, joined on row_id at pack time) by
+    ``Row.uid``: same_npi_pos_multi_rate, anesthesia_per_unit, institutional_on_physician_npi."""
 
     def __post_init__(self) -> None:
         self._index()
@@ -230,6 +233,9 @@ class RateStore:
         if self.recorder is not None:
             self.recorder.add(rows)
         return rows
+
+    def row_flags(self, r: Row) -> frozenset[str]:
+        return self.flags.get(r.uid, frozenset()) if self.flags else frozenset()
 
     def npis(self, r: Row) -> tuple[str, ...]:
         return self.npi_sets.get(r.npi_set, ()) if r.npi_set else ()
@@ -403,6 +409,7 @@ create table strings (id integer primary key, s text not null);
 create table rows ({", ".join(ROW_COLUMNS)});
 create table npi_sets (id integer, npi text);
 create table census_tins (census_id text, tin text);
+create table row_flags (source_id text, row_id text, flags text);
 """
 
 
@@ -422,6 +429,7 @@ def write_pack(
     npi_sets: dict[int, tuple[str, ...]] | None = None,
     census_tins: dict[str, Iterable[str]] | None = None,
     refresh_status: dict[str, dict[str, Any]] | None = None,
+    flags: dict[str, frozenset[str]] | None = None,
 ) -> int:
     """``npi_sets`` / ``census_tins`` may be filled while ``rows`` streams (they are written after
     the rows)."""
@@ -475,6 +483,14 @@ def write_pack(
         "insert into census_tins values (?, ?)",
         [(c, t) for c, tins in sorted((census_tins or {}).items()) for t in sorted(tins)],
     )
+    db.executemany(
+        "insert into row_flags values (?, ?, ?)",
+        [
+            (*uid.split(":", 1), "|".join(sorted(f)))
+            for uid, f in sorted((flags or {}).items())
+            if f
+        ],
+    )
     db.execute("create index rows_tin on rows (tin)")
     db.commit()
     db.close()
@@ -524,6 +540,13 @@ def load_pack(
         rows.append(Row(*vals))
     used = {r.npi_set for r in rows if r.npi_set}
     npis: dict[int, list[str]] = defaultdict(list)
+    flags: dict[str, frozenset[str]] = {}
+    has_flags = db.execute(
+        "select 1 from sqlite_master where type = 'table' and name = 'row_flags'"
+    ).fetchone()
+    if has_flags:  # packs built before C4b have no flags table
+        for src, rid, fl in db.execute("select source_id, row_id, flags from row_flags"):
+            flags[f"{src}:{rid}"] = frozenset(fl.split("|"))
     for i, npi in db.execute("select id, npi from npi_sets order by id, npi"):
         if i in used and valid_npi(npi):  # packs built before the pack-side filter carry "0"
             npis[i].append(sys.intern(npi))
@@ -541,6 +564,7 @@ def load_pack(
         npi_sets={k: tuple(v) for k, v in npis.items()},
         census_tins={c: frozenset(v) for c, v in census.items()},
         refresh_status=json.loads(meta.get("refresh_status") or "{}"),
+        flags=flags,
     )
 
 
@@ -561,7 +585,7 @@ def write_extract(store: RateStore, uids: Iterable[str], csv_path: Path, sources
     out = sorted({idx[u] for u in uids}, key=lambda r: (r.source_id, r.stage_row, r.row_id))
     used = {r.source_id for r in out}
     with csv_path.open("w", newline="") as f:
-        w = csv.DictWriter(f, ["row_ref", *ROW_COLUMNS, "npis"], lineterminator="\n")
+        w = csv.DictWriter(f, ["row_ref", *ROW_COLUMNS, "npis", "flags"], lineterminator="\n")
         w.writeheader()
         for r in out:
             d = {c: _csv_value(getattr(r, c)) for c in ROW_COLUMNS}
@@ -569,6 +593,7 @@ def write_extract(store: RateStore, uids: Iterable[str], csv_path: Path, sources
             d["ref"] = ""
             d["npi_set"] = ""
             d["npis"] = "|".join(store.npis(r))
+            d["flags"] = "|".join(sorted(store.row_flags(r)))
             w.writerow(d)
     doc = {
         "version": 2,
@@ -597,14 +622,17 @@ def write_extract(store: RateStore, uids: Iterable[str], csv_path: Path, sources
 
 def read_extract(
     csv_path: Path = EXTRACT_CSV, sources_path: Path = EXTRACT_SOURCES
-) -> tuple[list[Row], dict[str, SourceMeta], DataVersionInfo, list[str], dict, dict]:
+) -> tuple[list[Row], dict[str, SourceMeta], DataVersionInfo, list[str], dict, dict, dict]:
     doc = yaml.safe_load(sources_path.read_text())
     sources = {sid: SourceMeta(source_id=sid, **m) for sid, m in doc["sources"].items()}
     rows: list[Row] = []
     npis: dict[int, tuple[str, ...]] = {}
     set_ids: dict[tuple[str, ...], int] = {}
+    flags: dict[str, frozenset[str]] = {}
     with csv_path.open() as f:
         for d in csv.DictReader(f):
+            if d.get("flags"):
+                flags[f"{d['source_id']}:{d['row_id']}"] = frozenset(d["flags"].split("|"))
             meta = sources[d["source_id"]]
             d["ref"] = standard_ref(meta, d["row_ref"], int(d["stage_row"]))
             if d.get("npis"):
@@ -619,15 +647,15 @@ def read_extract(
         tic_release=dv["tic_release"],
     )
     census = {c: list(t) for c, t in (doc.get("census_tins") or {}).items()}
-    return rows, sources, version, list(doc.get("codes") or []), npis, census
+    return rows, sources, version, list(doc.get("codes") or []), npis, census, flags
 
 
 def pack_from_extract(
     out: Path, csv_path: Path = EXTRACT_CSV, sources_path: Path = EXTRACT_SOURCES
 ) -> int:
-    rows, sources, version, codes, npis, census = read_extract(csv_path, sources_path)
+    rows, sources, version, codes, npis, census, flags = read_extract(csv_path, sources_path)
     return write_pack(out, rows=rows, sources=sources, version=version, codes=codes,
-                      npi_sets=npis, census_tins=census)  # fmt: skip
+                      npi_sets=npis, census_tins=census, flags=flags)  # fmt: skip
 
 
 def store_from_extract(

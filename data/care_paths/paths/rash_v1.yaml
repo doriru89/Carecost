@@ -226,7 +226,8 @@ steps:
     why: For more complicated skin problems, the first doctor may send you to a skin specialist.
     when_skipped: Your first visit was already with a skin doctor, or the rash cleared up.
   when_skipped_basis: logic
-  reviewer_note: Some plans need the first doctor's order before this visit; the first visit fills that role here.
+  reviewer_note: "Some plans need the first doctor's order before this visit; the first visit fills that role here.
+    C4b (entry_options): this is option B's first visit; at an option-A site it is not a line."
   citations:
   - doc: medlineplus_rash
     year: 2024
@@ -242,6 +243,25 @@ steps:
     role: alternative
     mapping: asserted
     note: Longer new-patient visit
+# C4b (D-UI-3): where to go first. A = urgent care or a primary-care office (first visit = `visit`). B = a skin
+# doctor (first visit = `skin_doctor_visit`). A site gets one option, so an urgent care no longer shows a
+# skin-doctor visit line (AFC showed its own visit price twice). pending_austin.
+entry_options:
+- id: a
+  label:
+    en: Urgent care or primary care
+    zh: 急诊诊所（urgent care）或家庭医生
+  visit_step: visit
+  site_kinds: [urgent_care]
+  site_types: [primary_care_office]
+  service_areas: [urgent_care]
+- id: b
+  label:
+    en: Skin doctor (dermatologist)
+    zh: 皮肤科医生
+  visit_step: skin_doctor_visit
+  service_areas: [skin]
+  specialist: true
 exits:
 - when: It is one spot or mole that is new or changing
   text: Answer again and choose a spot or mole on the skin. That path covers a mole check and a sample.

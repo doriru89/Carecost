@@ -24,6 +24,9 @@ SHOULDER = "shoulder_chronic_clicking_v1"
 AFC_ARL = "afc_urgent_care_arlington_arlington"
 CHA = "cha_cambridge_hospital"
 ASC = "mass_general_brigham_endoscopy_clinic_braintree"
+TMC = "tufts_medical_center"
+CASH = {"kind": "cash"}
+RASH = "rash_v1"
 
 
 def _q(engine, payment=BCBS_HMO, path=SHOULDER, **where):
@@ -298,16 +301,20 @@ def test_the_14_dollar_afc_tufts_visit_is_set_aside(engine):
     assert v.in_total
 
 
-def test_the_cha_5_dollar_colonoscopy_is_unusual_and_not_summed(engine):
-    """P8 / R17: CHA's own Medicare row for 45378 is $5.04, against ~$1,000 at other
-    hospitals: the whole line is unusual, shown, not summed."""
-    r = _q(engine, {"kind": "medicare"}, "colon_diagnostic_v1", site_ids=[CHA])
-    ln = _line(r, CHA, "colonoscopy_facility")
-    assert ln.cell.kind == "money" and ln.cell.low == 5.04
+def test_a_whole_line_far_below_its_peers_is_unusual_and_not_summed(engine):
+    """P8 / R17: a line whose every row is under 1/3x of its peer median is unusual as a whole:
+    shown, not summed. C4b item 9 (A7 merged): CHA's $5.04 Medicare 45378 row is now excluded at
+    ETL (not_dollars), so the rule is carried by Tufts Medical Center's own self-pay row for 87220
+    (skin scraping), $10.50 (tufts_mrf stage row 170) against a $43 median at 12 hospital groups."""
+    r = _q(engine, CASH, RASH, site_ids=[TMC])
+    ln = _line(r, TMC, "skin_scraping_facility")
+    assert ln.cell.kind == "money" and ln.cell.low == 10.5
+    assert ln.cell.prov.row_ref.endswith(":170") and ln.cell.prov.source_id == "tufts_mrf"
     assert ln.unusual is not None and ln.unusual.whole_line and not ln.in_total
-    assert ln.unusual.peer_median > 500
-    reasons = {e.line_id: e.reason for e in _site(r, CHA).receipt.totals.excluded}
-    assert reasons["colonoscopy_facility"] == "unusual"
+    assert ln.unusual.peer_median == 43.0 and ln.unusual.n_groups >= 5
+    assert ln.cell.low < ln.unusual.peer_median / 3
+    reasons = {e.line_id: e.reason for e in _site(r, TMC).receipt.totals.excluded}
+    assert reasons["skin_scraping_facility"] == "unusual"
 
 
 # --------------------------------------------------------------------------- 10, 11, 12
@@ -328,9 +335,18 @@ def test_every_site_has_a_step_summary_for_the_map(engine):
 def test_unknown_billing_is_priced_as_a_hospital_clinic(engine, registry):
     """P9 / R7: billing_type unknown -> facility line + doctor line, never an office's one
     global line; the facility gap says it may charge a hospital facility fee."""
-    sid = next(s.id for s in registry.sites.values() if s.billing_type == "unknown"
+    # C4b item 9 (A7 merged): the first unknown-billing ortho site is now NEBH's surgery center,
+    # an ASC (priced as an ASC, not admitted to a visit path); the rule is about a clinic, so the
+    # selector skips surgery centers and takes the first unknown-billing site the path admits
+    # (orthoboston_llc_needham on the A7 data)
+    pool = set(
+        engine._admitted(registry.paths[SHOULDER], registry.path_areas(registry.paths[SHOULDER]))
+    )
+    sid = next(s.id for s in sorted(registry.sites.values(), key=lambda s: s.id)
+               if s.billing_type == "unknown" and s.site_type != "ambulatory_surgery_center"
                and s.listing_status != "registry_only" and not s.children_only
-               and "ortho" in s.service_areas)  # fmt: skip
+               and "ortho" in s.service_areas and s.id in pool)  # fmt: skip
+    assert engine._billing(registry.sites[sid]) == "hospital_outpatient"
     r = _q(engine, site_ids=[sid])
     lines = {ln.line_id: ln for ln in r.sites[0].receipt.lines}
     assert "visit_facility" in lines and "visit_doctor" in lines
@@ -520,18 +536,21 @@ def test_o_anesthesia_per_unit_rate_is_multiplied_by_base_units(engine, store):
 # --------------------------------------------------------------------------- contract level
 
 
-def _cha_medicare(eng):
-    r = _q(eng, {"kind": "medicare"}, "colon_diagnostic_v1", site_ids=[CHA])
-    return _line(r, CHA, "colonoscopy_facility"), _site(r, CHA)
+def _tmc_scraping(eng):
+    """C4b item 9 (A7 merged): the unusual line the contract-level tests sum or gate is Tufts
+    Medical Center's $10.50 self-pay 87220 row (was CHA's $5.04 Medicare 45378, now excluded
+    at ETL as not_dollars)."""
+    r = _q(eng, CASH, RASH, site_ids=[TMC])
+    return _line(r, TMC, "skin_scraping_facility"), _site(r, TMC)
 
 
 def _with_level(engine, ratios, **outl):
     eng = _engine_with(engine, outliers={**engine.out_cfg, **outl}) if outl else Engine(
         engine.store, engine.reg)  # fmt: skip
     q = eng._context(QuoteRequest.model_validate({
-        "payment": {"kind": "medicare"}, "care_path_id": "colon_diagnostic_v1", "answers": {},
+        "payment": CASH, "care_path_id": RASH, "answers": {},
         "service_codes": [], "picked_by": "person", "site_ids": None}), AS_OF)  # fmt: skip
-    key = eng.contract_key(eng.reg.sites[CHA], "file:cha_mrf", q)
+    key = eng.contract_key(eng.reg.sites[TMC], "file:tufts_mrf", q)
     eng.contract_levels = {**eng.contract_levels, key: ratios}
     return eng
 
@@ -543,10 +562,13 @@ def test_a_group_consistently_low_on_five_other_codes_is_summed_with_a_note(engi
     """Austin 2026-10-25: a line outside 1/3x-3x whose group sits <= 0.5x its peers on >= 5
     other codes (O contract_level) is its contract: summed at its real price, not unusual, with
     price.group_consistently_lower."""
-    ln, sq = _cha_medicare(_with_level(engine, FIVE_LOW))
-    assert ln.unusual is None and ln.in_total and ln.cell.low == 5.04
+    ln, sq = _tmc_scraping(_with_level(engine, FIVE_LOW))
+    # skin scraping is a possible step: summed lines are certain/likely only, so "summed" here
+    # means the line is a real price again (not unusual, the note) and counts in might_add
+    assert ln.unusual is None and ln.cell.low == 10.5
     assert "price.group_consistently_lower" in ln.price_notes
-    assert "colonoscopy_facility" in sq.receipt.totals.likely.line_ids
+    st = next(s for s in sq.steps if s.key == "skin_scraping")
+    assert st.figure == "own" and "skin_scraping" in sq.headline.might_add.step_keys
 
 
 def test_a_single_extreme_line_in_a_normal_group_is_still_gated(engine):
@@ -554,9 +576,9 @@ def test_a_single_extreme_line_in_a_normal_group_is_still_gated(engine):
     for ratios in (
         {f"{c}--facility": 1.0 for c in FIVE_LOW},  # normal elsewhere
         dict(list(FIVE_LOW.items())[:4]),  # 4 other codes
-        {"45378--facility": 0.01, **dict(list(FIVE_LOW.items())[:4])},
+        {"87220--facility": 0.01, **dict(list(FIVE_LOW.items())[:4])},
     ):  # own code
-        ln, _ = _cha_medicare(_with_level(engine, ratios))
+        ln, _ = _tmc_scraping(_with_level(engine, ratios))
         assert ln.unusual is not None and ln.unusual.whole_line and not ln.in_total
         assert not any(n.startswith("price.group_consistently") for n in ln.price_notes)
     # the $14 Tufts row of an otherwise normal group stays set aside
@@ -570,7 +592,7 @@ def test_contract_level_thresholds_are_the_rule(engine):
         {"contract_level": {"min_codes": 6, "high": 2.0, "low": 0.5}},
         {"contract_level": {"min_codes": 5, "high": 2.0, "low": 0.4}},
     ):
-        ln, _ = _cha_medicare(_with_level(engine, FIVE_LOW, **outl))
+        ln, _ = _tmc_scraping(_with_level(engine, FIVE_LOW, **outl))
         assert ln.unusual is not None and not ln.in_total
 
 
@@ -588,10 +610,10 @@ def test_contract_level_high_side_at_exactly_two_x(engine):
     high = {k: 2.0 for k in FIVE_LOW}
     eng = _with_level(engine, high)
     q = eng._context(QuoteRequest.model_validate({
-        "payment": {"kind": "medicare"}, "care_path_id": "colon_diagnostic_v1", "answers": {},
+        "payment": CASH, "care_path_id": RASH, "answers": {},
         "service_codes": [], "picked_by": "person", "site_ids": None}), AS_OF)  # fmt: skip
-    site = eng.reg.sites[CHA]
-    assert eng._contract_level(site, "file:cha_mrf", "45378", q, "high")
-    assert not eng._contract_level(site, "file:cha_mrf", "45378", q, "low")
+    site = eng.reg.sites[TMC]  # C4b item 9: the same group as the repointed tests above
+    assert eng._contract_level(site, "file:tufts_mrf", "87220", q, "high")
+    assert not eng._contract_level(site, "file:tufts_mrf", "87220", q, "low")
     eng2 = _with_level(engine, {k: 1.99 for k in FIVE_LOW})
-    assert not eng2._contract_level(site, "file:cha_mrf", "45378", q, "high")
+    assert not eng2._contract_level(site, "file:tufts_mrf", "87220", q, "high")

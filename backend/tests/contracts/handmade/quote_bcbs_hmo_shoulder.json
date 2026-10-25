@@ -52,20 +52,6 @@
         "our_rule": "hospital_monthly"
       }
     },
-    "cms_pfs_rvu26d": {
-      "source_kind": "medicare_pfs",
-      "publisher": "CMS (Medicare physician fee schedule) \u00b7 RVU26D",
-      "freshness": {
-        "last_updated": "2026-10-01",
-        "expected_by": "2027-01-01",
-        "late_to_refresh": false,
-        "source_rule": "fee_schedule_quarterly",
-        "fetched_at": "2026-10-24",
-        "our_refresh_due": "2027-01-01",
-        "stale_on_our_side": false,
-        "our_rule": "fee_schedule_per_release"
-      }
-    },
     "franciscan_mrf": {
       "source_kind": "hospital_mrf",
       "publisher": "Franciscan Children's",
@@ -232,7 +218,7 @@
           },
           {
             "line_id": "visit_doctor",
-            "tier": "certain",
+            "tier": "not_in_public_data",
             "likelihood": "certain",
             "step_id": "visit",
             "codes": [
@@ -248,32 +234,17 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "money",
-              "low": 75.54,
-              "high": 75.54,
-              "basis": "fee_schedule",
-              "prov": {
-                "source_id": "cms_pfs_rvu26d",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Oct_nonQPP.csv",
-                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
-                "source_date": "2026-10-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13010:facility:01",
-                "payer_id": null
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "bcbs_ma_tic_hmo",
+                "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
               }
             },
             "list_price": null,
             "tier_basis": "our_judgment",
-            "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
-              "group_name": null,
-              "group_tin": null,
-              "npi_count": null,
-              "chia_badge": null,
-              "by_npi": null
-            },
+            "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
@@ -707,7 +678,7 @@
           "excluded": [
             {
               "line_id": "visit_doctor",
-              "reason": "reference_only"
+              "reason": "no_dollar_amount"
             },
             {
               "line_id": "xray_reading",

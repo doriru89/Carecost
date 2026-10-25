@@ -109,7 +109,10 @@ def test_a_fee_schedule_number_carries_no_payer():
 
 
 def test_every_fee_schedule_number_in_the_fixtures_has_no_payer():
-    for name in ("quote_medicare_shoulder", "quote_masshealth_manual", "quote_bcbs_hmo_shoulder"):
+    """C4b 3d (rule changed): the BCBS quote carries no fee-schedule number at all now (no
+    Medicare reference for an insured person); Medicare and MassHealth still do."""
+    for name, want in (("quote_medicare_shoulder", True), ("quote_masshealth_manual", True),
+                       ("quote_bcbs_hmo_shoulder", False)):  # fmt: skip
         r = QuoteResponse.model_validate(fixture_doc(name))
         seen = 0
         for sq in r.sites:
@@ -121,7 +124,7 @@ def test_every_fee_schedule_number_in_the_fixtures_has_no_payer():
                     seen += 1
                     assert c.basis.value in ("fee_schedule", "estimate")
                     assert all(p.payer_id is None for p in c.provs())
-        assert seen, name
+        assert bool(seen) == want, name
 
 
 def test_gov_reader_rows_carry_place_of_service():
