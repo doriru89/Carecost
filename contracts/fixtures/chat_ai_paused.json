@@ -8,6 +8,8 @@
     "soft_cap_usd": 1.0,
     "hard_cap_usd": 2.0,
     "spent_today_usd": 2.01,
+    "turns_today": 12,
+    "turn_cap": 40,
     "wallet": "ok",
     "resets_at": "2026-10-25T00:00:00Z"
   },
@@ -17,5 +19,6 @@
     "message_key": "ai.paused_ip_cap",
     "resumes_at": "2026-10-25T00:00:00Z",
     "browse_prices_available": true
-  }
+  },
+  "conversation_turn": 3
 }

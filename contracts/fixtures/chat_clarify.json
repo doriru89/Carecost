@@ -8,12 +8,26 @@
     "soft_cap_usd": 1.0,
     "hard_cap_usd": 2.0,
     "spent_today_usd": 0.06,
+    "turns_today": 3,
+    "turn_cap": 40,
     "wallet": "ok",
     "resets_at": "2026-10-25T00:00:00Z"
   },
   "reply": {
     "kind": "clarify",
     "lead_in": "Thanks. Two quick questions so I can narrow this down.",
+    "understood": [
+      {
+        "question_id": "Q1",
+        "value": "shoulder",
+        "evidence": "My shoulder"
+      },
+      {
+        "question_id": "Q3",
+        "value": "6w_6m",
+        "evidence": "for a few months"
+      }
+    ],
     "questions": [
       {
         "question_id": "Q2",
@@ -79,5 +93,6 @@
       }
     ],
     "card_ids": []
-  }
+  },
+  "conversation_turn": 1
 }

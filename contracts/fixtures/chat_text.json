@@ -1,0 +1,32 @@
+{
+  "_fixture": true,
+  "_schema": "ChatResponse",
+  "conversation_id": "c_7f3a9d2e41b8c605",
+  "llm_called": true,
+  "budget": {
+    "state": "near_soft_cap",
+    "soft_cap_usd": 1.0,
+    "hard_cap_usd": 2.0,
+    "spent_today_usd": 0.83,
+    "turns_today": 3,
+    "turn_cap": 40,
+    "wallet": "ok",
+    "resets_at": "2026-10-25T00:00:00Z"
+  },
+  "conversation_turn": 2,
+  "reply": {
+    "kind": "text",
+    "text": "An X-ray is usually the first picture for a sore joint. Here is what it can cost nearby.",
+    "card_ids": [],
+    "services": [
+      {
+        "service_id": "svc_73030",
+        "plain_name": "Quick picture of the shoulder bones"
+      }
+    ],
+    "glossary_keys": [
+      "xray"
+    ],
+    "focus_line_id": "xray_facility"
+  }
+}

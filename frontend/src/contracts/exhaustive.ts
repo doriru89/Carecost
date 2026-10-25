@@ -24,7 +24,7 @@ import type {
   TierBasis,
   YouPay,
 } from "@/generated/contracts/quote_api";
-import type { ChatReply, Disposition } from "@/generated/contracts/chat_api";
+import type { AiPausedReply, ChatReply, Disposition } from "@/generated/contracts/chat_api";
 
 /** One fixed copy key per Gap kind (backend: app.etl.contracts.GAP_GLOSSARY). */
 export const GAP_COPY_KEY = {
@@ -151,6 +151,7 @@ export const CHAT_REPLY_FULL_PAGE = {
   clarify: false,
   care_paths: false,
   text: false,
+  llm_invalid: false,
   ai_paused: false,
 } as const satisfies Record<ChatReply["kind"], boolean>;
 
@@ -163,6 +164,14 @@ export const NOTICE_KEY = {
   masshealth_aco_may_differ: "notice.masshealth_aco_may_differ",
   medicare_advantage_is_insurance: "notice.medicare_advantage_is_insurance",
 } as const satisfies Record<QuoteResponse["notices"][number], string>;
+
+/** Why the AI is paused -> fixed copy key (backend: app.chat.contracts.PAUSE_KEY). */
+export const PAUSE_REASON_KEY = {
+  ip_daily_cap: "ai.paused_ip_cap",
+  wallet_exhausted: "ai.paused_wallet",
+  provider_unavailable: "ai.paused_provider",
+  conversation_cap: "ai.paused_conversation_cap",
+} as const satisfies Record<AiPausedReply["reason"], string>;
 
 export const DISPOSITION_RANK = {
   call_911: 4,

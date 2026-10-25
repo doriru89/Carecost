@@ -18,7 +18,8 @@
           "enum": [
             "ai.paused_ip_cap",
             "ai.paused_wallet",
-            "ai.paused_provider"
+            "ai.paused_provider",
+            "ai.paused_conversation_cap"
           ],
           "title": "Message Key",
           "type": "string"
@@ -27,7 +28,8 @@
           "enum": [
             "ip_daily_cap",
             "wallet_exhausted",
-            "provider_unavailable"
+            "provider_unavailable",
+            "conversation_cap"
           ],
           "title": "Reason",
           "type": "string"
@@ -42,7 +44,7 @@
               "type": "null"
             }
           ],
-          "description": "UTC; None when unknown (wallet / provider)",
+          "description": "None when unknown (wallet / provider)",
           "title": "Resumes At"
         }
       },
@@ -58,7 +60,7 @@
     },
     "BudgetStatus": {
       "additionalProperties": false,
-      "description": "D2. Per hashed IP per UTC day; the wallet is the prepaid ceiling (~$10).",
+      "description": "D2 + metrics F2. Per hashed IP per provider day (the reset time zone is provider config:\nGemini resets at midnight Pacific). Dollars and turns both count; whichever hits first pauses.\nThe wallet is the prepaid ceiling (~$10).",
       "properties": {
         "hard_cap_usd": {
           "exclusiveMinimum": 0,
@@ -90,6 +92,18 @@
           "title": "State",
           "type": "string"
         },
+        "turn_cap": {
+          "description": "Per-IP daily turn cap (a share of the project RPD)",
+          "exclusiveMinimum": 0,
+          "title": "Turn Cap",
+          "type": "integer"
+        },
+        "turns_today": {
+          "description": "LLM turns this IP used today, this one included",
+          "minimum": 0,
+          "title": "Turns Today",
+          "type": "integer"
+        },
         "wallet": {
           "enum": [
             "ok",
@@ -105,6 +119,8 @@
         "soft_cap_usd",
         "hard_cap_usd",
         "spent_today_usd",
+        "turns_today",
+        "turn_cap",
         "wallet",
         "resets_at"
       ],
@@ -177,11 +193,19 @@
         "text": {
           "title": "Text",
           "type": "string"
+        },
+        "understood": {
+          "items": {
+            "$ref": "#/$defs/InferredAnswer"
+          },
+          "title": "Understood",
+          "type": "array"
         }
       },
       "required": [
         "kind",
         "text",
+        "understood",
         "candidates",
         "card_ids"
       ],
@@ -218,6 +242,9 @@
           "$ref": "#/$defs/TextReply"
         },
         {
+          "$ref": "#/$defs/LlmInvalidReply"
+        },
+        {
           "$ref": "#/$defs/AiPausedReply"
         }
       ]
@@ -230,9 +257,11 @@
             "items": {
               "type": "string"
             },
+            "maxItems": 8,
             "type": "array"
           },
           "description": "Chip answers so far, questions.yaml id -> answer values (client keeps state)",
+          "maxProperties": 20,
           "title": "Answers",
           "type": "object"
         },
@@ -254,6 +283,28 @@
           "format": "email",
           "title": "Email",
           "type": "string"
+        },
+        "focus": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Focus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "P5: the receipt line the person is asking about, so the server can paste our own sourced text for it into the prompt"
+        },
+        "history": {
+          "description": "P5b: the person's own earlier messages, oldest first. Never assistant turns: a client-forged assistant turn is how the old route was broken.",
+          "items": {
+            "maxLength": 2000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 6,
+          "title": "History",
+          "type": "array"
         },
         "locale": {
           "enum": [
@@ -302,6 +353,8 @@
         "payment",
         "email",
         "answers",
+        "history",
+        "focus",
         "locale"
       ],
       "title": "ChatRequest",
@@ -318,8 +371,14 @@
           "title": "Conversation Id",
           "type": "string"
         },
+        "conversation_turn": {
+          "description": "The server's count for this conversation",
+          "minimum": 1,
+          "title": "Conversation Turn",
+          "type": "integer"
+        },
         "llm_called": {
-          "description": "False for red-flag, ai_paused and cached replies",
+          "description": "From the LLM client's call meter, never set by the handler. False for red-flag, ai_paused and cached replies",
           "title": "Llm Called",
           "type": "boolean"
         },
@@ -329,6 +388,7 @@
               "ai_paused": "#/$defs/AiPausedReply",
               "care_paths": "#/$defs/CarePathsReply",
               "clarify": "#/$defs/ClarifyReply",
+              "llm_invalid": "#/$defs/LlmInvalidReply",
               "red_flag": "#/$defs/RedFlagReply",
               "text": "#/$defs/TextReply"
             },
@@ -348,6 +408,9 @@
               "$ref": "#/$defs/TextReply"
             },
             {
+              "$ref": "#/$defs/LlmInvalidReply"
+            },
+            {
               "$ref": "#/$defs/AiPausedReply"
             }
           ],
@@ -358,7 +421,8 @@
         "conversation_id",
         "reply",
         "budget",
-        "llm_called"
+        "llm_called",
+        "conversation_turn"
       ],
       "title": "ChatResponse",
       "type": "object"
@@ -459,11 +523,19 @@
           "minItems": 1,
           "title": "Questions",
           "type": "array"
+        },
+        "understood": {
+          "items": {
+            "$ref": "#/$defs/InferredAnswer"
+          },
+          "title": "Understood",
+          "type": "array"
         }
       },
       "required": [
         "kind",
         "lead_in",
+        "understood",
         "questions",
         "candidates",
         "card_ids"
@@ -480,6 +552,84 @@
         "routine"
       ],
       "type": "string"
+    },
+    "Focus": {
+      "additionalProperties": false,
+      "properties": {
+        "care_path_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9_]+_v[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Care Path Id"
+        },
+        "line_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Line Id"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9_]*$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Site Id"
+        }
+      },
+      "required": [
+        "care_path_id",
+        "site_id",
+        "line_id"
+      ],
+      "title": "Focus",
+      "type": "object"
+    },
+    "InferredAnswer": {
+      "additionalProperties": false,
+      "description": "P5: an answer the model read from the person's own words, shown as a pre-selected chip\n(\"I understood: ... [change]\"). Never the absence of something (no \"none\" values).",
+      "properties": {
+        "evidence": {
+          "description": "Verbatim substring of the person's own text that supports it",
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Evidence",
+          "type": "string"
+        },
+        "question_id": {
+          "pattern": "^Q[0-9]+$",
+          "title": "Question Id",
+          "type": "string"
+        },
+        "value": {
+          "pattern": "^[a-z0-9_]{1,40}$",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question_id",
+        "value",
+        "evidence"
+      ],
+      "title": "InferredAnswer",
+      "type": "object"
     },
     "InsurancePayment": {
       "additionalProperties": false,
@@ -522,6 +672,35 @@
         "network"
       ],
       "title": "InsurancePayment",
+      "type": "object"
+    },
+    "LlmInvalidReply": {
+      "additionalProperties": false,
+      "description": "The model answered but its output failed validation twice (one retry, both charged).",
+      "properties": {
+        "browse_prices_available": {
+          "const": true,
+          "default": true,
+          "title": "Browse Prices Available",
+          "type": "boolean"
+        },
+        "kind": {
+          "const": "llm_invalid",
+          "title": "Kind",
+          "type": "string"
+        },
+        "message_key": {
+          "const": "ai.output_invalid",
+          "title": "Message Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "message_key",
+        "browse_prices_available"
+      ],
+      "title": "LlmInvalidReply",
       "type": "object"
     },
     "MassHealthPayment": {
@@ -624,6 +803,28 @@
       "title": "RedFlagReply",
       "type": "object"
     },
+    "ServiceRef": {
+      "additionalProperties": false,
+      "description": "P5: a catalog service the model points at when no care path fits. The UI quotes it through\nthe manual path with picked_by=assistant: shown, labelled, never summed.",
+      "properties": {
+        "plain_name": {
+          "description": "Filled from the catalog by id, never by the model",
+          "title": "Plain Name",
+          "type": "string"
+        },
+        "service_id": {
+          "pattern": "^[a-z0-9][a-z0-9_]*$",
+          "title": "Service Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_id",
+        "plain_name"
+      ],
+      "title": "ServiceRef",
+      "type": "object"
+    },
     "TextReply": {
       "additionalProperties": false,
       "description": "Anything else: out of scope, 'not covered yet', a follow-up answer. No prices in text.",
@@ -635,10 +836,38 @@
           "title": "Card Ids",
           "type": "array"
         },
+        "focus_line_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The receipt line this explains: must be the request's focus",
+          "title": "Focus Line Id"
+        },
+        "glossary_keys": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Glossary Keys",
+          "type": "array"
+        },
         "kind": {
           "const": "text",
           "title": "Kind",
           "type": "string"
+        },
+        "services": {
+          "items": {
+            "$ref": "#/$defs/ServiceRef"
+          },
+          "maxItems": 3,
+          "title": "Services",
+          "type": "array"
         },
         "text": {
           "title": "Text",
@@ -648,7 +877,10 @@
       "required": [
         "kind",
         "text",
-        "card_ids"
+        "card_ids",
+        "services",
+        "glossary_keys",
+        "focus_line_id"
       ],
       "title": "TextReply",
       "type": "object"

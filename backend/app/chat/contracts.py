@@ -12,24 +12,101 @@ Order of work on the server for every message (the contract makes the order visi
 
 Plain JSON, not streaming: see contracts/README.md ("Why plain JSON").
 
+Registry membership is a real validator, not a fixture test: a ``ChatResponse`` only validates
+with a ``ChatContext`` (``model_validate(data, context=ctx.as_context())``), which carries the
+registries (catalog, questions.yaml, redflags.json, glossary), the request it answers and the LLM
+call meter. Without one, validation fails, so the endpoint cannot skip the checks. Note for the
+chat stream: do not declare ``response_model=ChatResponse`` on the route (FastAPI would
+re-validate without the context); validate once with the context and return its JSON.
+
 ``python -m app.api_contracts`` regenerates ``contracts/chat_api.schema.json``.
 """
 
 from __future__ import annotations
 
+import json
 import re
-from datetime import datetime
-from typing import Annotated, Literal, Union
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Annotated, Any, Literal, Union
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, model_validator
+import yaml
+from pydantic import (
+    AfterValidator,
+    AwareDatetime,
+    BaseModel,
+    ConfigDict,
+    EmailStr,
+    Field,
+    ValidationInfo,
+    model_validator,
+)
 
-from app.quote.contracts import ANSWER_RE, PATH_ID_RE, QUESTION_ID_RE, Payment
+from app.quote.contracts import (
+    ANSWER_RE,
+    PATH_ID_RE,
+    QUESTION_ID_RE,
+    Answers,
+    Catalog,
+    Payment,
+    check_answers,
+)
+from app.sites.contracts import ID_RE
 
 Disposition = Literal["call_911", "er_today", "seen_today", "routine"]
 """Exactly the four dispositions in data/redflags/redflags.json (a test keeps them equal)."""
 
 MAX_QUESTIONS_PER_TURN = 2
 MAX_TEXT_CHARS = 2000
+MAX_HISTORY_TURNS = 6  # P5b: earlier user turns the client may send back
+MAX_HISTORY_CHARS = 4000
+MAX_TURNS_PER_CONVERSATION = 12  # metrics F4: past this, the reply is ai_paused(conversation_cap)
+MAX_LLM_ATTEMPTS = 2  # one retry at most; both attempts are charged (failure review F10)
+MAX_LLM_TEXT_CHARS = 300
+MAX_EVIDENCE_CHARS = 80
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+
+
+# --------------------------------------------------------------------------- LLM text filter
+
+_MONEY_WORDS = r"(dollars?|usd|bucks|cents?|美元|美金|块钱|块|元)"
+_LLM_TEXT_BANNED: list[tuple[str, re.Pattern[str]]] = [
+    ("a currency symbol", re.compile(r"[$¥€£₹]")),
+    (
+        "an amount of money",
+        re.compile(
+            rf"[0-9零一二两三四五六七八九十百千万][0-9.,]*\s*(k|千|万)?\s*{_MONEY_WORDS}", re.I
+        ),
+    ),
+    ("an amount of money", re.compile(r"\b(usd|dollars?)\s*[0-9]", re.I)),
+    ("a price", re.compile(r"\b(costs?|price[sd]?|charges?|pay|fee)s?\b\D{0,12}[0-9]", re.I)),
+    ("a billing code", re.compile(r"\b([0-9]{4}[0-9A-Z]|[A-Z][0-9]{4})\b")),
+    (
+        "a link",
+        re.compile(
+            r"https?://|www\.|\b[a-z0-9-]+\.(com|org|net|io|gov|edu|co|us|info|biz|ly|me|app)\b",
+            re.I,
+        ),
+    ),
+    ("an email address", re.compile(r"@")),
+    ("a phone number", re.compile(r"\+?\d[\d\s().-]{6,}\d|\b1[-\s]?\d{3}[-\s]?[A-Z0-9]{3,}", re.I)),
+    ("markup", re.compile(r"[<>]|\]\(")),
+]
+
+
+def check_llm_text(v: str) -> str:
+    """Every string an LLM writes for the screen: one or two short sentences, no dollars, codes,
+    links, phone numbers or markup. The UI supplies every number; the AI only explains."""
+    if len(v) > MAX_LLM_TEXT_CHARS:
+        raise ValueError(f"LLM text is over {MAX_LLM_TEXT_CHARS} chars")
+    for what, rx in _LLM_TEXT_BANNED:
+        if rx.search(v):
+            raise ValueError(f"LLM text may not contain {what}: {v!r}")
+    return v
+
+
+LlmText = Annotated[str, AfterValidator(check_llm_text)]
 
 
 class _Strict(BaseModel):
@@ -44,6 +121,18 @@ class Title(_Strict):
 # --------------------------------------------------------------------------- request
 
 
+class Focus(_Strict):
+    care_path_id: str | None = Field(pattern=PATH_ID_RE)
+    site_id: str | None = Field(pattern=ID_RE)
+    line_id: str | None = Field(pattern=ID_RE)
+
+    @model_validator(mode="after")
+    def _line_needs_site(self) -> Focus:
+        if self.line_id is not None and self.site_id is None:
+            raise ValueError("focus.line_id needs focus.site_id (lines are per site)")
+        return self
+
+
 class ChatRequest(_Strict):
     conversation_id: str | None = Field(
         pattern=r"^[A-Za-z0-9_-]{16,64}$",
@@ -55,17 +144,29 @@ class ChatRequest(_Strict):
         description="D2: required before AI use, deliberately unverified. The only personal "
         "field in any CareCost contract."
     )
-    answers: dict[str, list[str]] = Field(
+    answers: Answers = Field(
         description="Chip answers so far, questions.yaml id -> answer values (client keeps state)",
+    )
+    history: list[Annotated[str, Field(min_length=1, max_length=MAX_TEXT_CHARS)]] = Field(
+        max_length=MAX_HISTORY_TURNS,
+        description="P5b: the person's own earlier messages, oldest first. Never assistant turns: "
+        "a client-forged assistant turn is how the old route was broken.",
+    )
+    focus: Focus | None = Field(
+        description="P5: the receipt line the person is asking about, so the server can paste our "
+        "own sourced text for it into the prompt"
     )
     locale: Literal["en", "zh"]
 
     @model_validator(mode="after")
     def _answers(self) -> ChatRequest:
-        for q, vals in self.answers.items():
-            if not re.match(QUESTION_ID_RE, q) or not all(re.match(ANSWER_RE, v) for v in vals):
-                raise ValueError(f"answers must be question ids -> answer values, got {q!r}")
+        check_answers(self.answers)
+        if sum(len(t) for t in self.history) > MAX_HISTORY_CHARS:
+            raise ValueError(f"history is over {MAX_HISTORY_CHARS} chars")
         return self
+
+    def user_texts(self) -> list[str]:
+        return [*self.history, self.text]
 
 
 # --------------------------------------------------------------------------- reply variants
@@ -104,9 +205,31 @@ class CandidatePath(_Strict):
     review_status: Literal["pending_austin", "changes_requested", "approved"]
 
 
+class InferredAnswer(_Strict):
+    """P5: an answer the model read from the person's own words, shown as a pre-selected chip
+    ("I understood: ... [change]"). Never the absence of something (no "none" values)."""
+
+    question_id: str = Field(pattern=QUESTION_ID_RE)
+    value: str = Field(pattern=ANSWER_RE)
+    evidence: str = Field(
+        min_length=1,
+        max_length=MAX_EVIDENCE_CHARS,
+        description="Verbatim substring of the person's own text that supports it",
+    )
+
+
+class ServiceRef(_Strict):
+    """P5: a catalog service the model points at when no care path fits. The UI quotes it through
+    the manual path with picked_by=assistant: shown, labelled, never summed."""
+
+    service_id: str = Field(pattern=ID_RE)
+    plain_name: str = Field(description="Filled from the catalog by id, never by the model")
+
+
 class ClarifyReply(_Strict):
     kind: Literal["clarify"]
-    lead_in: str | None = Field(description="Short assistant sentence before the chips")
+    lead_in: LlmText | None = Field(description="Short assistant sentence before the chips")
+    understood: list[InferredAnswer] = Field(default_factory=list)
     questions: list[ChipQuestion] = Field(min_length=1, max_length=MAX_QUESTIONS_PER_TURN)
     candidates: list[CandidatePath] = Field(
         default_factory=list, description="Prices can show from turn one; questions only refine"
@@ -116,7 +239,8 @@ class ClarifyReply(_Strict):
 
 class CarePathsReply(_Strict):
     kind: Literal["care_paths"]
-    text: str
+    text: LlmText
+    understood: list[InferredAnswer] = Field(default_factory=list)
     candidates: list[CandidatePath] = Field(min_length=1)
     card_ids: list[str] = Field(default_factory=list)
 
@@ -125,49 +249,246 @@ class TextReply(_Strict):
     """Anything else: out of scope, 'not covered yet', a follow-up answer. No prices in text."""
 
     kind: Literal["text"]
-    text: str
+    text: LlmText
     card_ids: list[str] = Field(default_factory=list)
+    services: list[ServiceRef] = Field(default_factory=list, max_length=3)
+    glossary_keys: list[str] = Field(default_factory=list)
+    focus_line_id: str | None = Field(
+        default=None, description="The receipt line this explains: must be the request's focus"
+    )
+
+
+class LlmInvalidReply(_Strict):
+    """The model answered but its output failed validation twice (one retry, both charged)."""
+
+    kind: Literal["llm_invalid"]
+    message_key: Literal["ai.output_invalid"]
+    browse_prices_available: Literal[True] = True
 
 
 class AiPausedReply(_Strict):
     kind: Literal["ai_paused"]
-    reason: Literal["ip_daily_cap", "wallet_exhausted", "provider_unavailable"]
-    message_key: Literal["ai.paused_ip_cap", "ai.paused_wallet", "ai.paused_provider"]
-    resumes_at: datetime | None = Field(description="UTC; None when unknown (wallet / provider)")
+    reason: Literal["ip_daily_cap", "wallet_exhausted", "provider_unavailable", "conversation_cap"]
+    message_key: Literal[
+        "ai.paused_ip_cap", "ai.paused_wallet", "ai.paused_provider", "ai.paused_conversation_cap"
+    ]
+    resumes_at: AwareDatetime | None = Field(description="None when unknown (wallet / provider)")
     browse_prices_available: Literal[True] = True
 
+    @model_validator(mode="after")
+    def _key(self) -> AiPausedReply:
+        if PAUSE_KEY[self.reason] != self.message_key:
+            raise ValueError(f"{self.reason} needs message_key {PAUSE_KEY[self.reason]}")
+        return self
+
+
+PAUSE_KEY = {
+    "ip_daily_cap": "ai.paused_ip_cap",
+    "wallet_exhausted": "ai.paused_wallet",
+    "provider_unavailable": "ai.paused_provider",
+    "conversation_cap": "ai.paused_conversation_cap",
+}
 
 ChatReply = Annotated[
-    Union[RedFlagReply, ClarifyReply, CarePathsReply, TextReply, AiPausedReply],
+    Union[RedFlagReply, ClarifyReply, CarePathsReply, TextReply, LlmInvalidReply, AiPausedReply],
     Field(discriminator="kind"),
 ]
 
 
 class BudgetStatus(_Strict):
-    """D2. Per hashed IP per UTC day; the wallet is the prepaid ceiling (~$10)."""
+    """D2 + metrics F2. Per hashed IP per provider day (the reset time zone is provider config:
+    Gemini resets at midnight Pacific). Dollars and turns both count; whichever hits first pauses.
+    The wallet is the prepaid ceiling (~$10)."""
 
     state: Literal["ok", "near_soft_cap", "over_soft_cap", "paused"]
     soft_cap_usd: float = Field(gt=0)
     hard_cap_usd: float = Field(gt=0)
     spent_today_usd: float = Field(ge=0)
+    turns_today: int = Field(ge=0, description="LLM turns this IP used today, this one included")
+    turn_cap: int = Field(gt=0, description="Per-IP daily turn cap (a share of the project RPD)")
     wallet: Literal["ok", "low", "exhausted"]
-    resets_at: datetime
+    resets_at: AwareDatetime
 
     @model_validator(mode="after")
     def _caps(self) -> BudgetStatus:
         if self.soft_cap_usd > self.hard_cap_usd:
             raise ValueError("soft cap must be <= hard cap")
+        if self.turns_today > self.turn_cap:
+            raise ValueError("turns_today cannot pass turn_cap (that turn should not have run)")
+        spent_out = self.spent_today_usd >= self.hard_cap_usd
+        if (spent_out or self.turns_today == self.turn_cap or self.wallet == "exhausted") and (
+            self.state != "paused"
+        ):
+            raise ValueError("at the hard cap, the turn cap or an empty wallet, state is paused")
         return self
+
+
+# --------------------------------------------------------------------------- registries + context
+
+
+@dataclass(frozen=True)
+class ChatRegistries:
+    """The closed sets a reply may name, loaded from the content files (never hard-coded)."""
+
+    questions: dict[str, dict[str, Any]]
+    cards: frozenset[str]
+    dispositions: dict[str, dict[str, Any]]
+    flags: dict[str, str]  # flag id -> disposition id
+    glossary: frozenset[str]
+    catalog: Catalog
+
+    @classmethod
+    def load(cls, catalog: Catalog, repo: Path = REPO_ROOT) -> ChatRegistries:
+        qs = yaml.safe_load((repo / "data" / "questions" / "questions.yaml").read_text())
+        rf = json.loads((repo / "data" / "redflags" / "redflags.json").read_text())
+        gl = yaml.safe_load((repo / "content" / "glossary" / "glossary.yaml").read_text())
+        return cls(
+            questions={q["id"]: q for q in qs["questions"]},
+            cards=frozenset(c["id"] for c in qs["cards"]),
+            dispositions={d["id"]: d for d in rf["dispositions"]},
+            flags={f["id"]: f["disposition"] for f in rf["flags"]},
+            glossary=frozenset(gl["terms"]),
+            catalog=catalog,
+        )
+
+    def check_answers(self, answers: dict[str, list[str]]) -> None:
+        for qid, vals in answers.items():
+            q = self.questions.get(qid)
+            if q is None:
+                raise ValueError(f"unknown question {qid}")
+            bad = set(vals) - {a["value"] for a in q["answers"]}
+            if bad:
+                raise ValueError(f"{qid}: unknown answers {sorted(bad)}")
+
+
+@dataclass
+class LlmMeter:
+    """Counts provider calls. The LLM client wrapper calls ``record()`` once per call; the
+    handler never sets ``llm_called`` itself (theater F7: a self-reported bool proves nothing)."""
+
+    calls: int = 0
+
+    def record(self) -> None:
+        self.calls += 1
+
+
+@dataclass
+class ChatContext:
+    registries: ChatRegistries
+    request: ChatRequest
+    meter: LlmMeter = field(default_factory=LlmMeter)
+    conversation_turn: int = 1  # the server's own count for this conversation_id
+
+    @classmethod
+    def for_request(
+        cls,
+        request: ChatRequest,
+        registries: ChatRegistries,
+        meter: LlmMeter | None = None,
+        conversation_turn: int = 1,
+    ) -> ChatContext:
+        """Refuses a request whose chip answers are not in questions.yaml (security F4)."""
+        registries.check_answers(request.answers)
+        return cls(registries, request, meter or LlmMeter(), conversation_turn)
+
+    def as_context(self) -> dict[str, Any]:
+        return {"chat": self}
+
+
+def _check_reply(reply: Any, ctx: ChatContext) -> None:
+    reg, kind = ctx.registries, reply.kind
+    if kind == "red_flag":
+        d = reg.dispositions.get(reply.disposition)
+        if d is None:
+            raise ValueError(f"disposition {reply.disposition} is not in redflags.json")
+        if reply.headline.model_dump() != d["headline"] or reply.text.model_dump() != d["text"]:
+            raise ValueError("red-flag copy must be verbatim from redflags.json")
+        unknown = [f for f in reply.flag_ids if f not in reg.flags]
+        if unknown:
+            raise ValueError(f"unknown red flags {unknown}")
+    if kind == "clarify":
+        for chip in reply.questions:
+            src = reg.questions.get(chip.question_id)
+            if src is None:
+                raise ValueError(f"unknown question {chip.question_id}")
+            want = [(a["value"], a["label"]) for a in src["answers"]]
+            got = [(a.value, a.label.model_dump()) for a in chip.answers]
+            if chip.text.model_dump() != src["text"] or got != want:
+                raise ValueError(
+                    f"{chip.question_id}: chip text must be verbatim from questions.yaml"
+                )
+            if chip.multi != bool(src.get("multi")):
+                raise ValueError(f"{chip.question_id}: multi must match questions.yaml")
+    if kind in ("clarify", "care_paths"):
+        paths = {p.id: p for p in reg.catalog.care_paths}
+        for c in reply.candidates:
+            p = paths.get(c.path_id)
+            if p is None:
+                raise ValueError(f"unknown care path {c.path_id}")
+            if (c.title, c.review_status) != (p.title, p.review_status):
+                raise ValueError(f"{c.path_id}: title and review_status come from the catalog")
+        texts = ctx.request.user_texts()
+        for u in reply.understood:
+            reg.check_answers({u.question_id: [u.value]})
+            if u.value == "none":
+                raise ValueError("the model may infer a symptom, never its absence ('none')")
+            if not any(u.evidence in t for t in texts):
+                raise ValueError(f"{u.question_id}: evidence must quote the person's own words")
+    if kind in ("clarify", "care_paths", "text"):
+        bad = set(reply.card_ids) - reg.cards
+        if bad:
+            raise ValueError(f"unknown cards {sorted(bad)}")
+    if kind == "text":
+        services = {s.service_id: s for s in reg.catalog.services}
+        for s in reply.services:
+            svc = services.get(s.service_id)
+            if svc is None or svc.plain_name != s.plain_name:
+                raise ValueError(f"service {s.service_id}: must be a catalog service, catalog name")
+        if set(reply.glossary_keys) - reg.glossary:
+            raise ValueError(
+                f"unknown glossary keys {sorted(set(reply.glossary_keys) - reg.glossary)}"
+            )
+        focus = ctx.request.focus
+        if reply.focus_line_id is not None and (
+            focus is None or focus.line_id != reply.focus_line_id
+        ):
+            raise ValueError("focus_line_id must be the line the person asked about")
 
 
 class ChatResponse(_Strict):
     conversation_id: str = Field(pattern=r"^[A-Za-z0-9_-]{16,64}$")
     reply: ChatReply
     budget: BudgetStatus
-    llm_called: bool = Field(description="False for red-flag, ai_paused and cached replies")
+    llm_called: bool = Field(
+        description="From the LLM client's call meter, never set by the handler. False for "
+        "red-flag, ai_paused and cached replies"
+    )
+    conversation_turn: int = Field(ge=1, description="The server's count for this conversation")
 
     @model_validator(mode="after")
-    def _gate_order(self) -> ChatResponse:
+    def _gate_order(self, info: ValidationInfo) -> ChatResponse:
+        ctx = (info.context or {}).get("chat")
+        if not isinstance(ctx, ChatContext):
+            raise ValueError(
+                "ChatResponse must be validated with a ChatContext (registries + request + LLM "
+                "meter): model_validate(data, context=ctx.as_context())"
+            )
+        calls = ctx.meter.calls
+        if self.llm_called != (calls > 0):
+            raise ValueError(f"llm_called must come from the LLM meter ({calls} calls)")
+        if calls > MAX_LLM_ATTEMPTS:
+            raise ValueError(f"at most {MAX_LLM_ATTEMPTS} LLM attempts per turn (one retry)")
+        if self.reply.kind == "llm_invalid" and calls == 0:
+            raise ValueError("llm_invalid needs an LLM call")
+        if self.conversation_turn != ctx.conversation_turn:
+            raise ValueError("conversation_turn is the server's count")
+        if self.conversation_turn > MAX_TURNS_PER_CONVERSATION and not (
+            self.reply.kind == "ai_paused" and self.reply.reason == "conversation_cap"
+        ):
+            raise ValueError(
+                f"past {MAX_TURNS_PER_CONVERSATION} turns the reply is conversation_cap"
+            )
+        _check_reply(self.reply, ctx)
         if self.reply.kind in ("red_flag", "ai_paused") and self.llm_called:
             raise ValueError(f"{self.reply.kind} replies are decided before any LLM call")
         if (

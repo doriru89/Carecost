@@ -11,5 +11,7 @@
   },
   "email": "someone@example.com",
   "answers": {},
+  "history": [],
+  "focus": null,
   "locale": "en"
 }

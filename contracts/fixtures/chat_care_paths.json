@@ -8,12 +8,15 @@
     "soft_cap_usd": 1.0,
     "hard_cap_usd": 2.0,
     "spent_today_usd": 0.83,
+    "turns_today": 3,
+    "turn_cap": 40,
     "wallet": "ok",
     "resets_at": "2026-10-25T00:00:00Z"
   },
   "reply": {
     "kind": "care_paths",
     "text": "This sounds like shoulder pain that built up over time. Here is what a visit usually involves.",
+    "understood": [],
     "candidates": [
       {
         "path_id": "shoulder_chronic_clicking_v1",
@@ -23,5 +26,6 @@
       }
     ],
     "card_ids": []
-  }
+  },
+  "conversation_turn": 2
 }

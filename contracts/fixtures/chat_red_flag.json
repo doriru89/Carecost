@@ -8,6 +8,8 @@
     "soft_cap_usd": 1.0,
     "hard_cap_usd": 2.0,
     "spent_today_usd": 0.04,
+    "turns_today": 3,
+    "turn_cap": 40,
     "wallet": "ok",
     "resets_at": "2026-10-25T00:00:00Z"
   },
@@ -26,5 +28,6 @@
       "zh": "这可能是急症。请立即拨打 911 或请身边的人帮你打，不要自己开车。价格估算到此停止。"
     },
     "prices_withheld": true
-  }
+  },
+  "conversation_turn": 1
 }

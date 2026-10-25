@@ -234,9 +234,16 @@ def test_fixtures_together_cover_the_whole_contract():
     assert {2, 5, 7, None} <= rungs
     chats = {
         _validated(n).reply.kind
-        for n in ("chat_red_flag", "chat_clarify", "chat_ai_paused", "chat_care_paths")
+        for n in (
+            "chat_red_flag",
+            "chat_clarify",
+            "chat_ai_paused",
+            "chat_care_paths",
+            "chat_text",
+            "chat_llm_invalid",
+        )
     }
-    assert chats == {"red_flag", "clarify", "ai_paused", "care_paths"}
+    assert chats == {"red_flag", "clarify", "ai_paused", "care_paths", "text", "llm_invalid"}
 
 
 def test_hospital_files_use_the_365_day_rule():

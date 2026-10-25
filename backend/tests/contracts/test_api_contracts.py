@@ -160,6 +160,8 @@ def test_no_personal_data_fields_except_chat_email():
         "text",
         "payment",
         "answers",
+        "history",  # the person's own earlier messages (P5b), not personal data fields
+        "focus",
         "locale",
     } == {"email"}
 
@@ -540,19 +542,21 @@ def test_freshness_notices_must_match_the_sources():
 
 
 def test_chat_red_flag_and_pause_never_call_the_llm():
-    doc = _fixture("chat_red_flag")
-    with pytest.raises(ValidationError, match="before any LLM"):
-        chat.ChatResponse.model_validate({**doc, "llm_called": True})
-    doc = _fixture("chat_ai_paused")
-    with pytest.raises(ValidationError, match="before any LLM"):
-        chat.ChatResponse.model_validate({**doc, "llm_called": True})
+    from tests.contracts.chat_ctx import context
+
+    for name in ("chat_red_flag", "chat_ai_paused"):
+        doc = {**_fixture(name), "llm_called": True}
+        with pytest.raises(ValidationError, match="before any LLM"):
+            chat.ChatResponse.model_validate(doc, context=context(doc, calls=1))
 
 
 def test_clarify_asks_at_most_two_questions():
+    from tests.contracts.chat_ctx import context
+
     doc = _fixture("chat_clarify")
     doc["reply"]["questions"] = doc["reply"]["questions"] * 2
-    with pytest.raises(ValidationError):
-        chat.ChatResponse.model_validate(doc)
+    with pytest.raises(ValidationError, match="at most 2 items"):
+        chat.ChatResponse.model_validate(doc, context=context(doc))
 
 
 def test_payer_and_product_registries_exist():

@@ -1,0 +1,22 @@
+{
+  "_fixture": true,
+  "_schema": "ChatResponse",
+  "conversation_id": "c_7f3a9d2e41b8c605",
+  "llm_called": true,
+  "budget": {
+    "state": "near_soft_cap",
+    "soft_cap_usd": 1.0,
+    "hard_cap_usd": 2.0,
+    "spent_today_usd": 0.83,
+    "turns_today": 3,
+    "turn_cap": 40,
+    "wallet": "ok",
+    "resets_at": "2026-10-25T00:00:00Z"
+  },
+  "conversation_turn": 2,
+  "reply": {
+    "kind": "llm_invalid",
+    "message_key": "ai.output_invalid",
+    "browse_prices_available": true
+  }
+}

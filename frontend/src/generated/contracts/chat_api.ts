@@ -3,23 +3,33 @@
 
 export interface AiPausedReply {
   kind: "ai_paused";
-  reason: "ip_daily_cap" | "wallet_exhausted" | "provider_unavailable";
-  message_key: "ai.paused_ip_cap" | "ai.paused_wallet" | "ai.paused_provider";
+  reason: "ip_daily_cap" | "wallet_exhausted" | "provider_unavailable" | "conversation_cap";
+  message_key: "ai.paused_ip_cap" | "ai.paused_wallet" | "ai.paused_provider" | "ai.paused_conversation_cap";
   /**
-   * UTC; None when unknown (wallet / provider)
+   * None when unknown (wallet / provider)
    */
   resumes_at: string | null;
   browse_prices_available: true;
 }
 
 /**
- * D2. Per hashed IP per UTC day; the wallet is the prepaid ceiling (~$10).
+ * D2 + metrics F2. Per hashed IP per provider day (the reset time zone is provider config:
+ * Gemini resets at midnight Pacific). Dollars and turns both count; whichever hits first pauses.
+ * The wallet is the prepaid ceiling (~$10).
  */
 export interface BudgetStatus {
   state: "ok" | "near_soft_cap" | "over_soft_cap" | "paused";
   soft_cap_usd: number;
   hard_cap_usd: number;
   spent_today_usd: number;
+  /**
+   * LLM turns this IP used today, this one included
+   */
+  turns_today: number;
+  /**
+   * Per-IP daily turn cap (a share of the project RPD)
+   */
+  turn_cap: number;
   wallet: "ok" | "low" | "exhausted";
   resets_at: string;
 }
@@ -37,6 +47,7 @@ export interface CandidatePath {
 export interface CarePathsReply {
   kind: "care_paths";
   text: string;
+  understood: InferredAnswer[];
   candidates: CandidatePath[];
   card_ids: string[];
 }
@@ -45,7 +56,7 @@ export interface CashPayment {
   kind: "cash";
 }
 
-export type ChatReply = RedFlagReply | ClarifyReply | CarePathsReply | TextReply | AiPausedReply;
+export type ChatReply = RedFlagReply | ClarifyReply | CarePathsReply | TextReply | LlmInvalidReply | AiPausedReply;
 
 export interface ChatRequest {
   /**
@@ -62,17 +73,29 @@ export interface ChatRequest {
    * Chip answers so far, questions.yaml id -> answer values (client keeps state)
    */
   answers: Record<string, string[]>;
+  /**
+   * P5b: the person's own earlier messages, oldest first. Never assistant turns: a client-forged assistant turn is how the old route was broken.
+   */
+  history: string[];
+  /**
+   * P5: the receipt line the person is asking about, so the server can paste our own sourced text for it into the prompt
+   */
+  focus: Focus | null;
   locale: "en" | "zh";
 }
 
 export interface ChatResponse {
   conversation_id: string;
-  reply: RedFlagReply | ClarifyReply | CarePathsReply | TextReply | AiPausedReply;
+  reply: RedFlagReply | ClarifyReply | CarePathsReply | TextReply | LlmInvalidReply | AiPausedReply;
   budget: BudgetStatus;
   /**
-   * False for red-flag, ai_paused and cached replies
+   * From the LLM client's call meter, never set by the handler. False for red-flag, ai_paused and cached replies
    */
   llm_called: boolean;
+  /**
+   * The server's count for this conversation
+   */
+  conversation_turn: number;
 }
 
 export interface ChipAnswer {
@@ -93,6 +116,7 @@ export interface ClarifyReply {
    * Short assistant sentence before the chips
    */
   lead_in: string | null;
+  understood: InferredAnswer[];
   questions: ChipQuestion[];
   /**
    * Prices can show from turn one; questions only refine
@@ -109,6 +133,25 @@ export interface ClarifyReply {
  */
 export type Disposition = "call_911" | "er_today" | "seen_today" | "routine";
 
+export interface Focus {
+  care_path_id: string | null;
+  site_id: string | null;
+  line_id: string | null;
+}
+
+/**
+ * P5: an answer the model read from the person's own words, shown as a pre-selected chip
+ * ("I understood: ... [change]"). Never the absence of something (no "none" values).
+ */
+export interface InferredAnswer {
+  question_id: string;
+  value: string;
+  /**
+   * Verbatim substring of the person's own text that supports it
+   */
+  evidence: string;
+}
+
 export interface InsurancePayment {
   kind: "insurance";
   /**
@@ -123,6 +166,15 @@ export interface InsurancePayment {
    * Optional named network inside the product (TiC network id), e.g. hmo_blue
    */
   network: string | null;
+}
+
+/**
+ * The model answered but its output failed validation twice (one retry, both charged).
+ */
+export interface LlmInvalidReply {
+  kind: "llm_invalid";
+  message_key: "ai.output_invalid";
+  browse_prices_available: true;
 }
 
 /**
@@ -157,12 +209,30 @@ export interface RedFlagReply {
 }
 
 /**
+ * P5: a catalog service the model points at when no care path fits. The UI quotes it through
+ * the manual path with picked_by=assistant: shown, labelled, never summed.
+ */
+export interface ServiceRef {
+  service_id: string;
+  /**
+   * Filled from the catalog by id, never by the model
+   */
+  plain_name: string;
+}
+
+/**
  * Anything else: out of scope, 'not covered yet', a follow-up answer. No prices in text.
  */
 export interface TextReply {
   kind: "text";
   text: string;
   card_ids: string[];
+  services: ServiceRef[];
+  glossary_keys: string[];
+  /**
+   * The receipt line this explains: must be the request's focus
+   */
+  focus_line_id: string | null;
 }
 
 export interface Title {
