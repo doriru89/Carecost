@@ -74,8 +74,10 @@
         "urgent_care",
         "ortho"
       ],
-      "tins": [],
-      "tins_source": null,
+      "tins": [
+        "460903626"
+      ],
+      "tins_source": "research-v3/clinic-census.csv GB0378: org NPI 1164772299 -> 'DRX UC WATERTOWN PC DBA AFC URGENT CARE' in the BCBS TiC file (2026-10-24)",
       "listing_status": "web_verified",
       "listing_checked_at": "2026-10-24",
       "cash_prices": [
@@ -218,8 +220,12 @@
       "type_2_npis": [
         "1689670259"
       ],
-      "tins": [],
-      "tins_source": null,
+      "tins": [
+        "043026897",
+        "820671467",
+        "222768204"
+      ],
+      "tins_source": "research-v3/clinic-census.csv GB0166 (330 Mount Auburn St) clinician_billing_tins_bcbs: TINs the CMS-listed clinicians at this address bill under in BCBS TiC (Mt Auburn Professional Services, Boston Orthopaedic and Spine, HMFP at BIDMC)",
       "listing_status": "web_verified",
       "listing_checked_at": "2026-10-24"
     },
@@ -289,6 +295,46 @@
       "type_2_npis": [],
       "tins": [],
       "tins_source": null,
+      "listing_status": "web_verified",
+      "listing_checked_at": "2026-10-24"
+    },
+    {
+      "id": "tufts_medical_center",
+      "name": "Tufts Medical Center",
+      "site_type": "hospital_outpatient",
+      "operator": "Tufts Medicine",
+      "system_id": "tufts_medicine",
+      "hospital_entity_id": "tufts",
+      "billing_type": "hospital_outpatient",
+      "billing_type_source": "Hospital-licensed outpatient departments bill a facility fee (tufts_mrf lists facility rates)",
+      "address": {
+        "street": "800 Washington St",
+        "city": "Boston",
+        "state": "MA",
+        "zip": "02111"
+      },
+      "coords": {
+        "lat": 42.3495,
+        "lon": -71.0636,
+        "geocoded_by": "hospital_registry",
+        "geocoded_at": "2026-10-24"
+      },
+      "phone": null,
+      "hours": null,
+      "booking": [],
+      "portal_links": [],
+      "service_areas": [
+        "ortho",
+        "skin",
+        "gi"
+      ],
+      "type_2_npis": [
+        "1730132515"
+      ],
+      "tins": [
+        "043400617"
+      ],
+      "tins_source": "The hospital's own EIN in its CMS price-file name (043400617_tuftsmedicalcenter_standardcharges.csv.zip, tuftsmedicine.org/cms-hpt.txt)",
       "listing_status": "web_verified",
       "listing_checked_at": "2026-10-24"
     }

@@ -1,0 +1,826 @@
+{
+  "_fixture": true,
+  "_schema": "QuoteResponse",
+  "payment": {
+    "kind": "cash"
+  },
+  "care_path": {
+    "id": "shoulder_chronic_clicking_v1",
+    "version": "1.0.0",
+    "title": "Shoulder pain that came on gradually, often with painful clicking",
+    "review_status": "pending_austin"
+  },
+  "service_codes": [],
+  "picked_by": "person",
+  "as_of": "2026-10-24",
+  "data_version": {
+    "build_id": "20261024-1cb8089d",
+    "build_date": "2026-10-24",
+    "tic_release": "tic-2026-10",
+    "sites_version": 1,
+    "care_paths_version": "1.0.0"
+  },
+  "sources": {
+    "afc_watertown_self_pay": {
+      "source_kind": "clinic_posted",
+      "publisher": "AFC Urgent Care Watertown",
+      "freshness": {
+        "last_updated": null,
+        "expected_by": null,
+        "late_to_refresh": false,
+        "source_rule": "posted_page_date_365_days",
+        "fetched_at": "2026-10-10",
+        "our_refresh_due": "2026-10-17",
+        "stale_on_our_side": true,
+        "our_rule": "sites_weekly"
+      }
+    },
+    "mtauburn_mrf": {
+      "source_kind": "hospital_mrf",
+      "publisher": "Mount Auburn Hospital",
+      "freshness": {
+        "last_updated": "2026-04-01",
+        "expected_by": "2027-04-01",
+        "late_to_refresh": false,
+        "source_rule": "hospital_mrf_365_days",
+        "fetched_at": "2026-10-24",
+        "our_refresh_due": "2026-11-24",
+        "stale_on_our_side": false,
+        "our_rule": "hospital_monthly"
+      }
+    }
+  },
+  "sites": [
+    {
+      "site": {
+        "site_id": "afc_watertown",
+        "name": "AFC Urgent Care Watertown",
+        "site_type": "urgent_care",
+        "system_id": null,
+        "coords": {
+          "lat": 42.3637,
+          "lon": -71.159,
+          "geocoded_by": "manual",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "376 Arsenal St, Watertown, MA 02472",
+        "phone": "617-923-2273",
+        "billing_type": "office_visit",
+        "booking": [
+          {
+            "kind": "deep_link",
+            "provider": "solv",
+            "label": "Reserve a spot",
+            "url": "https://www.solvhealth.com/book-online/AM731g",
+            "phone": null
+          },
+          {
+            "kind": "call",
+            "provider": "phone",
+            "label": "Call",
+            "url": null,
+            "phone": "617-923-2273"
+          }
+        ],
+        "portal_links": [],
+        "hours": {
+          "source": "operator_schema_org",
+          "source_url": "https://www.afcurgentcare.com/watertown/",
+          "checked_at": "2026-10-24",
+          "weekly": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri"
+              ],
+              "opens": "08:00",
+              "closes": "20:00"
+            },
+            {
+              "days": [
+                "sat",
+                "sun"
+              ],
+              "opens": "08:00",
+              "closes": "17:00"
+            }
+          ],
+          "may_close_early": false
+        },
+        "hours_label": "posted_hours",
+        "price_label": "posted_price",
+        "price_source_id": "afc_watertown_self_pay",
+        "service_areas": [
+          "urgent_care",
+          "ortho"
+        ],
+        "listing_status": "web_verified"
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "visit",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": "visit",
+            "codes": [
+              "99203"
+            ],
+            "modifier": null,
+            "plain_name": "Visit with a clinician (includes the clinician's fee)",
+            "technical_name": "Urgent care evaluation, self-pay",
+            "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": false,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 179.0,
+              "high": 179.0,
+              "basis": "posted_self_pay",
+              "prov": {
+                "source_id": "afc_watertown_self_pay",
+                "source_kind": "clinic_posted",
+                "source_file": "afc-watertown-self-pay.html",
+                "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                "source_date": "2026-10-24",
+                "method": "stated",
+                "row_ref": "afc_watertown_self_pay:000000000000:evaluation_consultation",
+                "payer_id": null
+              }
+            },
+            "list_price": null,
+            "tier_basis": "our_judgment",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "xray",
+            "tier": "likely",
+            "likelihood": "likely",
+            "step_id": "xray",
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray, 2 views (self-pay)",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while.",
+            "glossary_keys": [
+              "xray"
+            ],
+            "component": "unknown",
+            "component_confirmed": false,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 150.0,
+              "high": 150.0,
+              "basis": "posted_self_pay",
+              "prov": {
+                "source_id": "afc_watertown_self_pay",
+                "source_kind": "clinic_posted",
+                "source_file": "afc-watertown-self-pay.html",
+                "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+                "source_date": "2026-10-24",
+                "method": "stated",
+                "row_ref": "afc_watertown_self_pay:000000000000:xray_2_views",
+                "payer_id": null
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: X-Rays",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: bone X-ray",
+                "url": "https://www.radiologyinfo.org/en/info/bonerad"
+              }
+            ]
+          },
+          {
+            "line_id": "physical_therapy_eval",
+            "tier": "likely",
+            "likelihood": "likely",
+            "step_id": "physical_therapy",
+            "codes": [
+              "97161"
+            ],
+            "modifier": null,
+            "plain_name": "Guided exercise program for the shoulder",
+            "technical_name": "Physical therapy evaluation and visits",
+            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
+            "glossary_keys": [
+              "pt_evaluation"
+            ],
+            "component": "facility",
+            "component_confirmed": false,
+            "unit": "once",
+            "availability": "not_offered",
+            "cell": null,
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [
+              {
+                "site_id": "mount_auburn_hospital",
+                "site_name": "Mount Auburn Hospital",
+                "lat": 42.3738,
+                "lon": -71.1284,
+                "cell": {
+                  "kind": "money",
+                  "low": 365.0,
+                  "high": 365.0,
+                  "basis": "discounted_cash",
+                  "prov": {
+                    "source_id": "mtauburn_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                    "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                    "source_date": "2026-04-01",
+                    "method": "stated",
+                    "row_ref": "mtauburn_mrf:a9e5ac64beef:3772",
+                    "payer_id": null
+                  }
+                }
+              }
+            ],
+            "learn_more": []
+          },
+          {
+            "line_id": "steroid_injection",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
+            "codes": [
+              "20610"
+            ],
+            "modifier": null,
+            "plain_name": "Shot of anti-inflammatory and numbing medicine",
+            "technical_name": "Corticosteroid shoulder injection",
+            "why": "It can calm the pain for a while so you can do your exercises.",
+            "glossary_keys": [
+              "steroid_injection",
+              "ultrasound"
+            ],
+            "component": "unknown",
+            "component_confirmed": false,
+            "unit": "once",
+            "availability": "unknown",
+            "cell": {
+              "kind": "not_published",
+              "what": "a posted self-pay price for a joint injection",
+              "ask": "Call and ask whether they give shoulder injections and what it costs.",
+              "searched": {
+                "source_id": "afc_watertown_self_pay",
+                "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "mri",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_mri",
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
+            "glossary_keys": [
+              "mri",
+              "xray"
+            ],
+            "component": "facility",
+            "component_confirmed": false,
+            "unit": "once",
+            "availability": "not_offered",
+            "cell": null,
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [
+              {
+                "site_id": "mount_auburn_hospital",
+                "site_name": "Mount Auburn Hospital",
+                "lat": 42.3738,
+                "lon": -71.1284,
+                "cell": {
+                  "kind": "money",
+                  "low": 2741.0,
+                  "high": 2741.0,
+                  "basis": "discounted_cash",
+                  "prov": {
+                    "source_id": "mtauburn_mrf",
+                    "source_kind": "hospital_mrf",
+                    "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                    "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                    "source_date": "2026-04-01",
+                    "method": "stated",
+                    "row_ref": "mtauburn_mrf:a9e5ac64beef:4603",
+                    "payer_id": null
+                  }
+                }
+              }
+            ],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73221&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: shoulder MRI",
+                "url": "https://www.radiologyinfo.org/en/info/shouldermr"
+              }
+            ]
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 329.0,
+            "high": 329.0,
+            "line_ids": [
+              "visit",
+              "xray"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": true
+          },
+          "complete": true,
+          "missing": 1,
+          "excluded": [
+            {
+              "line_id": "physical_therapy_eval",
+              "reason": "not_offered_here"
+            },
+            {
+              "line_id": "steroid_injection",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "mri",
+              "reason": "not_offered_here"
+            }
+          ],
+          "you_pay": {
+            "kind": "cash_full_amount",
+            "note_key": "youpay.cash_full_amount",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
+        "site_id": "mount_auburn_hospital",
+        "name": "Mount Auburn Hospital",
+        "site_type": "hospital_outpatient",
+        "system_id": "bilh",
+        "coords": {
+          "lat": 42.3738,
+          "lon": -71.1284,
+          "geocoded_by": "hospital_registry",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "330 Mount Auburn St, Cambridge, MA 02138",
+        "phone": null,
+        "billing_type": "hospital_outpatient",
+        "booking": [],
+        "portal_links": [
+          {
+            "kind": "mychart",
+            "system_id": "bilh",
+            "label": "MyBILH Chart",
+            "url": "https://mychart.bilh.org/MyChart-BILH/"
+          }
+        ],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "mtauburn_mrf",
+        "service_areas": [
+          "ortho",
+          "skin",
+          "gi"
+        ],
+        "listing_status": "web_verified"
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "visit_facility",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": "visit",
+            "codes": [
+              "99203"
+            ],
+            "modifier": null,
+            "plain_name": "Visit with a bone & joint doctor",
+            "technical_name": "New-patient orthopedic or sports-medicine visit",
+            "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
+            "glossary_keys": [],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 203.0,
+              "high": 203.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4409",
+                "payer_id": null
+              }
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 203.0,
+              "high": 203.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4409",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "our_judgment",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "visit_doctor",
+            "tier": "not_in_public_data",
+            "likelihood": "certain",
+            "step_id": "visit",
+            "codes": [
+              "99203"
+            ],
+            "modifier": null,
+            "plain_name": "Doctor's fee for the visit",
+            "technical_name": "Professional fee, new-patient visit",
+            "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "no_source",
+              "what": "a self-pay price for the doctor's own fee",
+              "ask": "Ask for a Good Faith Estimate (federal No Surprises Act). Massachusetts law (c.111 §228) says they must tell you the price within 2 business days."
+            },
+            "list_price": null,
+            "tier_basis": "our_judgment",
+            "doctor_fee": {
+              "rung": null,
+              "explanation_key": "fee.self_pay_no_source",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "xray_facility",
+            "tier": "likely",
+            "likelihood": "likely",
+            "step_id": "xray",
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while.",
+            "glossary_keys": [
+              "xray"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 527.0,
+              "high": 527.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3235",
+                "payer_id": null
+              }
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 527.0,
+              "high": 527.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3235",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: X-Rays",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: bone X-ray",
+                "url": "https://www.radiologyinfo.org/en/info/bonerad"
+              }
+            ]
+          },
+          {
+            "line_id": "xray_reading",
+            "tier": "not_in_public_data",
+            "likelihood": "likely",
+            "step_id": "xray",
+            "codes": [
+              "73030"
+            ],
+            "modifier": "26",
+            "plain_name": "A radiologist reads the X-ray",
+            "technical_name": "X-ray interpretation (professional)",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while.",
+            "glossary_keys": [
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "no_source",
+              "what": "a self-pay price for the radiologist's reading",
+              "ask": "Ask for a Good Faith Estimate (federal No Surprises Act). Massachusetts law (c.111 §228) says they must tell you the price within 2 business days."
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": {
+              "rung": null,
+              "explanation_key": "fee.self_pay_no_source",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: X-Rays",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: bone X-ray",
+                "url": "https://www.radiologyinfo.org/en/info/bonerad"
+              }
+            ]
+          },
+          {
+            "line_id": "physical_therapy_eval",
+            "tier": "likely",
+            "likelihood": "likely",
+            "step_id": "physical_therapy",
+            "codes": [
+              "97161"
+            ],
+            "modifier": null,
+            "plain_name": "Guided exercise program for the shoulder",
+            "technical_name": "Physical therapy evaluation and visits",
+            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
+            "glossary_keys": [
+              "pt_evaluation"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 365.0,
+              "high": 365.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3772",
+                "payer_id": null
+              }
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 365.0,
+              "high": 365.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3772",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "mri",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_mri",
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
+            "glossary_keys": [
+              "mri",
+              "xray"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 2741.0,
+              "high": 2741.0,
+              "basis": "discounted_cash",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4603",
+                "payer_id": null
+              }
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 2741.0,
+              "high": 2741.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4603",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73221&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: shoulder MRI",
+                "url": "https://www.radiologyinfo.org/en/info/shouldermr"
+              }
+            ]
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 1095.0,
+            "high": 1095.0,
+            "line_ids": [
+              "visit_facility",
+              "xray_facility",
+              "physical_therapy_eval"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": false,
+          "missing": 2,
+          "excluded": [
+            {
+              "line_id": "visit_doctor",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "xray_reading",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "mri",
+              "reason": "possible_tier"
+            }
+          ],
+          "you_pay": {
+            "kind": "cash_full_amount",
+            "note_key": "youpay.cash_full_amount",
+            "portal_label": null,
+            "portal_url": null
+          }
+        }
+      },
+      "other_payers": []
+    }
+  ],
+  "sites_without_service": [],
+  "notices": [
+    "care_path_draft",
+    "stale_on_our_side_sources"
+  ]
+}

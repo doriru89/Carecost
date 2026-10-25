@@ -102,10 +102,11 @@ separately at the end.
     the context); validate once with the context and return its JSON.
 
 Checked against the committed fixtures and registries only (tests, not validators):
-- every hospital-MRF number in a quote fixture is the cited row's number for the line's code, modifier
-  and the payment's payer, and every `not_published` / `percent_only` claim survives re-running the
-  lookup (`rate_row_extract.csv`, written by `backend/tests/contracts/make_rate_row_extract.py` from build
-  `20261024-1cb8089d`);
+- every hospital-MRF and TiC number in a quote fixture is the cited row's number for the line's code,
+  modifier and the payment's payer, a range's high end is the highest row the same lookup finds, and
+  every `not_published` / `percent_only` claim survives re-running the lookup (`rate_row_extract.csv` +
+  `rate_row_extract.sources.yaml`, written by `python -m app.quote.fixtures_gen` from hospital build
+  `20261024-10d8a893` and the 2026-10 BCBS HMO Blue TiC files);
 - payer, product, site, hospital, source, care-path, question, card and glossary ids resolve against
   their registries; three unregistered placeholder sources are listed in `test_fixtures.py`;
 - quote lines match their care-path step (codes, likelihood, `tier_basis`).
@@ -131,18 +132,18 @@ tier, every Gap kind, a Money range, a per-NPI breakdown, an AI-suggested line, 
 
 | Fixture | Shows |
 |---|---|
-| `quote_request_*` / `quote_*_shoulder` | BCBS HMO, cash and Medicare quotes for chronic shoulder pain with clicking. Every hospital-MRF number (Mount Auburn, Brigham, Franciscan) is a real row of build `20261024-1cb8089d`, checked by `rate_row_extract.csv`. |
+| `quote_request_*` / `quote_*_shoulder` | Chronic shoulder pain with clicking. **BCBS HMO and cash are real P1 engine output** (Tufts Medical Center, Mount Auburn Hospital, AFC Urgent Care Watertown; `python -m app.quote.fixtures_gen`, see `docs/p1-slice.md`); the engine reproduces them from `rate_row_extract.csv` in CI. Medicare is still hand-made (Brigham rows real, Medicare PFS a placeholder until A3). The pre-P1 hand-made BCBS / cash quotes live in `backend/tests/contracts/handmade/` as the mutation base of the negative rule tests. |
 | `quote_request_masshealth_manual` | Skip-AI manual pick (D3) with MassHealth |
 | `chat_request_first_message`, `chat_red_flag`, `chat_clarify`, `chat_care_paths`, `chat_text`, `chat_llm_invalid`, `chat_ai_paused` | Chat request and every reply kind |
 | `catalog` | Built from the 10 care paths in `data/care_paths/paths/` |
 | `sites` | `sites.yaml` entries for every site the quotes use (urgent care with posted prices, On My Way link, hospital outpatient) |
 
 Values that do not exist in loaded data yet are placeholders, validated only with `allow_placeholders`:
-the BCBS TiC group rate at Brigham (source `bcbs_ma_tic_hmo`, sha `000…`, numbers from
-research-v3/pro-fees.md, dated so that it shows a publisher late to refresh), the AFC posted page (sha `000…`,
-checked 2026-10-10 so that it shows us stale), Medicare PFS RVU26A (not registered until A3 adds its reader),
-NPIs `0000000001`/`0000000002`, and hand-entered coordinates for the two Watertown clinics. The thin real
-slice (P1) regenerates these fixtures from engine output.
+Medicare PFS RVU26A in the Medicare quote (not registered until A3 adds its reader) and, in the hand-made
+mutation bases under `backend/tests/contracts/handmade/`, the BCBS TiC group rate at Brigham (`bcbs_ma_tic_hmo`),
+the AFC posted page and NPIs `0000000001`/`0000000002`. The real BCBS / cash quotes validate without
+placeholders (`test_real_fixtures_need_no_placeholders`). Shapes real P1 data cannot show yet (percent-only,
+by-NPI, not offered, late / stale sources, rung 7) are listed in `test_fixtures.py::NOT_IN_REAL_DATA`.
 
 ## Regenerate / check
 

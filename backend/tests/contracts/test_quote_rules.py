@@ -19,11 +19,18 @@ from app.sites import contracts as sites
 
 REPO = Path(__file__).resolve().parents[3]
 FIX = REPO / "contracts" / "fixtures"
+# P1: the golden BCBS / cash quotes in contracts/fixtures are now real engine output. The negative
+# rule tests below mutate the earlier hand-made quotes, kept here, because they carry shapes real
+# P1 data does not produce (rung 7, by_npi, an AI Money line, not_offered, a stale source).
+HANDMADE = Path(__file__).resolve().parent / "handmade"
 CTX = {"allow_placeholders": True}
+QUOTES = ("quote_bcbs_hmo_shoulder", "quote_cash_shoulder", "quote_medicare_shoulder")
 
 
-def _fx(name: str) -> dict:
-    doc = json.loads((FIX / f"{name}.json").read_text())
+def _fx(name: str, real: bool = False) -> dict:
+    hand = HANDMADE / f"{name}.json"
+    path = hand if hand.exists() and not real else FIX / f"{name}.json"
+    doc = json.loads(path.read_text())
     doc.pop("_fixture")
     doc.pop("_schema")
     return doc
@@ -55,8 +62,9 @@ MA, BWH, FR, AFC = (
 
 
 def test_fixtures_are_valid_starting_points():
-    for n in ("quote_bcbs_hmo_shoulder", "quote_cash_shoulder", "quote_medicare_shoulder"):
+    for n in QUOTES:
         _ok(_fx(n))
+        q.QuoteResponse.model_validate(_fx(n, real=True), context=CTX)
 
 
 # --------------------------------------------------------------------------- AI never in totals
@@ -257,8 +265,8 @@ def test_missing_is_derived_and_counts_skipped_steps():
 def test_losing_a_price_never_improves_rank():
     """I7 property: turning any summed line into a gap makes the site's key strictly worse,
     whatever it does to the price."""
-    for name in ("quote_bcbs_hmo_shoulder", "quote_cash_shoulder", "quote_medicare_shoulder"):
-        resp = _ok(_fx(name))
+    for name, real in [(n, r) for n in QUOTES for r in (False, True)]:
+        resp = _ok(_fx(name, real))
         steps = {q._step_key(ln) for sq in resp.sites for ln in sq.receipt.lines if q._expected(ln)}
         for sq in resp.sites:
             key = q.rank_key(sq)

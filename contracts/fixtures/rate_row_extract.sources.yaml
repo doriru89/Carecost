@@ -1,0 +1,43 @@
+version: 1
+note: Freshness inputs for the sources in rate_row_extract.csv. Written by python
+  -m app.quote.fixtures_gen; do not edit by hand.
+data_version:
+  build_id: 20261024-10d8a893
+  build_date: '2026-10-24'
+  tic_release: tic-2026-10
+sources:
+  brigham_mrf:
+    source_kind: hospital_mrf
+    publisher: Brigham and Women's Hospital
+    source_file: 188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip
+    source_sha256: 188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce
+    last_updated: '2026-03-27'
+    fetched_at: '2026-10-24'
+  mtauburn_mrf:
+    source_kind: hospital_mrf
+    publisher: Mount Auburn Hospital
+    source_file: a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json
+    source_sha256: a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c
+    last_updated: '2026-04-01'
+    fetched_at: '2026-10-24'
+  tic_bcbs_ma_hmo_blue_fi:
+    source_kind: insurer_tic
+    publisher: "Blue Cross Blue Shield of Massachusetts \xB7 HMO Blue (fully insured)"
+    source_file: 2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz
+    source_sha256: 123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+  tic_bcbs_ma_hmo_blue_si:
+    source_kind: insurer_tic
+    publisher: "Blue Cross Blue Shield of Massachusetts \xB7 HMO Blue (self insured)"
+    source_file: 2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Self-Insured_in-network-rates.json.gz
+    source_sha256: 261f02c8d69c2e468493f92bf2d3636b31355013db271b3c42271f720ac65f23
+    last_updated: '2026-10-01'
+    fetched_at: '2026-10-24'
+  tufts_mrf:
+    source_kind: hospital_mrf
+    publisher: Tufts Medical Center
+    source_file: d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip
+    source_sha256: d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971
+    last_updated: '2026-04-01'
+    fetched_at: '2026-10-24'

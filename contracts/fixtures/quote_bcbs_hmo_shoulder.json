@@ -17,58 +17,16 @@
   "picked_by": "person",
   "as_of": "2026-10-24",
   "data_version": {
-    "build_id": "20261024-1cb8089d",
+    "build_id": "20261024-10d8a893",
     "build_date": "2026-10-24",
     "tic_release": "tic-2026-10",
     "sites_version": 1,
     "care_paths_version": "1.0.0"
   },
   "sources": {
-    "bcbs_ma_tic_hmo": {
-      "source_kind": "insurer_tic",
-      "publisher": "Blue Cross Blue Shield of Massachusetts",
-      "freshness": {
-        "last_updated": "2026-05-01",
-        "expected_by": "2026-06-15",
-        "late_to_refresh": true,
-        "source_rule": "tic_45_days",
-        "fetched_at": "2026-10-20",
-        "our_refresh_due": "2026-11-20",
-        "stale_on_our_side": false,
-        "our_rule": "tic_monthly"
-      }
-    },
-    "brigham_mrf": {
+    "mtauburn_mrf": {
       "source_kind": "hospital_mrf",
-      "publisher": "Brigham and Women's Hospital",
-      "freshness": {
-        "last_updated": "2026-03-27",
-        "expected_by": "2027-03-27",
-        "late_to_refresh": false,
-        "source_rule": "hospital_mrf_365_days",
-        "fetched_at": "2026-10-24",
-        "our_refresh_due": "2026-11-24",
-        "stale_on_our_side": false,
-        "our_rule": "hospital_monthly"
-      }
-    },
-    "cms_pfs_rvu26a": {
-      "source_kind": "medicare_pfs",
-      "publisher": "CMS (Medicare, Boston 2026)",
-      "freshness": {
-        "last_updated": "2026-01-01",
-        "expected_by": "2027-01-01",
-        "late_to_refresh": false,
-        "source_rule": "fee_schedule_annual",
-        "fetched_at": "2026-10-24",
-        "our_refresh_due": null,
-        "stale_on_our_side": false,
-        "our_rule": "fee_schedule_per_release"
-      }
-    },
-    "franciscan_mrf": {
-      "source_kind": "hospital_mrf",
-      "publisher": "Franciscan Children's",
+      "publisher": "Mount Auburn Hospital",
       "freshness": {
         "last_updated": "2026-04-01",
         "expected_by": "2027-04-01",
@@ -80,9 +38,23 @@
         "our_rule": "hospital_monthly"
       }
     },
-    "mtauburn_mrf": {
+    "tic_bcbs_ma_hmo_blue_fi": {
+      "source_kind": "insurer_tic",
+      "publisher": "Blue Cross Blue Shield of Massachusetts \u00b7 HMO Blue (fully insured)",
+      "freshness": {
+        "last_updated": "2026-10-01",
+        "expected_by": "2026-11-15",
+        "late_to_refresh": false,
+        "source_rule": "tic_45_days",
+        "fetched_at": "2026-10-24",
+        "our_refresh_due": "2026-11-24",
+        "stale_on_our_side": false,
+        "our_rule": "tic_monthly"
+      }
+    },
+    "tufts_mrf": {
       "source_kind": "hospital_mrf",
-      "publisher": "Mount Auburn Hospital",
+      "publisher": "Tufts Medical Center",
       "freshness": {
         "last_updated": "2026-04-01",
         "expected_by": "2027-04-01",
@@ -124,17 +96,17 @@
         "hours_label": "unknown",
         "price_label": "price_file",
         "price_source_id": "mtauburn_mrf",
+        "listing_status": "web_verified",
         "service_areas": [
           "ortho",
           "skin",
           "gi"
-        ],
-        "listing_status": "web_verified"
+        ]
       },
       "receipt": {
         "lines": [
           {
-            "line_id": "referral_visit",
+            "line_id": "referral_facility",
             "tier": "certain",
             "likelihood": "certain",
             "step_id": "referral",
@@ -142,12 +114,13 @@
               "99213"
             ],
             "modifier": null,
-            "plain_name": "Visit with your main doctor first",
-            "technical_name": "Primary-care referral visit",
+            "plain_name": "Visit with your main doctor first: the hospital's fee",
+            "technical_name": "Primary-care referral visit (hospital facility fee)",
             "why": "Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.",
             "glossary_keys": [
               "referral",
-              "hmo"
+              "hmo",
+              "facility_fee"
             ],
             "component": "facility",
             "component_confirmed": true,
@@ -169,9 +142,77 @@
                 "payer_id": "BCBS_MA"
               }
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 203.0,
+              "high": 203.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4414",
+                "payer_id": null
+              }
+            },
             "tier_basis": "plan_rule",
             "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "referral_doctor",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": "referral",
+            "codes": [
+              "99213"
+            ],
+            "modifier": null,
+            "plain_name": "Visit with your main doctor first: the doctor's fee",
+            "technical_name": "Primary-care referral visit (professional fee)",
+            "why": "Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.",
+            "glossary_keys": [
+              "referral",
+              "hmo"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 64.65,
+              "high": 108.56,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:15835",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "plan_rule",
+            "doctor_fee": {
+              "rung": 2,
+              "explanation_key": "fee.rung_2_group",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
             "ai_suggested": false,
             "in_total": true,
             "elsewhere": [],
@@ -186,10 +227,12 @@
               "99203"
             ],
             "modifier": null,
-            "plain_name": "Visit with a bone & joint doctor",
-            "technical_name": "New-patient orthopedic or sports-medicine visit",
+            "plain_name": "Visit with a bone & joint doctor: the hospital's fee",
+            "technical_name": "New-patient orthopedic or sports-medicine visit (hospital facility fee)",
             "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
-            "glossary_keys": [],
+            "glossary_keys": [
+              "facility_fee"
+            ],
             "component": "facility",
             "component_confirmed": true,
             "unit": "once",
@@ -210,7 +253,22 @@
                 "payer_id": "BCBS_MA"
               }
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 203.0,
+              "high": 203.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4409",
+                "payer_id": null
+              }
+            },
             "tier_basis": "our_judgment",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -227,8 +285,8 @@
               "99203"
             ],
             "modifier": null,
-            "plain_name": "Doctor's fee for the visit",
-            "technical_name": "Professional fee, new-patient visit",
+            "plain_name": "Visit with a bone & joint doctor: the doctor's fee",
+            "technical_name": "New-patient orthopedic or sports-medicine visit (professional fee)",
             "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
             "glossary_keys": [],
             "component": "professional",
@@ -237,25 +295,25 @@
             "availability": "offered",
             "cell": {
               "kind": "money",
-              "low": 75.54,
-              "high": 75.54,
-              "basis": "fee_schedule",
+              "low": 80.02,
+              "high": 134.37,
+              "basis": "negotiated",
               "prov": {
-                "source_id": "cms_pfs_rvu26a",
-                "source_kind": "medicare_pfs",
-                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                "source_date": "2026-01-01",
-                "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:99203",
-                "payer_id": null
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:12029",
+                "payer_id": "BCBS_MA"
               }
             },
             "list_price": null,
             "tier_basis": "our_judgment",
             "doctor_fee": {
-              "rung": 7,
-              "explanation_key": "fee.rung_7_medicare_reference",
+              "rung": 2,
+              "explanation_key": "fee.rung_2_group",
               "group_name": null,
               "group_tin": null,
               "npi_count": null,
@@ -264,7 +322,7 @@
               "by_npi": null
             },
             "ai_suggested": false,
-            "in_total": false,
+            "in_total": true,
             "elsewhere": [],
             "learn_more": []
           },
@@ -277,11 +335,12 @@
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones",
-            "technical_name": "Shoulder X-ray",
-            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while.",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "technical_name": "Shoulder X-ray (hospital facility fee)",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while. It shows arthritis, bone spurs and calcium in the tendons, which changes what comes next.",
             "glossary_keys": [
-              "xray"
+              "xray",
+              "facility_fee"
             ],
             "component": "facility",
             "component_confirmed": true,
@@ -303,7 +362,22 @@
                 "payer_id": "BCBS_MA"
               }
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 527.0,
+              "high": 527.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3235",
+                "payer_id": null
+              }
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -329,9 +403,9 @@
               "73030"
             ],
             "modifier": "26",
-            "plain_name": "A radiologist reads the X-ray",
-            "technical_name": "X-ray interpretation (professional)",
-            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while.",
+            "plain_name": "Quick picture of the shoulder bones: the doctor's reading",
+            "technical_name": "Shoulder X-ray (professional fee)",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while. It shows arthritis, bone spurs and calcium in the tendons, which changes what comes next.",
             "glossary_keys": [
               "xray"
             ],
@@ -340,9 +414,13 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "not_loaded",
-              "what": "BCBS's rate for the radiologist reading the X-ray",
-              "eta": "tic-2026-11"
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -362,7 +440,7 @@
             ]
           },
           {
-            "line_id": "physical_therapy_eval",
+            "line_id": "physical_therapy_facility",
             "tier": "likely",
             "likelihood": "likely",
             "step_id": "physical_therapy",
@@ -370,11 +448,12 @@
               "97161"
             ],
             "modifier": null,
-            "plain_name": "Guided exercise program for the shoulder",
-            "technical_name": "Physical therapy evaluation and visits",
+            "plain_name": "Guided exercise program for the shoulder: the hospital's fee",
+            "technical_name": "Physical therapy evaluation and visits (hospital facility fee)",
             "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
             "glossary_keys": [
-              "pt_evaluation"
+              "pt_evaluation",
+              "facility_fee"
             ],
             "component": "facility",
             "component_confirmed": true,
@@ -396,7 +475,22 @@
                 "payer_id": "BCBS_MA"
               }
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 365.0,
+              "high": 365.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3772",
+                "payer_id": null
+              }
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -405,7 +499,7 @@
             "learn_more": []
           },
           {
-            "line_id": "physical_therapy_sessions",
+            "line_id": "physical_therapy_sessions_facility",
             "tier": "likely",
             "likelihood": "likely",
             "step_id": "physical_therapy",
@@ -413,11 +507,12 @@
               "97110"
             ],
             "modifier": null,
-            "plain_name": "Exercise sessions with a physical therapist, per 15 minutes",
-            "technical_name": "Therapeutic exercise (per 15 minutes)",
+            "plain_name": "Later exercise sessions (each 15 minutes): the hospital's fee",
+            "technical_name": "Therapeutic exercise (hospital facility fee)",
             "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
             "glossary_keys": [
-              "pt_evaluation"
+              "pt_evaluation",
+              "facility_fee"
             ],
             "component": "facility",
             "component_confirmed": true,
@@ -439,7 +534,22 @@
                 "payer_id": "BCBS_MA"
               }
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 149.0,
+              "high": 149.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3751",
+                "payer_id": null
+              }
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -448,7 +558,7 @@
             "learn_more": []
           },
           {
-            "line_id": "steroid_injection",
+            "line_id": "steroid_injection_facility",
             "tier": "possible",
             "likelihood": "possible",
             "step_id": "steroid_injection",
@@ -456,12 +566,13 @@
               "20610"
             ],
             "modifier": null,
-            "plain_name": "Shot of anti-inflammatory and numbing medicine",
-            "technical_name": "Corticosteroid shoulder injection",
-            "why": "It can calm the pain for a while so you can do your exercises.",
+            "plain_name": "Shot of anti-inflammatory and numbing medicine: the hospital's fee",
+            "technical_name": "Corticosteroid shoulder injection (hospital facility fee)",
+            "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
             "glossary_keys": [
               "steroid_injection",
-              "ultrasound"
+              "ultrasound",
+              "facility_fee"
             ],
             "component": "facility",
             "component_confirmed": true,
@@ -483,7 +594,22 @@
                 "payer_id": "BCBS_MA"
               }
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 1062.0,
+              "high": 1062.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4085",
+                "payer_id": null
+              }
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -492,7 +618,60 @@
             "learn_more": []
           },
           {
-            "line_id": "injection_drug_ai",
+            "line_id": "steroid_injection_doctor",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
+            "codes": [
+              "20610"
+            ],
+            "modifier": null,
+            "plain_name": "Shot of anti-inflammatory and numbing medicine: the doctor's fee",
+            "technical_name": "Corticosteroid shoulder injection (professional fee)",
+            "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
+            "glossary_keys": [
+              "steroid_injection",
+              "ultrasound"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 52.15,
+              "high": 75.06,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:5531",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": {
+              "rung": 2,
+              "explanation_key": "fee.rung_2_group",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "steroid_injection_drug_ai",
             "tier": "not_in_public_data",
             "likelihood": "possible",
             "step_id": "steroid_injection",
@@ -500,8 +679,8 @@
               "J3301"
             ],
             "modifier": null,
-            "plain_name": "The medicine in the shot may be billed on its own line",
-            "technical_name": "Injected steroid drug (AI-suggested)",
+            "plain_name": "The medicine in the shot",
+            "technical_name": "Injected medicine (billed as a drug)",
             "why": "The medicine in the shot may appear as its own line on the bill.",
             "glossary_keys": [],
             "component": "drug",
@@ -509,13 +688,9 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "not_published",
-              "what": "a price for the injected medicine",
-              "ask": "Ask whether the medicine is billed separately from the shot.",
-              "searched": {
-                "source_id": "mtauburn_mrf",
-                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c"
-              }
+              "kind": "not_loaded",
+              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
+              "eta": null
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -526,7 +701,7 @@
             "learn_more": []
           },
           {
-            "line_id": "ultrasound",
+            "line_id": "tendon_scan_ultrasound_facility",
             "tier": "possible",
             "likelihood": "possible",
             "step_id": "tendon_scan_ultrasound",
@@ -534,12 +709,13 @@
               "76881"
             ],
             "modifier": null,
-            "plain_name": "Live sound-wave picture of the tendons",
-            "technical_name": "Shoulder ultrasound",
+            "plain_name": "Live sound-wave picture of the tendons: the hospital's fee",
+            "technical_name": "Shoulder ultrasound (hospital facility fee)",
             "why": "If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear is.",
             "glossary_keys": [
               "ultrasound",
-              "xray"
+              "xray",
+              "facility_fee"
             ],
             "component": "facility",
             "component_confirmed": true,
@@ -561,6 +737,67 @@
                 "payer_id": "BCBS_MA"
               }
             },
+            "list_price": {
+              "kind": "money",
+              "low": 739.0,
+              "high": 739.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:3698",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: Ultrasound",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=76881&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: musculoskeletal ultrasound",
+                "url": "https://www.radiologyinfo.org/en/info/genus"
+              }
+            ]
+          },
+          {
+            "line_id": "tendon_scan_ultrasound_reading",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_ultrasound",
+            "codes": [
+              "76881"
+            ],
+            "modifier": "26",
+            "plain_name": "Live sound-wave picture of the tendons: the doctor's reading",
+            "technical_name": "Shoulder ultrasound (professional fee)",
+            "why": "If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear is.",
+            "glossary_keys": [
+              "ultrasound",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            },
             "list_price": null,
             "tier_basis": "guideline",
             "doctor_fee": null,
@@ -579,7 +816,7 @@
             ]
           },
           {
-            "line_id": "mri",
+            "line_id": "tendon_scan_mri_facility",
             "tier": "possible",
             "likelihood": "possible",
             "step_id": "tendon_scan_mri",
@@ -587,12 +824,13 @@
               "73221"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage",
-            "technical_name": "Shoulder MRI (no contrast)",
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "technical_name": "Shoulder MRI (no contrast) (hospital facility fee)",
             "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
             "glossary_keys": [
               "mri",
-              "xray"
+              "xray",
+              "facility_fee"
             ],
             "component": "facility",
             "component_confirmed": true,
@@ -614,6 +852,67 @@
                 "payer_id": "BCBS_MA"
               }
             },
+            "list_price": {
+              "kind": "money",
+              "low": 2741.0,
+              "high": 2741.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4603",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73221&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: shoulder MRI",
+                "url": "https://www.radiologyinfo.org/en/info/shouldermr"
+              }
+            ]
+          },
+          {
+            "line_id": "tendon_scan_mri_reading",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_mri",
+            "codes": [
+              "73221"
+            ],
+            "modifier": "26",
+            "plain_name": "Detailed scan of tendons & cartilage: the doctor's reading",
+            "technical_name": "Shoulder MRI (no contrast) (professional fee)",
+            "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
+            "glossary_keys": [
+              "mri",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            },
             "list_price": null,
             "tier_basis": "guideline",
             "doctor_fee": null,
@@ -630,52 +929,179 @@
                 "url": "https://www.radiologyinfo.org/en/info/shouldermr"
               }
             ]
+          },
+          {
+            "line_id": "mr_arthrogram_facility",
+            "tier": "possible",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "73222"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan with dye in the joint: the hospital's fee",
+            "technical_name": "Shoulder MR arthrogram (hospital facility fee)",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray",
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 1977.65,
+              "high": 1977.65,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:40092",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 4052.0,
+              "high": 4052.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:4604",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ]
+          },
+          {
+            "line_id": "mr_arthrogram_reading",
+            "tier": "not_in_public_data",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "73222"
+            ],
+            "modifier": "26",
+            "plain_name": "Detailed scan with dye in the joint: the doctor's reading",
+            "technical_name": "Shoulder MR arthrogram (professional fee)",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ]
           }
         ],
         "totals": {
           "likely": {
-            "low": 715.65,
-            "high": 715.65,
+            "low": 860.32,
+            "high": 958.58,
             "line_ids": [
-              "referral_visit",
+              "referral_facility",
+              "referral_doctor",
               "visit_facility",
+              "visit_doctor",
               "xray_facility",
-              "physical_therapy_eval"
+              "physical_therapy_facility"
             ],
             "includes_estimate": false,
             "includes_late_source": false,
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 3,
+          "missing": 2,
           "excluded": [
-            {
-              "line_id": "visit_doctor",
-              "reason": "reference_only"
-            },
             {
               "line_id": "xray_reading",
               "reason": "no_dollar_amount"
             },
             {
-              "line_id": "steroid_injection",
+              "line_id": "physical_therapy_sessions_facility",
+              "reason": "repeats"
+            },
+            {
+              "line_id": "steroid_injection_facility",
               "reason": "possible_tier"
             },
             {
-              "line_id": "injection_drug_ai",
+              "line_id": "steroid_injection_doctor",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "steroid_injection_drug_ai",
               "reason": "ai_suggested"
             },
             {
-              "line_id": "ultrasound",
+              "line_id": "tendon_scan_ultrasound_facility",
               "reason": "possible_tier"
             },
             {
-              "line_id": "mri",
+              "line_id": "tendon_scan_ultrasound_reading",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "tendon_scan_mri_facility",
               "reason": "possible_tier"
             },
             {
-              "line_id": "physical_therapy_sessions",
-              "reason": "repeats"
+              "line_id": "tendon_scan_mri_reading",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "mr_arthrogram_facility",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "mr_arthrogram_reading",
+              "reason": "no_dollar_amount"
             }
           ],
           "you_pay": {
@@ -693,7 +1119,7 @@
           "points": [
             {
               "payer_id": "WELLPOINT",
-              "label": "Wellpoint (GIC) · all commercial plans",
+              "label": "Wellpoint / Unicare (GIC)",
               "product": null,
               "money": {
                 "kind": "money",
@@ -713,30 +1139,9 @@
               }
             },
             {
-              "payer_id": null,
-              "label": "Medicare managed care plan (payer not named)",
-              "product": null,
-              "money": {
-                "kind": "money",
-                "low": 104.29,
-                "high": 104.29,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "mtauburn_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
-                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41011",
-                  "payer_id": null
-                }
-              }
-            },
-            {
               "payer_id": "BCBS_MA",
-              "label": "Blue Cross · HMO",
-              "product": "HMO",
+              "label": "Blue Cross Blue Shield of Massachusetts",
+              "product": null,
               "money": {
                 "kind": "money",
                 "low": 110.42,
@@ -755,29 +1160,8 @@
               }
             },
             {
-              "payer_id": "BCBS_MA",
-              "label": "Blue Cross · PPO",
-              "product": "PPO",
-              "money": {
-                "kind": "money",
-                "low": 110.42,
-                "high": 110.42,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "mtauburn_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
-                  "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
-                  "source_date": "2026-04-01",
-                  "method": "stated",
-                  "row_ref": "mtauburn_mrf:a9e5ac64beef:41008",
-                  "payer_id": "BCBS_MA"
-                }
-              }
-            },
-            {
               "payer_id": "HARVARD_PILGRIM",
-              "label": "Harvard Pilgrim · self-insured commercial",
+              "label": "Harvard Pilgrim (Point32Health)",
               "product": null,
               "money": {
                 "kind": "money",
@@ -819,43 +1203,83 @@
     },
     {
       "site": {
-        "site_id": "brigham_and_womens_hospital",
-        "name": "Brigham and Women's Hospital",
-        "site_type": "hospital_outpatient",
-        "system_id": "mgb",
+        "site_id": "afc_watertown",
+        "name": "AFC Urgent Care Watertown",
+        "site_type": "urgent_care",
+        "system_id": null,
         "coords": {
-          "lat": 42.3358,
-          "lon": -71.1065,
-          "geocoded_by": "hospital_registry",
+          "lat": 42.3637,
+          "lon": -71.159,
+          "geocoded_by": "manual",
           "geocoded_at": "2026-10-24"
         },
-        "address_line": "75 Francis St, Boston, MA 02115",
-        "phone": null,
-        "billing_type": "hospital_outpatient",
-        "booking": [],
-        "portal_links": [
+        "address_line": "376 Arsenal St, Watertown, MA 02472",
+        "phone": "617-923-2273",
+        "billing_type": "office_visit",
+        "booking": [
           {
-            "kind": "patient_gateway",
-            "system_id": "mgb",
-            "label": "MGB Patient Gateway",
-            "url": "https://patientgateway.massgeneralbrigham.org/"
+            "kind": "deep_link",
+            "provider": "solv",
+            "label": "Reserve a spot",
+            "url": "https://www.solvhealth.com/book-online/AM731g",
+            "phone": null
+          },
+          {
+            "kind": "walk_in",
+            "provider": "none",
+            "label": "Walk in",
+            "url": null,
+            "phone": null
+          },
+          {
+            "kind": "call",
+            "provider": "phone",
+            "label": "Call",
+            "url": null,
+            "phone": "617-923-2273"
           }
         ],
-        "hours": null,
-        "hours_label": "unknown",
+        "portal_links": [],
+        "hours": {
+          "source": "operator_schema_org",
+          "source_url": "https://www.afcurgentcare.com/watertown/",
+          "checked_at": "2026-10-24",
+          "weekly": [
+            {
+              "days": [
+                "mon",
+                "tue",
+                "wed",
+                "thu",
+                "fri"
+              ],
+              "opens": "08:00",
+              "closes": "20:00"
+            },
+            {
+              "days": [
+                "sat",
+                "sun"
+              ],
+              "opens": "08:00",
+              "closes": "17:00"
+            }
+          ],
+          "may_close_early": false
+        },
+        "hours_label": "posted_hours",
         "price_label": "price_file",
-        "price_source_id": "brigham_mrf",
+        "price_source_id": "tic_bcbs_ma_hmo_blue_fi",
+        "listing_status": "web_verified",
         "service_areas": [
-          "ortho",
-          "skin",
-          "gi"
-        ],
-        "listing_status": "web_verified"
+          "urgent_care",
+          "ortho"
+        ]
       },
       "receipt": {
         "lines": [
           {
-            "line_id": "referral_visit",
+            "line_id": "referral",
             "tier": "not_in_public_data",
             "likelihood": "certain",
             "step_id": "referral",
@@ -870,17 +1294,17 @@
               "referral",
               "hmo"
             ],
-            "component": "facility",
+            "component": "professional",
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
             "cell": {
               "kind": "not_published",
-              "what": "a BCBS HMO rate for a primary-care visit at Brigham",
-              "ask": "Ask your primary care office what the referral visit costs with BCBS HMO.",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
               "searched": {
-                "source_id": "brigham_mrf",
-                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce"
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
               }
             },
             "list_price": null,
@@ -888,6 +1312,625 @@
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "visit",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": "visit",
+            "codes": [
+              "99203"
+            ],
+            "modifier": null,
+            "plain_name": "Visit with a bone & joint doctor",
+            "technical_name": "New-patient orthopedic or sports-medicine visit",
+            "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
+            "glossary_keys": [],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 135.61,
+              "high": 135.61,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:11541",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "our_judgment",
+            "doctor_fee": {
+              "rung": 2,
+              "explanation_key": "fee.rung_2_group",
+              "group_name": "DRX UC WATERTOWN PC DBA AFC URGENT C ARE",
+              "group_tin": "46-0903626",
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "xray",
+            "tier": "likely",
+            "likelihood": "likely",
+            "step_id": "xray",
+            "codes": [
+              "73030"
+            ],
+            "modifier": null,
+            "plain_name": "Quick picture of the shoulder bones",
+            "technical_name": "Shoulder X-ray",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while. It shows arthritis, bone spurs and calcium in the tendons, which changes what comes next.",
+            "glossary_keys": [
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 43.15,
+              "high": 43.15,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:8875",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": {
+              "rung": 2,
+              "explanation_key": "fee.rung_2_group",
+              "group_name": "DRX UC WATERTOWN PC DBA AFC URGENT C ARE",
+              "group_tin": "46-0903626",
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: X-Rays",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: bone X-ray",
+                "url": "https://www.radiologyinfo.org/en/info/bonerad"
+              }
+            ]
+          },
+          {
+            "line_id": "physical_therapy",
+            "tier": "not_in_public_data",
+            "likelihood": "likely",
+            "step_id": "physical_therapy",
+            "codes": [
+              "97161"
+            ],
+            "modifier": null,
+            "plain_name": "Guided exercise program for the shoulder",
+            "technical_name": "Physical therapy evaluation and visits",
+            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
+            "glossary_keys": [
+              "pt_evaluation"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "physical_therapy_sessions",
+            "tier": "not_in_public_data",
+            "likelihood": "likely",
+            "step_id": "physical_therapy",
+            "codes": [
+              "97110"
+            ],
+            "modifier": null,
+            "plain_name": "Later exercise sessions (each 15 minutes)",
+            "technical_name": "Therapeutic exercise",
+            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
+            "glossary_keys": [
+              "pt_evaluation"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "per_15_minutes",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "steroid_injection",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
+            "codes": [
+              "20610"
+            ],
+            "modifier": null,
+            "plain_name": "Shot of anti-inflammatory and numbing medicine",
+            "technical_name": "Corticosteroid shoulder injection",
+            "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
+            "glossary_keys": [
+              "steroid_injection",
+              "ultrasound"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 79.86,
+              "high": 79.86,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:5752",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": {
+              "rung": 2,
+              "explanation_key": "fee.rung_2_group",
+              "group_name": "DRX UC WATERTOWN PC DBA AFC URGENT C ARE",
+              "group_tin": "46-0903626",
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "steroid_injection_drug_ai",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
+            "codes": [
+              "J3301"
+            ],
+            "modifier": null,
+            "plain_name": "The medicine in the shot",
+            "technical_name": "Injected medicine (billed as a drug)",
+            "why": "The medicine in the shot may appear as its own line on the bill.",
+            "glossary_keys": [],
+            "component": "drug",
+            "component_confirmed": false,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": true,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "tendon_scan_ultrasound",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_ultrasound",
+            "codes": [
+              "76881"
+            ],
+            "modifier": null,
+            "plain_name": "Live sound-wave picture of the tendons",
+            "technical_name": "Shoulder ultrasound",
+            "why": "If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear is.",
+            "glossary_keys": [
+              "ultrasound",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 63.58,
+              "high": 63.58,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:9381",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": {
+              "rung": 2,
+              "explanation_key": "fee.rung_2_group",
+              "group_name": "DRX UC WATERTOWN PC DBA AFC URGENT C ARE",
+              "group_tin": "46-0903626",
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: Ultrasound",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=76881&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: musculoskeletal ultrasound",
+                "url": "https://www.radiologyinfo.org/en/info/genus"
+              }
+            ]
+          },
+          {
+            "line_id": "tendon_scan_mri",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_mri",
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage",
+            "technical_name": "Shoulder MRI (no contrast)",
+            "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
+            "glossary_keys": [
+              "mri",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73221&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: shoulder MRI",
+                "url": "https://www.radiologyinfo.org/en/info/shouldermr"
+              }
+            ]
+          },
+          {
+            "line_id": "mr_arthrogram",
+            "tier": "not_in_public_data",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "73222"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan with dye in the joint",
+            "technical_name": "Shoulder MR arthrogram",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ]
+          }
+        ],
+        "totals": {
+          "likely": {
+            "low": 178.76,
+            "high": 178.76,
+            "line_ids": [
+              "visit",
+              "xray"
+            ],
+            "includes_estimate": false,
+            "includes_late_source": false,
+            "includes_stale_source": false
+          },
+          "complete": false,
+          "missing": 3,
+          "excluded": [
+            {
+              "line_id": "referral",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "physical_therapy",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "physical_therapy_sessions",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "steroid_injection",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "steroid_injection_drug_ai",
+              "reason": "ai_suggested"
+            },
+            {
+              "line_id": "tendon_scan_ultrasound",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "tendon_scan_mri",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "mr_arthrogram",
+              "reason": "no_dollar_amount"
+            }
+          ],
+          "you_pay": {
+            "kind": "copay_or_deductible",
+            "note_key": "youpay.copay_or_deductible",
+            "portal_label": "Check my deductible at MyBlue",
+            "portal_url": "https://www.bluecrossma.org/myblue"
+          }
+        }
+      },
+      "other_payers": []
+    },
+    {
+      "site": {
+        "site_id": "tufts_medical_center",
+        "name": "Tufts Medical Center",
+        "site_type": "hospital_outpatient",
+        "system_id": "tufts_medicine",
+        "coords": {
+          "lat": 42.3495,
+          "lon": -71.0636,
+          "geocoded_by": "hospital_registry",
+          "geocoded_at": "2026-10-24"
+        },
+        "address_line": "800 Washington St, Boston, MA 02111",
+        "phone": null,
+        "billing_type": "hospital_outpatient",
+        "booking": [],
+        "portal_links": [],
+        "hours": null,
+        "hours_label": "unknown",
+        "price_label": "price_file",
+        "price_source_id": "tufts_mrf",
+        "listing_status": "web_verified",
+        "service_areas": [
+          "ortho",
+          "skin",
+          "gi"
+        ]
+      },
+      "receipt": {
+        "lines": [
+          {
+            "line_id": "referral_facility",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": "referral",
+            "codes": [
+              "99213"
+            ],
+            "modifier": null,
+            "plain_name": "Visit with your main doctor first: the hospital's fee",
+            "technical_name": "Primary-care referral visit (hospital facility fee)",
+            "why": "Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.",
+            "glossary_keys": [
+              "referral",
+              "hmo",
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 361.0,
+              "high": 361.0,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:661060",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 361.0,
+              "high": 361.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:42793",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "plan_rule",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "referral_doctor",
+            "tier": "certain",
+            "likelihood": "certain",
+            "step_id": "referral",
+            "codes": [
+              "99213"
+            ],
+            "modifier": null,
+            "plain_name": "Visit with your main doctor first: the doctor's fee",
+            "technical_name": "Primary-care referral visit (professional fee)",
+            "why": "Some plans, especially HMO plans, won't pay for a specialist unless your main doctor sends a referral first.",
+            "glossary_keys": [
+              "referral",
+              "hmo"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 61.0,
+              "high": 117.68,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:15811",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "plan_rule",
+            "doctor_fee": {
+              "rung": 2,
+              "explanation_key": "fee.rung_2_group",
+              "group_name": "TUFTS MEDICAL CENTER INC",
+              "group_tin": "04-3400617",
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": true,
             "elsewhere": [],
             "learn_more": []
           },
@@ -900,24 +1943,41 @@
               "99203"
             ],
             "modifier": null,
-            "plain_name": "Visit with a bone & joint doctor",
-            "technical_name": "New-patient orthopedic or sports-medicine visit",
+            "plain_name": "Visit with a bone & joint doctor: the hospital's fee",
+            "technical_name": "New-patient orthopedic or sports-medicine visit (hospital facility fee)",
             "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
-            "glossary_keys": [],
+            "glossary_keys": [
+              "facility_fee"
+            ],
             "component": "facility",
-            "component_confirmed": false,
+            "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
             "cell": {
               "kind": "not_published",
-              "what": "a BCBS HMO facility rate for a new-patient visit",
-              "ask": "Ask Brigham billing for a Good Faith Estimate of the facility fee.",
+              "what": "this insurer's rate for this item at this hospital",
+              "ask": "Ask the hospital billing office for a Good Faith Estimate for your plan.",
               "searched": {
-                "source_id": "brigham_mrf",
-                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce"
+                "source_id": "tufts_mrf",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971"
               }
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 430.0,
+              "high": 430.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:35495",
+                "payer_id": null
+              }
+            },
             "tier_basis": "our_judgment",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -934,8 +1994,8 @@
               "99203"
             ],
             "modifier": null,
-            "plain_name": "Doctor's fee for the visit",
-            "technical_name": "Professional fee, new-patient visit (hospital setting)",
+            "plain_name": "Visit with a bone & joint doctor: the doctor's fee",
+            "technical_name": "New-patient orthopedic or sports-medicine visit (professional fee)",
             "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
             "glossary_keys": [],
             "component": "professional",
@@ -944,17 +2004,17 @@
             "availability": "offered",
             "cell": {
               "kind": "money",
-              "low": 80.0,
-              "high": 328.84,
+              "low": 75.5,
+              "high": 145.65,
               "basis": "negotiated",
               "prov": {
-                "source_id": "bcbs_ma_tic_hmo",
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
                 "source_kind": "insurer_tic",
-                "source_file": "bcbsma_hmo_in-network-rates_2026-05-01.json.gz",
-                "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-                "source_date": "2026-05-01",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
                 "method": "stated",
-                "row_ref": "bcbs_ma_tic_hmo:000000000000:99203:group_bwpo",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:12007",
                 "payer_id": "BCBS_MA"
               }
             },
@@ -963,53 +2023,12 @@
             "doctor_fee": {
               "rung": 2,
               "explanation_key": "fee.rung_2_group",
-              "group_name": "Brigham and Women's Physicians Organization",
-              "group_tin": "04-3466314",
-              "npi_count": 1892,
+              "group_name": "TUFTS MEDICAL CENTER INC",
+              "group_tin": "04-3400617",
+              "npi_count": null,
               "multiple": null,
               "chia_badge": null,
-              "by_npi": [
-                {
-                  "npi": "0000000001",
-                  "display_name": null,
-                  "money": {
-                    "kind": "money",
-                    "low": 80.0,
-                    "high": 80.0,
-                    "basis": "negotiated",
-                    "prov": {
-                      "source_id": "bcbs_ma_tic_hmo",
-                      "source_kind": "insurer_tic",
-                      "source_file": "bcbsma_hmo_in-network-rates_2026-05-01.json.gz",
-                      "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-                      "source_date": "2026-05-01",
-                      "method": "stated",
-                      "row_ref": "bcbs_ma_tic_hmo:000000000000:99203:block_a",
-                      "payer_id": "BCBS_MA"
-                    }
-                  }
-                },
-                {
-                  "npi": "0000000002",
-                  "display_name": null,
-                  "money": {
-                    "kind": "money",
-                    "low": 328.84,
-                    "high": 328.84,
-                    "basis": "negotiated",
-                    "prov": {
-                      "source_id": "bcbs_ma_tic_hmo",
-                      "source_kind": "insurer_tic",
-                      "source_file": "bcbsma_hmo_in-network-rates_2026-05-01.json.gz",
-                      "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
-                      "source_date": "2026-05-01",
-                      "method": "stated",
-                      "row_ref": "bcbs_ma_tic_hmo:000000000000:99203:block_b",
-                      "payer_id": "BCBS_MA"
-                    }
-                  }
-                }
-              ]
+              "by_npi": null
             },
             "ai_suggested": false,
             "in_total": true,
@@ -1018,30 +2037,98 @@
           },
           {
             "line_id": "xray_facility",
-            "tier": "not_in_public_data",
+            "tier": "likely",
             "likelihood": "likely",
             "step_id": "xray",
             "codes": [
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones",
-            "technical_name": "Shoulder X-ray",
-            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while.",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "technical_name": "Shoulder X-ray (hospital facility fee)",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while. It shows arthritis, bone spurs and calcium in the tendons, which changes what comes next.",
             "glossary_keys": [
-              "xray"
+              "xray",
+              "facility_fee"
             ],
             "component": "facility",
             "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
             "cell": {
+              "kind": "money",
+              "low": 110.42,
+              "high": 110.42,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:488780",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 333.0,
+              "high": 333.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:73747",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": true,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: X-Rays",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: bone X-ray",
+                "url": "https://www.radiologyinfo.org/en/info/bonerad"
+              }
+            ]
+          },
+          {
+            "line_id": "xray_reading",
+            "tier": "not_in_public_data",
+            "likelihood": "likely",
+            "step_id": "xray",
+            "codes": [
+              "73030"
+            ],
+            "modifier": "26",
+            "plain_name": "Quick picture of the shoulder bones: the doctor's reading",
+            "technical_name": "Shoulder X-ray (professional fee)",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while. It shows arthritis, bone spurs and calcium in the tendons, which changes what comes next.",
+            "glossary_keys": [
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
               "kind": "not_published",
-              "what": "a BCBS HMO rate for a shoulder X-ray at Brigham",
-              "ask": "Ask Brigham billing for a Good Faith Estimate.",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
               "searched": {
-                "source_id": "brigham_mrf",
-                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce"
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
               }
             },
             "list_price": null,
@@ -1062,20 +2149,20 @@
             ]
           },
           {
-            "line_id": "steroid_injection",
-            "tier": "possible",
-            "likelihood": "possible",
-            "step_id": "steroid_injection",
+            "line_id": "physical_therapy_facility",
+            "tier": "likely",
+            "likelihood": "likely",
+            "step_id": "physical_therapy",
             "codes": [
-              "20610"
+              "97161"
             ],
-            "modifier": "50",
-            "plain_name": "Shot of anti-inflammatory and numbing medicine, both shoulders",
-            "technical_name": "Corticosteroid shoulder injection, bilateral (modifier 50)",
-            "why": "It can calm the pain for a while so you can do your exercises.",
+            "modifier": null,
+            "plain_name": "Guided exercise program for the shoulder: the hospital's fee",
+            "technical_name": "Physical therapy evaluation and visits (hospital facility fee)",
+            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
             "glossary_keys": [
-              "steroid_injection",
-              "ultrasound"
+              "pt_evaluation",
+              "facility_fee"
             ],
             "component": "facility",
             "component_confirmed": true,
@@ -1083,134 +2170,36 @@
             "availability": "offered",
             "cell": {
               "kind": "money",
-              "low": 424.52,
-              "high": 424.52,
+              "low": 266.66,
+              "high": 266.66,
               "basis": "negotiated",
               "prov": {
-                "source_id": "brigham_mrf",
+                "source_id": "tufts_mrf",
                 "source_kind": "hospital_mrf",
-                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-                "source_date": "2026-03-27",
-                "method": "stated",
-                "row_ref": "brigham_mrf:188337340e25:4049",
-                "payer_id": "BCBS_MA"
-              }
-            },
-            "list_price": null,
-            "tier_basis": "guideline",
-            "doctor_fee": null,
-            "ai_suggested": false,
-            "in_total": false,
-            "elsewhere": [],
-            "learn_more": []
-          }
-        ],
-        "totals": {
-          "likely": {
-            "low": 80.0,
-            "high": 328.84,
-            "line_ids": [
-              "visit_doctor"
-            ],
-            "includes_estimate": false,
-            "includes_late_source": true,
-            "includes_stale_source": false
-          },
-          "complete": false,
-          "missing": 4,
-          "excluded": [
-            {
-              "line_id": "referral_visit",
-              "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "visit_facility",
-              "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "xray_facility",
-              "reason": "no_dollar_amount"
-            },
-            {
-              "line_id": "steroid_injection",
-              "reason": "possible_tier"
-            }
-          ],
-          "you_pay": {
-            "kind": "copay_or_deductible",
-            "note_key": "youpay.copay_or_deductible",
-            "portal_label": "Check my deductible at MyBlue",
-            "portal_url": "https://www.bluecrossma.org/myblue"
-          }
-        }
-      },
-      "other_payers": []
-    },
-    {
-      "site": {
-        "site_id": "franciscan_childrens",
-        "name": "Franciscan Children's",
-        "site_type": "hospital_outpatient",
-        "system_id": null,
-        "coords": {
-          "lat": 42.354,
-          "lon": -71.153,
-          "geocoded_by": "hospital_registry",
-          "geocoded_at": "2026-10-24"
-        },
-        "address_line": "30 Warren St, Brighton, MA 02135",
-        "phone": null,
-        "billing_type": "hospital_outpatient",
-        "booking": [],
-        "portal_links": [],
-        "hours": null,
-        "hours_label": "unknown",
-        "price_label": "price_file",
-        "price_source_id": "franciscan_mrf",
-        "service_areas": [
-          "ortho"
-        ],
-        "listing_status": "web_verified"
-      },
-      "receipt": {
-        "lines": [
-          {
-            "line_id": "physical_therapy_eval",
-            "tier": "likely",
-            "likelihood": "likely",
-            "step_id": "physical_therapy",
-            "codes": [
-              "97161"
-            ],
-            "modifier": "GP",
-            "plain_name": "Guided exercise program for the shoulder",
-            "technical_name": "Physical therapy evaluation and visits",
-            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
-            "glossary_keys": [
-              "pt_evaluation"
-            ],
-            "component": "unknown",
-            "component_confirmed": false,
-            "unit": "once",
-            "availability": "offered",
-            "cell": {
-              "kind": "money",
-              "low": 97.76,
-              "high": 97.76,
-              "basis": "negotiated",
-              "prov": {
-                "source_id": "franciscan_mrf",
-                "source_kind": "hospital_mrf",
-                "source_file": "f7d22355fb08df5fc1fbf7655b7c632a6dc47b1c79c24d56498be2a9fccc2fcd.csv",
-                "source_sha256": "f7d22355fb08df5fc1fbf7655b7c632a6dc47b1c79c24d56498be2a9fccc2fcd",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
                 "source_date": "2026-04-01",
                 "method": "stated",
-                "row_ref": "franciscan_mrf:f7d22355fb08:2854",
+                "row_ref": "tufts_mrf:d16771049bc4:502659",
                 "payer_id": "BCBS_MA"
               }
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 541.0,
+              "high": 541.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:77030",
+                "payer_id": null
+              }
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -1219,7 +2208,7 @@
             "learn_more": []
           },
           {
-            "line_id": "physical_therapy_sessions",
+            "line_id": "physical_therapy_sessions_facility",
             "tier": "likely",
             "likelihood": "likely",
             "step_id": "physical_therapy",
@@ -1227,26 +2216,49 @@
               "97110"
             ],
             "modifier": null,
-            "plain_name": "Exercise sessions with a physical therapist, per 15 minutes",
-            "technical_name": "Therapeutic exercise (per 15 minutes)",
+            "plain_name": "Later exercise sessions (each 15 minutes): the hospital's fee",
+            "technical_name": "Therapeutic exercise (hospital facility fee)",
             "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
             "glossary_keys": [
-              "pt_evaluation"
+              "pt_evaluation",
+              "facility_fee"
             ],
-            "component": "unknown",
-            "component_confirmed": false,
+            "component": "facility",
+            "component_confirmed": true,
             "unit": "per_15_minutes",
             "availability": "offered",
             "cell": {
-              "kind": "percent_only",
-              "pct": 71.0,
-              "of": "gross charges",
-              "searched": {
-                "source_id": "franciscan_mrf",
-                "source_sha256": "f7d22355fb08df5fc1fbf7655b7c632a6dc47b1c79c24d56498be2a9fccc2fcd"
+              "kind": "money",
+              "low": 224.32,
+              "high": 285.23,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:648672",
+                "payer_id": "BCBS_MA"
               }
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 181.0,
+              "high": 181.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:77008",
+                "payer_id": null
+              }
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -1255,67 +2267,265 @@
             "learn_more": []
           },
           {
-            "line_id": "xray_facility",
-            "tier": "likely",
-            "likelihood": "likely",
-            "step_id": "xray",
+            "line_id": "steroid_injection_facility",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
             "codes": [
-              "73030"
+              "20610"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones",
-            "technical_name": "Shoulder X-ray",
-            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while.",
+            "plain_name": "Shot of anti-inflammatory and numbing medicine: the hospital's fee",
+            "technical_name": "Corticosteroid shoulder injection (hospital facility fee)",
+            "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
             "glossary_keys": [
-              "xray"
+              "steroid_injection",
+              "ultrasound",
+              "facility_fee"
             ],
             "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 283.01,
+              "high": 283.01,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:519611",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 645.0,
+              "high": 645.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:55137",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "steroid_injection_doctor",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
+            "codes": [
+              "20610"
+            ],
+            "modifier": null,
+            "plain_name": "Shot of anti-inflammatory and numbing medicine: the doctor's fee",
+            "technical_name": "Corticosteroid shoulder injection (professional fee)",
+            "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
+            "glossary_keys": [
+              "steroid_injection",
+              "ultrasound"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 42.18,
+              "high": 81.37,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:5432",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": {
+              "rung": 2,
+              "explanation_key": "fee.rung_2_group",
+              "group_name": "TUFTS MEDICAL CENTER INC",
+              "group_tin": "04-3400617",
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "steroid_injection_drug_ai",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
+            "codes": [
+              "J3301"
+            ],
+            "modifier": null,
+            "plain_name": "The medicine in the shot",
+            "technical_name": "Injected medicine (billed as a drug)",
+            "why": "The medicine in the shot may appear as its own line on the bill.",
+            "glossary_keys": [],
+            "component": "drug",
             "component_confirmed": false,
             "unit": "once",
-            "availability": "not_offered",
-            "cell": null,
+            "availability": "offered",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": true,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": []
+          },
+          {
+            "line_id": "tendon_scan_ultrasound_facility",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_ultrasound",
+            "codes": [
+              "76881"
+            ],
+            "modifier": null,
+            "plain_name": "Live sound-wave picture of the tendons: the hospital's fee",
+            "technical_name": "Shoulder ultrasound (hospital facility fee)",
+            "why": "If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear is.",
+            "glossary_keys": [
+              "ultrasound",
+              "xray",
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 231.59,
+              "high": 231.59,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:537350",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 608.0,
+              "high": 608.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:32566",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: Ultrasound",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=76881&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: musculoskeletal ultrasound",
+                "url": "https://www.radiologyinfo.org/en/info/genus"
+              }
+            ]
+          },
+          {
+            "line_id": "tendon_scan_ultrasound_reading",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_ultrasound",
+            "codes": [
+              "76881"
+            ],
+            "modifier": "26",
+            "plain_name": "Live sound-wave picture of the tendons: the doctor's reading",
+            "technical_name": "Shoulder ultrasound (professional fee)",
+            "why": "If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear is.",
+            "glossary_keys": [
+              "ultrasound",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            },
             "list_price": null,
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [
-              {
-                "site_id": "mount_auburn_hospital",
-                "site_name": "Mount Auburn Hospital",
-                "lat": 42.3738,
-                "lon": -71.1284,
-                "cell": {
-                  "kind": "money",
-                  "low": 110.42,
-                  "high": 110.42,
-                  "basis": "negotiated",
-                  "prov": {
-                    "source_id": "mtauburn_mrf",
-                    "source_kind": "hospital_mrf",
-                    "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
-                    "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
-                    "source_date": "2026-04-01",
-                    "method": "stated",
-                    "row_ref": "mtauburn_mrf:a9e5ac64beef:41007",
-                    "payer_id": "BCBS_MA"
-                  }
-                }
-              }
-            ],
+            "elsewhere": [],
             "learn_more": [
               {
-                "label": "MedlinePlus: X-Rays",
-                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73030&informationRecipient.languageCode.c=en"
+                "label": "MedlinePlus: Ultrasound",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=76881&informationRecipient.languageCode.c=en"
               },
               {
-                "label": "RadiologyInfo: bone X-ray",
-                "url": "https://www.radiologyinfo.org/en/info/bonerad"
+                "label": "RadiologyInfo: musculoskeletal ultrasound",
+                "url": "https://www.radiologyinfo.org/en/info/genus"
               }
             ]
           },
           {
-            "line_id": "mri",
+            "line_id": "tendon_scan_mri_facility",
             "tier": "possible",
             "likelihood": "possible",
             "step_id": "tendon_scan_mri",
@@ -1323,47 +2533,55 @@
               "73221"
             ],
             "modifier": null,
-            "plain_name": "Detailed scan of tendons & cartilage",
-            "technical_name": "Shoulder MRI (no contrast)",
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "technical_name": "Shoulder MRI (no contrast) (hospital facility fee)",
             "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
             "glossary_keys": [
               "mri",
-              "xray"
+              "xray",
+              "facility_fee"
             ],
             "component": "facility",
-            "component_confirmed": false,
+            "component_confirmed": true,
             "unit": "once",
-            "availability": "not_offered",
-            "cell": null,
-            "list_price": null,
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 891.43,
+              "high": 891.43,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:289273",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 1631.0,
+              "high": 1631.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:9943",
+                "payer_id": null
+              }
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
-            "elsewhere": [
-              {
-                "site_id": "mount_auburn_hospital",
-                "site_name": "Mount Auburn Hospital",
-                "lat": 42.3738,
-                "lon": -71.1284,
-                "cell": {
-                  "kind": "money",
-                  "low": 659.15,
-                  "high": 659.15,
-                  "basis": "negotiated",
-                  "prov": {
-                    "source_id": "mtauburn_mrf",
-                    "source_kind": "hospital_mrf",
-                    "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
-                    "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
-                    "source_date": "2026-04-01",
-                    "method": "stated",
-                    "row_ref": "mtauburn_mrf:a9e5ac64beef:40087",
-                    "payer_id": "BCBS_MA"
-                  }
-                }
-              }
-            ],
+            "elsewhere": [],
             "learn_more": [
               {
                 "label": "MedlinePlus: MRI Scans",
@@ -1374,32 +2592,227 @@
                 "url": "https://www.radiologyinfo.org/en/info/shouldermr"
               }
             ]
+          },
+          {
+            "line_id": "tendon_scan_mri_reading",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_mri",
+            "codes": [
+              "73221"
+            ],
+            "modifier": "26",
+            "plain_name": "Detailed scan of tendons & cartilage: the doctor's reading",
+            "technical_name": "Shoulder MRI (no contrast) (professional fee)",
+            "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
+            "glossary_keys": [
+              "mri",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73221&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: shoulder MRI",
+                "url": "https://www.radiologyinfo.org/en/info/shouldermr"
+              }
+            ]
+          },
+          {
+            "line_id": "mr_arthrogram_facility",
+            "tier": "possible",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "73222"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan with dye in the joint: the hospital's fee",
+            "technical_name": "Shoulder MR arthrogram (hospital facility fee)",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray",
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 2674.57,
+              "high": 2674.57,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:289222",
+                "payer_id": "BCBS_MA"
+              }
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 2456.0,
+              "high": 2456.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "tufts_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "tufts_mrf:d16771049bc4:104251",
+                "payer_id": null
+              }
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ]
+          },
+          {
+            "line_id": "mr_arthrogram_reading",
+            "tier": "not_in_public_data",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "73222"
+            ],
+            "modifier": "26",
+            "plain_name": "Detailed scan with dye in the joint: the doctor's reading",
+            "technical_name": "Shoulder MR arthrogram (professional fee)",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ]
           }
         ],
         "totals": {
           "likely": {
-            "low": 97.76,
-            "high": 97.76,
+            "low": 874.58,
+            "high": 1001.41,
             "line_ids": [
-              "physical_therapy_eval"
+              "referral_facility",
+              "referral_doctor",
+              "visit_doctor",
+              "xray_facility",
+              "physical_therapy_facility"
             ],
             "includes_estimate": false,
             "includes_late_source": false,
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 4,
+          "missing": 3,
           "excluded": [
             {
-              "line_id": "xray_facility",
-              "reason": "not_offered_here"
+              "line_id": "visit_facility",
+              "reason": "no_dollar_amount"
             },
             {
-              "line_id": "mri",
-              "reason": "not_offered_here"
+              "line_id": "xray_reading",
+              "reason": "no_dollar_amount"
             },
             {
-              "line_id": "physical_therapy_sessions",
+              "line_id": "physical_therapy_sessions_facility",
+              "reason": "repeats"
+            },
+            {
+              "line_id": "steroid_injection_facility",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "steroid_injection_doctor",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "steroid_injection_drug_ai",
+              "reason": "ai_suggested"
+            },
+            {
+              "line_id": "tendon_scan_ultrasound_facility",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "tendon_scan_ultrasound_reading",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "tendon_scan_mri_facility",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "tendon_scan_mri_reading",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "mr_arthrogram_facility",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "mr_arthrogram_reading",
               "reason": "no_dollar_amount"
             }
           ],
@@ -1411,12 +2824,245 @@
           }
         }
       },
-      "other_payers": []
+      "other_payers": [
+        {
+          "line_id": "xray_facility",
+          "code": "73030",
+          "points": [
+            {
+              "payer_id": "WELLSENSE",
+              "label": "WellSense Health Plan",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 87.45,
+                "high": 136.53,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "tufts_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "tufts_mrf:d16771049bc4:4627128",
+                  "payer_id": "WELLSENSE"
+                }
+              }
+            },
+            {
+              "payer_id": "TUFTS_HP",
+              "label": "Tufts Health Plan (Point32Health)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 94.57,
+                "high": 405.31,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "tufts_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "tufts_mrf:d16771049bc4:1938910",
+                  "payer_id": "TUFTS_HP"
+                }
+              }
+            },
+            {
+              "payer_id": "BCBS_MA",
+              "label": "Blue Cross Blue Shield of Massachusetts",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 110.42,
+                "high": 110.42,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "tufts_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "tufts_mrf:d16771049bc4:251735",
+                  "payer_id": "BCBS_MA"
+                }
+              }
+            },
+            {
+              "payer_id": "CIGNA",
+              "label": "Cigna",
+              "product": "PPO",
+              "money": {
+                "kind": "money",
+                "low": 166.5,
+                "high": 405.31,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "tufts_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "tufts_mrf:d16771049bc4:153408",
+                  "payer_id": "CIGNA"
+                }
+              }
+            },
+            {
+              "payer_id": "HARVARD_PILGRIM",
+              "label": "Harvard Pilgrim (Point32Health)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 177.56,
+                "high": 195.62,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "tufts_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "tufts_mrf:d16771049bc4:1203397",
+                  "payer_id": "HARVARD_PILGRIM"
+                }
+              }
+            },
+            {
+              "payer_id": "WELLPOINT",
+              "label": "Wellpoint / Unicare (GIC)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 179.52,
+                "high": 179.52,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "tufts_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "tufts_mrf:d16771049bc4:5736274",
+                  "payer_id": "WELLPOINT"
+                }
+              }
+            },
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": "PPO",
+              "money": {
+                "kind": "money",
+                "low": 195.62,
+                "high": 333.0,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "tufts_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "tufts_mrf:d16771049bc4:2322720",
+                  "payer_id": "UHC"
+                }
+              }
+            },
+            {
+              "payer_id": "AETNA",
+              "label": "Aetna",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 214.25,
+                "high": 214.25,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "tufts_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "tufts_mrf:d16771049bc4:240674",
+                  "payer_id": "AETNA"
+                }
+              }
+            },
+            {
+              "payer_id": "HNE",
+              "label": "Health New England",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 269.73,
+                "high": 269.73,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "tufts_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "tufts_mrf:d16771049bc4:1284383",
+                  "payer_id": "HNE"
+                }
+              }
+            },
+            {
+              "payer_id": "MASSHEALTH",
+              "label": "MassHealth (Medicaid)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 333.0,
+                "high": 333.0,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "tufts_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+                  "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+                  "source_date": "2026-04-01",
+                  "method": "stated",
+                  "row_ref": "tufts_mrf:d16771049bc4:1590930",
+                  "payer_id": "MASSHEALTH"
+                }
+              }
+            }
+          ],
+          "cash": {
+            "kind": "money",
+            "low": 233.1,
+            "high": 233.1,
+            "basis": "discounted_cash",
+            "prov": {
+              "source_id": "tufts_mrf",
+              "source_kind": "hospital_mrf",
+              "source_file": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971.zip",
+              "source_sha256": "d16771049bc4c99872e8b5447cfe25b6d10e24a26d5f2748c9b4db65472a4971",
+              "source_date": "2026-04-01",
+              "method": "stated",
+              "row_ref": "tufts_mrf:d16771049bc4:73747",
+              "payer_id": null
+            }
+          },
+          "yours": "in_points"
+        }
+      ]
     }
   ],
   "sites_without_service": [],
   "notices": [
-    "care_path_draft",
-    "late_to_refresh_sources"
+    "care_path_draft"
   ]
 }

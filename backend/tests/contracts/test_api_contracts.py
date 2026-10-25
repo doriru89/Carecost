@@ -21,13 +21,16 @@ from app.quote import contracts as q
 
 REPO = Path(__file__).resolve().parents[3]
 FIX = REPO / "contracts" / "fixtures"
+# Negative rule tests mutate the earlier hand-made BCBS / cash quotes (see test_quote_rules.py).
+HANDMADE = Path(__file__).resolve().parent / "handmade"
 
 
 PLACEHOLDERS = {"allow_placeholders": True}  # fixtures carry placeholder shas / NPIs
 
 
 def _fixture(name: str) -> dict:
-    doc = json.loads((FIX / f"{name}.json").read_text())
+    hand = HANDMADE / f"{name}.json"
+    doc = json.loads((hand if hand.exists() else FIX / f"{name}.json").read_text())
     doc.pop("_fixture")
     doc.pop("_schema")
     return doc
