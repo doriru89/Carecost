@@ -212,9 +212,11 @@ def run(pack: Path, out: Path, raw: Path, staging: Path, tic: Path,
         "reference_codes": {
             "codes": sorted(reg.codes.reference),
             "outlier_rows": sum(1 for m in outl if m.line.code in reg.codes.reference),
-            "unexplained_rows": sum(1 for m, v in zip(outl, verdicts)
-                                    if m.line.code in reg.codes.reference
-                                    and v.cause == "unexplained"),
+            "unexplained_rows": sum(
+                1
+                for m, v in zip(outl, verdicts)
+                if m.line.code in reg.codes.reference and v.cause == "unexplained"
+            ),
         },  # fmt: skip
         "trace_status": dict(
             Counter(tr.verified if tr else "not_found" for tr in traces)

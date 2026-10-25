@@ -356,8 +356,10 @@ class CodeList(BaseModel):
     def codes(self) -> set[str]:
         """Hand-written codes.yaml list + every care-path code (path_codes.yaml, R9) + the
         reference codes."""
-        return {c for d in self.domains.values() for c in d} | set(self.path_codes) | set(
-            self.reference
+        return (
+            {c for d in self.domains.values() for c in d}
+            | set(self.path_codes)
+            | set(self.reference)
         )
 
     def group_for(self, code: str) -> str:
