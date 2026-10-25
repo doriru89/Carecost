@@ -72,7 +72,9 @@ def test_ai_suggested_money_line_is_never_summed():
 def test_assistant_picks_are_all_labelled_ai_suggested():
     doc = _fx("quote_bcbs_hmo_shoulder")
     doc["picked_by"] = "assistant"
-    _bad(doc, "assistant")
+    _bad(doc, "never a care path")
+    doc["care_path"] = None
+    _bad(doc, "every line the assistant picked is ai_suggested")
 
 
 def test_assistant_cannot_request_a_care_path_quote():
@@ -162,7 +164,8 @@ def test_total_honesty_flags_are_derived():
 def test_tic_price_needs_a_tic_release_and_no_not_loaded_notice():
     doc = _fx("quote_bcbs_hmo_shoulder")
     doc["data_version"]["tic_release"] = None
-    _bad(doc, "tic_release")
+    doc["notices"].append("tic_not_loaded")
+    _bad(doc, "a TiC price needs data_version.tic_release")
     doc = _fx("quote_cash_shoulder")
     doc["notices"].append("tic_not_loaded")
     _bad(doc, "tic_not_loaded")
@@ -177,6 +180,15 @@ def test_bcbs_receipt_cannot_sum_a_medicare_rate():
     ln = _line(doc, MA, "visit_doctor")
     ln["doctor_fee"].update(rung=5, explanation_key="fee.rung_5_medicare")
     _bad(doc, "rung 5 is not for insurance")
+
+
+def test_rung_7_shows_only_the_medicare_reference():
+    doc = _fx("quote_bcbs_hmo_shoulder")
+    ln = _line(doc, MA, "visit_doctor")
+    assert ln["doctor_fee"]["rung"] == 7
+    ln["cell"] = copy.deepcopy(_line(doc, MA, "visit_facility")["cell"])  # a BCBS MRF rate
+    del doc["sources"]["cms_pfs_rvu26a"]  # no other line uses the PFS file now
+    _bad(doc, "rung 7 is the Medicare reference")
 
 
 def test_bcbs_receipt_cannot_use_another_payers_rate():

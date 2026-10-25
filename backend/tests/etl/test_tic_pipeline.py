@@ -120,6 +120,8 @@ def test_provider_references_resolve_to_tins(runs):
         RateRow(**r)  # D30: the tic_* columns are contract fields
     with pytest.raises(ValidationError, match="insurer_tic row needs"):
         RateRow(**{k: r[k] for k in CORE})  # a TiC row without its TiC fields is rejected
+    with pytest.raises(ValidationError, match="only for insurer_tic rows"):
+        RateRow(**{**r, "source_kind": "hospital_mrf"})  # a hospital row with TiC fields
 
 
 def test_inline_provider_groups_and_pretty_json(tmp_path):

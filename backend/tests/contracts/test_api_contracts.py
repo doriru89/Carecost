@@ -398,7 +398,17 @@ def test_rung_6_money_must_be_marked_estimate():
     site = _bcbs_site(1)
     ln = _rung6(site)
     ln["cell"]["prov"]["method"] = "computed_fee_schedule"
-    with pytest.raises(ValidationError, match="estimate"):
+    with pytest.raises(ValidationError, match="basis estimate <=> estimate_medicare_multiple"):
+        _check(site)
+    # a plain negotiated rate labelled rung 6 (the old TiC cell) is not an estimate
+    site = _bcbs_site(1)
+    tic_cell = copy.deepcopy(_line(site["receipt"], "visit_doctor")["cell"])
+    ln = _rung6(site)
+    ln["cell"] = tic_cell
+    site.resp["sources"]["bcbs_ma_tic_hmo"] = _fixture("quote_bcbs_hmo_shoulder")["sources"][
+        "bcbs_ma_tic_hmo"
+    ]
+    with pytest.raises(ValidationError, match="rung 6 Money must be estimate_medicare_multiple"):
         _check(site)
 
 
