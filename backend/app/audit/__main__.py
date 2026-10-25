@@ -30,6 +30,7 @@ from app.quote.store import REPO_ROOT, load_pack
 
 FIX_FOR = {
     "not_dollars": ("-", "A5", "normalize: a stated dollar under 1% of the row's gross is a unit / weight -> excluded, reason not_dollars"),
+    "flat_visit_rate": ("-", "C3", "genuine (one amount per visit, whatever is done): count it once, on the visit; the other line says the test may be included"),
     "facility_professional_mixup": ("-", "A2/A5", "component: a TiC 'institutional' row of a doctors' group, or a hospital row without billing_class, is checked against both component medians before it prices a line"),
     "peers_flat_rate": ("-", "C3", "peer median: count a flat-rate group once per family, not per code (or exclude flat groups from per-code medians)"),
     "placeholder": ("F1", "A5/A2", "normalize: amount <= $1 or >= $99,999 -> excluded, reason placeholder"),
@@ -71,6 +72,29 @@ def _pooled(bt: dict[str, Any]) -> dict[str, float]:
                                           4)}  # fmt: skip
 
 
+def contract_key(m: Measured) -> str:
+    """One contract = payer + billing group + code + the outlying amount. A payer's contract is
+    copied into each of its network files (HPHC: up to 15), and each copy is its own line here."""
+    ln = m.line
+    return f"{ln.payer}|{ln.group}|{ln.code}|{outlying(m)[0][0]:.2f}"
+
+
+def distinct(outl: list[Measured], verdicts: list) -> dict[str, Any]:
+    """Outliers and unexplained as lines (rows of outliers.csv) and as distinct contracts."""
+    keys = [contract_key(m) for m in outl]
+    unexp = {k for k, v in zip(keys, verdicts) if v.cause == "unexplained"}
+    by_cause: dict[str, set[str]] = {}
+    for k, v in zip(keys, verdicts):
+        by_cause.setdefault(v.cause, set()).add(k)
+    return {
+        "outlier_rows": len(outl),
+        "outlier_contracts": len(set(keys)),
+        "unexplained_rows": sum(1 for v in verdicts if v.cause == "unexplained"),
+        "unexplained_contracts": len(unexp),
+        "contracts_by_cause": {c: len(by_cause.get(c, ())) for c in CAUSES},
+    }
+
+
 def _ident(ln) -> tuple:
     return (ln.kind.split(":")[0], ln.code, ln.mod, ln.component, ln.payer, ln.product, ln.network,
             ln.group, ln.family)  # fmt: skip
@@ -97,6 +121,8 @@ def run(pack: Path, out: Path, raw: Path, staging: Path, tic: Path,
     traces = [by_use[m.line.family == "mrf_cash"].get(r.uid) for m, (_, r) in zip(outl, prim)]
     cl = Classifier(lines, measured, children)
     verdicts = [cl.classify(m, tr.quote if tr else "") for m, tr in zip(outl, traces)]
+    ckeys = [contract_key(m) for m in outl]
+    copies = Counter(ckeys)
 
     # fix simulation (cumulative)
     steps = [
@@ -122,7 +148,9 @@ def run(pack: Path, out: Path, raw: Path, staging: Path, tic: Path,
     after = measure(cur)
     residual_ids = {_ident(m.line) for m in after if m.outlier}
     cl_after = Classifier(cur, after, children)
-    residual_causes = Counter(cl_after.classify(m).cause for m in after if m.outlier)
+    res_m = [m for m in after if m.outlier]
+    res_v = [cl_after.classify(m) for m in res_m]
+    residual_causes = Counter(v.cause for v in res_v)
 
     out.mkdir(parents=True, exist_ok=True)
     cols = ["rank", "side", "ratio", "kind", "code", "modifier", "component", "payer", "product",
@@ -130,11 +158,13 @@ def run(pack: Path, out: Path, raw: Path, staging: Path, tic: Path,
             "peer_p25", "peer_p75", "line_low", "line_high", "line_rows", "outlying_rows",
             "value", "source_id", "source_kind", "row_id", "stage_row", "source_pointer",
             "source_quote", "trace", "cause", "cause_detail", "fix", "fix_owner", "fix_rule",
-            "outlier_after_fixes"]  # fmt: skip
+            "outlier_after_fixes", "contract_key", "contract_lines", "first_of_contract"]  # fmt: skip
+    seen: set[str] = set()
     with (out / "outliers.csv").open("w", newline="") as fh:
         w = csv.writer(fh, lineterminator="\n")
         w.writerow(cols)
-        for i, (m, v, (val, r), tr) in enumerate(zip(outl, verdicts, prim, traces), start=1):
+        for i, (m, v, (val, r), tr, ck) in enumerate(zip(outl, verdicts, prim, traces, ckeys),
+                                                     start=1):  # fmt: skip
             ln = m.line
             fid, owner, rule = FIX_FOR[v.cause]
             w.writerow([
@@ -146,8 +176,9 @@ def run(pack: Path, out: Path, raw: Path, staging: Path, tic: Path,
                 len(ln.rows), len(outlying(m)), val, r.source_id, r.source_kind, r.row_id,
                 r.stage_row, tr.pointer if tr else "", (tr.quote if tr else "")[:QUOTE_MAX],
                 tr.verified if tr else "not_found", v.cause, v.detail, fid, owner, rule,
-                _ident(ln) in residual_ids,
+                _ident(ln) in residual_ids, ck, copies[ck], ck not in seen,
             ])  # fmt: skip
+            seen.add(ck)
     # the engine's default request (no network): every network file of the payer + product
     prod = measure(LineBuilder(store, reg, level="product").build())
     kinds = Counter(m.line.kind for m in measured)
@@ -177,6 +208,14 @@ def run(pack: Path, out: Path, raw: Path, staging: Path, tic: Path,
             "outliers": sum(1 for m in prod if m.outlier),
         },
         "causes": {c: sum(1 for v in verdicts if v.cause == c) for c in CAUSES},
+        "distinct": distinct(outl, verdicts),
+        "reference_codes": {
+            "codes": sorted(reg.codes.reference),
+            "outlier_rows": sum(1 for m in outl if m.line.code in reg.codes.reference),
+            "unexplained_rows": sum(1 for m, v in zip(outl, verdicts)
+                                    if m.line.code in reg.codes.reference
+                                    and v.cause == "unexplained"),
+        },  # fmt: skip
         "trace_status": dict(
             Counter(tr.verified if tr else "not_found" for tr in traces)
         ),  # fmt: skip
@@ -185,6 +224,7 @@ def run(pack: Path, out: Path, raw: Path, staging: Path, tic: Path,
             "outliers": len(residual_ids),
             "measured": len(after),
             "causes": dict(residual_causes.most_common()),
+            "distinct": distinct(res_m, res_v),
         },  # fmt: skip
         "backtest": backtest(lines),
         "backtest_after_fixes": backtest(cur),
@@ -205,7 +245,8 @@ def main() -> None:
     a = ap.parse_args()
     s = run(a.pack, a.out, a.raw_root, a.staging_root, a.tic_root, a.sites)
     print(json.dumps({k: s[k] for k in ("lines_measured", "outliers", "outlier_share", "causes",
-                                        "trace_status", "fixes", "seconds")}, indent=1))  # fmt: skip
+                                        "distinct", "reference_codes", "trace_status", "fixes",
+                                        "seconds")}, indent=1))  # fmt: skip
 
 
 if __name__ == "__main__":
