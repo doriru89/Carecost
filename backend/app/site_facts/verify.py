@@ -10,7 +10,10 @@ A claim is rejected when any of its evidence fails:
   ``text.quote_found``);
 * ``phone_not_in_quote``: the phone digits do not appear in the quote;
 * ``unknown_capability`` / ``unknown_site``: ids outside capabilities.yaml / sites.yaml;
-* ``no_evidence``: ``offered`` / ``not_offered`` without evidence.
+* ``no_evidence``: ``offered`` / ``not_offered`` without evidence;
+* ``scope_missing`` / ``scope_wrong``: the site's pages are marked ``scope: hospital_page`` in
+  pages.yaml and the evidence does not say so, or the evidence says so for a site whose pages are
+  its own.
 
 A claim with one bad quote is rejected whole: a person must be able to trust every quote shown.
 """
@@ -26,7 +29,7 @@ import yaml
 
 from app.site_facts.fetch import Fetcher
 from app.site_facts.models import CapabilityFile, Evidence, RunFile, RunSite, norm_phone
-from app.site_facts.paths import CACHE_DIR, CAPABILITIES, SITES_YAML
+from app.site_facts.paths import CACHE_DIR, CAPABILITIES, PAGES, SITES_YAML
 from app.site_facts.text import quote_found, sha256_text
 
 
@@ -52,6 +55,14 @@ class VerifyResult:
 
 def load_run(path: Path) -> RunFile:
     return RunFile.model_validate(yaml.safe_load(path.read_text(encoding="utf-8")))
+
+
+def load_scopes(path: Path = PAGES) -> dict[str, str]:
+    """site id -> page scope (``hospital_page``) from pages.yaml; own pages have no entry."""
+    if not path.is_file():
+        return {}
+    sites = (yaml.safe_load(path.read_text(encoding="utf-8")) or {}).get("sites", {})
+    return {sid: e["scope"] for sid, e in sites.items() if (e or {}).get("scope")}
 
 
 def load_capabilities(path: Path = CAPABILITIES) -> CapabilityFile:
@@ -87,16 +98,23 @@ def verify(
     cache_dir: Path = CACHE_DIR,
     capabilities: CapabilityFile | None = None,
     site_ids: set[str] | None = None,
+    scopes: dict[str, str] | None = None,
 ) -> VerifyResult:
     caps = set((capabilities or load_capabilities()).capabilities)
     if site_ids is None:
         site_ids = {s["id"] for s in yaml.safe_load(SITES_YAML.read_text())["sites"]}
+    if scopes is None:
+        scopes = load_scopes()
     pages = _Pages(cache_dir)
     res = VerifyResult(run=run, accepted={})
+    sid = ""
 
     def bad_evidence(evs: list[Evidence]) -> tuple[str, str] | None:
+        want = scopes.get(sid)
         for ev in evs:
             why = pages.check(ev)
+            if why is None and ev.scope != want:
+                why = "scope_missing" if want else "scope_wrong"
             if why:
                 return why, f"{ev.url} :: {ev.quote[:80]!r}"
         return None

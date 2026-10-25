@@ -21,6 +21,179 @@ pages:
   - https://bidmc.org/patients-visitors/language-assistance-interpreter
   - https://bidmc.org/patients-visitors/social-work-services
   - https://bidmc.org/patients-visitors/visiting-hours-policies
+- url: https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
+  status: ok
+  method: http
+  final_url: https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:03+00:00'
+  page_sha256: f741ea3610ddf1b7fb11b0c1097b87a0b1d188129a8fa35f38aca8765751de19
+  text_chars: 4857
+  site_ids:
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0152
+  roles:
+  - location
+  related:
+  - https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmc.org/services
+  - https://bidmc.org/patients-visitors/billing-financial-services
+  - https://bidmc.org/patients-visitors/language-assistance-interpreter
+  - https://bidmc.org/patients-visitors/social-work-services
+  - https://bidmc.org/patients-visitors/visiting-hours-policies
+- url: https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
+  status: ok
+  method: http
+  final_url: https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:05+00:00'
+  page_sha256: ea317d1fcc128895b9d1d80024df32ed99d779c1404858ad2af9a7d584c8e04c
+  text_chars: 5253
+  site_ids:
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0153
+  roles:
+  - location
+  related:
+  - https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmc.org/services
+  - https://bidmc.org/patients-visitors/billing-financial-services
+  - https://bidmc.org/patients-visitors/language-assistance-interpreter
+  - https://bidmc.org/patients-visitors/social-work-services
+  - https://bidmc.org/patients-visitors/visiting-hours-policies
+- url: https://bidmc.org/locations/bidmc-chestnut-hill
+  status: ok
+  method: http
+  final_url: https://bidmc.org/locations/bidmc-chestnut-hill
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:08+00:00'
+  page_sha256: 902e054baa82b705f823a32dee09b39343bf0d49c315fef47f5d87a3df54630e
+  text_chars: 11741
+  site_ids:
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0171
+  roles:
+  - location
+  related:
+  - https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmc.org/services
+  - https://bidmc.org/patients-visitors/billing-financial-services
+  - https://bidmc.org/patients-visitors/language-assistance-interpreter
+  - https://bidmc.org/patients-visitors/social-work-services
+  - https://bidmc.org/patients-visitors/visiting-hours-policies
+- url: https://bidmc.org/locations/bidmc-chestnut-hill/sports-medicine
+  status: ok
+  method: http
+  final_url: https://bidmc.org/locations/bidmc-chestnut-hill/sports-medicine
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:09+00:00'
+  page_sha256: 6b7b2b0482880ee34b86b249e1ef0cb0b22254c36c09fbe24f88426581080a58
+  text_chars: 6277
+  site_ids:
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0171
+  roles:
+  - services
+  related:
+  - https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmc.org/services
+  - https://bidmc.org/patients-visitors/billing-financial-services
+  - https://bidmc.org/patients-visitors/language-assistance-interpreter
+  - https://bidmc.org/patients-visitors/social-work-services
+  - https://bidmc.org/patients-visitors/visiting-hours-policies
+- url: https://bidmc.org/locations/bidmc-lexington
+  status: ok
+  method: http
+  final_url: https://bidmc.org/locations/bidmc-lexington
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:11+00:00'
+  page_sha256: 4c055767fc66093547249c798fb295496118673442ae8dcc06df3e06e739dde9
+  text_chars: 13760
+  site_ids:
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0176
+  roles:
+  - location
+  related:
+  - https://bidmc.org/locations/bidmc-lexington/infusion
+  - https://bidmc.org/locations/bidmc-lexington/laboratory
+  - https://bidmc.org/locations/bidmc-lexington/rehabilitation
+  - https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmc.org/services
+  - https://bidmc.org/patients-visitors/billing-financial-services
+- url: https://bidmc.org/locations/bidmc-lexington/infusion
+  status: ok
+  method: http
+  final_url: https://bidmc.org/locations/bidmc-lexington/infusion
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:12+00:00'
+  page_sha256: 91ae32f3350ff4fadc8a972bb25d03c6eb4d3a4f3db22572c56ad64fd3a7bb93
+  text_chars: 3552
+  site_ids:
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0176
+  roles:
+  - related
+  related:
+  - https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmc.org/services
+  - https://bidmc.org/patients-visitors/billing-financial-services
+  - https://bidmc.org/patients-visitors/language-assistance-interpreter
+  - https://bidmc.org/patients-visitors/social-work-services
+  - https://bidmc.org/patients-visitors/visiting-hours-policies
+- url: https://bidmc.org/locations/bidmc-lexington/laboratory
+  status: ok
+  method: http
+  final_url: https://bidmc.org/locations/bidmc-lexington/laboratory
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:13+00:00'
+  page_sha256: 4b38d4284c54b0361f938dda0cdf8f7ae1289cff9da295329c0935d4d8acc889
+  text_chars: 3866
+  site_ids:
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0176
+  roles:
+  - related
+  related:
+  - https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmc.org/services
+  - https://bidmc.org/patients-visitors/billing-financial-services
+  - https://bidmc.org/patients-visitors/language-assistance-interpreter
+  - https://bidmc.org/patients-visitors/social-work-services
+  - https://bidmc.org/patients-visitors/visiting-hours-policies
+- url: https://bidmc.org/locations/bidmc-lexington/rehabilitation
+  status: ok
+  method: http
+  final_url: https://bidmc.org/locations/bidmc-lexington/rehabilitation
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:14+00:00'
+  page_sha256: adeb715f36f8adfa86e80a95dd61d01734eb612da3e6590928c11712406da915
+  text_chars: 4765
+  site_ids:
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0176
+  roles:
+  - related
+  related:
+  - https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmc.org/services
+  - https://bidmc.org/patients-visitors/billing-financial-services
+  - https://bidmc.org/patients-visitors/language-assistance-interpreter
+  - https://bidmc.org/patients-visitors/social-work-services
+  - https://bidmc.org/patients-visitors/visiting-hours-policies
+- url: https://bidmc.org/patients-visitors/billing-financial-services
+  status: ok
+  method: http
+  final_url: https://bidmc.org/patients-visitors/billing-financial-services
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:04+00:00'
+  page_sha256: a307309bc43003fc12b75be9b28d2025650e8c86d0eacf861ad717f62d1c6885
+  text_chars: 5375
+  site_ids:
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0152
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0153
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0171
+  roles:
+  - related
+  related:
+  - https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmc.org/patients-visitors/billing-financial-services/assistance
+  - https://bidmc.org/patients-visitors/billing-financial-services/price-transparency
+  - https://bidmc.org/services
+  - https://bidmc.org/patients-visitors/language-assistance-interpreter
+  - https://bidmc.org/patients-visitors/social-work-services
 - url: https://bidmc.org/patients-visitors/billing-financial-services/bill-pay
   status: ok
   method: http
@@ -31,6 +204,9 @@ pages:
   text_chars: 4809
   site_ids:
   - beth_israel_deaconess_medical_center
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0152
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0153
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0171
   roles:
   - related
   related:
@@ -50,6 +226,9 @@ pages:
   text_chars: 3257
   site_ids:
   - beth_israel_deaconess_medical_center
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0152
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0153
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0171
   roles:
   - related
   related:
@@ -59,6 +238,26 @@ pages:
   - https://bidmc.org/services/arthritis
   - https://bidmc.org/services/bariatric-surgery
   - https://bidmc.org/services/behavioral-health
+- url: https://bidmilton.org/patients-visitors/billing-financial-services
+  status: ok
+  method: http
+  final_url: https://bidmilton.org/patients-visitors/billing-financial-services
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:15+00:00'
+  page_sha256: a976db5ad7d0362be46918207931a16037b6f86a150c411c4e6b3b3f015c69c6
+  text_chars: 5249
+  site_ids:
+  - community_physicians_associates_inc_milton
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0180
+  roles:
+  - related
+  related:
+  - https://bidmilton.org/patients-visitors/billing-financial-services/bill-pay
+  - https://bidmilton.org/patients-visitors/billing-financial-services/price-transparency
+  - https://bidmilton.org/patients-visitors/billing-financial-services/assistance
+  - https://bidmilton.org/services
+  - https://bidmilton.org/patients-visitors/language-assistance-interpreter
+  - https://bidmilton.org/patients-visitors/social-work
 - url: https://bidmilton.org/patients-visitors/billing-financial-services/bill-pay
   status: ok
   method: http
@@ -69,6 +268,8 @@ pages:
   text_chars: 5981
   site_ids:
   - beth_israel_deaconess_hospital_milton
+  - community_physicians_associates_inc_milton
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0180
   roles:
   - related
   related:
@@ -88,6 +289,8 @@ pages:
   text_chars: 3197
   site_ids:
   - beth_israel_deaconess_hospital_milton
+  - community_physicians_associates_inc_milton
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0180
   roles:
   - related
   related:
@@ -208,7 +411,6 @@ pages:
   - beth_israel_lahey_health_urgent_care_chestnut_hill_chest
   - beth_israel_lahey_health_urgent_care_dedham_dedham
   - bilh_urgent_care_watertown
-  - lahey_health_urgent_care_woburn_woburn
   roles:
   - related
   related:
@@ -229,7 +431,6 @@ pages:
   - beth_israel_lahey_health_urgent_care_chestnut_hill_chest
   - beth_israel_lahey_health_urgent_care_dedham_dedham
   - bilh_urgent_care_watertown
-  - lahey_health_urgent_care_woburn_woburn
   roles:
   - related
   related:
@@ -292,8 +493,6 @@ pages:
   fetched_at: '2026-10-25T13:54:59+00:00'
   page_sha256: 0a28491c0dea85aa11b777b636f4b2946c17abe684270d1495118ffb211890f3
   text_chars: 3811
-  site_ids:
-  - lahey_health_urgent_care_woburn_woburn
   roles:
   - location
   related:
@@ -514,6 +713,25 @@ pages:
   - franciscan_childrens
   roles:
   - location
+- url: https://mountauburnhospital.org/locations/medical-office-building
+  status: ok
+  method: http
+  final_url: https://mountauburnhospital.org/locations/medical-office-building
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:07+00:00'
+  page_sha256: 08042c30e2078524a4f134281bd42af94dd17dc69a6e66c9f9082bb19564a206
+  text_chars: 2566
+  site_ids:
+  - mount_auburn_professional_services_inc_cambridge_gb0165
+  roles:
+  - location
+  related:
+  - https://mountauburnhospital.org/patients-visitors/billing-financial-services/bill-pay
+  - https://mountauburnhospital.org/services
+  - https://mountauburnhospital.org/patients-visitors/billing-financial-services
+  - https://mountauburnhospital.org/patients-visitors/language-assistance-interpreter
+  - https://mountauburnhospital.org/patients-visitors/visiting-hours-policies
+  - https://mountauburnhospital.org/services/arthritis-rheumatology
 - url: https://mountauburnhospital.org/locations/mount-auburn-hospital
   status: ok
   method: http
@@ -524,6 +742,7 @@ pages:
   text_chars: 6424
   site_ids:
   - mount_auburn_hospital
+  - mount_auburn_professional_services_inc_cambridge_gb0166
   roles:
   - location
   related:
@@ -533,6 +752,26 @@ pages:
   - https://mountauburnhospital.org/patients-visitors/language-assistance-interpreter
   - https://mountauburnhospital.org/patients-visitors/visiting-hours-policies
   - https://mountauburnhospital.org/services/digestive-care
+- url: https://mountauburnhospital.org/patients-visitors/billing-financial-services
+  status: ok
+  method: http
+  final_url: https://mountauburnhospital.org/patients-visitors/billing-financial-services
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:08+00:00'
+  page_sha256: c70922b64b58db7c4a69dd0461554a7c3b8252731ba26cdc809dc3e918ca0e48
+  text_chars: 5659
+  site_ids:
+  - mount_auburn_professional_services_inc_cambridge_gb0165
+  - mount_auburn_professional_services_inc_cambridge_gb0166
+  roles:
+  - related
+  related:
+  - https://mountauburnhospital.org/patients-visitors/billing-financial-services/bill-pay
+  - https://mountauburnhospital.org/patients-visitors/billing-financial-services/assistance
+  - https://mountauburnhospital.org/patients-visitors/billing-financial-services/price-transparency
+  - https://mountauburnhospital.org/services
+  - https://mountauburnhospital.org/patients-visitors/language-assistance-interpreter
+  - https://mountauburnhospital.org/patients-visitors/visiting-hours-policies
 - url: https://mountauburnhospital.org/patients-visitors/billing-financial-services/bill-pay
   status: ok
   method: http
@@ -543,6 +782,8 @@ pages:
   text_chars: 4322
   site_ids:
   - mount_auburn_hospital
+  - mount_auburn_professional_services_inc_cambridge_gb0165
+  - mount_auburn_professional_services_inc_cambridge_gb0166
   roles:
   - related
   related:
@@ -562,6 +803,8 @@ pages:
   text_chars: 3320
   site_ids:
   - mount_auburn_hospital
+  - mount_auburn_professional_services_inc_cambridge_gb0165
+  - mount_auburn_professional_services_inc_cambridge_gb0166
   roles:
   - related
   related:
@@ -581,6 +824,7 @@ pages:
   text_chars: 2766
   site_ids:
   - new_england_baptist_hospital
+  - new_england_baptist_medical_associates_inc_roxbury_cross
   roles:
   - location
   related:
@@ -590,6 +834,25 @@ pages:
   - https://nebh.org/patients-visitors/language-assistance-interpreter
   - https://nebh.org/patients-visitors/visiting-hours-policies
   - https://nebh.org/services/joint-health-replacement/replacement
+- url: https://nebh.org/patients-visitors/billing-financial-services
+  status: ok
+  method: http
+  final_url: https://nebh.org/patients-visitors/billing-financial-services
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:24+00:00'
+  page_sha256: b6db1bf4abde2479c287471f9b6978ac9db8d5a1e7d998d5f1cf8f8ea32c4325
+  text_chars: 8427
+  site_ids:
+  - new_england_baptist_medical_associates_inc_roxbury_cross
+  roles:
+  - related
+  related:
+  - https://nebh.org/patients-visitors/billing-financial-services/bill-pay
+  - https://nebh.org/patients-visitors/billing-financial-services/assistance
+  - https://nebh.org/patients-visitors/billing-financial-services/price-transparency
+  - https://nebh.org/services
+  - https://nebh.org/patients-visitors/language-assistance-interpreter
+  - https://nebh.org/patients-visitors/visiting-hours-policies
 - url: https://nebh.org/patients-visitors/billing-financial-services/bill-pay
   status: ok
   method: http
@@ -600,6 +863,7 @@ pages:
   text_chars: 3801
   site_ids:
   - new_england_baptist_hospital
+  - new_england_baptist_medical_associates_inc_roxbury_cross
   roles:
   - related
   related:
@@ -619,6 +883,7 @@ pages:
   text_chars: 2187
   site_ids:
   - new_england_baptist_hospital
+  - new_england_baptist_medical_associates_inc_roxbury_cross
   roles:
   - related
   related:
@@ -780,6 +1045,82 @@ pages:
   - https://uphamscornerhealthcenter.org/contact-us/
   - https://uphamscornerhealthcenter.org/uphams-elder-service-plan-pace/
   - https://uphamscornerhealthcenter.org/interpreter-services/
+- url: https://winchesterhospital.org/locations/endoscopy-center
+  status: ok
+  method: http
+  final_url: https://winchesterhospital.org/locations/endoscopy-center
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:52+00:00'
+  page_sha256: 9dcd031c88ec6de0950984abb3e559ad27432ead7de7d5aa13a9dcacce4cf808
+  text_chars: 1884
+  site_ids:
+  - winchester_hospital_endoscopy_cente_woburn
+  roles:
+  - location
+  related:
+  - https://winchesterhospital.org/patients-visitors/billing-financial-services/bill-pay
+  - https://winchesterhospital.org/services
+  - https://winchesterhospital.org/patients-visitors/billing-financial-services
+  - https://winchesterhospital.org/patients-visitors/language-assistance-interpreter
+  - https://winchesterhospital.org/patients-visitors/visiting-hours-policies
+  - https://winchesterhospital.org/services/digestive-care
+- url: https://winchesterhospital.org/patients-visitors/billing-financial-services
+  status: ok
+  method: http
+  final_url: https://winchesterhospital.org/patients-visitors/billing-financial-services
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:55+00:00'
+  page_sha256: f536a2b8d16bd26fa5656599d608c63eba067b51230f28c3c0e6d76a9bb861de
+  text_chars: 3812
+  site_ids:
+  - winchester_hospital_endoscopy_cente_woburn
+  roles:
+  - related
+  related:
+  - https://winchesterhospital.org/patients-visitors/billing-financial-services/bill-pay
+  - https://winchesterhospital.org/patients-visitors/billing-financial-services/assistance
+  - https://winchesterhospital.org/patients-visitors/billing-financial-services/price-transparency
+  - https://winchesterhospital.org/services
+  - https://winchesterhospital.org/patients-visitors/language-assistance-interpreter
+  - https://winchesterhospital.org/patients-visitors/visiting-hours-policies
+- url: https://winchesterhospital.org/patients-visitors/billing-financial-services/bill-pay
+  status: ok
+  method: http
+  final_url: https://winchesterhospital.org/patients-visitors/billing-financial-services/bill-pay
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:53+00:00'
+  page_sha256: 876a8efabcb23fe31b731341e8c020c425a5a7de39c94d51b3886b60d7893269
+  text_chars: 2860
+  site_ids:
+  - winchester_hospital_endoscopy_cente_woburn
+  roles:
+  - related
+  related:
+  - https://winchesterhospital.org/services
+  - https://winchesterhospital.org/patients-visitors/billing-financial-services
+  - https://winchesterhospital.org/patients-visitors/language-assistance-interpreter
+  - https://winchesterhospital.org/patients-visitors/visiting-hours-policies
+  - https://winchesterhospital.org/patients-visitors/billing-financial-services/assistance
+  - https://winchesterhospital.org/patients-visitors/billing-financial-services/price-transparency
+- url: https://winchesterhospital.org/services
+  status: ok
+  method: http
+  final_url: https://winchesterhospital.org/services
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:54+00:00'
+  page_sha256: d819b632afcef41f7ccd0d105f9421be614a0f37c74e997eb64b1df1a8a753aa
+  text_chars: 2883
+  site_ids:
+  - winchester_hospital_endoscopy_cente_woburn
+  roles:
+  - related
+  related:
+  - https://winchesterhospital.org/services/anesthesiology
+  - https://winchesterhospital.org/services/anticoagulation-management
+  - https://winchesterhospital.org/services/arthritis-care-rheumatology
+  - https://winchesterhospital.org/services/audiology
+  - https://winchesterhospital.org/services/behavioral-health
+  - https://winchesterhospital.org/services/breastfeeding-support
 - url: https://www.afcurgentcare.com/arlington/
   status: ok
   method: http
@@ -1820,6 +2161,247 @@ pages:
   - https://www.afcurgentcare.com/watertown/patient-services/emergency-room-alternative/
   - https://www.afcurgentcare.com/watertown/patient-services/physical-examinations/
   - https://www.afcurgentcare.com/watertown/patient-services/sports-camp-physicals/
+- url: https://www.apderm.com/ancillary-services/
+  status: ok
+  method: http
+  final_url: https://www.apderm.com/ancillary-services/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:27+00:00'
+  page_sha256: 509102c20b47f7c3528a28857d9a897336ebb8d94634ef7279abca644b1bdf3a
+  text_chars: 8614
+  jsonld_hours: true
+  site_ids:
+  - adult_and_pediatric_dermatology_pc_wellesley
+  - associates_in_dermatology_llc_watertown
+  - boston_dermatology_and_laser_center_llc_boston
+  - dermatology_associates_pc_canton
+  - dermcare_physicians_and_surgeons_llc_waltham
+  - mystic_valley_dermatology_associates_pc_somerville
+  - mystic_valley_dermatology_associates_pc_stoneham
+  - mystic_valley_dermatology_associates_pc_winchester
+  roles:
+  - related
+  related:
+  - https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  - https://www.apderm.com/treatment/isotretinoin-accutane/
+  - https://www.apderm.com/treatment/photodynamic-therapy/
+  - https://www.apderm.com/treatment/phototherapy/
+  - https://www.apderm.com/condition/spider-veins-and-varicose-veins-treatments/
+  - https://www.apderm.com/treatment/teledermatology/
+- url: https://www.apderm.com/locations/boston-ma/
+  status: ok
+  method: http
+  final_url: https://www.apderm.com/locations/boston-ma/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:57+00:00'
+  page_sha256: 4e6f2ba24bffadbb4cd4f034f748129bb6242b98a358d087f993ee7c82d07d60
+  text_chars: 7933
+  jsonld_hours: true
+  site_ids:
+  - boston_dermatology_and_laser_center_llc_boston
+  roles:
+  - location
+  related:
+  - https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  - https://www.apderm.com/ancillary-services/
+  - https://www.apderm.com/treatment/isotretinoin-accutane/
+  - https://www.apderm.com/treatment/photodynamic-therapy/
+  - https://www.apderm.com/treatment/phototherapy/
+  - https://www.apderm.com/condition/spider-veins-and-varicose-veins-treatments/
+- url: https://www.apderm.com/locations/canton-ma/
+  status: ok
+  method: http
+  final_url: https://www.apderm.com/locations/canton-ma/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:23+00:00'
+  page_sha256: f71cc3b7493551cec853ec7b174d4739b4ec93d21608db0c2ae3b058fe7802d0
+  text_chars: 9881
+  jsonld_hours: true
+  site_ids:
+  - dermatology_associates_pc_canton
+  roles:
+  - location
+  related:
+  - https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  - https://www.apderm.com/ancillary-services/
+  - https://www.apderm.com/treatment/isotretinoin-accutane/
+  - https://www.apderm.com/treatment/photodynamic-therapy/
+  - https://www.apderm.com/treatment/phototherapy/
+  - https://www.apderm.com/condition/spider-veins-and-varicose-veins-treatments/
+- url: https://www.apderm.com/locations/somerville-ma/
+  status: ok
+  method: http
+  final_url: https://www.apderm.com/locations/somerville-ma/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:42+00:00'
+  page_sha256: 54edf4c5af9b209fda59ab6f7f8200a3e2632c843be86eda15f8cf8fef6ac33c
+  text_chars: 9687
+  jsonld_hours: true
+  site_ids:
+  - mystic_valley_dermatology_associates_pc_somerville
+  roles:
+  - location
+  related:
+  - https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  - https://www.apderm.com/ancillary-services/
+  - https://www.apderm.com/treatment/isotretinoin-accutane/
+  - https://www.apderm.com/treatment/photodynamic-therapy/
+  - https://www.apderm.com/treatment/phototherapy/
+  - https://www.apderm.com/condition/spider-veins-and-varicose-veins-treatments/
+- url: https://www.apderm.com/locations/stoneham-ma/
+  status: ok
+  method: http
+  final_url: https://www.apderm.com/locations/stoneham-ma/
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:19+00:00'
+  page_sha256: 4306f3202f607be1e206d162b53d6b8128f563c453a253048295111018582cb7
+  text_chars: 10539
+  jsonld_hours: true
+  site_ids:
+  - mystic_valley_dermatology_associates_pc_stoneham
+  roles:
+  - location
+  related:
+  - https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  - https://www.apderm.com/ancillary-services/
+  - https://www.apderm.com/treatment/isotretinoin-accutane/
+  - https://www.apderm.com/treatment/photodynamic-therapy/
+  - https://www.apderm.com/treatment/phototherapy/
+  - https://www.apderm.com/condition/spider-veins-and-varicose-veins-treatments/
+- url: https://www.apderm.com/locations/waltham-ma/
+  status: ok
+  method: http
+  final_url: https://www.apderm.com/locations/waltham-ma/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:43+00:00'
+  page_sha256: 440c100003a0eae03c155a8abd6833813f09d1b6cc1fa475f4dc0a75b81a60e7
+  text_chars: 9174
+  jsonld_hours: true
+  site_ids:
+  - dermcare_physicians_and_surgeons_llc_waltham
+  roles:
+  - location
+  related:
+  - https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  - https://www.apderm.com/ancillary-services/
+  - https://www.apderm.com/treatment/isotretinoin-accutane/
+  - https://www.apderm.com/treatment/photodynamic-therapy/
+  - https://www.apderm.com/treatment/phototherapy/
+  - https://www.apderm.com/condition/spider-veins-and-varicose-veins-treatments/
+- url: https://www.apderm.com/locations/watertown-ma/
+  status: ok
+  method: http
+  final_url: https://www.apderm.com/locations/watertown-ma/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:45+00:00'
+  page_sha256: 99e48ea1bbc5e47d5349715b44db988e09a33b06cca5d7d84decb5fcc2d7f561
+  text_chars: 8887
+  jsonld_hours: true
+  site_ids:
+  - associates_in_dermatology_llc_watertown
+  roles:
+  - location
+  related:
+  - https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  - https://www.apderm.com/ancillary-services/
+  - https://www.apderm.com/treatment/isotretinoin-accutane/
+  - https://www.apderm.com/treatment/photodynamic-therapy/
+  - https://www.apderm.com/treatment/phototherapy/
+  - https://www.apderm.com/condition/spider-veins-and-varicose-veins-treatments/
+- url: https://www.apderm.com/locations/wellesley-ma/
+  status: ok
+  method: http
+  final_url: https://www.apderm.com/locations/wellesley-ma/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:45+00:00'
+  page_sha256: de5030626f7eabe1f5882bab995f690e00a31a18622831705f2137d008c6f69b
+  text_chars: 10340
+  jsonld_hours: true
+  site_ids:
+  - adult_and_pediatric_dermatology_pc_wellesley
+  roles:
+  - location
+  related:
+  - https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  - https://www.apderm.com/ancillary-services/
+  - https://www.apderm.com/treatment/isotretinoin-accutane/
+  - https://www.apderm.com/treatment/photodynamic-therapy/
+  - https://www.apderm.com/treatment/phototherapy/
+  - https://www.apderm.com/condition/spider-veins-and-varicose-veins-treatments/
+- url: https://www.apderm.com/locations/winchester-ma/
+  status: ok
+  method: http
+  final_url: https://www.apderm.com/locations/winchester-ma/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:47+00:00'
+  page_sha256: e5987a5d8fde44e5bbee2d673a0fd95dc72ca4e365f0e4841a0517accceec8c3
+  text_chars: 8746
+  jsonld_hours: true
+  site_ids:
+  - mystic_valley_dermatology_associates_pc_winchester
+  roles:
+  - location
+  related:
+  - https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  - https://www.apderm.com/ancillary-services/
+  - https://www.apderm.com/treatment/isotretinoin-accutane/
+  - https://www.apderm.com/treatment/photodynamic-therapy/
+  - https://www.apderm.com/treatment/phototherapy/
+  - https://www.apderm.com/condition/spider-veins-and-varicose-veins-treatments/
+- url: https://www.apderm.com/treatment/isotretinoin-accutane/
+  status: ok
+  method: http
+  final_url: https://www.apderm.com/treatment/isotretinoin-accutane/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:28+00:00'
+  page_sha256: 6c448a5456caba4430d0df0b4bf83b737658755081ba2347c85cf85cdda9de2d
+  text_chars: 5780
+  jsonld_hours: true
+  site_ids:
+  - adult_and_pediatric_dermatology_pc_wellesley
+  - associates_in_dermatology_llc_watertown
+  - boston_dermatology_and_laser_center_llc_boston
+  - dermatology_associates_pc_canton
+  - dermcare_physicians_and_surgeons_llc_waltham
+  - mystic_valley_dermatology_associates_pc_somerville
+  - mystic_valley_dermatology_associates_pc_stoneham
+  - mystic_valley_dermatology_associates_pc_winchester
+  roles:
+  - related
+  related:
+  - https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  - https://www.apderm.com/ancillary-services/
+  - https://www.apderm.com/treatment/photodynamic-therapy/
+  - https://www.apderm.com/treatment/phototherapy/
+  - https://www.apderm.com/condition/spider-veins-and-varicose-veins-treatments/
+  - https://www.apderm.com/treatment/teledermatology/
+- url: https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  status: ok
+  method: http
+  final_url: https://www.apderm.com/treatment/patch-testing-contact-dermatitis/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:27+00:00'
+  page_sha256: 0c9499cc17910181a186ee9651287eb966b5c016f72af38f284c5097f54ccd88
+  text_chars: 6833
+  jsonld_hours: true
+  site_ids:
+  - adult_and_pediatric_dermatology_pc_wellesley
+  - associates_in_dermatology_llc_watertown
+  - boston_dermatology_and_laser_center_llc_boston
+  - dermatology_associates_pc_canton
+  - dermcare_physicians_and_surgeons_llc_waltham
+  - mystic_valley_dermatology_associates_pc_somerville
+  - mystic_valley_dermatology_associates_pc_stoneham
+  - mystic_valley_dermatology_associates_pc_winchester
+  roles:
+  - related
+  related:
+  - https://www.apderm.com/ancillary-services/
+  - https://www.apderm.com/treatment/isotretinoin-accutane/
+  - https://www.apderm.com/treatment/photodynamic-therapy/
+  - https://www.apderm.com/treatment/phototherapy/
+  - https://www.apderm.com/condition/spider-veins-and-varicose-veins-treatments/
+  - https://www.apderm.com/treatment/teledermatology/
 - url: https://www.atriushealth.org/locations/braintree
   status: ok
   method: http
@@ -1879,6 +2461,25 @@ pages:
   - https://www.atriushealth.org/services/pediatrics
   - https://www.atriushealth.org/services/laboratory
   - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/copley
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/copley
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:48+00:00'
+  page_sha256: c7779efe039d7f1ab9fb4c0a73f367b614779dbe3447a13978cd9c5601f02d57
+  text_chars: 7668
+  site_ids:
+  - atrius_health_inc_boston_gb0096
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
 - url: https://www.atriushealth.org/locations/dedham
   status: ok
   method: http
@@ -1898,6 +2499,26 @@ pages:
   - https://www.atriushealth.org/services/pediatrics
   - https://www.atriushealth.org/services/laboratory
   - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/kenmore
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/kenmore
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:56+00:00'
+  page_sha256: 2e03539e65bd4cd4ebc882d09ce9655e56fa65cb6cc612b667b61bd861527aef
+  text_chars: 11191
+  site_ids:
+  - atrius_health_inc_boston_gb0144
+  - atrius_health_urgent_care_harvard_vanguard_kenmore_bosto
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
 - url: https://www.atriushealth.org/locations/medford
   status: ok
   method: http
@@ -1908,6 +2529,44 @@ pages:
   text_chars: 7844
   site_ids:
   - atrius_health_inc_medford
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/quincy-congress-street
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/quincy-congress-street
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:17+00:00'
+  page_sha256: 9cc2f6d117bb425c081f3563e97212b37b0c6a7b1f28f100cbd7acad8503034c
+  text_chars: 6379
+  site_ids:
+  - atrius_health_inc_quincy_gb0189
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/quincy-hancock-street
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/quincy-hancock-street
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:17+00:00'
+  page_sha256: 8d2936b42e67d4cf277b364b589455b263c6032d6b71bfa9a330ee846192a4f5
+  text_chars: 8693
+  site_ids:
+  - atrius_health_inc_quincy_gb0188
   roles:
   - location
   related:
@@ -1975,6 +2634,25 @@ pages:
   - https://www.atriushealth.org/services/pediatrics
   - https://www.atriushealth.org/services/laboratory
   - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
+- url: https://www.atriushealth.org/locations/weymouth-90-libbey-parkway
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/locations/weymouth-90-libbey-parkway
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:51+00:00'
+  page_sha256: afa2d054438d67ccea916f84ef3d5b58383571007c1743cf0152069c50187710
+  text_chars: 7512
+  site_ids:
+  - atrius_health_inc_weymouth_gb0139
+  roles:
+  - location
+  related:
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/family-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
 - url: https://www.atriushealth.org/locations/weymouth-weymouth-mri
   status: ok
   method: http
@@ -1983,8 +2661,6 @@ pages:
   fetched_at: '2026-10-25T13:49:35+00:00'
   page_sha256: 06331963673287b672abb69a2e674f8a9bba58f365d0c57bdd710a09c0f22817
   text_chars: 5157
-  site_ids:
-  - atrius_health_inc_weymouth_gb0139
   roles:
   - location
   related:
@@ -2003,17 +2679,22 @@ pages:
   page_sha256: 8fcffcac9dceda79745f59e5bfcd0c5f479eb237e1495783a327d2be4dfec936
   text_chars: 5230
   site_ids:
+  - atrius_health_inc_boston_gb0096
+  - atrius_health_inc_boston_gb0144
   - atrius_health_inc_braintree
   - atrius_health_inc_burlington
   - atrius_health_inc_chestnut_hill
   - atrius_health_inc_dedham
   - atrius_health_inc_medford
+  - atrius_health_inc_quincy_gb0188
+  - atrius_health_inc_quincy_gb0189
   - atrius_health_inc_somerville
   - atrius_health_inc_watertown
   - atrius_health_inc_wellesley
   - atrius_health_inc_weymouth_gb0139
   - atrius_health_urgent_care_harvard_vanguard_braintree_bra
   - atrius_health_urgent_care_harvard_vanguard_burlington_bu
+  - atrius_health_urgent_care_harvard_vanguard_kenmore_bosto
   - atrius_health_urgent_care_harvard_vanguard_somerville_so
   roles:
   - related
@@ -2024,6 +2705,30 @@ pages:
   - https://www.atriushealth.org/services/laboratory
   - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
   - https://www.atriushealth.org/services/eye-care
+- url: https://www.atriushealth.org/services/family-medicine
+  status: ok
+  method: http
+  final_url: https://www.atriushealth.org/services/family-medicine
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:49+00:00'
+  page_sha256: c51d22a16b9d749796e579798b716d8c62ea242f35d26f4a99bdbfa5a741d2bd
+  text_chars: 5304
+  site_ids:
+  - atrius_health_inc_boston_gb0096
+  - atrius_health_inc_boston_gb0144
+  - atrius_health_inc_quincy_gb0188
+  - atrius_health_inc_quincy_gb0189
+  - atrius_health_inc_weymouth_gb0139
+  - atrius_health_urgent_care_harvard_vanguard_kenmore_bosto
+  roles:
+  - related
+  related:
+  - https://www.atriushealth.org/services/family-medicine/locations
+  - https://www.atriushealth.org/services
+  - https://www.atriushealth.org/services/internal-medicine
+  - https://www.atriushealth.org/services/pediatrics
+  - https://www.atriushealth.org/services/laboratory
+  - https://www.atriushealth.org/services/obstetrics-gynecology/obstetrical-care/nurse-midwifery-program
 - url: https://www.atriushealth.org/services/internal-medicine
   status: ok
   method: http
@@ -2033,17 +2738,22 @@ pages:
   page_sha256: 5cc757ac0a875ab8e5c27915b6142b83c239671f346b8c36e8efff75afca92ed
   text_chars: 5893
   site_ids:
+  - atrius_health_inc_boston_gb0096
+  - atrius_health_inc_boston_gb0144
   - atrius_health_inc_braintree
   - atrius_health_inc_burlington
   - atrius_health_inc_chestnut_hill
   - atrius_health_inc_dedham
   - atrius_health_inc_medford
+  - atrius_health_inc_quincy_gb0188
+  - atrius_health_inc_quincy_gb0189
   - atrius_health_inc_somerville
   - atrius_health_inc_watertown
   - atrius_health_inc_wellesley
   - atrius_health_inc_weymouth_gb0139
   - atrius_health_urgent_care_harvard_vanguard_braintree_bra
   - atrius_health_urgent_care_harvard_vanguard_burlington_bu
+  - atrius_health_urgent_care_harvard_vanguard_kenmore_bosto
   - atrius_health_urgent_care_harvard_vanguard_somerville_so
   roles:
   - related
@@ -2064,6 +2774,8 @@ pages:
   text_chars: 5067
   site_ids:
   - beth_israel_deaconess_hospital_milton
+  - community_physicians_associates_inc_milton
+  - harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0180
   roles:
   - location
   related:
@@ -2083,6 +2795,7 @@ pages:
   text_chars: 5315
   site_ids:
   - boston_medical_center
+  - evans_medical_foundation_inc_boston_gb0151
   roles:
   - location
   related:
@@ -2101,11 +2814,137 @@ pages:
   page_sha256: 0738f468a9e1bc591c85e9311371e3eb14c7f008c0373bb07502b4d1444dde0b
   text_chars: 2013
   site_ids:
+  - bmc_affiliated_physicians_inc_brighton_gb0159
+  - bmc_brighton_formerly_st_elizabeths
   - boston_medical_center
+  - boston_medical_center_south
+  - evans_medical_foundation_inc_boston_gb0151
   roles:
   - related
   related:
   - https://www.bmc.org/volunteer-services
+  - https://www.bmc.org/departments/addiction-treatment-programs
+  - https://www.bmc.org/departments/lab-services
+  - https://www.bmc.org/interpreter-services
+  - https://www.bmc.org/services/medical-records
+- url: https://www.bmc.org/departments/addiction-treatment-programs
+  status: ok
+  method: http
+  final_url: https://www.bmc.org/departments/addiction-treatment-programs
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:02+00:00'
+  page_sha256: d6536cc3f9de0e5a0fbe08819c8632dfe2b6bd52170e2370e5e96edda6037e1c
+  text_chars: 6793
+  site_ids:
+  - bmc_affiliated_physicians_inc_brighton_gb0159
+  - bmc_brighton_formerly_st_elizabeths
+  - boston_medical_center_south
+  - evans_medical_foundation_inc_boston_gb0151
+  roles:
+  - related
+  related:
+  - https://www.bmc.org/departments/addiction-treatment-programs/conditions-we-treat
+  - https://www.bmc.org/departments/addiction-treatment-programs/treatments-and-services
+  - https://www.bmc.org/departments/addiction-treatment-programs/our-team
+  - https://www.bmc.org/departments/addiction-treatment-programs/stories-recovery
+  - https://www.bmc.org/departments/addiction-treatment-programs/patient-resources
+  - https://www.bmc.org/departments/addiction-treatment-programs/faster-paths-treatment
+- url: https://www.bmc.org/departments/adult-primary-care/office-based-addiction-treatment-obat
+  status: ok
+  method: http
+  final_url: https://www.bmc.org/departments/adult-primary-care/office-based-addiction-treatment-obat
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:27+00:00'
+  page_sha256: 659cfebe3addd4e715cca4fea10c5f0ceb0f5b947459a39645a0b1bfa29a8feb
+  text_chars: 4969
+  jsonld_hours: true
+  site_ids:
+  - bmc_adult_primary_care_urgent_care_fka_bmc_shapiro_urgen
+  roles:
+  - related
+  related:
+  - https://www.bmc.org/departments/adult-primary-care/office-based-addiction-treatment-obat/conditions-we-treat
+  - https://www.bmc.org/departments/adult-primary-care/office-based-addiction-treatment-obat/treatments-and-services
+  - https://www.bmc.org/departments/adult-primary-care/office-based-addiction-treatment-obat/our-team
+  - https://www.bmc.org/departments/adult-primary-care/office-based-addiction-treatment-obat/provider-resources
+  - https://www.bmc.org/volunteer-services
+  - https://www.bmc.org/conditions-we-treat
+- url: https://www.bmc.org/departments/adult-primary-care/treatments-and-services
+  status: ok
+  method: http
+  final_url: https://www.bmc.org/departments/adult-primary-care/treatments-and-services
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:27+00:00'
+  page_sha256: ddf536ddde73ea965df2bade2a2e8e9991ed6571325136530c34fc32c470c201
+  text_chars: 2655
+  site_ids:
+  - bmc_adult_primary_care_urgent_care_fka_bmc_shapiro_urgen
+  roles:
+  - related
+  related:
+  - https://www.bmc.org/volunteer-services
+  - https://www.bmc.org/conditions-we-treat
+  - https://www.bmc.org/departments/addiction-treatment-programs
+  - https://www.bmc.org/departments/lab-services
+  - https://www.bmc.org/interpreter-services
+  - https://www.bmc.org/patient-care/conditions-we-treat/db/high-cholesterol-hypercholesterolemia
+- url: https://www.bmc.org/departments/orthopedic-surgery
+  status: ok
+  method: http
+  final_url: https://www.bmc.org/departments/orthopedic-surgery
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:58+00:00'
+  page_sha256: c255f07f1d7fb7ce4462d02cdc3ed267b7e4b4e1a6038f62b3f5e63a1e45a1ff
+  text_chars: 7559
+  jsonld_hours: true
+  site_ids:
+  - boston_university_orthopaedic_surgical_associates_inc_bo_gb0147
+  roles:
+  - services
+  related:
+  - https://www.bmc.org/departments/orthopedic-surgery/conditions-we-treat
+  - https://www.bmc.org/departments/orthopedic-surgery/treatments-and-services
+  - https://www.bmc.org/volunteer-services
+  - https://www.bmc.org/conditions-we-treat
+  - https://www.bmc.org/departments/addiction-treatment-programs
+  - https://www.bmc.org/departments/lab-services
+- url: https://www.bmc.org/internal-medicine
+  status: ok
+  method: http
+  final_url: https://www.bmc.org/departments/adult-primary-care
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:24+00:00'
+  page_sha256: f9b4b6493943f22071ebcd9a42f1fbd167ee2f4b9d4989b6e152d4ca9c7a1c10
+  text_chars: 6383
+  jsonld_hours: true
+  site_ids:
+  - bmc_adult_primary_care_urgent_care_fka_bmc_shapiro_urgen
+  roles:
+  - location
+  related:
+  - https://www.bmc.org/departments/adult-primary-care/treatments-and-services
+  - https://www.bmc.org/departments/adult-primary-care/office-based-addiction-treatment-obat
+  - https://www.bmc.org/volunteer-services
+  - https://www.bmc.org/conditions-we-treat
+  - https://www.bmc.org/departments/addiction-treatment-programs
+  - https://www.bmc.org/departments/lab-services
+- url: https://www.bmc.org/locations
+  status: ok
+  method: http
+  final_url: https://www.bmc.org/locations
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:05+00:00'
+  page_sha256: cee49077f66a0f756bb56b132b7ee8f596d446bb06010b304c0714ba0be127bc
+  text_chars: 3388
+  site_ids:
+  - bmc_affiliated_physicians_inc_brighton_gb0159
+  - bmc_brighton_formerly_st_elizabeths
+  - boston_medical_center_south
+  roles:
+  - location
+  related:
+  - https://www.bmc.org/volunteer-services
+  - https://www.bmc.org/conditions-we-treat
   - https://www.bmc.org/departments/addiction-treatment-programs
   - https://www.bmc.org/departments/lab-services
   - https://www.bmc.org/interpreter-services
@@ -2119,7 +2958,12 @@ pages:
   page_sha256: 8cc31c7b1ffc46832999b73446f4c9f5078fe5b66d319d1727ebfdf4eecfe8a8
   text_chars: 4057
   site_ids:
+  - bmc_adult_primary_care_urgent_care_fka_bmc_shapiro_urgen
+  - bmc_affiliated_physicians_inc_brighton_gb0159
+  - bmc_brighton_formerly_st_elizabeths
   - boston_medical_center
+  - boston_medical_center_south
+  - evans_medical_foundation_inc_boston_gb0151
   roles:
   - related
   related:
@@ -2138,6 +2982,7 @@ pages:
   page_sha256: 3312189af6ce23cf04724c1d3ef7a8bc28c136ec226e099a8e1eb12bb281af33
   text_chars: 11260
   site_ids:
+  - cambridge_public_health_commission_cambridge
   - cha_cambridge_hospital
   roles:
   - location
@@ -2148,6 +2993,63 @@ pages:
   - https://www.challiance.org/services-programs/specialty-care/imaging-radiology
   - https://www.challiance.org/patients-visitors/shuttle-service
   - https://www.challiance.org/services-programs/mental-health-and-substance-use/substance-use-addiction/substance-use-addiction
+- url: https://www.challiance.org/locations/everett/cha-everett-hospital
+  status: ok
+  method: http
+  final_url: https://www.challiance.org/locations/everett/cha-everett-hospital
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:09+00:00'
+  page_sha256: b6a49f61b0c69bbdace96e5e368a8a517646a8ca96c6d702b63696fee9ab6f75
+  text_chars: 9879
+  site_ids:
+  - cambridge_public_health_commission_everett
+  roles:
+  - location
+  related:
+  - https://www.challiance.org/services-programs/vaccines-and-immunizations
+  - https://www.challiance.org/services-programs
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/adult-psychiatry/adult-psychiatry
+  - https://www.challiance.org/services-programs/specialty-care/imaging-radiology/bone-density
+  - https://www.challiance.org/services-programs/specialty-care/imaging-radiology/breast-imaging-and-mammography
+  - https://www.challiance.org/services-programs/cancer-care/cancer-care
+- url: https://www.challiance.org/locations/somerville/cha-dermatology
+  status: ok
+  method: http
+  final_url: https://www.challiance.org/locations/somerville/cha-dermatology
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:41+00:00'
+  page_sha256: a35981ef61e8bfb53f0141050bba0de0d33bd20c9ac79664e4695853d51e3a4a
+  text_chars: 8638
+  site_ids:
+  - cambridge_public_health_commission_somerville_gb0067
+  roles:
+  - location
+  related:
+  - https://www.challiance.org/services-programs/vaccines-and-immunizations
+  - https://www.challiance.org/services-programs
+  - https://www.challiance.org/patients-visitors/shuttle-service
+  - https://www.challiance.org/services-programs/specialty-care/dermatology
+  - https://www.challiance.org/services-programs/primary-care/primary-care-at-cha
+  - https://www.challiance.org/i-want-to/find-a-service
+- url: https://www.challiance.org/locations/somerville/cha-somerville-campus
+  status: ok
+  method: http
+  final_url: https://www.challiance.org/locations/somerville/cha-somerville-campus
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:18+00:00'
+  page_sha256: df20909d9cf79a8d7794ee3d36921b5769c20ad84b73033fe7b87bab1dbe4557
+  text_chars: 10190
+  site_ids:
+  - cambridge_public_health_commission_somerville_gb0194
+  roles:
+  - location
+  related:
+  - https://www.challiance.org/services-programs/vaccines-and-immunizations
+  - https://www.challiance.org/services-programs
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/child-adolescent-psychiatry/child-adolescent-hospital-care
+  - https://www.challiance.org/services-programs/urgent-care
+  - https://www.challiance.org/patients-visitors/shuttle-service
+  - https://www.challiance.org/services-programs/specialty-care/cardiology
 - url: https://www.challiance.org/locations/somerville/cha-urgent-care-center
   status: ok
   method: http
@@ -2167,6 +3069,23 @@ pages:
   - https://www.challiance.org/patients-visitors/shuttle-service
   - https://www.challiance.org/services-programs/laboratory-and-pathology
   - https://www.challiance.org/services-programs/specialty-care/imaging-radiology/radiology-and-imaging
+- url: https://www.challiance.org/patients-visitors/shuttle-service
+  status: ok
+  method: http
+  final_url: https://www.challiance.org/patients-visitors/shuttle-service
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:42+00:00'
+  page_sha256: 272d2a819a407a20708364cf21df79c37a02c4257a9be6321b684d3d9a972b70
+  text_chars: 7650
+  site_ids:
+  - cambridge_public_health_commission_somerville_gb0067
+  roles:
+  - related
+  related:
+  - https://www.challiance.org/services-programs/vaccines-and-immunizations
+  - https://www.challiance.org/services-programs
+  - https://www.challiance.org/help-center/shuttle-service
+  - https://www.challiance.org/i-want-to/find-a-service
 - url: https://www.challiance.org/services-programs
   status: ok
   method: http
@@ -2176,6 +3095,10 @@ pages:
   page_sha256: 78b986b7094da41e5d11ec6ca519c3f02f7edec83e1b782155e2a4d74e9f4da1
   text_chars: 4635
   site_ids:
+  - cambridge_public_health_commission_cambridge
+  - cambridge_public_health_commission_everett
+  - cambridge_public_health_commission_somerville_gb0067
+  - cambridge_public_health_commission_somerville_gb0194
   - cha_cambridge_hospital
   - cha_somerville_urgent_care_center_somerville
   roles:
@@ -2187,6 +3110,63 @@ pages:
   - https://www.challiance.org/services-programs/specialty-care/ear-nose-and-throat-otolaryngology/ear-nose-and-throat
   - https://www.challiance.org/services-programs/anesthesia
   - https://www.challiance.org/services-programs/primary-care/back-pain-clinic/back-pain-clinic
+- url: https://www.challiance.org/services-programs/mental-health-and-substance-use/adult-psychiatry/adult-psychiatry
+  status: ok
+  method: http
+  final_url: https://www.challiance.org/services-programs/mental-health-and-substance-use/adult-psychiatry
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:10+00:00'
+  page_sha256: 2821bd16c33830f7c357de9a87751518f82d543a57e05486f2dac8386cc014ab
+  text_chars: 3814
+  site_ids:
+  - cambridge_public_health_commission_everett
+  roles:
+  - related
+  related:
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/adult-psychiatry/adult-psychiatry-outpatient
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/adult-psychiatry/adult-psychiatry-inpatient-care
+  - https://www.challiance.org/services-programs/vaccines-and-immunizations
+  - https://www.challiance.org/services-programs
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/www.challiance.org
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use
+- url: https://www.challiance.org/services-programs/mental-health-and-substance-use/child-adolescent-psychiatry/child-adolescent-hospital-care
+  status: ok
+  method: http
+  final_url: https://www.challiance.org/services-programs/mental-health-and-substance-use/child-adolescent-psychiatry/child-adolescent-hospital-care
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:19+00:00'
+  page_sha256: 1141a9459ea76768df6629b2085fc763b4c0ba8c11f39bb15fb56698205e0076
+  text_chars: 8988
+  site_ids:
+  - cambridge_public_health_commission_somerville_gb0194
+  roles:
+  - related
+  related:
+  - https://www.challiance.org/services-programs/vaccines-and-immunizations
+  - https://www.challiance.org/services-programs
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/child-adolescent-psychiatry/www.challiance.org
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/child-adolescent-psychiatry
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/psychiatry-crisis-services
+- url: https://www.challiance.org/services-programs/mental-health-and-substance-use/psychiatry-crisis-services
+  status: ok
+  method: http
+  final_url: https://www.challiance.org/services-programs/mental-health-and-substance-use/psychiatry-crisis-services
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:06+00:00'
+  page_sha256: 3238730e2fa014fad4a29c5a598f03cfa1d42c24246538eb51ab6650af621270
+  text_chars: 4069
+  site_ids:
+  - cambridge_public_health_commission_cambridge
+  roles:
+  - related
+  related:
+  - https://www.challiance.org/services-programs/vaccines-and-immunizations
+  - https://www.challiance.org/services-programs
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/www.challiance.org
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use
+  - https://www.challiance.org/services-programs/mental-health-and-substance-use/services-programs/mental-health-and-substance-use/psychiatry-crisis-services
+  - https://www.challiance.org/file%20library/services%20and%20programs/mental%20health/cbhc/cbhc-handout_bp_2024.pdf
 - url: https://www.challiance.org/services-programs/vaccines-and-immunizations
   status: ok
   method: http
@@ -2196,6 +3176,10 @@ pages:
   page_sha256: da685f7a2ca118d4f07145c4c8c71105527f94d942b9b55db57343d27ea9c9dd
   text_chars: 17154
   site_ids:
+  - cambridge_public_health_commission_cambridge
+  - cambridge_public_health_commission_everett
+  - cambridge_public_health_commission_somerville_gb0067
+  - cambridge_public_health_commission_somerville_gb0194
   - cha_cambridge_hospital
   - cha_somerville_urgent_care_center_somerville
   roles:
@@ -2234,6 +3218,7 @@ pages:
   text_chars: 210840
   site_ids:
   - boston_childrens_hospital
+  - childrens_hospital_pediatric_associates_inc_boston
   roles:
   - related
   related:
@@ -2243,6 +3228,25 @@ pages:
   - https://www.childrenshospital.org/conditions-treatments/achalasia
   - https://www.childrenshospital.org/conditions-treatments/achilles-tendon-injuries
   - https://www.childrenshospital.org/conditions-treatments/achondroplasia
+- url: https://www.childrenshospital.org/locations/boston
+  status: ok
+  method: http
+  final_url: https://www.childrenshospital.org/locations/boston
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:59+00:00'
+  page_sha256: d1d41e14496f378da0152bdaaa77a399610dd90d9b919b6ee79365532cfd58b4
+  text_chars: 5520
+  site_ids:
+  - childrens_hospital_pediatric_associates_inc_boston
+  roles:
+  - location
+  related:
+  - https://www.childrenshospital.org/conditions-treatments
+  - https://www.childrenshospital.org/services
+  - https://www.childrenshospital.org/services/pediatric-sleep-center
+  - https://www.childrenshospital.org/services/neurology
+  - https://www.childrenshospital.org/services/esophageal-and-airway-treatment-center
+  - https://www.childrenshospital.org/services/pectus-and-chest-wall-treatment-program
 - url: https://www.childrenshospital.org/services
   status: ok
   method: http
@@ -2253,6 +3257,7 @@ pages:
   text_chars: 83707
   site_ids:
   - boston_childrens_hospital
+  - childrens_hospital_pediatric_associates_inc_boston
   roles:
   - related
   related:
@@ -2262,6 +3267,25 @@ pages:
   - https://www.childrenshospital.org/services/adolescent-breast-center
   - https://www.childrenshospital.org/services/adolescent-medicine-complex-diagnosis-consult-program
   - https://www.childrenshospital.org/services/adolescent-substance-use-and-addiction-program
+- url: https://www.childrenshospital.org/services/pediatric-sleep-center
+  status: ok
+  method: http
+  final_url: https://www.childrenshospital.org/services/pediatric-sleep-center
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:00+00:00'
+  page_sha256: c234dfa899ad6bdbc44da349a7e8f8cd415cb6a6acf5361794463b49f81bdd9b
+  text_chars: 3942
+  site_ids:
+  - childrens_hospital_pediatric_associates_inc_boston
+  roles:
+  - related
+  related:
+  - https://www.childrenshospital.org/services/pediatric-sleep-center/conditions-treatments
+  - https://www.childrenshospital.org/services/pediatric-sleep-center/meet-our-team
+  - https://www.childrenshospital.org/services/pediatric-sleep-center/our-services
+  - https://www.childrenshospital.org/services/pediatric-sleep-center/patient-resources
+  - https://www.childrenshospital.org/services/pediatric-sleep-center/patient-resources/sleep-coaching
+  - https://www.childrenshospital.org/services/pediatric-sleep-center/frequently-asked-questions
 - url: https://www.codman.org/
   status: manual
   method: http
@@ -2300,6 +3324,7 @@ pages:
   text_chars: 7345
   site_ids:
   - dana_farber_cancer_institute
+  - dana_farber_cancer_institute_inc_boston
   roles:
   - related
   related:
@@ -2309,6 +3334,25 @@ pages:
   - https://www.dana-farber.org/cancer-care/care-team/nursing
   - https://www.dana-farber.org/cancer-care/treatment/supportive-oncology
   - https://www.dana-farber.org/patient-family/support-services
+- url: https://www.dana-farber.org/cancer-care/treatment
+  status: ok
+  method: http
+  final_url: https://www.dana-farber.org/cancer-care/treatment
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:02+00:00'
+  page_sha256: 9edb58244a29b0dfe96121c3adb81aa02fa33a2eb630b5a83260a41b3a09aa2c
+  text_chars: 11373
+  site_ids:
+  - dana_farber_cancer_institute_inc_boston
+  roles:
+  - related
+  related:
+  - https://www.dana-farber.org/cancer-care/treatment/early-detection-interception
+  - https://www.dana-farber.org/cancer-care/treatment/breast-oncology
+  - https://www.dana-farber.org/cancer-care/treatment/breast-oncology/programs
+  - https://www.dana-farber.org/cancer-care/treatment/breast-oncology/programs/breast-cancer-during-pregnancy
+  - https://www.dana-farber.org/cancer-care/treatment/breast-oncology/programs/ductal-carcinoma-in-situ
+  - https://www.dana-farber.org/cancer-care/treatment/breast-oncology/programs/inflammatory-breast-cancer
 - url: https://www.dana-farber.org/cancer-care/types
   status: ok
   method: http
@@ -2319,10 +3363,30 @@ pages:
   text_chars: 4761
   site_ids:
   - dana_farber_cancer_institute
+  - dana_farber_cancer_institute_inc_boston
   roles:
   - related
   related:
   - https://www.dana-farber.org/cancer-care
+  - https://www.dana-farber.org/cancer-care/treatment
+  - https://www.dana-farber.org/cancer-care/treatment/early-detection-interception
+  - https://www.dana-farber.org/cancer-care/care-team/nursing
+  - https://www.dana-farber.org/patient-family/support-services
+- url: https://www.dana-farber.org/locations/longwood
+  status: ok
+  method: http
+  final_url: https://www.dana-farber.org/locations/yawkey-center
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:01+00:00'
+  page_sha256: e1f7435532dbcd8f9c6eff4750a64b4aa1bdd36443229728981e6ca3d55ecfce
+  text_chars: 8716
+  site_ids:
+  - dana_farber_cancer_institute_inc_boston
+  roles:
+  - location
+  related:
+  - https://www.dana-farber.org/cancer-care
+  - https://www.dana-farber.org/cancer-care/types
   - https://www.dana-farber.org/cancer-care/treatment
   - https://www.dana-farber.org/cancer-care/treatment/early-detection-interception
   - https://www.dana-farber.org/cancer-care/care-team/nursing
@@ -2523,6 +3587,7 @@ pages:
   text_chars: 4422
   site_ids:
   - brigham_and_womens_hospital
+  - brigham_and_womens_physicians_organization_inc_boston
   roles:
   - location
 - url: https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-spine-center-loc0000280307
@@ -2675,6 +3740,54 @@ pages:
   - location
   related:
   - https://www.massgeneralbrigham.org/en/find-care/express-care/services
+- url: https://www.massgeneralbrigham.org/en/locations/cambridge-ma/spaulding-rehabilitation-hospital-for-continuing-care-cambridge-loc0000295396
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/cambridge-ma/spaulding-rehabilitation-hospital-for-continuing-care-cambridge-loc0000295396
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:21+00:00'
+  page_sha256: bc3e10f1a2b9c01e18fedf5396db3acb0c7ff09aeb99fae9ffbc3dbccb9935c5
+  text_chars: 2091
+  site_ids:
+  - massachusetts_general_physicians_organization_inc_cambri
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/cambridge-ma/spaulding-rehabilitation-outpatient-center-cambridge-loc0000280882
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/cambridge-ma/spaulding-rehabilitation-outpatient-center-cambridge-loc0000280882
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:20+00:00'
+  page_sha256: d6faf3f4d5e5e8d02795063ed58d0d50bd13a52a123219193aea9aa731280a59
+  text_chars: 979
+  site_ids:
+  - massachusetts_general_physicians_organization_inc_cambri
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/charlestown-ma/massachusetts-general-physical-medicine-and-rehabilitation-clinic-at-spaulding-rehabilitation-loc0000280566
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/charlestown-ma/massachusetts-general-physical-medicine-and-rehabilitation-clinic-at-spaulding-rehabilitation-loc0000280566
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:22+00:00'
+  page_sha256: 0fb25fbb50be5fe3a9df00f5a268c5fa17145987d6971a2e5efc0aef3390d1d5
+  text_chars: 900
+  site_ids:
+  - massachusetts_general_physicians_organization_inc_charle
+  roles:
+  - location
+- url: https://www.massgeneralbrigham.org/en/locations/charlestown-ma/spaulding-rehabilitation-hospital-charlestown-loc0000280569
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/charlestown-ma/spaulding-rehabilitation-hospital-charlestown-loc0000280569
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:23+00:00'
+  page_sha256: ad654d95ab2d120c39b61706a9bc659d4360de52d73f2952504501fcd56a7936
+  text_chars: 3539
+  site_ids:
+  - massachusetts_general_physicians_organization_inc_charle
+  roles:
+  - location
 - url: https://www.massgeneralbrigham.org/en/locations/chelsea-ma/chelsea-community-health-center-urgent-care-loc0000292207
   status: ok
   method: http
@@ -2701,6 +3814,20 @@ pages:
   - mass_general_brigham_for_children_gastroenterology_and_n_gb0198
   roles:
   - location
+- url: https://www.massgeneralbrigham.org/en/locations/chelsea-ma/mass-general-brigham-imaging-chelsea-80-everett-ave-loc0000281028
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/chelsea-ma/mass-general-brigham-imaging-chelsea-80-everett-ave-loc0000281028
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:49+00:00'
+  page_sha256: 80067bd47fc3ebc6ee756bc80c41f618a50f8360d60408ccf9f45c832c1d9b4f
+  text_chars: 1764
+  site_ids:
+  - massachusetts_general_physicians_organization_inc_chelse
+  roles:
+  - location
+  related:
+  - https://www.massgeneralbrigham.org/en/services/imaging
 - url: https://www.massgeneralbrigham.org/en/locations/chelsea-ma/massachusetts-general-dermatology-clinic-at-chelsea-community-health-center-loc0000280758
   status: ok
   method: http
@@ -2751,6 +3878,18 @@ pages:
   - location
   related:
   - https://www.massgeneralbrigham.org/en/find-care/express-care/services
+- url: https://www.massgeneralbrigham.org/en/locations/lynn-ma/mass-general-brigham-lynn480-lynnfield-st-loc0000280812
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/lynn-ma/mass-general-brigham-lynn480-lynnfield-st-loc0000280812
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:51+00:00'
+  page_sha256: 0bb2a9b3c22ec1ccb5c4d336a73d04117ab1c69de75e8b7bee6537e9909e53d3
+  text_chars: 698
+  site_ids:
+  - mass_general_brigham_medical_group_northern_massachusett
+  roles:
+  - location
 - url: https://www.massgeneralbrigham.org/en/locations/newton-ma/mass-general-brigham-express-care-newton-loc0000281607
   status: ok
   method: http
@@ -2817,6 +3956,18 @@ pages:
   - mass_general_brigham_orthopedics_clinic_at_revere_commun
   roles:
   - location
+- url: https://www.massgeneralbrigham.org/en/locations/revere-ma/mass-general-broadway-primary-care-at-revere-loc0000280934
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/revere-ma/mass-general-broadway-primary-care-at-revere-loc0000280934
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:40+00:00'
+  page_sha256: d45be4c1d27d32da888215e172c08b2e701eaced120d376eb2464cddb905643a
+  text_chars: 740
+  site_ids:
+  - the_general_hospital_corporation_revere
+  roles:
+  - location
 - url: https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/mass-general-brigham-express-care-south-weymouth-loc0000280711
   status: ok
   method: http
@@ -2831,6 +3982,18 @@ pages:
   - location
   related:
   - https://www.massgeneralbrigham.org/en/find-care/express-care/services
+- url: https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/mass-general-brigham-healthcare-center-south-weymouth-loc0000280713
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/mass-general-brigham-healthcare-center-south-weymouth-loc0000280713
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:19+00:00'
+  page_sha256: 8ec0782e02d000a4013967d9d5123d37cc7f556e3759e26adc22f0c4711bfe5c
+  text_chars: 2107
+  site_ids:
+  - harbor_medical_associates_inc_south_weymouth
+  roles:
+  - location
 - url: https://www.massgeneralbrigham.org/en/locations/wellesley-ma/mass-general-brigham-orthopedics-walkin-clinic-in-wellesley-loc0000290358
   status: ok
   method: http
@@ -2853,6 +4016,7 @@ pages:
   text_chars: 1016
   site_ids:
   - newton_wellesley_outpatient_surgery_center_wellesley
+  - robert_j_banco_md_pc_wellesley
   roles:
   - location
 - url: https://www.massgeneralbrigham.org/en/locations/woburn-ma/mass-general-brigham-express-care-woburn-loc0000280961
@@ -2869,6 +4033,25 @@ pages:
   - location
   related:
   - https://www.massgeneralbrigham.org/en/find-care/express-care/services
+- url: https://www.massgeneralbrigham.org/en/services/imaging
+  status: ok
+  method: http
+  final_url: https://www.massgeneralbrigham.org/en/services/imaging
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:50+00:00'
+  page_sha256: aa9de27bc8d0fab0a7ee257dd51cb8d030b600c0b3066663ead183dfd2180eff
+  text_chars: 8937
+  site_ids:
+  - massachusetts_general_physicians_organization_inc_chelse
+  roles:
+  - related
+  related:
+  - https://www.massgeneralbrigham.org/en/search/locations/results
+  - https://www.massgeneralbrigham.org/content/dam/unified-xwalk/images/services/imaging/sd-imaging-bl-22-496x645-2x.jpg
+  - https://www.massgeneralbrigham.org/en/services/pediatric-imaging
+  - https://www.massgeneralbrigham.org/en/services/interventional-radiology
+  - https://www.massgeneralbrigham.org/en/services/heart-vascular
+  - https://www.massgeneralbrigham.org/en/services/neuroscience
 - url: https://www.massgeneralbrigham.org/en/services/orthopedics
   status: ok
   method: http
@@ -2969,6 +4152,110 @@ pages:
   - https://www.neighborhealth.com/en/care-and-services/emergency-care/
   - https://www.neighborhealth.com/en/care-and-services/emergency-department/
   - https://www.neighborhealth.com/en/care-and-services/community-care/
+- url: https://www.ortho.boston/
+  status: manual
+  method: http
+  http_status: 200
+  reason: challenge / bot-check page
+  site_ids:
+  - orthoboston_llc_needham
+  roles:
+  - location
+- url: https://www.skincarephysicians.net/services
+  status: ok
+  method: http
+  final_url: https://www.skincarephysicians.net/services/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:33+00:00'
+  page_sha256: e796521cd16f281dc40f6d9ff4bf2154f4604353852edd0e74d9c419f50fa904
+  text_chars: 11109
+  site_ids:
+  - skincare_physicians_inc_chestnut_hill
+  roles:
+  - related
+  related:
+  - https://www.skincarephysicians.net/services/medical-dermatology/
+  - https://www.skincarephysicians.net/services/medical-dermatology/psoriasis-treatment/
+  - https://www.skincarephysicians.net/services/medical-dermatology/skin-cancer-evaluation-treatment/
+  - https://www.skincarephysicians.net/services/surgical-dermatology/
+  - https://www.skincarephysicians.net/services/surgical-dermatology/mohs-surgery/
+  - https://www.skincarephysicians.net/services/cosmetic-dermatology/
+- url: https://www.skincarephysicians.net/services/
+  status: ok
+  method: http
+  final_url: https://www.skincarephysicians.net/services/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:31+00:00'
+  page_sha256: e796521cd16f281dc40f6d9ff4bf2154f4604353852edd0e74d9c419f50fa904
+  text_chars: 11109
+  site_ids:
+  - skincare_physicians_inc_chestnut_hill
+  roles:
+  - services
+  related:
+  - https://www.skincarephysicians.net/services/medical-dermatology/
+  - https://www.skincarephysicians.net/services/medical-dermatology/psoriasis-treatment/
+  - https://www.skincarephysicians.net/services/medical-dermatology/skin-cancer-evaluation-treatment/
+  - https://www.skincarephysicians.net/services/surgical-dermatology/
+  - https://www.skincarephysicians.net/services/surgical-dermatology/mohs-surgery/
+  - https://www.skincarephysicians.net/services/cosmetic-dermatology/
+- url: https://www.skincarephysicians.net/services/medical-dermatology/
+  status: ok
+  method: http
+  final_url: https://www.skincarephysicians.net/services/medical-dermatology/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:34+00:00'
+  page_sha256: 6152b0171772d9eabf372fb3546425b6caf7f57826c28d19ee6baef325ef11ea
+  text_chars: 13786
+  site_ids:
+  - skincare_physicians_inc_chestnut_hill
+  roles:
+  - related
+  related:
+  - https://www.skincarephysicians.net/services/medical-dermatology/psoriasis-treatment/
+  - https://www.skincarephysicians.net/services/medical-dermatology/skin-cancer-evaluation-treatment/
+  - https://www.skincarephysicians.net/services
+  - https://www.skincarephysicians.net/services/surgical-dermatology/
+  - https://www.skincarephysicians.net/services/surgical-dermatology/mohs-surgery/
+  - https://www.skincarephysicians.net/services/cosmetic-dermatology/
+- url: https://www.skincarephysicians.net/services/medical-dermatology/psoriasis-treatment/
+  status: ok
+  method: http
+  final_url: https://www.skincarephysicians.net/services/medical-dermatology/psoriasis-treatment/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:36+00:00'
+  page_sha256: 0a160786cb22a32cf79967db7cb8cbdd235088a95f0e4594d17097893154c9da
+  text_chars: 12966
+  site_ids:
+  - skincare_physicians_inc_chestnut_hill
+  roles:
+  - related
+  related:
+  - https://www.skincarephysicians.net/services
+  - https://www.skincarephysicians.net/services/medical-dermatology/
+  - https://www.skincarephysicians.net/services/medical-dermatology/skin-cancer-evaluation-treatment/
+  - https://www.skincarephysicians.net/services/surgical-dermatology/
+  - https://www.skincarephysicians.net/services/surgical-dermatology/mohs-surgery/
+  - https://www.skincarephysicians.net/services/cosmetic-dermatology/
+- url: https://www.skincarephysicians.net/visit/directions/
+  status: ok
+  method: http
+  final_url: https://www.skincarephysicians.net/visit/directions/
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:30+00:00'
+  page_sha256: 3958dd489be5d7db9fd1df1d1637671c08bafe5295c018a875aa359ba6bfee7a
+  text_chars: 14500
+  site_ids:
+  - skincare_physicians_inc_chestnut_hill
+  roles:
+  - location
+  related:
+  - https://www.skincarephysicians.net/services
+  - https://www.skincarephysicians.net/services/medical-dermatology/
+  - https://www.skincarephysicians.net/services/medical-dermatology/psoriasis-treatment/
+  - https://www.skincarephysicians.net/services/medical-dermatology/skin-cancer-evaluation-treatment/
+  - https://www.skincarephysicians.net/services/surgical-dermatology/
+  - https://www.skincarephysicians.net/services/surgical-dermatology/mohs-surgery/
 - url: https://www.southshorehealth.org/locations/health-expressbraintree
   status: ok
   method: http
@@ -2988,6 +4275,83 @@ pages:
   - https://www.southshorehealth.org/services-care/pregnancy-childbirth
   - https://www.southshorehealth.org/services-care/orthopedics
   - https://www.southshorehealth.org/services-care/weight-loss-surgery
+- url: https://www.southshorehealth.org/locations/south-shore-health-urgent-care-weymouth
+  status: ok
+  method: http
+  final_url: https://www.southshorehealth.org/locations/south-shore-health-urgent-care-weymouth
+  http_status: 200
+  fetched_at: '2026-10-25T15:01:27+00:00'
+  page_sha256: 93475f6bcab95ec452e50ed174fc4ef159d24879e4f8d34a094d5126996cdead
+  text_chars: 6009
+  site_ids:
+  - south_shore_health_urgent_care_weymouth_formerly_health
+  roles:
+  - location
+  related:
+  - https://www.southshorehealth.org/services-care/primary-care
+  - https://www.southshorehealth.org/services-care/home-care/south-shore-vna
+  - https://www.southshorehealth.org/services-care
+  - https://www.southshorehealth.org/services-care/pregnancy-childbirth
+  - https://www.southshorehealth.org/services-care/orthopedics
+  - https://www.southshorehealth.org/services-care/weight-loss-surgery
+- url: https://www.southshorehealth.org/locations/south-shore-medical-center-quincy
+  status: ok
+  method: http
+  final_url: https://www.southshorehealth.org/locations/south-shore-medical-center-quincy
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:37+00:00'
+  page_sha256: 06442f71be3858ed51ec65f2f678d4d7026398fb4ce8e793c1b1c6b8d2ba6ae5
+  text_chars: 4382
+  site_ids:
+  - south_shore_medical_center_inc_quincy
+  roles:
+  - location
+  related:
+  - https://www.southshorehealth.org/services-care/primary-care
+  - https://www.southshorehealth.org/services-care/home-care/south-shore-vna
+  - https://www.southshorehealth.org/services-care
+  - https://www.southshorehealth.org/services-care/pregnancy-childbirth
+  - https://www.southshorehealth.org/services-care/orthopedics
+  - https://www.southshorehealth.org/services-care/weight-loss-surgery
+- url: https://www.southshorehealth.org/locations/south-shore-medical-centerquincy
+  status: ok
+  method: http
+  final_url: https://www.southshorehealth.org/locations/south-shore-medical-centerquincy
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:38+00:00'
+  page_sha256: 23f3fa9c4b28991fec639b3d92fbeaeee1e7cab39f5a67eb8c93998e90bfdfdc
+  text_chars: 9771
+  site_ids:
+  - south_shore_medical_center_inc_quincy
+  roles:
+  - location
+  related:
+  - https://www.southshorehealth.org/services-care/primary-care
+  - https://www.southshorehealth.org/services-care/home-care/south-shore-vna
+  - https://www.southshorehealth.org/services-care
+  - https://www.southshorehealth.org/services-care/pregnancy-childbirth
+  - https://www.southshorehealth.org/services-care/orthopedics
+  - https://www.southshorehealth.org/services-care/weight-loss-surgery
+- url: https://www.southshorehealth.org/services-care
+  status: ok
+  method: http
+  final_url: https://www.southshorehealth.org/services-care
+  http_status: 200
+  fetched_at: '2026-10-25T15:00:39+00:00'
+  page_sha256: 086ff6a5ff392e9f03d76970943fa3cfc4c8448ed2d357ee8fca8dfe5af06a47
+  text_chars: 5578
+  site_ids:
+  - south_shore_health_urgent_care_weymouth_formerly_health
+  - south_shore_medical_center_inc_quincy
+  roles:
+  - related
+  related:
+  - https://www.southshorehealth.org/services-care/primary-care
+  - https://www.southshorehealth.org/services-care/home-care/south-shore-vna
+  - https://www.southshorehealth.org/services-care/pregnancy-childbirth
+  - https://www.southshorehealth.org/services-care/orthopedics
+  - https://www.southshorehealth.org/services-care/weight-loss-surgery
+  - https://www.southshorehealth.org/services-care/south-shore-health-urgent-care
 - url: https://www.southshorehealth.org/services-care/home-care/south-shore-vna
   status: ok
   method: http
@@ -2998,6 +4362,8 @@ pages:
   text_chars: 5500
   site_ids:
   - south_shore_health_urgent_care_braintree_formerly_health
+  - south_shore_health_urgent_care_weymouth_formerly_health
+  - south_shore_medical_center_inc_quincy
   roles:
   - related
   related:
@@ -3017,6 +4383,8 @@ pages:
   text_chars: 7934
   site_ids:
   - south_shore_health_urgent_care_braintree_formerly_health
+  - south_shore_health_urgent_care_weymouth_formerly_health
+  - south_shore_medical_center_inc_quincy
   roles:
   - related
   related:

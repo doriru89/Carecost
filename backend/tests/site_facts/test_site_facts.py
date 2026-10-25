@@ -328,3 +328,81 @@ def test_pages_and_manifest_refer_to_real_sites() -> None:
             assert set(row.get("site_ids", [])) <= ids, url
             if row["status"] == "ok":
                 assert len(row["page_sha256"]) == 64
+
+
+# ---------------------------------------------------------------- S0b: hospital pages for a physician group
+
+
+def test_verifier_checks_evidence_scope_against_pages_yaml(tmp_path: Path) -> None:
+    _, b = _cache_page(tmp_path)
+    plain = {"value": "Demo", "evidence": [_ev(b, "Demo Urgent Care Town")]}
+    scoped = {"value": "Demo", "evidence": [{**_ev(b, "Demo Urgent Care Town"), "scope": "hospital_page"}]}  # fmt: skip
+    hosp = {"demo": "hospital_page"}
+    r = verify(
+        _run("a", b, official_name=plain), cache_dir=tmp_path, site_ids={"demo"}, scopes=hosp
+    )
+    assert [x.reason for x in r.rejections] == ["scope_missing"]
+    r = verify(_run("a", b, official_name=scoped), cache_dir=tmp_path, site_ids={"demo"}, scopes={})
+    assert [x.reason for x in r.rejections] == ["scope_wrong"]
+    r = verify(
+        _run("a", b, official_name=scoped), cache_dir=tmp_path, site_ids={"demo"}, scopes=hosp
+    )
+    assert r.rejections == []
+
+
+def test_merge_never_agrees_on_a_hospital_page_claim(tmp_path: Path) -> None:
+    _, b = _cache_page(tmp_path)
+    ev = {**_ev(b, "On-site X-ray"), "scope": "hospital_page"}
+    caps = {"xray": {"value": "offered", "evidence": [ev]}}
+    hosp = {"demo": "hospital_page"}
+    va = verify(_run("a", b, capabilities=caps), cache_dir=tmp_path, site_ids={"demo"}, scopes=hosp)
+    vb = verify(_run("b", b, capabilities=caps), cache_dir=tmp_path, site_ids={"demo"}, scopes=hosp)
+    m = merge(va, vb)
+    x = m.facts["sites"]["demo"]["capabilities"]["xray"]
+    assert x["status"] == "disputed" and x["evidence"][0]["scope"] == "hospital_page"
+    assert m.agreed == 0 and m.disputes[0].reason
+    assert "hospital_page" in write_review(m, "a", "b", {}, tmp_path / "r").read_text()
+    m2 = merge(va, vb, [{"site_id": "demo", "field": "capabilities.xray", "value": "offered"}])
+    assert m2.facts["sites"]["demo"]["capabilities"]["xray"]["status"] == "austin_reviewed"
+
+
+def test_own_page_evidence_has_no_scope_key_in_facts(tmp_path: Path) -> None:
+    _, b = _cache_page(tmp_path)
+    caps = {"xray": {"value": "offered", "evidence": [_ev(b, "On-site X-ray")]}}
+    va = verify(_run("a", b, capabilities=caps), cache_dir=tmp_path, site_ids={"demo"}, scopes={})
+    vb = verify(_run("b", b, capabilities=caps), cache_dir=tmp_path, site_ids={"demo"}, scopes={})
+    ev = merge(va, vb).facts["sites"]["demo"]["capabilities"]["xray"]["evidence"][0]
+    assert set(ev) == {"url", "quote", "fetched_at", "page_sha256"}  # X1 EV exactly
+
+
+def test_found_yaml_ids_and_scopes_reach_pages_yaml() -> None:
+    found = yaml.safe_load((disc.FOUND).read_text())["sites"]
+    ids = {s["id"] for s in yaml.safe_load(SITES_YAML.read_text())["sites"]}
+    assert set(found) <= ids
+    pages = disc.load_pages()
+    for sid, f in found.items():
+        assert f.get("scope") in (None, "hospital_page"), sid
+        assert pages[sid].get("scope") == f.get("scope"), f"{sid}: re-run discover"
+        assert bool(f.get("pages")) != bool(f.get("no_own_page")), sid  # exactly one of the two
+
+
+def test_no_site_is_left_unsearched() -> None:
+    left = [
+        s for s, e in disc.load_pages().items() if "not found yet" in (e.get("no_own_page") or "")
+    ]
+    assert left == []
+
+
+def test_prune_drops_a_site_from_a_page_it_no_longer_uses() -> None:
+    from app.site_facts.__main__ import prune_site_ids
+    from app.site_facts.fetch import PageRecord
+
+    loc = PageRecord(url="https://x.example/a", status="ok", site_ids=["s1", "s2"],
+                     related=["https://x.example/a/services"])  # fmt: skip
+    rel = PageRecord(url="https://x.example/a/services", status="ok", site_ids=["s1", "s2"])
+    wrong = PageRecord(url="https://x.example/mri", status="ok", site_ids=["s2"])
+    pages = {"s1": {"pages": [{"url": "https://x.example/a"}]},
+             "s2": {"pages": [{"url": "https://x.example/b"}]}}  # fmt: skip
+    changed = prune_site_ids([loc, rel, wrong], pages)
+    assert {r.url for r in changed} == {loc.url, rel.url, wrong.url}
+    assert loc.site_ids == ["s1"] and rel.site_ids == ["s1"] and wrong.site_ids == []

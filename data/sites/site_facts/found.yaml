@@ -10,6 +10,7 @@ sites:
     - {url: 'https://www.massgeneralbrigham.org/en/locations/newton-ma/newtonwellesley-hospital-loc0000246998', role: location}
   harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0182:
     source: web_search
+    scope: hospital_page  # HMFP physician group; the pages are BID Needham hospital's (S0b rule)
     query: BIDMC Needham 148 Chestnut Street gastroenterology orthopedics location
     pages:
     - {url: 'https://bidneedham.org/services/orthopedics', role: services}
@@ -27,8 +28,6 @@ sites:
   lexington_waltham_dermatology_group_inc_lexington:
     no_own_page: 'web_search "Lexington-Waltham Dermatology 57 Bedford St Lexington": only directories'
   # finder matches checked by hand and rejected (wrong place)
-  winchester_hospital_endoscopy_cente_woburn:
-    no_own_page: 'finder:bilh matched winchester-hospital-urgent-care-woburn (an urgent care, not the endoscopy center); not found yet'
   mount_auburn_hospital:
     source: hand_checked
     pages:
@@ -117,5 +116,125 @@ sites:
   clinicians_at_77_warren_st_brighton: {no_own_page: census address cluster (Clinicians at an address), no single named operator}
   clinicians_at_1269_beacon_st_brookline: {no_own_page: census address cluster (Clinicians at an address), no single named operator}
   clinicians_at_721_main_st_melrose: {no_own_page: census address cluster (Clinicians at an address), no single named operator}
-  mount_auburn_professional_services_inc_cambridge_gb0165: {no_own_page: 'finder:bilh matched mount-auburn-pediatrics-cambridge (pediatrics; this record is GI/ortho at 300 Mount Auburn St); not found yet'}
-  mount_auburn_professional_services_inc_cambridge_gb0166: {no_own_page: 'finder:bilh matched mount-auburn-pediatrics-cambridge (pediatrics; this record is GI/ortho); not found yet'}
+
+  # ------------------------------------------------------------------ S0b (2026-10-25)
+  # scope: hospital_page = the site is a physician group (or other entity) at the address of a
+  # hospital / system facility, and the only pages are that facility's. Runs record such evidence
+  # with `scope: hospital_page`; merge never makes it `agreed` (Austin decides). See site_facts.md.
+  #
+  # The 22 sitemap-finder matches, each checked by reading the cached page for the site's street
+  # address. 20 confirmed (pinned here so discover no longer depends on sitemap scoring), 2 wrong.
+  atrius_health_inc_braintree: {source: hand_checked, note: 'finder:atrius confirmed: page prints 111 Grossman Drive', pages: [{url: 'https://www.atriushealth.org/locations/braintree', role: location}]}
+  atrius_health_inc_medford: {source: hand_checked, note: 'finder:atrius confirmed: 26 City Hall Mall', pages: [{url: 'https://www.atriushealth.org/locations/medford', role: location}]}
+  atrius_health_inc_watertown: {source: hand_checked, note: 'finder:atrius confirmed: 485 Arsenal Street', pages: [{url: 'https://www.atriushealth.org/locations/watertown', role: location}]}
+  atrius_health_inc_wellesley: {source: hand_checked, note: 'finder:atrius confirmed: 230 Worcester Street', pages: [{url: 'https://www.atriushealth.org/locations/wellesley', role: location}]}
+  atrius_health_inc_weymouth_gb0139: {source: hand_checked, note: 'finder:atrius matched weymouth-weymouth-mri = 420 Libbey Industrial Parkway, MRI only (WRONG); replaced by the 90 Libbey Parkway page, which prints 90 Libbey Industrial Parkway', pages: [{url: 'https://www.atriushealth.org/locations/weymouth-90-libbey-parkway', role: location}]}
+  atrius_health_inc_burlington: {source: hand_checked, note: 'finder:atrius confirmed: 20 Wall Street', pages: [{url: 'https://www.atriushealth.org/locations/burlington', role: location}]}
+  atrius_health_inc_chestnut_hill: {source: hand_checked, note: 'finder:atrius confirmed: 291 Independence Drive', pages: [{url: 'https://www.atriushealth.org/locations/chestnut-hill-west-roxbury', role: location}]}
+  atrius_health_inc_dedham: {source: hand_checked, note: 'finder:atrius confirmed: One Lyons Street', pages: [{url: 'https://www.atriushealth.org/locations/dedham', role: location}]}
+  lahey_clinic_inc_lexington: {source: hand_checked, note: 'finder:lahey confirmed: 16 Hayden Avenue', pages: [{url: 'https://www.lahey.org/locations/lahey-outpatient-center-lexington', role: location}]}
+  atrius_health_inc_somerville: {source: hand_checked, note: 'finder:atrius confirmed: 40 Holland Street', pages: [{url: 'https://www.atriushealth.org/locations/somerville', role: location}]}
+  atrius_health_urgent_care_harvard_vanguard_braintree_bra: {source: hand_checked, note: 'finder:atrius confirmed: 111 Grossman Drive; the whole-building page (urgent care is one of its services)', pages: [{url: 'https://www.atriushealth.org/locations/braintree', role: location}]}
+  atrius_health_urgent_care_harvard_vanguard_burlington_bu: {source: hand_checked, note: 'finder:atrius confirmed: 20 Wall Street; whole-building page', pages: [{url: 'https://www.atriushealth.org/locations/burlington', role: location}]}
+  beth_israel_lahey_health_urgent_care_chestnut_hill_chest: {source: hand_checked, note: 'finder:bilh confirmed: 200 Boylston Street, 1st Floor', pages: [{url: 'https://bilh.org/locations/bilh-urgent-care-chestnut-hill', role: location}]}
+  beth_israel_lahey_health_urgent_care_dedham_dedham: {source: hand_checked, note: 'finder:bilh confirmed: 910 Washington Street', pages: [{url: 'https://bilh.org/locations/bilh-urgent-care-dedham', role: location}]}
+  pm_pediatrics_at_dedham_dedham: {source: hand_checked, note: 'finder:pm_pediatrics confirmed: 719 Providence Highway', pages: [{url: 'https://pmpediatriccare.com/location/dedham/', role: location}]}
+  pm_pediatic_care_saugus_saugus: {source: hand_checked, note: 'finder:pm_pediatrics confirmed: 737 Broadway', pages: [{url: 'https://pmpediatriccare.com/location/massachusetts-saugus/', role: location}]}
+  atrius_health_urgent_care_harvard_vanguard_somerville_so: {source: hand_checked, note: 'finder:atrius confirmed: 40 Holland Street; whole-building page', pages: [{url: 'https://www.atriushealth.org/locations/somerville', role: location}]}
+  cha_somerville_urgent_care_center_somerville: {source: hand_checked, note: 'finder:cha confirmed: 33 Tower Street', pages: [{url: 'https://www.challiance.org/locations/somerville/cha-urgent-care-center', role: location}]}
+  bilh_urgent_care_watertown: {source: hand_checked, note: 'finder:bilh confirmed: 480 Pleasant Street', pages: [{url: 'https://bilh.org/locations/bilh-urgent-care-watertown', role: location}]}
+  lahey_health_urgent_care_woburn_woburn: {no_own_page: 'finder:bilh matched winchester-hospital-urgent-care-woburn, which prints 345 Washington Street, Unit 15, not 7 Alfred Street (WRONG). web_search "Lahey urgent care Woburn 7 Alfred Street": only Solv (booking). The census address may be stale; A6 to check'}
+  pm_pediatrics_at_woburn_woburn: {source: hand_checked, note: 'finder:pm_pediatrics confirmed: 99 Commerce Way', pages: [{url: 'https://pmpediatriccare.com/location/massachusetts-woburn/', role: location}]}
+  new_england_baptist_hospital: {source: hand_checked, note: 'finder:nebh confirmed: 125 Parker Hill Avenue', pages: [{url: 'https://nebh.org/locations/new-england-baptist-hospital', role: location}]}
+  #
+  # The 86 "not found yet" sites (83 never searched + 3 rejected finder matches). Every page below
+  # was fetched and prints this site's street address unless the note says otherwise.
+  # -- operators' own sitemaps (no web search)
+  the_general_hospital_corporation_revere: {source: hand_checked, note: 'MGB sitemap; 385 Broadway is Mass General Broadway Primary Care (census lists the record as skin; the MGB dermatology clinic in Revere is at 300 Ocean Ave, another site)', pages: [{url: 'https://www.massgeneralbrigham.org/en/locations/revere-ma/mass-general-broadway-primary-care-at-revere-loc0000280934', role: location}]}
+  massachusetts_general_physicians_organization_inc_chelse: {source: hand_checked, note: 'MGB sitemap; 80 Everett Ave is an MGB Imaging site (census lists GI; the MGH GI clinic is at 100 Everett Ave, another address)', pages: [{url: 'https://www.massgeneralbrigham.org/en/locations/chelsea-ma/mass-general-brigham-imaging-chelsea-80-everett-ave-loc0000281028', role: location}]}
+  mass_general_brigham_medical_group_northern_massachusett: {source: hand_checked, note: MGB sitemap; 480 Lynnfield Street, pages: [{url: 'https://www.massgeneralbrigham.org/en/locations/lynn-ma/mass-general-brigham-lynn480-lynnfield-st-loc0000280812', role: location}]}
+  brigham_and_womens_physicians_organization_inc_boston: {source: hand_checked, scope: hospital_page, note: 'BWPO physician group at 75 Francis St; the page is the BWH hospital page', pages: [{url: 'https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-hospital-loc0000246983', role: location}]}
+  harbor_medical_associates_inc_south_weymouth: {source: hand_checked, note: 'MGB sitemap; 541 Main Street (MGB Healthcare Center South Weymouth). southshorehealth.org also lists Harbor Medical, but that is another operator', pages: [{url: 'https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/mass-general-brigham-healthcare-center-south-weymouth-loc0000280713', role: location}]}
+  massachusetts_general_physicians_organization_inc_cambri: {source: hand_checked, scope: hospital_page, note: 'MGPO at 1575 Cambridge St = Spaulding Cambridge; pages are Spaulding''s', pages: [{url: 'https://www.massgeneralbrigham.org/en/locations/cambridge-ma/spaulding-rehabilitation-outpatient-center-cambridge-loc0000280882', role: location}, {url: 'https://www.massgeneralbrigham.org/en/locations/cambridge-ma/spaulding-rehabilitation-hospital-for-continuing-care-cambridge-loc0000295396', role: location}]}
+  massachusetts_general_physicians_organization_inc_charle: {source: hand_checked, scope: hospital_page, note: 'MGPO at 300 1st Ave = Spaulding Rehabilitation Hospital Charlestown; pages are Spaulding''s', pages: [{url: 'https://www.massgeneralbrigham.org/en/locations/charlestown-ma/massachusetts-general-physical-medicine-and-rehabilitation-clinic-at-spaulding-rehabilitation-loc0000280566', role: location}, {url: 'https://www.massgeneralbrigham.org/en/locations/charlestown-ma/spaulding-rehabilitation-hospital-charlestown-loc0000280569', role: location}]}
+  cambridge_public_health_commission_somerville_gb0067: {source: hand_checked, note: CHA sitemap; 236 Highland Avenue, pages: [{url: 'https://www.challiance.org/locations/somerville/cha-dermatology', role: location}]}
+  cambridge_public_health_commission_somerville_gb0194: {source: hand_checked, note: 'CHA sitemap; the Somerville campus page prints 236 Highland Ave (census: 230 Highland Ave, the same campus); reviewer may check', pages: [{url: 'https://www.challiance.org/locations/somerville/cha-somerville-campus', role: location}]}
+  cambridge_public_health_commission_cambridge: {source: hand_checked, note: CHA sitemap; 1493 Cambridge Street, pages: [{url: 'https://www.challiance.org/locations/cambridge/cha-cambridge-hospital', role: location}]}
+  cambridge_public_health_commission_everett: {source: hand_checked, note: CHA sitemap; 103 Garland Street, pages: [{url: 'https://www.challiance.org/locations/everett/cha-everett-hospital', role: location}]}
+  cambridge_public_health_commission_somerville_gb0255: {no_own_page: 'web_search "CHA Assembly Square 5 Middlesex Avenue Somerville" found challiance.org/locations/somerville/cha-assembly-square-care-center, but the fetched page is now "CHA One Cabot Care Center" at 1 Cabot Rd, Medford: the center moved. A6 to check the census row'}
+  atrius_health_inc_boston_gb0096: {source: hand_checked, note: Atrius sitemap; 142 Berkeley Street (Copley), pages: [{url: 'https://www.atriushealth.org/locations/copley', role: location}]}
+  atrius_health_inc_boston_gb0144: {source: hand_checked, note: Atrius sitemap; 133 Brookline Avenue (Kenmore), pages: [{url: 'https://www.atriushealth.org/locations/kenmore', role: location}]}
+  atrius_health_urgent_care_harvard_vanguard_kenmore_bosto: {source: hand_checked, note: Atrius sitemap; 133 Brookline Avenue; whole-building page, pages: [{url: 'https://www.atriushealth.org/locations/kenmore', role: location}]}
+  atrius_health_inc_quincy_gb0188: {source: hand_checked, note: Atrius sitemap; 1250 Hancock Street, pages: [{url: 'https://www.atriushealth.org/locations/quincy-hancock-street', role: location}]}
+  atrius_health_inc_quincy_gb0189: {source: hand_checked, note: 'Atrius sitemap; 500 Congress Street (census operator column says Integrated Dermatology; the page is Atrius)', pages: [{url: 'https://www.atriushealth.org/locations/quincy-congress-street', role: location}]}
+  harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0152: {source: hand_checked, scope: hospital_page, note: 'HMFP at 330 Brookline Ave; BIDMC East Campus page', pages: [{url: 'https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus', role: location}]}
+  harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0153: {source: hand_checked, scope: hospital_page, note: 'HMFP at 1 Deaconess Rd; BIDMC West Campus page', pages: [{url: 'https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus', role: location}]}
+  harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0171: {source: hand_checked, scope: hospital_page, note: 'HMFP at 200 Boylston St; BIDMC Chestnut Hill pages', pages: [{url: 'https://bidmc.org/locations/bidmc-chestnut-hill', role: location}, {url: 'https://bidmc.org/locations/bidmc-chestnut-hill/sports-medicine', role: services}]}
+  harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0176: {source: hand_checked, scope: hospital_page, note: 'HMFP at 482 Bedford St; BIDMC Lexington page', pages: [{url: 'https://bidmc.org/locations/bidmc-lexington', role: location}]}
+  harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0180: {source: hand_checked, scope: hospital_page, note: 'HMFP at 199 Reedsdale Rd; BID Milton hospital homepage', pages: [{url: 'https://www.bidmilton.org/', role: location}]}
+  community_physicians_associates_inc_milton: {source: web_search, query: Community Physicians Associates Milton 100 Highland Street, scope: hospital_page, note: 'search found only directories; the BID Milton homepage lists 100 Highland Street as its Lintz Medical Office Building', pages: [{url: 'https://www.bidmilton.org/', role: location}]}
+  mount_auburn_professional_services_inc_cambridge_gb0165: {source: hand_checked, scope: hospital_page, note: 'Mount Auburn sitemap; 300 Mount Auburn Street Medical Office Building (the hospital''s page)', pages: [{url: 'https://mountauburnhospital.org/locations/medical-office-building', role: location}]}
+  mount_auburn_professional_services_inc_cambridge_gb0166: {source: hand_checked, scope: hospital_page, note: 'Mount Auburn sitemap; 330 Mount Auburn Street is the hospital', pages: [{url: 'https://mountauburnhospital.org/locations/mount-auburn-hospital', role: location}]}
+  new_england_baptist_medical_associates_inc_roxbury_cross: {source: hand_checked, scope: hospital_page, note: 'NEBH physician group at 125 Parker Hill Ave; the NEBH hospital page', pages: [{url: 'https://nebh.org/locations/new-england-baptist-hospital', role: location}]}
+  winchester_hospital_endoscopy_cente_woburn: {source: hand_checked, note: 'Winchester Hospital sitemap; 10 Commerce Way', pages: [{url: 'https://winchesterhospital.org/locations/endoscopy-center', role: location}]}
+  south_shore_health_urgent_care_weymouth_formerly_health: {source: hand_checked, note: South Shore Health sitemap; 330 Washington Street, pages: [{url: 'https://www.southshorehealth.org/locations/south-shore-health-urgent-care-weymouth', role: location}]}
+  south_shore_medical_center_inc_quincy: {source: hand_checked, note: 'South Shore Health sitemap; 1495 Hancock Street (two near-identical pages)', pages: [{url: 'https://www.southshorehealth.org/locations/south-shore-medical-center-quincy', role: location}, {url: 'https://www.southshorehealth.org/locations/south-shore-medical-centerquincy', role: location}]}
+  south_shore_medical_center_inc_weymouth: {no_own_page: 'South Shore Health sitemap: no SSMC page prints 780 Main St (its Weymouth women''s center pages print 51 Performance Dr / 90 Libbey Pkwy). web_search "South Shore Medical Center 780 Main Street Weymouth": the building houses South Shore Urology (Suite 2C, the census suite) and the Center for Physical Wellness'}
+  childrens_hospital_pediatric_associates_inc_boston: {source: hand_checked, scope: hospital_page, note: 'physician group at 300 Longwood Ave; the Boston Children''s Hospital page (children only)', pages: [{url: 'https://www.childrenshospital.org/locations/boston', role: location}]}
+  dana_farber_cancer_institute_inc_boston: {source: hand_checked, note: 'Dana-Farber sitemap; 450 Brookline Avenue (Yawkey Center)', pages: [{url: 'https://www.dana-farber.org/locations/longwood', role: location}]}
+  dermatology_associates_pc_canton: {source: hand_checked, note: APDerm sitemap; 95 Washington Street, pages: [{url: 'https://www.apderm.com/locations/canton-ma/', role: location}]}
+  mystic_valley_dermatology_associates_pc_somerville: {source: hand_checked, note: APDerm sitemap; 349 Broadway, pages: [{url: 'https://www.apderm.com/locations/somerville-ma/', role: location}]}
+  mystic_valley_dermatology_associates_pc_winchester: {source: hand_checked, note: APDerm sitemap; 11 Shore Road, pages: [{url: 'https://www.apderm.com/locations/winchester-ma/', role: location}]}
+  mystic_valley_dermatology_associates_pc_stoneham: {source: hand_checked, note: APDerm sitemap; 92 Montvale Avenue, pages: [{url: 'https://www.apderm.com/locations/stoneham-ma/', role: location}]}
+  dermcare_physicians_and_surgeons_llc_waltham: {source: hand_checked, note: APDerm sitemap; 75 3rd Avenue, pages: [{url: 'https://www.apderm.com/locations/waltham-ma/', role: location}]}
+  adult_and_pediatric_dermatology_pc_wellesley: {source: hand_checked, note: 'APDerm sitemap; 386 Washington St (wellesley-ma-2 is 888 Worcester St, another office)', pages: [{url: 'https://www.apderm.com/locations/wellesley-ma/', role: location}]}
+  south_shore_skin_surgeons_pc_braintree: {no_own_page: 'APDerm sitemap has no Braintree page (south-weymouth prints 541 Main St). web_search "South Shore Skin Surgeons Braintree 400 Washington Street": only Sharecare / Healthline / directories'}
+  hallmark_health_medical_associates_inc_melrose: {no_own_page: 'manual: melrosewakefield.org redirects to tuftsmedicine.org, which answers HTTP 403 to the plain fetch (sitemap and homepage)'}
+  hallmark_health_medical_associates_inc_stoneham: {no_own_page: 'manual: Tufts Medicine (melrosewakefield.org -> tuftsmedicine.org) answers HTTP 403 to the plain fetch'}
+  pratt_med_surg_dermatology_associates_inc_boston: {no_own_page: 'manual: web_search "Pratt Dermatology Tufts 800 Washington St Boston" points to tuftsmedicine.org (Tufts Medical Center Dermatology), which answers HTTP 403 to the plain fetch'}
+  # -- BMC: bmc.org has no location pages in its sitemap; found by web search on bmc.org
+  bmc_brighton_formerly_st_elizabeths: {source: web_search, query: BMC Brighton 736 Cambridge Street location (bmc.org), note: 'BMC "Getting Here" page lists every BMC campus; one page for several sites', pages: [{url: 'https://www.bmc.org/locations', role: location}]}
+  boston_medical_center_south: {source: web_search, query: Boston Medical Center South Brockton 235 North Pearl Street (bmc.org), note: 'BMC "Getting Here" page; one page for several sites', pages: [{url: 'https://www.bmc.org/locations', role: location}]}
+  bmc_affiliated_physicians_inc_brighton_gb0159: {source: web_search, query: BMC Brighton 736 Cambridge Street location (bmc.org), scope: hospital_page, note: 'physician group at BMC Brighton''s address', pages: [{url: 'https://www.bmc.org/locations', role: location}]}
+  boston_university_orthopaedic_surgical_associates_inc_bo_gb0147: {source: web_search, query: orthopedic surgery 725 Albany Street Boston Medical Center Shapiro location (bmc.org), scope: hospital_page, note: 'BUOSA physician group; the BMC Orthopedic Surgery department page prints 725 Albany St (Suite 4B)', pages: [{url: 'https://www.bmc.org/departments/orthopedic-surgery', role: services}]}
+  evans_medical_foundation_inc_boston_gb0151: {source: hand_checked, scope: hospital_page, note: 'BMC physician foundation at 1 BMC Place; the BMC homepage (already cached for boston_medical_center)', pages: [{url: 'https://www.bmc.org/', role: location}]}
+  bmc_adult_primary_care_urgent_care_fka_bmc_shapiro_urgen: {source: web_search, query: BMC urgent care 801 Massachusetts Avenue Shapiro (bmc.org), note: 'Adult Primary Care page prints 801 Massachusetts Ave; the page does not use the words urgent care', pages: [{url: 'https://www.bmc.org/internal-medicine', role: location}]}
+  boston_medical_center_corporation_roslindale: {no_own_page: 'web_search "BMC orthopedics Roslindale 4199 Washington Street" (bmc.org): 4199 Washington St is Greater Roslindale Medical & Dental Center, a separate community health center listed in BMC''s HealthNet list; no BMC page for this record'}
+  # -- web search (the query is the search; a directory-only result is recorded as no own page)
+  skincare_physicians_inc_chestnut_hill: {source: web_search, query: SkinCare Physicians Chestnut Hill 1244 Boylston Street, pages: [{url: 'https://www.skincarephysicians.net/visit/directions/', role: location}, {url: 'https://www.skincarephysicians.net/services/', role: services}]}
+  associates_in_dermatology_llc_watertown: {source: web_search, query: Associates in Dermatology Watertown 40 Spring St, note: APDerm page prints 40 Spring Street, pages: [{url: 'https://www.apderm.com/locations/watertown-ma/', role: location}]}
+  boston_dermatology_and_laser_center_llc_boston: {source: web_search, query: Boston Dermatology and Laser Center 30 Lancaster St, note: APDerm page prints 30 Lancaster Street, pages: [{url: 'https://www.apderm.com/locations/boston-ma/', role: location}]}
+  robert_j_banco_md_pc_wellesley: {source: web_search, query: Robert J. Banco MD spine surgeon Wellesley 25 Washington Street, scope: hospital_page, note: 'search found nothing naming Dr. Banco; 25 Washington St is the Newton-Wellesley Outpatient Surgery Center (MGB page)', pages: [{url: 'https://www.massgeneralbrigham.org/en/locations/wellesley-ma/newtonwellesley-outpatient-surgery-center-loc0000281105', role: location}]}
+  orthoboston_llc_needham: {source: web_search, query: OrthoBoston Needham 145 Rosemary Street, note: 'domain ortho.boston named in a WebMD listing; the fetch got a bot-check page -> manual', pages: [{url: 'https://www.ortho.boston/', role: location}]}
+  dermatology_institute_of_boston_pc_boston: {no_own_page: 'web_search "Dermatology Institute of Boston 441 Stuart Street": only WebMD / lead-finder listings'}
+  dermatology_associates_of_concord_inc_cambridge: {no_own_page: 'web_search "Dermatology Associates of Concord 625 Mount Auburn St Cambridge": only WebMD / Zocdoc / job boards'}
+  adams_street_dermatology_assoc_pc_quincy: {no_own_page: 'web_search "Adams Street Dermatology Quincy 36 Adams St": only Solv / Healthline / Zocdoc'}
+  id_of_quincy_llc_quincy: {no_own_page: 'web_search "Integrated Dermatology of Quincy 104 Quarry St": only job postings'}
+  integrated_dermatology_of_brookline_llc_brookline: {no_own_page: 'web_search "Integrated Dermatology of Brookline 1101 Beacon St": only WebMD / Zocdoc / job boards; integrateddermatology.com has no robots.txt or sitemap (404)'}
+  newton_watertown_dermatology_assoc_pc_brighton: {no_own_page: 'web_search x2 ("Integrated Dermatology Newton Watertown Dermatology 280 Washington St Brighton", "Integrated Dermatology of Newton-Brighton official site locations"): only Tebra / Fresha / job boards'}
+  dermphysicians_of_new_england_llc_burlington: {no_own_page: 'manual: forefrontdermatology.com robots.txt disallows CareCost-ETL; web_search "Forefront Dermatology Burlington MA 83 Cambridge St" found no Burlington MA page'}
+  forefront_dermatology_sc_woburn: {no_own_page: 'manual: forefrontdermatology.com robots.txt disallows CareCost-ETL (not searched separately)'}
+  dermatology_and_skin_care_assoc_pc_wellesley: {no_own_page: 'web_search "Dermatology and Skin Care Associates Wellesley 10 Laurel Ave": only MGB doctor directory / NPI listings'}
+  dermwellesley_llc_wellesley: {no_own_page: 'web_search "DermWellesley 20 William Street Wellesley dermatology": only WebMD / Sofwave / Boston Magazine listings'}
+  premier_dermatology_pllc_wellesley: {no_own_page: 'web_search "Premier Dermatology Wellesley 372 Washington St": only the MGB doctor directory'}
+  tang_benjes_and_associates_pc_wellesley: {no_own_page: 'web_search "Tang Benjes dermatology Wellesley 332 Washington St": only MediFind / MGB directory / WebMD'}
+  maritime_mohs_pc_wellesley_hills: {no_own_page: 'web_search "Maritime Mohs Wellesley Hills 62 Walnut St": nothing about the practice'}
+  vivaskin_dermatology_and_aesthetics_wellesley_hills: {no_own_page: 'web_search "VivaSkin Dermatology Wellesley Hills 70 Hastings St": nothing about the practice'}
+  boston_food_allergy_center_llc_bi_network_boston_gb0098: {no_own_page: 'web_search "Boston Food Allergy Center 75 Kneeland St": only NPI viewer / WebMD / bestprosintown'}
+  boston_food_allergy_center_llc_bi_network_boston_gb0099: {no_own_page: 'same search as gb0098; 1 Nassau Street Unit 1906 is the NPI mailing address, not a clinic'}
+  barry_s_paul_m_d_arlington: {no_own_page: 'web_search "Barry S Paul MD dermatology Arlington 22 Mill St": only MGB directory / WebMD / Doximity'}
+  northeast_dermatology_associates_pc_brookline: {no_own_page: 'web_search "Northeast Dermatology Associates Brookline 235 Cypress St": the address is Brookline Dermatology Associates in the listings; no own page'}
+  robert_j_obrien_jr_md_and_assoc_pc_winchester: {no_own_page: 'web_search "Robert J O''Brien MD dermatology Winchester 955 Main Street": only FREIDA / WebMD / disabilityinfo listings'}
+  john_m_siliski_md_pc_boston: {no_own_page: 'web_search "John M Siliski MD orthopedic surgeon 1 Hawthorne Place Boston": only the MGB doctor directory'}
+  john_kadzielski_md_pllc_quincy: {no_own_page: 'web_search "John Kadzielski MD orthopedic Quincy 300 Congress St": nothing naming him'}
+  boston_orthopaedic_and_spine_llc_chestnut_hill: {no_own_page: 'web_search "Boston Orthopaedic and Spine 830 Boylston Street Chestnut Hill": only Exactech / WebMD / disabilityinfo listings'}
+  northeast_orthopedic_associates_pc_dedham: {no_own_page: 'web_search "Northeast Orthopedic Associates Dedham 200 Providence Highway": only NPI viewer / WebMD (Greater Boston Orthopedic Center at the same building)'}
+  harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0235: {no_own_page: 'web_search "BIDMC orthopedics Dedham 40 Allied Drive" named the BIDMC podiatry and foot-and-ankle pages, but neither fetched page prints 40 Allied Drive'}
+  dermatology_partners_inc_wellesley: {no_own_page: 'web_search "Dermatology Partners Wellesley 65 Walnut Street": only WebMD / Solv / MGB directory'}
+  cvs_minuteclinic_cambridge_alewife_brook_parkway_cambrid: {no_own_page: &cvs 'manual: cvs.com sitemap index answers HTTP 403; a MinuteClinic locator page was thin to the plain fetch and timed out in plain Chromium; not searched (search budget)'}
+  cvs_clinic_pllc_for_the_maintenance_of_minuteclinic_char: {no_own_page: *cvs}
+  minuteclinic_medford: {no_own_page: *cvs}
+  minuteclinic_newton: {no_own_page: *cvs}
+  minuteclinic_quincy: {no_own_page: *cvs}
+  cvs_retail_clinic_watertown_watertown: {no_own_page: *cvs}
+  minuteclinic_wellesley: {no_own_page: *cvs}

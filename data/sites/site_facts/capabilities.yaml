@@ -26,6 +26,8 @@ capabilities:
     - {path: ankle_sprain_urgent_care_v1, step: visit}
     - {path: back_new_pain_v1, step: visit}
     - {path: shoulder_acute_injury_v1, step: visit}
+    - {path: stomach_ache_v1, step: visit}
+    - {path: rash_v1, step: visit}
   gi_visit:
     label: {en: Gastroenterology (digestive) visit, zh: 消化科门诊}
     covers:
@@ -40,6 +42,7 @@ capabilities:
     label: {en: Dermatology (skin) visit, zh: 皮肤科门诊}
     covers:
     - {path: skin_changing_mole_v1, step: derm_visit}
+    - {path: rash_v1, step: skin_doctor_visit}
   xray:
     label: {en: X-ray, zh: X光}
     covers:
@@ -64,12 +67,19 @@ capabilities:
     - {path: shoulder_chronic_clicking_v1, step: mr_arthrogram}
   ct:
     label: {en: CT scan, zh: CT}
-    covers: []
+    covers:
+    - {path: stomach_ache_v1, step: belly_ct}
   ultrasound:
     label: {en: Ultrasound (joints and tendons), zh: 超声（关节和肌腱）}
     covers:
     - {path: shoulder_acute_injury_v1, step: tendon_ultrasound}
     - {path: shoulder_chronic_clicking_v1, step: tendon_scan_ultrasound}
+  abdominal_ultrasound:
+    # Separate from joint/tendon ultrasound: a sports-medicine office that scans tendons often does
+    # no belly ultrasound, and a radiology site that does belly ultrasound may not scan tendons.
+    label: {en: Ultrasound (belly), zh: 腹部超声}
+    covers:
+    - {path: stomach_ache_v1, step: belly_ultrasound}
   physical_therapy:
     label: {en: Physical therapy, zh: 物理治疗}
     covers:
@@ -103,6 +113,7 @@ capabilities:
     - {path: colon_screening_v1, step: polyp_pathology}
     - {path: gerd_heartburn_v1, step: pathology}
     - {path: skin_changing_mole_v1, step: pathology}
+    - {path: rash_v1, step: pathology}
   joint_injection:
     label: {en: Joint injection, zh: 关节注射}
     covers:
@@ -111,13 +122,29 @@ capabilities:
     label: {en: Skin biopsy, zh: 皮肤活检}
     covers:
     - {path: skin_changing_mole_v1, step: skin_biopsy}
+    - {path: rash_v1, step: skin_sample}
+  skin_scraping:
+    label: {en: Skin scraping check (fungus test), zh: 皮屑刮片检查（真菌检测）}
+    covers:
+    - {path: rash_v1, step: skin_scraping}
   skin_excision:
     label: {en: Skin lesion removal (excision), zh: 皮肤病灶切除}
     covers:
     - {path: skin_changing_mole_v1, step: wider_removal}
   blood_tests:
     label: {en: Blood tests / lab draw, zh: 抽血化验}
-    covers: []
+    covers:
+    - {path: stomach_ache_v1, step: blood_tests}
+  urine_test:
+    label: {en: Urine test, zh: 尿检}
+    covers:
+    - {path: stomach_ache_v1, step: urine_test}
+  pregnancy_test:
+    # Its own capability: pages list "pregnancy test" apart from "urinalysis", and the run rule is
+    # to map only a service the page names.
+    label: {en: Pregnancy test, zh: 验孕}
+    covers:
+    - {path: stomach_ache_v1, step: pregnancy_test}
   prescription_medicine:
     label: {en: Prescription medicine (filled at a pharmacy), zh: 处方药（药房取药）}
     covers:

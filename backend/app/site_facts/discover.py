@@ -160,6 +160,8 @@ def discover(fetcher: Fetcher | None, sites: list[dict[str, Any]] | None = None)
             f = found[sid]
             if f.get("no_own_page"):
                 entry["no_own_page"] = f["no_own_page"]
+            if f.get("scope"):
+                entry["scope"] = f["scope"]
             for p in f.get("pages", []):
                 entry["pages"].append({**p, "source": f.get("source", "hand_checked")})
         if not entry["pages"] and not entry.get("no_own_page"):

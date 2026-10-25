@@ -19,7 +19,7 @@ sites:
     no_own_page: 'web_search "Northeast Ambulatory Center Stoneham 3 Woodland Rd endoscopy": only Yellow Pages / WebMD; specialty
       not stated anywhere'
   newton_wellesley_outpatient_surgery_center_wellesley:
-    site_type: ambulatory_surgery_center
+    site_type: hospital_outpatient
     pages:
     - url: https://www.massgeneralbrigham.org/en/locations/wellesley-ma/newtonwellesley-outpatient-surgery-center-loc0000281105
       role: location
@@ -36,7 +36,7 @@ sites:
   dermatology_institute_of_boston_pc_boston:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Dermatology Institute of Boston 441 Stuart Street": only WebMD / lead-finder listings'
   massachusetts_general_dermatology_clinic_boston:
     site_type: specialist_office
     pages:
@@ -48,27 +48,37 @@ sites:
     pages:
     - url: https://www.atriushealth.org/locations/braintree
       role: location
-      source: finder:atrius
+      source: hand_checked
   newton_watertown_dermatology_assoc_pc_brighton:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search x2 ("Integrated Dermatology Newton Watertown Dermatology 280 Washington St Brighton", "Integrated
+      Dermatology of Newton-Brighton official site locations"): only Tebra / Fresha / job boards'
   dermphysicians_of_new_england_llc_burlington:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: forefrontdermatology.com robots.txt disallows CareCost-ETL; web_search "Forefront Dermatology Burlington
+      MA 83 Cambridge St" found no Burlington MA page'
   dermatology_associates_of_concord_inc_cambridge:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Dermatology Associates of Concord 625 Mount Auburn St Cambridge": only WebMD / Zocdoc / job
+      boards'
   dermatology_associates_pc_canton:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.apderm.com/locations/canton-ma/
+      role: location
+      source: hand_checked
   skincare_physicians_inc_chestnut_hill:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.skincarephysicians.net/visit/directions/
+      role: location
+      source: web_search
+    - url: https://www.skincarephysicians.net/services/
+      role: services
+      source: web_search
   clinicians_at_588_providence_hwy_dedham:
     site_type: specialist_office
     pages: []
@@ -82,7 +92,7 @@ sites:
     pages:
     - url: https://www.atriushealth.org/locations/medford
       role: location
-      source: finder:atrius
+      source: hand_checked
   clinicians_at_60_dedham_ave_ste_201_needham:
     site_type: specialist_office
     pages: []
@@ -90,71 +100,78 @@ sites:
   adams_street_dermatology_assoc_pc_quincy:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Adams Street Dermatology Quincy 36 Adams St": only Solv / Healthline / Zocdoc'
   id_of_quincy_llc_quincy:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Integrated Dermatology of Quincy 104 Quarry St": only job postings'
   south_shore_medical_center_inc_quincy:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.southshorehealth.org/locations/south-shore-medical-center-quincy
+      role: location
+      source: hand_checked
+    - url: https://www.southshorehealth.org/locations/south-shore-medical-centerquincy
+      role: location
+      source: hand_checked
   the_general_hospital_corporation_revere:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.massgeneralbrigham.org/en/locations/revere-ma/revere-community-health-center-loc0000280787
-    - https://www.massgeneralbrigham.org/en/locations/revere-ma/mass-eye-and-ear-optometry-service-loc0000281090
-    - https://www.massgeneralbrigham.org/en/locations/revere-ma/massachusetts-general-diabetes-center-loc0000280777
-    - https://www.massgeneralbrigham.org/en/locations/revere-ma/mass-general-broadway-primary-care-at-revere-loc0000280934
-    - https://www.massgeneralbrigham.org/en/locations/revere-ma/massachusetts-general-rehabilitation-services-loc0000280785
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.massgeneralbrigham.org/en/locations/revere-ma/mass-general-broadway-primary-care-at-revere-loc0000280934
+      role: location
+      source: hand_checked
   cambridge_public_health_commission_somerville_gb0067:
     site_type: hospital_outpatient
-    pages: []
-    candidates:
-    - https://www.challiance.org/locations/somerville/cha-dermatology
-    - https://www.challiance.org/locations/somerville/cha-somerville-campus
-    - https://www.challiance.org/locations/somerville/cha-urgent-care-center
-    - https://www.challiance.org/locations/somerville/cha-broadway-care-center
-    - https://www.challiance.org/locations/somerville/cha-somerville-pediatrics
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.challiance.org/locations/somerville/cha-dermatology
+      role: location
+      source: hand_checked
   mystic_valley_dermatology_associates_pc_somerville:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.apderm.com/locations/somerville-ma/
+      role: location
+      source: hand_checked
   dermcare_physicians_and_surgeons_llc_waltham:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.apderm.com/locations/waltham-ma/
+      role: location
+      source: hand_checked
   associates_in_dermatology_llc_watertown:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.apderm.com/locations/watertown-ma/
+      role: location
+      source: web_search
   atrius_health_inc_watertown:
     site_type: specialist_office
     pages:
     - url: https://www.atriushealth.org/locations/watertown
       role: location
-      source: finder:atrius
+      source: hand_checked
   adult_and_pediatric_dermatology_pc_wellesley:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.apderm.com/locations/wellesley-ma/
+      role: location
+      source: hand_checked
   atrius_health_inc_wellesley:
     site_type: specialist_office
     pages:
     - url: https://www.atriushealth.org/locations/wellesley
       role: location
-      source: finder:atrius
+      source: hand_checked
   dermatology_and_skin_care_assoc_pc_wellesley:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Dermatology and Skin Care Associates Wellesley 10 Laurel Ave": only MGB doctor directory / NPI
+      listings'
   dermwellesley_llc_wellesley:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "DermWellesley 20 William Street Wellesley dermatology": only WebMD / Sofwave / Boston Magazine
+      listings'
   krauss_dermatology_pc_wellesley:
     site_type: specialist_office
     pages:
@@ -167,43 +184,47 @@ sites:
   premier_dermatology_pllc_wellesley:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Premier Dermatology Wellesley 372 Washington St": only the MGB doctor directory'
   tang_benjes_and_associates_pc_wellesley:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Tang Benjes dermatology Wellesley 332 Washington St": only MediFind / MGB directory / WebMD'
   maritime_mohs_pc_wellesley_hills:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Maritime Mohs Wellesley Hills 62 Walnut St": nothing about the practice'
   vivaskin_dermatology_and_aesthetics_wellesley_hills:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "VivaSkin Dermatology Wellesley Hills 70 Hastings St": nothing about the practice'
   mystic_valley_dermatology_associates_pc_winchester:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.apderm.com/locations/winchester-ma/
+      role: location
+      source: hand_checked
   forefront_dermatology_sc_woburn:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: forefrontdermatology.com robots.txt disallows CareCost-ETL (not searched separately)'
   clinicians_at_147_milk_street_boston:
     site_type: specialist_office
     pages: []
     no_own_page: census address cluster (Clinicians at an address)
   atrius_health_inc_boston_gb0096:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.atriushealth.org/locations/copley
+      role: location
+      source: hand_checked
   boston_food_allergy_center_llc_bi_network_boston_gb0098:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Boston Food Allergy Center 75 Kneeland St": only NPI viewer / WebMD / bestprosintown'
   boston_food_allergy_center_llc_bi_network_boston_gb0099:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: same search as gb0098; 1 Nassau Street Unit 1906 is the NPI mailing address, not a clinic
   brigham_and_womens_gastroenterology_clinic_boston:
     site_type: specialist_office
     pages:
@@ -216,14 +237,10 @@ sites:
     no_own_page: census address cluster (Clinicians at an address)
   massachusetts_general_physicians_organization_inc_chelse:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.massgeneralbrigham.org/en/locations/chelsea-ma/massachusetts-general-hospital-blood-draw-chelsea-loc0000281067
-    - https://www.massgeneralbrigham.org/en/locations/chelsea-ma/massachusetts-student-health-center-at-chelsea-community-health-center-loc0000280957
-    - https://www.massgeneralbrigham.org/en/locations/chelsea-ma/massachusetts-general-urology-clinic-at-chelsea-community-health-center-loc0000280772
-    - https://www.massgeneralbrigham.org/en/locations/chelsea-ma/massachusetts-general-podiatry-clinic-at-chelsea-community-health-center-loc0000280768
-    - https://www.massgeneralbrigham.org/en/locations/chelsea-ma/massachusetts-general-pulmonary-clinic-at-chelsea-community-health-center-loc0000280770
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.massgeneralbrigham.org/en/locations/chelsea-ma/mass-general-brigham-imaging-chelsea-80-everett-ave-loc0000281028
+      role: location
+      source: hand_checked
   mass_general_brigham_for_children_gastroenterology_and_n_gb0117:
     site_type: hospital_outpatient
     pages:
@@ -236,93 +253,95 @@ sites:
     no_own_page: 'web_search "DotHouse Health 1353 Dorchester Ave dermatology orthopedics": only BMC / mass.gov / Zocdoc pages'
   mass_general_brigham_medical_group_northern_massachusett:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.massgeneralbrigham.org/en/locations/lynn-ma/salem-hospital-blood-draw-lynn-loc0000281051
-    - https://www.massgeneralbrigham.org/en/locations/lynn-ma/mass-general-brigham-express-care-lynn-loc0000280813
-    - https://www.massgeneralbrigham.org/en/locations/lynn-ma/mass-general-brigham-lynn480-lynnfield-st-loc0000280812
-    - https://www.massgeneralbrigham.org/en/locations/lynn-ma/spaulding-rehabilitation-outpatient-center-lynn-loc0000280886
-    - https://www.massgeneralbrigham.org/en/locations/lynn-ma/mass-general-brigham-neuroscience-institute-in-lynn-loc0000282082
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.massgeneralbrigham.org/en/locations/lynn-ma/mass-general-brigham-lynn480-lynnfield-st-loc0000280812
+      role: location
+      source: hand_checked
   hallmark_health_medical_associates_inc_melrose:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: melrosewakefield.org redirects to tuftsmedicine.org, which answers HTTP 403 to the plain fetch (sitemap
+      and homepage)'
   hallmark_health_medical_associates_inc_stoneham:
     site_type: hospital_outpatient
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: Tufts Medicine (melrosewakefield.org -> tuftsmedicine.org) answers HTTP 403 to the plain fetch'
   atrius_health_inc_weymouth_gb0139:
     site_type: specialist_office
     pages:
-    - url: https://www.atriushealth.org/locations/weymouth-weymouth-mri
+    - url: https://www.atriushealth.org/locations/weymouth-90-libbey-parkway
       role: location
-      source: finder:atrius
+      source: hand_checked
   winchester_hospital_endoscopy_cente_woburn:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: finder:bilh matched winchester-hospital-urgent-care-woburn (an urgent care, not the endoscopy center); not
-      found yet
+    pages:
+    - url: https://winchesterhospital.org/locations/endoscopy-center
+      role: location
+      source: hand_checked
   barry_s_paul_m_d_arlington:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Barry S Paul MD dermatology Arlington 22 Mill St": only MGB directory / WebMD / Doximity'
   atrius_health_inc_boston_gb0144:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.atriushealth.org/locations/kenmore
+      role: location
+      source: hand_checked
   boston_dermatology_and_laser_center_llc_boston:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.apderm.com/locations/boston-ma/
+      role: location
+      source: web_search
   boston_university_orthopaedic_surgical_associates_inc_bo_gb0147:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.bmc.org/departments/orthopedic-surgery
+      role: services
+      source: web_search
+    scope: hospital_page
   brigham_and_womens_physicians_organization_inc_boston:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-hospital-loc0000246983
-    - https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-lung-center-loc0000280295
-    - https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-spine-center-loc0000280307
-    - https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-urology-clinic-loc0000280310
-    - https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-infusion-center-loc0000280292
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.massgeneralbrigham.org/en/locations/boston-ma/brigham-and-womens-hospital-loc0000246983
+      role: location
+      source: hand_checked
+    scope: hospital_page
   childrens_hospital_pediatric_associates_inc_boston:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.childrenshospital.org/locations/boston
+      role: location
+      source: hand_checked
+    scope: hospital_page
   dana_farber_cancer_institute_inc_boston:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.dana-farber.org/locations/longwood
+      role: location
+      source: hand_checked
   evans_medical_foundation_inc_boston_gb0151:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.bmc.org/
+      role: location
+      source: hand_checked
+    scope: hospital_page
   harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0152:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://bilh.org/locations/bilh-pc-267-boston-road
-    - https://bilh.org/locations/bilh-pc-boston-street-topsfield
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/bidmc-emergency-department
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
+      role: location
+      source: hand_checked
+    scope: hospital_page
   harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0153:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://bilh.org/locations/bilh-pc-267-boston-road
-    - https://bilh.org/locations/bilh-pc-boston-street-topsfield
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/bidmc-emergency-department
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
+      role: location
+      source: hand_checked
+    scope: hospital_page
   mass_eye_and_ear_dermatology_clinic_boston:
     site_type: specialist_office
     pages:
@@ -338,52 +357,60 @@ sites:
   pratt_med_surg_dermatology_associates_inc_boston:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: web_search "Pratt Dermatology Tufts 800 Washington St Boston" points to tuftsmedicine.org (Tufts
+      Medical Center Dermatology), which answers HTTP 403 to the plain fetch'
   south_shore_skin_surgeons_pc_braintree:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'APDerm sitemap has no Braintree page (south-weymouth prints 541 Main St). web_search "South Shore Skin Surgeons
+      Braintree 400 Washington Street": only Sharecare / Healthline / directories'
   clinicians_at_77_warren_st_brighton:
     site_type: hospital_outpatient
     pages: []
     no_own_page: census address cluster (Clinicians at an address)
   bmc_affiliated_physicians_inc_brighton_gb0159:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.bmc.org/locations
+      role: location
+      source: web_search
+    scope: hospital_page
   integrated_dermatology_of_brookline_llc_brookline:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Integrated Dermatology of Brookline 1101 Beacon St": only WebMD / Zocdoc / job boards; integrateddermatology.com
+      has no robots.txt or sitemap (404)'
   northeast_dermatology_associates_pc_brookline:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Northeast Dermatology Associates Brookline 235 Cypress St": the address is Brookline Dermatology
+      Associates in the listings; no own page'
   atrius_health_inc_burlington:
     site_type: specialist_office
     pages:
     - url: https://www.atriushealth.org/locations/burlington
       role: location
-      source: finder:atrius
+      source: hand_checked
   cambridge_public_health_commission_cambridge:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.challiance.org/locations/cambridge/cha-pace
-    - https://www.challiance.org/locations/cambridge/birth-center
-    - https://www.challiance.org/locations/cambridge/cha-macht-building
-    - https://www.challiance.org/locations/cambridge/cha-zinberg-clinic
-    - https://www.challiance.org/locations/cambridge/cha-cambridge-hospital
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.challiance.org/locations/cambridge/cha-cambridge-hospital
+      role: location
+      source: hand_checked
   mount_auburn_professional_services_inc_cambridge_gb0165:
     site_type: specialist_office
-    pages: []
-    no_own_page: finder:bilh matched mount-auburn-pediatrics-cambridge (pediatrics; this record is GI/ortho at 300 Mount Auburn
-      St); not found yet
+    pages:
+    - url: https://mountauburnhospital.org/locations/medical-office-building
+      role: location
+      source: hand_checked
+    scope: hospital_page
   mount_auburn_professional_services_inc_cambridge_gb0166:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: finder:bilh matched mount-auburn-pediatrics-cambridge (pediatrics; this record is GI/ortho); not found yet
+    pages:
+    - url: https://mountauburnhospital.org/locations/mount-auburn-hospital
+      role: location
+      source: hand_checked
+    scope: hospital_page
   massachusetts_general_dermatology_clinic_at_chelsea_comm:
     site_type: specialist_office
     pages:
@@ -395,7 +422,7 @@ sites:
     pages:
     - url: https://www.atriushealth.org/locations/chestnut-hill-west-roxbury
       role: location
-      source: finder:atrius
+      source: hand_checked
   brigham_dermatology_associates_chestnut_hill:
     site_type: hospital_outpatient
     pages:
@@ -404,30 +431,26 @@ sites:
       source: census_website
   harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0171:
     site_type: hospital_outpatient
-    pages: []
-    candidates:
-    - https://bilh.org/locations/bilh-urgent-care-chestnut-hill
-    - https://bilh.org/locations/bilh-pc-the-street-chestnut-hill
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/bidmc-emergency-department
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://bidmc.org/locations/bidmc-chestnut-hill
+      role: location
+      source: hand_checked
+    - url: https://bidmc.org/locations/bidmc-chestnut-hill/sports-medicine
+      role: services
+      source: hand_checked
+    scope: hospital_page
   atrius_health_inc_dedham:
     site_type: specialist_office
     pages:
     - url: https://www.atriushealth.org/locations/dedham
       role: location
-      source: finder:atrius
+      source: hand_checked
   cambridge_public_health_commission_everett:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.challiance.org/locations/everett/whidden-legacy
-    - https://www.challiance.org/locations/everett/cha-everett-hospital
-    - https://www.challiance.org/locations/everett/cha-everett-care-center
-    - https://www.challiance.org/locations/everett/cha-everett-teen-health-center
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.challiance.org/locations/everett/cha-everett-hospital
+      role: location
+      source: hand_checked
   brigham_and_womens_faulkner_gastroenterology_clinic_jama:
     site_type: hospital_outpatient
     pages:
@@ -436,37 +459,35 @@ sites:
       source: census_website
   harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0176:
     site_type: hospital_outpatient
-    pages: []
-    candidates:
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/bidmc-emergency-department
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://bidmc.org/locations/bidmc-lexington
+      role: location
+      source: hand_checked
+    scope: hospital_page
   lahey_clinic_inc_lexington:
     site_type: hospital_outpatient
     pages:
     - url: https://www.lahey.org/locations/lahey-outpatient-center-lexington
       role: location
-      source: finder:lahey
+      source: hand_checked
   lexington_waltham_dermatology_group_inc_lexington:
     site_type: specialist_office
     pages: []
     no_own_page: 'web_search "Lexington-Waltham Dermatology 57 Bedford St Lexington": only directories'
   community_physicians_associates_inc_milton:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.bidmilton.org/
+      role: location
+      source: web_search
+    scope: hospital_page
   harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0180:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://bilh.org/locations/bilh-pc-milton-landing
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/bidmc-emergency-department
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.bidmilton.org/
+      role: location
+      source: hand_checked
+    scope: hospital_page
   harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0182:
     site_type: specialist_office
     pages:
@@ -476,17 +497,17 @@ sites:
     - url: https://bidneedham.org/contact
       role: location
       source: web_search
+    scope: hospital_page
   needham_gastroenterology_associates_pc_needham:
     site_type: specialist_office
     pages: []
     no_own_page: 'web_search "Needham Gastroenterology Associates 464 Hillside Ave": only WebMD / directories'
   orthoboston_llc_needham:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.massgeneralbrigham.org/en/locations/needham-ma/mass-general-brigham-needham-loc0000280823
-    - https://www.massgeneralbrigham.org/en/locations/needham-ma/mass-general-brigham-heart-and-vascular-institute-in-needham-loc0000282046
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.ortho.boston/
+      role: location
+      source: web_search
   mass_general_brigham_orthopedics_and_sports_medicine_cli_gb0186:
     site_type: specialist_office
     pages:
@@ -501,22 +522,20 @@ sites:
       source: census_website
   atrius_health_inc_quincy_gb0188:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.atriushealth.org/locations/quincy-hancock-street
-    - https://www.atriushealth.org/locations/quincy-congress-street
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.atriushealth.org/locations/quincy-hancock-street
+      role: location
+      source: hand_checked
   atrius_health_inc_quincy_gb0189:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.atriushealth.org/locations/quincy-hancock-street
-    - https://www.atriushealth.org/locations/quincy-congress-street
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.atriushealth.org/locations/quincy-congress-street
+      role: location
+      source: hand_checked
   john_kadzielski_md_pllc_quincy:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "John Kadzielski MD orthopedic Quincy 300 Congress St": nothing naming him'
   mass_general_brigham_orthopedics_clinic_at_revere_commun:
     site_type: hospital_outpatient
     pages:
@@ -528,31 +547,25 @@ sites:
     pages:
     - url: https://www.atriushealth.org/locations/somerville
       role: location
-      source: finder:atrius
+      source: hand_checked
   cambridge_public_health_commission_somerville_gb0194:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.challiance.org/locations/somerville/cha-dermatology
-    - https://www.challiance.org/locations/somerville/cha-somerville-campus
-    - https://www.challiance.org/locations/somerville/cha-urgent-care-center
-    - https://www.challiance.org/locations/somerville/cha-broadway-care-center
-    - https://www.challiance.org/locations/somerville/cha-somerville-pediatrics
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.challiance.org/locations/somerville/cha-somerville-campus
+      role: location
+      source: hand_checked
   harbor_medical_associates_inc_south_weymouth:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/mass-general-brigham-imaging-weymouth-loc0000280997
-    - https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/mass-eye-and-ear-ophthalmology-weymouth-loc0000291035
-    - https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/brigham-and-womens-renal-medicine-clinic-loc0000280708
-    - https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/mass-general-brigham-primary-care-clinic-loc0000280714
-    - https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/brigham-and-womens-pain-management-clinic-loc0000280707
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.massgeneralbrigham.org/en/locations/south-weymouth-ma/mass-general-brigham-healthcare-center-south-weymouth-loc0000280713
+      role: location
+      source: hand_checked
   mystic_valley_dermatology_associates_pc_stoneham:
     site_type: specialist_office
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.apderm.com/locations/stoneham-ma/
+      role: location
+      source: hand_checked
   mass_general_brigham_for_children_gastroenterology_and_n_gb0198:
     site_type: hospital_outpatient
     pages:
@@ -562,21 +575,18 @@ sites:
   dermatology_partners_inc_wellesley:
     site_type: specialist_office
     pages: []
-    candidates:
-    - https://www.massgeneralbrigham.org/en/locations/wellesley-ma/mass-eye-and-ear-wellesley-loc0000280861
-    - https://www.massgeneralbrigham.org/en/locations/wellesley-ma/mass-general-brigham-imaging-wellesley-loc0000281042
-    - https://www.massgeneralbrigham.org/en/locations/wellesley-ma/mass-general-brigham-primary-care-clinic-loc0000280924
-    - https://www.massgeneralbrigham.org/en/locations/wellesley-ma/mass-general-brigham-primary-care-clinic-loc0000280928
-    - https://www.massgeneralbrigham.org/en/locations/wellesley-ma/mass-general-brigham-primary-care-clinic-loc0000281613
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Dermatology Partners Wellesley 65 Walnut Street": only WebMD / Solv / MGB directory'
   south_shore_medical_center_inc_weymouth:
     site_type: hospital_outpatient
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'South Shore Health sitemap: no SSMC page prints 780 Main St (its Weymouth women''s center pages print 51
+      Performance Dr / 90 Libbey Pkwy). web_search "South Shore Medical Center 780 Main Street Weymouth": the building houses
+      South Shore Urology (Suite 2C, the census suite) and the Center for Physical Wellness'
   robert_j_obrien_jr_md_and_assoc_pc_winchester:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Robert J O''Brien MD dermatology Winchester 955 Main Street": only FREIDA / WebMD / disabilityinfo
+      listings'
   brigham_and_womens_spine_center_boston:
     site_type: specialist_office
     pages:
@@ -586,7 +596,7 @@ sites:
   john_m_siliski_md_pc_boston:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "John M Siliski MD orthopedic surgeon 1 Hawthorne Place Boston": only the MGB doctor directory'
   mass_general_brigham_orthopedics_and_sports_medicine_at_gb0216:
     site_type: hospital_outpatient
     pages:
@@ -621,41 +631,39 @@ sites:
     no_own_page: census address cluster (Clinicians at an address)
   massachusetts_general_physicians_organization_inc_cambri:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.massgeneralbrigham.org/en/locations/cambridge-ma/mclean-child-and-adolescent-outpatient-clinic-mamp-loc0000280879
-    - https://www.massgeneralbrigham.org/en/locations/cambridge-ma/the-gunderson-residence-program-at-mclean-hospital-loc0000297914
-    - https://www.massgeneralbrigham.org/en/locations/cambridge-ma/spaulding-rehabilitation-outpatient-center-cambridge-loc0000280882
-    - https://www.massgeneralbrigham.org/en/locations/cambridge-ma/spaulding-rehabilitation-hospital-for-continuing-care-cambridge-loc0000295396
-    - https://www.massgeneralbrigham.org/en/locations/cambridge-ma/mass-general-brigham-imaging-at-spaulding-rehabilitation-hospital-for-continuing-care-cambridge-loc0000281073
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.massgeneralbrigham.org/en/locations/cambridge-ma/spaulding-rehabilitation-outpatient-center-cambridge-loc0000280882
+      role: location
+      source: hand_checked
+    - url: https://www.massgeneralbrigham.org/en/locations/cambridge-ma/spaulding-rehabilitation-hospital-for-continuing-care-cambridge-loc0000295396
+      role: location
+      source: hand_checked
+    scope: hospital_page
   massachusetts_general_physicians_organization_inc_charle:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://www.massgeneralbrigham.org/en/locations/charlestown-ma/massachusetts-general-hospital-blood-draw-charlestown-loc0000281069
-    - https://www.massgeneralbrigham.org/en/locations/charlestown-ma/massachusetts-general-brain-and-body-program-at-spaulding-rehabilitation-loc0000280565
-    - https://www.massgeneralbrigham.org/en/locations/charlestown-ma/massachusetts-general-physical-medicine-and-rehabilitation-clinic-at-spaulding-rehabilitation-loc0000280566
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.massgeneralbrigham.org/en/locations/charlestown-ma/massachusetts-general-physical-medicine-and-rehabilitation-clinic-at-spaulding-rehabilitation-loc0000280566
+      role: location
+      source: hand_checked
+    - url: https://www.massgeneralbrigham.org/en/locations/charlestown-ma/spaulding-rehabilitation-hospital-charlestown-loc0000280569
+      role: location
+      source: hand_checked
+    scope: hospital_page
   boston_orthopaedic_and_spine_llc_chestnut_hill:
     site_type: hospital_outpatient
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Boston Orthopaedic and Spine 830 Boylston Street Chestnut Hill": only Exactech / WebMD / disabilityinfo
+      listings'
   harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0235:
     site_type: hospital_outpatient
     pages: []
-    candidates:
-    - https://bilh.org/locations/bilh-urgent-care-dedham
-    - https://bilh.org/locations/bilh-pc-dedham-westwood-family-medicine
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/east-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/west-campus
-    - https://bidmc.org/locations/beth-israel-deaconess-medical-center/bidmc-emergency-department
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: web_search "BIDMC orthopedics Dedham 40 Allied Drive" named the BIDMC podiatry and foot-and-ankle pages,
+      but neither fetched page prints 40 Allied Drive
   northeast_orthopedic_associates_pc_dedham:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "Northeast Orthopedic Associates Dedham 200 Providence Highway": only NPI viewer / WebMD (Greater
+      Boston Orthopedic Center at the same building)'
   codman_square_health_center_inc_dorchester:
     site_type: hospital_outpatient
     pages:
@@ -681,24 +689,22 @@ sites:
   boston_medical_center_corporation_roslindale:
     site_type: specialist_office
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "BMC orthopedics Roslindale 4199 Washington Street" (bmc.org): 4199 Washington St is Greater
+      Roslindale Medical & Dental Center, a separate community health center listed in BMC''s HealthNet list; no BMC page
+      for this record'
   new_england_baptist_medical_associates_inc_roxbury_cross:
     site_type: specialist_office
-    pages: []
-    candidates:
-    - https://nebh.org/locations/new-england-baptist-hospital
-    - https://nebh.org/locations/new-england-baptist-orthopedic-specialists-spine
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://nebh.org/locations/new-england-baptist-hospital
+      role: location
+      source: hand_checked
+    scope: hospital_page
   cambridge_public_health_commission_somerville_gb0255:
     site_type: specialist_office
     pages: []
-    candidates:
-    - https://www.challiance.org/locations/somerville/cha-dermatology
-    - https://www.challiance.org/locations/somerville/cha-somerville-campus
-    - https://www.challiance.org/locations/somerville/cha-urgent-care-center
-    - https://www.challiance.org/locations/somerville/cha-broadway-care-center
-    - https://www.challiance.org/locations/somerville/cha-somerville-pediatrics
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'web_search "CHA Assembly Square 5 Middlesex Avenue Somerville" found challiance.org/locations/somerville/cha-assembly-square-care-center,
+      but the fetched page is now "CHA One Cabot Care Center" at 1 Cabot Rd, Medford: the center moved. A6 to check the census
+      row'
   mass_general_brigham_orthopedics_walk_in_clinic_in_welle:
     site_type: specialist_office
     pages:
@@ -707,8 +713,11 @@ sites:
       source: census_website
   robert_j_banco_md_pc_wellesley:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.massgeneralbrigham.org/en/locations/wellesley-ma/newtonwellesley-outpatient-surgery-center-loc0000281105
+      role: location
+      source: web_search
+    scope: hospital_page
   excel_orthopaedic_specialists_woburn:
     site_type: hospital_outpatient
     pages: []
@@ -727,12 +736,16 @@ sites:
       source: census_website
   atrius_health_urgent_care_harvard_vanguard_kenmore_bosto:
     site_type: urgent_care
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.atriushealth.org/locations/kenmore
+      role: location
+      source: hand_checked
   bmc_adult_primary_care_urgent_care_fka_bmc_shapiro_urgen:
     site_type: urgent_care
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.bmc.org/internal-medicine
+      role: location
+      source: web_search
   carbon_health_boston_ma_back_bay_boylston_boston:
     site_type: urgent_care
     pages:
@@ -772,7 +785,7 @@ sites:
     pages:
     - url: https://www.atriushealth.org/locations/braintree
       role: location
-      source: finder:atrius
+      source: hand_checked
   minuteclinic_braintree:
     site_type: urgent_care
     pages: []
@@ -807,7 +820,7 @@ sites:
     pages:
     - url: https://www.atriushealth.org/locations/burlington
       role: location
-      source: finder:atrius
+      source: hand_checked
   convenientmd_urgent_care_burlington_burlington:
     site_type: urgent_care
     pages:
@@ -829,11 +842,13 @@ sites:
   cvs_minuteclinic_cambridge_alewife_brook_parkway_cambrid:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: cvs.com sitemap index answers HTTP 403; a MinuteClinic locator page was thin to the plain fetch
+      and timed out in plain Chromium; not searched (search budget)'
   cvs_clinic_pllc_for_the_maintenance_of_minuteclinic_char:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: cvs.com sitemap index answers HTTP 403; a MinuteClinic locator page was thin to the plain fetch
+      and timed out in plain Chromium; not searched (search budget)'
   chelsea_community_health_center_urgent_care_chelsea:
     site_type: urgent_care
     pages:
@@ -851,7 +866,7 @@ sites:
     pages:
     - url: https://bilh.org/locations/bilh-urgent-care-chestnut-hill
       role: location
-      source: finder:bilh
+      source: hand_checked
   afc_urgent_care_dedham_dedham:
     site_type: urgent_care
     pages:
@@ -863,7 +878,7 @@ sites:
     pages:
     - url: https://bilh.org/locations/bilh-urgent-care-dedham
       role: location
-      source: finder:bilh
+      source: hand_checked
   convenientmd_urgent_care_dedham_dedham:
     site_type: urgent_care
     pages:
@@ -875,7 +890,7 @@ sites:
     pages:
     - url: https://pmpediatriccare.com/location/dedham/
       role: location
-      source: finder:pm_pediatrics
+      source: hand_checked
   codman_square_health_center_dorchester:
     site_type: urgent_care
     pages:
@@ -927,7 +942,8 @@ sites:
   minuteclinic_medford:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: cvs.com sitemap index answers HTTP 403; a MinuteClinic locator page was thin to the plain fetch
+      and timed out in plain Chromium; not searched (search budget)'
   afc_urgent_care_needham_needham:
     site_type: urgent_care
     pages:
@@ -937,7 +953,8 @@ sites:
   minuteclinic_newton:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: cvs.com sitemap index answers HTTP 403; a MinuteClinic locator page was thin to the plain fetch
+      and timed out in plain Chromium; not searched (search budget)'
   mass_general_brigham_express_care_newton_newton:
     site_type: urgent_care
     pages:
@@ -959,7 +976,8 @@ sites:
   minuteclinic_quincy:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: cvs.com sitemap index answers HTTP 403; a MinuteClinic locator page was thin to the plain fetch
+      and timed out in plain Chromium; not searched (search budget)'
   afc_urgent_care_revere_revere:
     site_type: urgent_care
     pages:
@@ -988,19 +1006,19 @@ sites:
     pages:
     - url: https://pmpediatriccare.com/location/massachusetts-saugus/
       role: location
-      source: finder:pm_pediatrics
+      source: hand_checked
   atrius_health_urgent_care_harvard_vanguard_somerville_so:
     site_type: urgent_care
     pages:
     - url: https://www.atriushealth.org/locations/somerville
       role: location
-      source: finder:atrius
+      source: hand_checked
   cha_somerville_urgent_care_center_somerville:
     site_type: urgent_care
     pages:
     - url: https://www.challiance.org/locations/somerville/cha-urgent-care-center
       role: location
-      source: finder:cha
+      source: hand_checked
   mass_general_brigham_express_care_south_weymouth_south_w:
     site_type: urgent_care
     pages:
@@ -1030,15 +1048,17 @@ sites:
     pages:
     - url: https://bilh.org/locations/bilh-urgent-care-watertown
       role: location
-      source: finder:bilh
+      source: hand_checked
   cvs_retail_clinic_watertown_watertown:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: cvs.com sitemap index answers HTTP 403; a MinuteClinic locator page was thin to the plain fetch
+      and timed out in plain Chromium; not searched (search budget)'
   minuteclinic_wellesley:
     site_type: urgent_care
     pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    no_own_page: 'manual: cvs.com sitemap index answers HTTP 403; a MinuteClinic locator page was thin to the plain fetch
+      and timed out in plain Chromium; not searched (search budget)'
   carbon_health_west_roxbury_ma_spring_st_west_roxbury:
     site_type: urgent_care
     pages:
@@ -1053,14 +1073,16 @@ sites:
       source: census_website
   south_shore_health_urgent_care_weymouth_formerly_health:
     site_type: urgent_care
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.southshorehealth.org/locations/south-shore-health-urgent-care-weymouth
+      role: location
+      source: hand_checked
   lahey_health_urgent_care_woburn_woburn:
     site_type: urgent_care
-    pages:
-    - url: https://bilh.org/locations/winchester-hospital-urgent-care-woburn
-      role: location
-      source: finder:bilh
+    pages: []
+    no_own_page: 'finder:bilh matched winchester-hospital-urgent-care-woburn, which prints 345 Washington Street, Unit 15,
+      not 7 Alfred Street (WRONG). web_search "Lahey urgent care Woburn 7 Alfred Street": only Solv (booking). The census
+      address may be stale; A6 to check'
   mass_general_brigham_express_care_woburn_woburn:
     site_type: urgent_care
     pages:
@@ -1077,7 +1099,7 @@ sites:
     pages:
     - url: https://pmpediatriccare.com/location/massachusetts-woburn/
       role: location
-      source: finder:pm_pediatrics
+      source: hand_checked
   massachusetts_general_hospital:
     site_type: hospital_outpatient
     pages:
@@ -1104,8 +1126,10 @@ sites:
       source: hand_checked
   bmc_brighton_formerly_st_elizabeths:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.bmc.org/locations
+      role: location
+      source: web_search
   cha_cambridge_hospital:
     site_type: hospital_outpatient
     pages:
@@ -1153,10 +1177,7 @@ sites:
     pages:
     - url: https://nebh.org/locations/new-england-baptist-hospital
       role: location
-      source: finder:nebh
-    candidates:
-    - https://bilh.org/locations/bilh-pc-267-boston-road
-    - https://bilh.org/locations/bilh-pc-boston-street-topsfield
+      source: hand_checked
   newton_wellesley_hospital:
     site_type: hospital_outpatient
     pages:
@@ -1180,6 +1201,8 @@ sites:
       source: hand_checked
   boston_medical_center_south:
     site_type: hospital_outpatient
-    pages: []
-    no_own_page: not found yet (census, finders, found.yaml)
+    pages:
+    - url: https://www.bmc.org/locations
+      role: location
+      source: web_search
 finder_errors: {}
