@@ -16,8 +16,9 @@ export default defineConfig(({ mode }) => ({
       overlay: true,
     },
     proxy: {
+      // the merged backend (app.server) runs on 8100; 8000 is the legacy server
       "/api": {
-        target: `http://127.0.0.1:${process.env.VITE_API_PORT || '8000'}`,
+        target: `http://127.0.0.1:${process.env.VITE_API_PORT || '8100'}`,
         changeOrigin: true,
       },
     },

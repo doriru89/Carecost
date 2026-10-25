@@ -1,6 +1,6 @@
 import { lazy, Suspense, useMemo, useState } from "react";
 import { LocateFixed } from "lucide-react";
-import type { Catalog, CatalogService } from "@/generated/contracts/catalog";
+import type { Catalog, CatalogPath, CatalogService } from "@/generated/contracts/catalog";
 import type { Payment, QuoteResponse } from "@/generated/contracts/quote_api";
 import { cn } from "@/lib/utils";
 import { zipToLocation, type UserLocation } from "../lib/geo";
@@ -28,6 +28,8 @@ export function ResultsPane({
   view,
   onView,
   catalog,
+  paths,
+  loadServices,
   onPickPath,
   onPickService,
   location,
@@ -39,6 +41,8 @@ export function ResultsPane({
   view: ResultsView;
   onView: (v: ResultsView) => void;
   catalog: Catalog | null;
+  paths: CatalogPath[] | null;
+  loadServices: (pathId: string) => Promise<CatalogService[]>;
   onPickPath: (id: string) => void;
   onPickService: (s: CatalogService) => void;
   location: UserLocation | null;
@@ -87,7 +91,7 @@ export function ResultsPane({
       </div>
 
       {view === "browse" ? (
-        <BrowsePicker catalog={catalog} onPickPath={onPickPath} onPickService={onPickService} />
+        <BrowsePicker catalog={catalog} paths={paths} loadServices={loadServices} onPickPath={onPickPath} onPickService={onPickService} />
       ) : state.status === "idle" ? (
         <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
           Describe what's going on in the chat, or pick a problem under Browse, and prices show here.

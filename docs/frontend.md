@@ -1,8 +1,8 @@
 # Frontend (wave 2, stream D)
 
 The CareCost price tool at `/start`: payment choice, chat, "Skip AI → Browse prices", a split view
-(chat | receipt · list · map), the gradient receipt, and full-page red-flag / 988 stops. It runs on the
-committed contract fixtures (mock mode) until streams C and Chat merge.
+(chat | receipt · list · map), the gradient receipt, and full-page red-flag / 988 stops. Mock mode runs on the
+committed contract fixtures; api mode runs on the merged backend (`app.server`, wave2/base 68326f8 + D2).
 
 ## Run
 
@@ -10,7 +10,7 @@ committed contract fixtures (mock mode) until streams C and Chat merge.
 cd frontend
 npm ci
 npm run dev:app                      # http://127.0.0.1:5180/start  (mock data, the default)
-VITE_DATA_SOURCE=api npm run dev:app # real API: /api is proxied to 127.0.0.1:$VITE_API_PORT (default 8000)
+VITE_DATA_SOURCE=api npm run dev:app # real API: /api is proxied to 127.0.0.1:$VITE_API_PORT (default 8100)
 # or add ?data=api / ?data=mock to the URL
 
 npm run typecheck:contracts          # generated contract types + exhaustive.ts + the copy file
@@ -18,7 +18,9 @@ npm run typecheck:app                # tsc -p tsconfig.app.json (0 errors)
 npx vitest run                       # logic + component tests
 npm run content:build                # glossary / cards / questions / MA ZIP JSON from their YAML sources
 npm run build && npx vite preview --host 127.0.0.1 --port 5180 --strictPort
-npm run screenshots                  # Playwright, needs a server on :5180; writes docs/frontend/*.png + switch-timing.json
+# api mode needs the backend: cd backend && uv run --frozen uvicorn app.server:app --port 8100
+MODE=both npm run screenshots        # Playwright, needs a server on :5180; mock -> <screen>-<w>.png + switch-timing.json,
+                                     # api -> <screen>-api-<w>.png + switch-timing-api.json
 ```
 
 ## Where things are
@@ -31,7 +33,7 @@ npm run screenshots                  # Playwright, needs a server on :5180; writ
 | `src/app/components/SiteList.tsx`, `SiteMap.tsx`, `Booking.tsx` | §4.3 list and MapLibre map (OpenFreeMap `liberty` style, no key; loaded lazily) |
 | `src/app/components/ChatPane.tsx` | every chat reply kind; chips; "Because you said"; D33 lines |
 | `src/app/pages/StopPages.tsx` | red flag (911 / ER / seen today / routine) and the separate crisis_988 page |
-| `src/app/api/client.ts`, `mock.ts` | `POST /api/quote`, `POST /api/chat`, `GET /api/catalog`; mock mode from `contracts/fixtures/*.json` |
+| `src/app/api/client.ts`, `mock.ts` | `POST /api/quote`, `POST /api/chat`, `GET /api/catalog`, `GET /api/catalog/paths`, `GET /api/catalog/paths/{id}/services`; mock mode from `contracts/fixtures/*.json`. `quoteBody()` is the one spot where C2's `near` / `max_sites` will go |
 | `src/app/lib/*` | pure logic: tiers, source hover text, freshness, cash-discount check, hours (Boston time), distance, sorting, payment list |
 | `src/contracts/copy.ts` | the copy file every contract copy key resolves to (compile-checked) |
 | `src/app/content/*.json` | built from `content/glossary/glossary.yaml`, `data/questions/questions.yaml`, and the `zipcodes` package (MA only) |
@@ -51,11 +53,24 @@ npm run screenshots                  # Playwright, needs a server on :5180; writ
 - Red flag → full page, no prices. crisis_988 has its own page (tel:988, sms:988, 988lifeline.org chat, 911).
 - No accounts (D19). Email is asked only before AI use (D2), unverified.
 
+## Merged quote contract (D2)
+
+- A range cites both ends: `Money.prov` (low) and `Money.prov_high` (high) render as a "Low:" and a "High:" chip
+  when they are different rows; the hover shows `row_ref` and `Provenance.row_id`.
+- `SiteSummary.price_source_id: null` → "This place has its own price list, but we do not read it yet".
+- `ReceiptLine.at = your_primary_care` → "Happens at your own primary care office, not at this place".
+- Rung 6 (`basis: estimate`) carries an "Estimate" tag (the total already flags `includes_estimate`); rung 7
+  carries "Reference only, not added" and its amount is dimmed.
+- `QuoteResponse.copy_keys` (D33) render under the receipt as "Before you go"; a manual pick has none.
+- Browse uses the two picker routes: a care path opens its services ("Price every step" or "Only: <service>").
+- Chat in api mode: the merged base has no `/api/chat` route yet (404) → a plain error with "Browse prices";
+  `ai_paused(provider_unavailable)` renders `ai.paused_provider` with the browse button.
+
 ## Mock mode
 
-Quotes: chronic shoulder pain × {BCBS MA HMO (real P1 output), cash (real P1 output), Medicare (hand-made)}.
-Anything else (other insurers, MassHealth, other care paths, single-service picks) shows "No test data for this
-choice yet" instead of inventing numbers. Chat is a demo script, not the red-flag gate: crisis words → the
+Quotes (C's engine on the committed extract): chronic shoulder pain × {BCBS MA HMO, cash, Medicare}, and a
+manual pick of 73030 + 73221 × MassHealth (reachable through the mock API; the UI picks one service at a time).
+Anything else shows "No test data for this choice yet" instead of inventing numbers. Chat is a demo script, not the red-flag gate: crisis words → the
 crisis_988 reply (copy from `data/redflags/redflags.json`), emergency words → the call_911 fixture, first
 message → clarify, later turns → care_paths; `#text`, `#invalid`, `#paused` return those fixtures.
 
@@ -71,9 +86,13 @@ launch: `copy.not_a_diagnosis`, `copy.when_to_see_a_doctor`, the four `youpay.*`
 Insurance switch (plan §4.1, < 300 ms): time from the payment `<select>` change to the next animation frame
 after the new receipt commits (`window.__carecostSwitch`, `scripts/screenshots.mjs`), production build
 (`vite preview`), mock mode, headless Chromium, Austin's Mac, 2026-10-24. See `docs/frontend/switch-timing.json`.
-Mock mode has no network round trip; with the real API add the quote latency (P1 bench: p50 2.7 ms on loopback).
+Api mode (D2, 2026-10-25): same method against `uvicorn app.server:app --port 8100` on the committed extract, through
+the `vite preview` proxy; five uncached switches per width, 10.6–17.9 ms; cached 4.1–9.2 ms
+(`docs/frontend/switch-timing-api.json`).
 
 ## Screenshots (`docs/frontend/`)
 
-`start`, `receipt-bcbs`, `receipt-cash`, `list`, `map`, `red-flag`, `crisis-988` at 375 and 1280 px, plus
-`split-stacked-flipped-1280`.
+Mock: `start`, `receipt-bcbs`, `receipt-bcbs-tufts`, `receipt-cash`, `list`, `map`, `red-flag`, `crisis-988` at 375
+and 1280 px, plus `split-stacked-flipped-1280`. Api (`-api`): `start`, `receipt-bcbs`, `receipt-bcbs-tufts`,
+`receipt-cash`, `list`, `receipt-masshealth-mri`, `chat-404`, `chat-paused` (the last answers `/api/chat` in the
+browser with the Chat service's no-key reply, since Chat is not merged; quotes still come from the server).

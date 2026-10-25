@@ -64,6 +64,11 @@ export function Receipt({
           {distance != null && <> · {milesText(distance)}</>} · {open.text}
         </p>
         <p className="text-xs">{t(`billing.${site.billing_type}`)}</p>
+        {site.price_source_id == null && (
+          <p className="text-[11px] text-warn" data-testid="price-source-not-read">
+            {t("receipt.price_source_not_read")}
+          </p>
+        )}
       </header>
 
       {quote.notices.length > 0 && (
@@ -124,6 +129,18 @@ export function Receipt({
           </a>
         )}
       </div>
+
+      {quote.copy_keys.length > 0 && (
+        // D33: a quote reached from a care path carries both fixed lines; a manual pick carries none
+        <div className="mt-3 rounded-lg border border-border p-3 text-xs space-y-1.5" data-testid="d33-lines">
+          <p className="font-semibold">{t("receipt.d33_heading")}</p>
+          {quote.copy_keys.map((k) => (
+            <p key={k} data-testid={`d33-${k}`}>
+              {t(k)}
+            </p>
+          ))}
+        </div>
+      )}
 
       <div className="mt-3">
         <Booking site={site} />
