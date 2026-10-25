@@ -57,6 +57,15 @@ How the reply kind is chosen (code):
   shows. It catches "osteonecrosis", "SLAP lesion", "thoracic outlet syndrome", "肩周炎", none of
   which the deny-list has. Cost: a regex per reply; a false positive costs one retry. Proposal:
   move it into the contract next to the deny-list.
+- **Diagnostic cue rule (review 2026-10-24):** a cue phrase (might/could/may be, sounds/looks
+  like, you probably have, likely, probably, consistent with, suggests, 可能是, 像是, 大概是 ...)
+  must be followed within 5 words (8 characters in Chinese) by a word from the shown paths'
+  reviewed text. A turn with no path shown has no such text, so every cue is rejected there. This
+  catches "It might be a pinched nerve in your neck", which has no condition-shaped word.
+  False positives on the 9 good messages available (contract fixtures + test messages): 0.
+- **Money in words (review 2026-10-24):** dollar(s), buck(s), usd, cent(s), grand, 美元, 美金,
+  块钱, 人民币, 元 (not 单元 / 公元 / 元素) are rejected with or without a number. LlmText already
+  rejected symbols and number + unit.
 - The model's message is checked even when the service decides not to show it.
 - Fixed copy: `copy.not_a_diagnosis` + `copy.when_to_see_a_doctor` on every reply with candidates
   (contract). Proposed wording in `data/chat/copy.yaml` (pending Austin + 1 reader, P10); the UI copy

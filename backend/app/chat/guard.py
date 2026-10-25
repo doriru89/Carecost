@@ -8,6 +8,15 @@
    Chinese 癌 / 炎 / 瘤 / 综合征 / 综合症) must appear in the reviewed text of a path the reply shows
    (title, intro, glossary terms). "rotator cuff tendinopathy" passes only if the path says it.
    False positives cost one retry; misses cost a made-up diagnosis on screen.
+3. Money in any form (review 2026-10-24): currency WORDS are rejected even without a number
+   ("around three hundred dollars", "a couple grand"). LlmText already rejects symbols and
+   digit/number-character + unit; the AI has no reason to talk about money at all.
+4. Diagnostic cue phrases (review 2026-10-24), a structural rule instead of a longer word list:
+   "might/could/may be", "sounds like", "you probably have", "likely", "consistent with", 可能是,
+   像是 ... One rule: a word within the next few words after the cue must come from the shown
+   paths' reviewed text ("most likely the rotator cuff" passes for the shoulder path; "might be a
+   pinched nerve" does not). A turn that shows no path has no such text, so every cue is
+   rejected there: explaining what it may be belongs to turns that show paths.
 """
 
 from __future__ import annotations
@@ -60,3 +69,56 @@ def check_condition_shapes(text: str | None, allowed_text: str) -> None:
         raise GuardError(
             f"LLM text uses condition-like words the shown care paths do not: {bad} (D33)"
         )
+
+
+_MONEY_WORDS = re.compile(
+    r"\b(?:dollars?|bucks?|usd|cents?|grand)\b"
+    r"|美元|美金|块钱|人民币|(?<![单公多])元(?![素旦宵])",
+    re.I,
+)
+
+
+def check_money(text: str | None) -> None:
+    if not text:
+        return
+    m = _MONEY_WORDS.search(text)
+    if m:
+        raise GuardError(f"LLM text may not talk about money ({m.group(0)!r}): the UI shows prices")
+
+
+_EN_CUES = re.compile(
+    r"\b(?:might|could|may)\s+(?:well\s+)?be\b|\bsounds?\s+like\b|\blooks?\s+like\b"
+    r"|\byou\s+(?:probably|likely|may|might|could)\s+have\b|\b(?:most\s+)?likely\b"
+    r"|\bprobably\b|\bconsistent\s+with\b|\bsuggests?\b",
+    re.I,
+)
+_ZH_CUES = re.compile(r"可能是|可能有|像是|也许是|大概是|应该是|估计是")
+CUE_WINDOW = 5  # words after an English cue
+ZH_WINDOW = 8  # characters after a Chinese cue
+_STOP = {
+    "a", "an", "the", "it", "is", "be", "of", "in", "on", "to", "and", "or", "your", "you",
+    "that", "this", "with", "from", "some", "kind", "sort", "type", "problem", "issue",
+    "something", "related", "caused", "due", "by", "more", "most", "often", "usually",
+}  # fmt: skip
+
+
+def _words(s: str) -> list[str]:
+    return re.findall(r"[a-z][a-z'-]*", s.lower())
+
+
+def check_diagnostic_cues(text: str | None, allowed_text: str) -> None:
+    """A cue must be followed by the shown paths' own words. On a turn that shows no path the
+    allowed text is empty, so every cue is rejected: one rule covers both cases."""
+    if not text:
+        return
+    allowed_words = set(_words(allowed_text)) - _STOP
+    for m in _EN_CUES.finditer(text):
+        after = [w for w in _words(text[m.end() :])[:CUE_WINDOW] if w not in _STOP]
+        if not any(w in allowed_words for w in after):
+            raise GuardError(f"diagnostic cue {m.group(0)!r} not followed by a shown path's words")
+    for m in _ZH_CUES.finditer(text):
+        tail = text[m.end() : m.end() + ZH_WINDOW]
+        if not allowed_text or not any(
+            tail[i : i + 2] in allowed_text for i in range(len(tail) - 1)
+        ):
+            raise GuardError(f"diagnostic cue {m.group(0)!r} not followed by a shown path's words")

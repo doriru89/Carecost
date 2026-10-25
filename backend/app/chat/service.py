@@ -670,5 +670,8 @@ class ChatService:
     def _check_text(self, text: str | None, shown: list[str], required: bool) -> None:
         if required and not text:
             raise ValueError("message is empty")
+        allowed = self._allowed_text(shown)
         guard.check_voice(text)
-        guard.check_condition_shapes(text, self._allowed_text(shown))
+        guard.check_money(text)
+        guard.check_condition_shapes(text, allowed)
+        guard.check_diagnostic_cues(text, allowed)
