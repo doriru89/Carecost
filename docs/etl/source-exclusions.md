@@ -61,3 +61,43 @@ Hospital normalize, rows excluded per source: bmc_brighton 320, bmc 580, bmc_sou
 cha 461 per-diem/case-rate + 33 not_dollars, childrens 248, faulkner 21, newton_wellesley 30,
 tufts 811 chargemaster_as_rate + 44 per-diem/case-rate (2,029 / 33 / 811 in all). TiC: 0 per-diem
 prices on our codes. Flags and their counts per network: each run's `run.json` `flags`.
+
+## A7 (wave 2 round C6, 2026-10-25): ED visit levels as reference codes
+
+`codes.yaml` `reference:` holds 99281-99285 (emergency department visit, levels 1-5). They are in
+`CodeList.codes`, so hospital normalize, the TiC filter (`tic extend`) and the pack carry them, but
+they are in no domain: `Registry.code_areas` gives no area, no site admits them and nothing is
+ranked on them. They are not care-path codes, so `codes check` is unchanged; `codes check --data`
+passes after the re-extraction below. C4b reads them for the response-level ER reference.
+
+Run (A6's data root cloned with `cp -c -R`, flags as A6):
+
+```bash
+cd backend
+uv run --frozen --extra etl python -m app.etl --data-dir $D normalize --force
+uv run --frozen --extra etl python -m app.etl --data-dir $D tic extend --network all
+uv run --frozen --extra etl python -m app.etl --data-dir $D build --build-date 2026-10-25 \
+  --baseline-manifest <previous build>/manifest.json
+uv run --frozen --extra etl python -m app.quote.pack --hospital-build $D/build/20261025-336340ed \
+  --tic-root $D/intermediate/tic --gov-root $D/intermediate/gov --out a7.sqlite
+```
+
+`tic extend`: 38 of 38 networks, +5 items each; 34 by HTTP Range, 4 UHC files streamed (the host
+answers 200 to Range; sha256 checked). No new single-NPI institutional groups, so
+`tic_npi_types.yaml` needed no NPPES call.
+
+Measured in the pack (build `20261025-336340ed`, 2,068,299 rows; A6's was 1,963,462):
+
+* hospital files, 1,517 ED rows (facility; CHA's have no revenue code, so component `unknown`):
+  bid_milton 25, bid_needham 15, bidmc 35, bmc 270, bmc_brighton 212, bmc_south 212, brigham 50,
+  cha 110, childrens 175, faulkner 26, mgh 48, mtauburn 40, nebh 20, newton_wellesley 9, tufts 270.
+  Dana-Farber and Franciscan post none. By payer: TUFTS_HP 183, BCBS_MA 148, UHC 148, MGB_HP 95,
+  WELLPOINT 82, AETNA 66, CIGNA 63, FALLON 56, HARVARD_PILGRIM 51, CCA 50, MEDICARE 43,
+  MASSHEALTH 35, WELLSENSE 30, HUMANA 29, TRICARE 13, HNE 10, UHC_HPHC_ALLIANCE 6, unmapped
+  payer 384, chargemaster (gross only) 25. Example: CHA 99284 "CHA HB BCBS PPO" $807.72, gross
+  $2,200.00. CHA's raw file has 360 ED rows; 250 are excluded at the source (catch-all plans 125,
+  dental 70, behavioral carve-out 20, out of state 20, per diem / case rate 10, workers' comp 5).
+* TiC, 103,300 ED rows (100,962 professional, 2,338 facility) in all 38 networks: AETNA 33,497,
+  HARVARD_PILGRIM 30,315, BCBS_MA 17,353, MGB_HP 16,115, UHC 3,675, TUFTS_HP 1,960, FALLON 385.
+  37,006 of them list POS 23 (emergency room).
+* gov fee schedules: Medicare PFS 10, OPPS 5, MassHealth 5.

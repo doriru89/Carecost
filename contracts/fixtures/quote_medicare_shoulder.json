@@ -25,6 +25,20 @@
     "care_paths_version": "1.0.0"
   },
   "sources": {
+    "bmc_mrf": {
+      "source_kind": "hospital_mrf",
+      "publisher": "Boston Medical Center",
+      "freshness": {
+        "last_updated": "2026-03-13",
+        "expected_by": "2027-03-13",
+        "late_to_refresh": false,
+        "source_rule": "hospital_mrf_365_days",
+        "fetched_at": "2026-10-25",
+        "our_refresh_due": "2026-11-25",
+        "stale_on_our_side": false,
+        "our_rule": "hospital_monthly"
+      }
+    },
     "brigham_mrf": {
       "source_kind": "hospital_mrf",
       "publisher": "Brigham and Women's Hospital",
@@ -65,6 +79,20 @@
         "our_refresh_due": "2027-01-01",
         "stale_on_our_side": false,
         "our_rule": "fee_schedule_per_release"
+      }
+    },
+    "mgh_mrf": {
+      "source_kind": "hospital_mrf",
+      "publisher": "Massachusetts General Hospital",
+      "freshness": {
+        "last_updated": "2026-03-27",
+        "expected_by": "2027-03-27",
+        "late_to_refresh": false,
+        "source_rule": "hospital_mrf_365_days",
+        "fetched_at": "2026-10-25",
+        "our_refresh_due": "2026-11-25",
+        "stale_on_our_side": false,
+        "our_rule": "hospital_monthly"
       }
     }
   },
@@ -2496,16 +2524,389 @@
   ],
   "options": [],
   "er_reference": {
-    "status": "not_loaded",
+    "status": "priced",
     "note_key": "er.visit_alone_costs_more",
     "codes": [
       "99283",
       "99284",
       "99285"
     ],
-    "low": null,
-    "high": null,
-    "includes_doctor": false,
-    "hospitals": []
+    "low": 351.63,
+    "high": 958.98,
+    "includes_doctor": true,
+    "hospitals": [
+      {
+        "site_id": "massachusetts_general_hospital",
+        "name": "Massachusetts General Hospital",
+        "distance_km": 0.93,
+        "levels": [
+          {
+            "code": "99283",
+            "facility": {
+              "kind": "money",
+              "low": 328.79,
+              "high": 328.79,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "mgh_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba.zip",
+                "source_sha256": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "mgh_mrf:5be51f8464a8:43238",
+                "payer_id": "MEDICARE",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 72.74,
+              "high": 72.74,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26d",
+                "source_kind": "medicare_pfs",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13039:facility:01",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            }
+          },
+          {
+            "code": "99284",
+            "facility": {
+              "kind": "money",
+              "low": 505.69,
+              "high": 505.69,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "mgh_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba.zip",
+                "source_sha256": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "mgh_mrf:5be51f8464a8:43244",
+                "payer_id": "MEDICARE",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 123.62,
+              "high": 123.62,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26d",
+                "source_kind": "medicare_pfs",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13040:facility:01",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            }
+          },
+          {
+            "code": "99285",
+            "facility": {
+              "kind": "money",
+              "low": 779.71,
+              "high": 779.71,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "mgh_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba.zip",
+                "source_sha256": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "mgh_mrf:5be51f8464a8:43212",
+                "payer_id": "MEDICARE",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 179.27,
+              "high": 179.27,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26d",
+                "source_kind": "medicare_pfs",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13041:facility:01",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            }
+          }
+        ]
+      },
+      {
+        "site_id": "tufts_medical_center",
+        "name": "Tufts Medical Center",
+        "distance_km": 1.29,
+        "levels": [
+          {
+            "code": "99283",
+            "facility": {
+              "kind": "money",
+              "low": 278.89,
+              "high": 278.89,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_kind": "medicare_opps",
+                "source_file": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b.zip",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "cms_opps_addb_2026q4:2fc507a1fa67:11561:opps",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 72.74,
+              "high": 72.74,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26d",
+                "source_kind": "medicare_pfs",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13039:facility:01",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            }
+          },
+          {
+            "code": "99284",
+            "facility": {
+              "kind": "money",
+              "low": 426.3,
+              "high": 426.3,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_kind": "medicare_opps",
+                "source_file": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b.zip",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "cms_opps_addb_2026q4:2fc507a1fa67:11562:opps",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 123.62,
+              "high": 123.62,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26d",
+                "source_kind": "medicare_pfs",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13040:facility:01",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            }
+          },
+          {
+            "code": "99285",
+            "facility": {
+              "kind": "money",
+              "low": 608.43,
+              "high": 608.43,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_opps_addb_2026q4",
+                "source_kind": "medicare_opps",
+                "source_file": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b.zip",
+                "source_sha256": "2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "cms_opps_addb_2026q4:2fc507a1fa67:11563:opps",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 179.27,
+              "high": 179.27,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26d",
+                "source_kind": "medicare_pfs",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13041:facility:01",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            }
+          }
+        ]
+      },
+      {
+        "site_id": "boston_medical_center",
+        "name": "Boston Medical Center",
+        "distance_km": 3.08,
+        "levels": [
+          {
+            "code": "99283",
+            "facility": {
+              "kind": "money",
+              "low": 317.11,
+              "high": 317.11,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "bmc_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "77660f57289afcf250bc03eff8ef68819b813eb0b85d82e8e3a413c45c19ecde.zip",
+                "source_sha256": "77660f57289afcf250bc03eff8ef68819b813eb0b85d82e8e3a413c45c19ecde",
+                "source_date": "2026-03-13",
+                "method": "stated",
+                "row_ref": "bmc_mrf:77660f57289a:63984",
+                "payer_id": "MEDICARE",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 72.74,
+              "high": 72.74,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26d",
+                "source_kind": "medicare_pfs",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13039:facility:01",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            }
+          },
+          {
+            "code": "99284",
+            "facility": {
+              "kind": "money",
+              "low": 484.72,
+              "high": 484.72,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "bmc_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "77660f57289afcf250bc03eff8ef68819b813eb0b85d82e8e3a413c45c19ecde.zip",
+                "source_sha256": "77660f57289afcf250bc03eff8ef68819b813eb0b85d82e8e3a413c45c19ecde",
+                "source_date": "2026-03-13",
+                "method": "stated",
+                "row_ref": "bmc_mrf:77660f57289a:63985",
+                "payer_id": "MEDICARE",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 123.62,
+              "high": 123.62,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26d",
+                "source_kind": "medicare_pfs",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13040:facility:01",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            }
+          },
+          {
+            "code": "99285",
+            "facility": {
+              "kind": "money",
+              "low": 691.81,
+              "high": 691.81,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "bmc_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "77660f57289afcf250bc03eff8ef68819b813eb0b85d82e8e3a413c45c19ecde.zip",
+                "source_sha256": "77660f57289afcf250bc03eff8ef68819b813eb0b85d82e8e3a413c45c19ecde",
+                "source_date": "2026-03-13",
+                "method": "stated",
+                "row_ref": "bmc_mrf:77660f57289a:63986",
+                "payer_id": "MEDICARE",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 179.27,
+              "high": 179.27,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26d",
+                "source_kind": "medicare_pfs",
+                "source_file": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6.zip",
+                "source_sha256": "521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6",
+                "source_date": "2026-10-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26d:521ff0f4ecbf:13041:facility:01",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            }
+          }
+        ]
+      }
+    ]
   }
 }

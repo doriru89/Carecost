@@ -41,7 +41,7 @@ def build_report(
     rows = pq.read_table(build_dir / "rate_row.parquet", columns=COLS).to_pylist()
     entities = [s.hospital_entity for s in sources.rate_row_sources]
     n_h = len(entities)
-    target = sorted(codes.codes, key=lambda c: (codes.domains_for(c)[0], c))
+    target = sorted(codes.codes, key=lambda c: (codes.group_for(c), c))
 
     usable = [r for r in rows if _usable(r)]
     payer_rows = [r for r in rows if r["row_kind"] == "payer_rate"]
@@ -92,7 +92,7 @@ def build_report(
         )
         for (code, h, p), amts in sorted(cell.items()):
             w.writerow([
-                code, "/".join(codes.domains_for(code)), h, p, len(amts),
+                code, codes.group_for(code), h, p, len(amts),
                 f"{min(amts):.2f}", f"{statistics.median(amts):.2f}", f"{max(amts):.2f}",
             ])  # fmt: skip
 
@@ -155,7 +155,7 @@ def build_report(
     for c in target:
         b = bl.get(c, {})
         L.append(
-            f"| {'/'.join(codes.domains_for(c))} | {c} | {codes.description(c)} | "
+            f"| {codes.group_for(c)} | {c} | {codes.description(c)} | "
             f"{b.get('db_hosp_mrf', '?')} → **{len(by_code_h.get(c, ()))}** | {b.get('files_payer_dollar', '?')} | "
             f"{b.get('db_mrf_rows', '?')} → **{by_code_rows.get(c, 0)}** | {pct_only.get(c, 0)} | {alg_only.get(c, 0)} |"
         )

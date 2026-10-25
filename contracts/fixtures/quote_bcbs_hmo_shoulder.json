@@ -26529,16 +26529,335 @@
   ],
   "options": [],
   "er_reference": {
-    "status": "not_loaded",
+    "status": "priced",
     "note_key": "er.visit_alone_costs_more",
     "codes": [
       "99283",
       "99284",
       "99285"
     ],
-    "low": null,
-    "high": null,
+    "low": 371.28,
+    "high": 1315.7,
     "includes_doctor": false,
-    "hospitals": []
+    "hospitals": [
+      {
+        "site_id": "mount_auburn_hospital",
+        "name": "Mount Auburn Hospital",
+        "distance_km": 0.77,
+        "levels": [
+          {
+            "code": "99283",
+            "facility": {
+              "kind": "money",
+              "low": 435.54,
+              "high": 435.54,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:11230",
+                "payer_id": "BCBS_MA",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 117.55,
+              "high": 117.55,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:24030",
+                "payer_id": "BCBS_MA",
+                "row_id": "5da17bb808115dbd:0"
+              },
+              "prov_high": null
+            }
+          },
+          {
+            "code": "99284",
+            "facility": {
+              "kind": "money",
+              "low": 703.87,
+              "high": 703.87,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:11237",
+                "payer_id": "BCBS_MA",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 199.76,
+              "high": 199.76,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:24441",
+                "payer_id": "BCBS_MA",
+                "row_id": "5a2ea907f372f843:0"
+              },
+              "prov_high": null
+            }
+          },
+          {
+            "code": "99285",
+            "facility": {
+              "kind": "money",
+              "low": 1026.01,
+              "high": 1026.01,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "mtauburn_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c.json",
+                "source_sha256": "a9e5ac64beef14dde904cbe044b106a1b0851bc577e4b7087d6abf4ac52ab02c",
+                "source_date": "2026-04-01",
+                "method": "stated",
+                "row_ref": "mtauburn_mrf:a9e5ac64beef:11244",
+                "payer_id": "BCBS_MA",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "money",
+              "low": 289.69,
+              "high": 289.69,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_kind": "insurer_tic",
+                "source_file": "2026-10-01_Blue-Cross-and-Blue-Shield-of-Massachusetts-Inc_HMO-Blue-Fully-Insured_in-network-rates.json.gz",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e",
+                "source_date": "2026-10-01",
+                "method": "stated",
+                "row_ref": "tic_bcbs_ma_hmo_blue_fi:123c081435e7:24811",
+                "payer_id": "BCBS_MA",
+                "row_id": "2f1caa3bb38d64c5:0"
+              },
+              "prov_high": null
+            }
+          }
+        ]
+      },
+      {
+        "site_id": "cha_cambridge_hospital",
+        "name": "CHA Cambridge Hospital",
+        "distance_km": 1.38,
+        "levels": [
+          {
+            "code": "99283",
+            "facility": {
+              "kind": "money",
+              "low": 520.46,
+              "high": 520.46,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:180310",
+                "payer_id": "BCBS_MA",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            }
+          },
+          {
+            "code": "99284",
+            "facility": {
+              "kind": "money",
+              "low": 841.1,
+              "high": 841.1,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:983473",
+                "payer_id": "BCBS_MA",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            }
+          },
+          {
+            "code": "99285",
+            "facility": {
+              "kind": "money",
+              "low": 1226.05,
+              "high": 1226.05,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "cha_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
+                "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
+                "source_date": "2026-03-20",
+                "method": "stated",
+                "row_ref": "cha_mrf:2efdf1cef584:189991",
+                "payer_id": "BCBS_MA",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "site_id": "bmc_brighton_formerly_st_elizabeths",
+        "name": "BMC Brighton (Formerly St. Elizabeth's)",
+        "distance_km": 3.48,
+        "levels": [
+          {
+            "code": "99283",
+            "facility": {
+              "kind": "money",
+              "low": 371.28,
+              "high": 371.28,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "bmc_brighton_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed.zip",
+                "source_sha256": "82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed",
+                "source_date": "2026-03-13",
+                "method": "stated",
+                "row_ref": "bmc_brighton_mrf:82e4e827864c:139273",
+                "payer_id": "BCBS_MA",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            }
+          },
+          {
+            "code": "99284",
+            "facility": {
+              "kind": "money",
+              "low": 600.02,
+              "high": 600.02,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "bmc_brighton_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed.zip",
+                "source_sha256": "82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed",
+                "source_date": "2026-03-13",
+                "method": "stated",
+                "row_ref": "bmc_brighton_mrf:82e4e827864c:548416",
+                "payer_id": "BCBS_MA",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            }
+          },
+          {
+            "code": "99285",
+            "facility": {
+              "kind": "money",
+              "low": 874.63,
+              "high": 874.63,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "bmc_brighton_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed.zip",
+                "source_sha256": "82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed",
+                "source_date": "2026-03-13",
+                "method": "stated",
+                "row_ref": "bmc_brighton_mrf:82e4e827864c:548418",
+                "payer_id": "BCBS_MA",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "doctor": {
+              "kind": "not_published",
+              "what": "this insurer's rate for this doctor group and item",
+              "ask": "Ask the office which doctor group bills for it and what your plan pays.",
+              "searched": {
+                "source_id": "tic_bcbs_ma_hmo_blue_fi",
+                "source_sha256": "123c081435e742cd95c575534ab913b86a268a3b67d7a3c5ac3ba8fa961efc2e"
+              }
+            }
+          }
+        ]
+      }
+    ]
   }
 }
