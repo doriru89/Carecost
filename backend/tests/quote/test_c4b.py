@@ -535,3 +535,28 @@ def test_offered_unpriced_step_is_an_estimate_not_partial(engine, store, registr
         "afc_watertown",
         "includes_estimate",
     )
+
+
+def test_er_facility_fee_reads_emergency_room_rows_only(engine, store):
+    """main 2026-10-25: BMC bills 99283 under revenue code 0520 (a clinic, $122.40 self-pay) and
+    0450 (the ER, $650.70). Only 045x rows, or rows with no revenue code (CHA), price the ER."""
+    bmc = [r for r in store.rows if r.source_id == "bmc_mrf" and r.code == "99283"
+           and r.discounted_cash is not None]  # fmt: skip
+    assert {(r.rev_code, r.discounted_cash) for r in bmc} >= {("0520", 122.4), ("0450", 650.7)}
+    q = engine._context(QuoteRequest.model_validate({
+        "payment": CASH, "care_path_id": STOMACH, "answers": {}, "service_codes": [],
+        "picked_by": "person", "site_ids": None}), AS_OF)  # fmt: skip
+    site = engine.reg.sites["boston_medical_center"]
+    qe = replace(q, rev_prefixes=tuple(engine.cfg["er_reference"]["rev_code_prefixes"]))
+    er_cell = engine._facility_cell(site, "99283", qe, "er")[0]
+    assert (er_cell["low"], er_cell["high"]) == (650.7, 650.7)
+    clinic = engine._facility_cell(site, "99283", q, "er")[0]  # without the ER filter
+    assert clinic["low"] == 122.4
+    er = _q(engine, CASH).er_reference  # from City Hall: BMC is one of the 3
+    b = next(h for h in er.hospitals if h.site_id == "boston_medical_center")
+    lv3 = next(lv for lv in b.levels if lv.code == "99283")
+    assert lv3.facility.low == 650.7 and er.low > 122.4
+    cha = [r for r in store.rows if r.source_id == "cha_mrf" and r.code in ED]
+    assert cha and all(not r.rev_code for r in cha)  # CHA's ED rows carry no revenue code: kept
+    q2 = replace(q, rev_prefixes=("045",))
+    assert q2.rows_ok(cha) == cha

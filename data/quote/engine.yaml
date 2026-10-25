@@ -179,6 +179,11 @@ referral_answers: [hmo_referral_required, unsure]
 er_reference:
   codes: ["99283", "99284", "99285"]
   hospitals: 3
+  # main 2026-10-25: a hospital-file row prices the ER facility fee only when its revenue code
+  # (zero-padded to 4) starts with one of these (045x = emergency room) or it has no revenue
+  # code (CHA's ED rows carry none). BMC's 99283 under 0520 (a clinic, $122.40 self-pay) is not
+  # an ER visit. TiC and fee-schedule rows carry no revenue code.
+  rev_code_prefixes: ["045"]
 
 # P11 you-pay per payer (insurance). Payers not listed use `default`.
 you_pay:

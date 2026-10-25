@@ -22765,7 +22765,7 @@
       "99284",
       "99285"
     ],
-    "low": 122.4,
+    "low": 483.6,
     "high": 3000.0,
     "includes_doctor": false,
     "hospitals": [
@@ -22948,7 +22948,7 @@
             "code": "99283",
             "facility": {
               "kind": "money",
-              "low": 122.4,
+              "low": 483.602,
               "high": 483.602,
               "basis": "discounted_cash",
               "prov": {
@@ -22958,21 +22958,11 @@
                 "source_sha256": "82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed",
                 "source_date": "2026-03-13",
                 "method": "stated",
-                "row_ref": "bmc_brighton_mrf:82e4e827864c:17702",
-                "payer_id": null,
-                "row_id": null
-              },
-              "prov_high": {
-                "source_id": "bmc_brighton_mrf",
-                "source_kind": "hospital_mrf",
-                "source_file": "82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed.zip",
-                "source_sha256": "82e4e827864c09cc80a2b3fc3bcd6cef87815181ab74ba5ca579217bd951c0ed",
-                "source_date": "2026-03-13",
-                "method": "stated",
                 "row_ref": "bmc_brighton_mrf:82e4e827864c:1087",
                 "payer_id": null,
                 "row_id": null
-              }
+              },
+              "prov_high": null
             },
             "doctor": {
               "kind": "no_source",

@@ -52,7 +52,7 @@ import re
 import statistics
 from collections import defaultdict
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import cached_property
 from datetime import date
 from typing import Any
@@ -228,6 +228,15 @@ class Req:
     networks: list[str]
     as_of: date
     posted: dict[str, SourceMeta] = field(default_factory=dict)
+    rev_prefixes: tuple[str, ...] | None = None  # C4b ER: hospital-file rows' allowed rev codes
+
+    def rows_ok(self, rows: list[Row]) -> list[Row]:
+        """Hospital-file rows this request may read. The ER reference reads only emergency-room
+        rows: revenue code 045x, or no revenue code (CHA's ED rows carry none)."""
+        if self.rev_prefixes is None:
+            return rows
+        return [r for r in rows if not r.rev_code
+                or r.rev_code.zfill(4).startswith(self.rev_prefixes)]  # fmt: skip
 
 
 class Engine:
@@ -477,7 +486,7 @@ class Engine:
                     True,
                     None,
                 )
-            rows = [r for c in loaded for r in self._cash_rows(src, c)]
+            rows = q.rows_ok([r for c in loaded for r in self._cash_rows(src, c)])
             m = self._money(rows, lambda r: r.discounted_cash, PriceBasis.discounted_cash)
             if m:
                 return m, all(r.component == "facility" for r in rows), list_price
@@ -496,6 +505,7 @@ class Engine:
                     rows = self._hospital_rows(src, loaded, q.payer or "",
                                                {"commercial", "connector", "unknown"}, q.product,
                                                mods=("TC",))  # fmt: skip
+                rows = q.rows_ok(rows)
                 first, pct = self._dollar_or_pct(rows, src)
                 confirmed = all(r.component == "facility" for r in rows if r.amount is not None)
             tic = None
@@ -559,7 +569,7 @@ class Engine:
         own = None
         if src and loaded:
             lobs = {"medicare"} if q.kind == "medicare" else {"medicaid"}
-            rows = self._hospital_rows(src, loaded, q.payer or "", lobs, None)
+            rows = q.rows_ok(self._hospital_rows(src, loaded, q.payer or "", lobs, None))
             if q.kind == "masshealth":  # not the standard MassHealth plan (engine.yaml)
                 bad = [w.upper() for w in self.cfg["masshealth_plan_exclude"]]
                 rows = [r for r in rows if not any(w in r.plan_raw.upper() for w in bad)]
@@ -2414,6 +2424,9 @@ class Engine:
             if src not in near or (hosp_like, d, s.id) < (near[src][0], near[src][1],
                                                          near[src][2].id):  # fmt: skip
                 near[src] = (hosp_like, d, s)
+        # main 2026-10-25: BMC also bills 99283 at a clinic (revenue code 0520, $122.40 self-pay):
+        # only emergency-room rows (045x) or rows with no revenue code price the ER facility fee
+        qe = replace(q, rev_prefixes=tuple(str(p) for p in cfg["rev_code_prefixes"]))
         hosp = [(d, s) for _, d, s in sorted(near.values(), key=lambda t: (t[1], t[2].id))][
             : int(cfg["hospitals"])
         ]
@@ -2424,7 +2437,7 @@ class Engine:
         for d, s in hosp:
             levels = []
             for code in codes:
-                fac = self._facility_cell(s, code, q, "er")[0]
+                fac = self._facility_cell(s, code, qe, "er")[0]
                 doc = self._doctor_cell(s, it, code, "", q, hospital_line=True)[0]
                 levels.append({"code": code, "facility": fac, "doctor": doc})
                 if fac["kind"] == "money":
