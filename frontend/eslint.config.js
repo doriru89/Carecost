@@ -24,17 +24,18 @@ export default tseslint.config(
     },
   },
   {
-    files: ["src/features/**/*.{ts,tsx}"],
+    // The price tool (src/app) reads data only through the generated contracts and its own api/;
+    // it must not reach into the legacy marketing site (src/pages, src/config) or the old
+    // pre-contract JSON (src/generated/*.json). `npx eslint src/app --max-warnings=0` makes it fail.
+    files: ["src/app/**/*.{ts,tsx}"],
     rules: {
-      // Fail-only scaffolding phase: warn on broad cross-feature imports.
       "no-restricted-imports": [
         "warn",
         {
           patterns: [
             {
-              group: ["@/features/*/*"],
-              message:
-                "Import from your own feature or shared modules only; avoid cross-feature coupling.",
+              group: ["@/pages/*", "@/config/*", "@/generated/*.json"],
+              message: "src/app uses the generated contracts (@/generated/contracts/*) and its own api/, not the legacy site or pre-contract JSON.",
             },
           ],
         },

@@ -1,6 +1,7 @@
 /**
- * Distance is computed only in the browser (§4.3, D1): the quote request has no location field,
- * and nothing here sends one anywhere. A typed ZIP is looked up in a bundled MA centroid table.
+ * Distance is computed in the browser (§4.3, D1). A typed ZIP is looked up in a bundled MA centroid
+ * table. Since C2 the quote request carries a `near` point so the server can pick the closest sites;
+ * only `quoteBody()` in api/client.ts sends it (a device fix rounded to 2 decimals).
  */
 import zipTable from "../content/ma_zips.json";
 

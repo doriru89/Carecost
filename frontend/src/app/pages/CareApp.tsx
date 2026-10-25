@@ -7,10 +7,11 @@ import { CHAT_REPLY_FULL_PAGE } from "@/contracts/exhaustive";
 import type { Catalog, CatalogPath, CatalogService } from "@/generated/contracts/catalog";
 import type { CandidatePath, ChatRequest, RedFlagReply, ServiceRef } from "@/generated/contracts/chat_api";
 import type { Payment, QuoteRequest } from "@/generated/contracts/quote_api";
-import { ApiError, getApi, NoMockData } from "../api/client";
+import { ApiError, getApi, nearFor, NoMockData } from "../api/client";
 import { ChatPane, type ChatTurn } from "../components/ChatPane";
 import { PaymentSelect } from "../components/PaymentSelect";
-import { ResultsPane, type QuoteState, type ResultsView } from "../components/ResultsPane";
+import { ResultsPane, type QuoteState, type ResultsView, type SitePick } from "../components/ResultsPane";
+import type { SiteScope } from "../lib/sites";
 import { SplitView, type SplitState } from "../components/SplitView";
 import type { UserLocation } from "../lib/geo";
 import { paymentId } from "../lib/payments";
@@ -21,8 +22,21 @@ const MAX_HISTORY = 6;
 
 type Query = Pick<QuoteRequest, "care_path_id" | "service_codes" | "picked_by">;
 
-function requestKey(payment: Payment, q: Query): string {
-  return `${paymentId(payment)}|${q.care_path_id ?? q.service_codes.join(",")}|${q.picked_by}`;
+function requestKey(payment: Payment, q: Query, where = ""): string {
+  return `${paymentId(payment)}|${q.care_path_id ?? q.service_codes.join(",")}|${q.picked_by}|${where}`;
+}
+
+/** The part of the request key that depends on location: the `near` point quoteBody() will send. */
+function whereKey(mode: "mock" | "api", location: UserLocation | null): string {
+  if (mode === "mock") return "";
+  const n = nearFor(location);
+  return n ? `${n.lat},${n.lon}` : "overall";
+}
+
+function siteScope(mode: "mock" | "api", location: UserLocation | null): SiteScope {
+  if (mode === "mock") return { kind: "fixture" };
+  if (!location || !nearFor(location)) return { kind: "overall" };
+  return { kind: "near", label: location.kind === "device" ? "you" : location.label };
 }
 
 declare global {
@@ -55,6 +69,7 @@ export default function CareApp() {
 
   const [view, setView] = useState<ResultsView>("receipt");
   const [location, setLocation] = useState<UserLocation | null>(null);
+  const [pick, setPick] = useState<SitePick>({ sort: "price", selected: null });
   const [split, setSplit] = useState<SplitState>({ orientation: "side", swapped: false });
   const [phoneTab, setPhoneTab] = useState<"chat" | "prices">("chat");
   const [catalog, setCatalog] = useState<Catalog | null>(null);
@@ -69,7 +84,7 @@ export default function CareApp() {
   // ---- quotes: one request per (payment, query); cached so switching back is instant
   useEffect(() => {
     if (!payment || !query) return;
-    const key = requestKey(payment, query);
+    const key = requestKey(payment, query, whereKey(api.mode, location));
     const hit = cache.current.get(key);
     if (hit) {
       setQuoteState(hit);
@@ -78,9 +93,9 @@ export default function CareApp() {
     let live = true;
     setQuoteState((s) => (s.status === "ok" ? s : { status: "loading", key }));
     api
-      .quote({ payment, ...query, answers, site_ids: null })
+      .quote({ payment, ...query, answers, site_ids: null }, { location })
       .then((quote) => {
-        const st: QuoteState = { status: "ok", key, quote };
+        const st: QuoteState = { status: "ok", key, quote, scope: siteScope(api.mode, location) };
         cache.current.set(key, st);
         if (live) setQuoteState(st);
       })
@@ -94,7 +109,7 @@ export default function CareApp() {
     return () => {
       live = false;
     };
-  }, [api, payment, query]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [api, payment, query, location]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---- the <300 ms check: time from the payment change to the new receipt being committed
   useEffect(() => {
@@ -109,7 +124,7 @@ export default function CareApp() {
   }, [quoteState]);
 
   const changePayment = (p: Payment) => {
-    if (query) switchStart.current = { t: performance.now(), key: requestKey(p, query) };
+    if (query) switchStart.current = { t: performance.now(), key: requestKey(p, query, whereKey(api.mode, location)) };
     setPayment(p);
   };
 
@@ -205,6 +220,7 @@ export default function CareApp() {
     setConversationId(null);
     setQuery(null);
     setQuoteState({ status: "idle" });
+    setPick({ sort: "price", selected: null });
     setPhase("start");
     navigate("/");
   };
@@ -344,6 +360,8 @@ export default function CareApp() {
             onPickService={(s) => pickService(s)}
             location={location}
             onLocation={setLocation}
+            pick={pick}
+            onPick={setPick}
           />
         }
       />

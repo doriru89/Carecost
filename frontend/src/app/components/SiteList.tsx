@@ -1,8 +1,8 @@
 import { t } from "@/contracts/copy";
 import { cn } from "@/lib/utils";
 import { milesText } from "../lib/geo";
-import { totalText } from "../lib/receipt";
-import type { SiteView, SortMode } from "../lib/sites";
+import { dataNoticeKey, totalText } from "../lib/receipt";
+import type { SiteScope, SiteView, SortMode } from "../lib/sites";
 import { Booking } from "./Booking";
 
 const BILLING_TAG: Record<string, string> = {
@@ -11,6 +11,30 @@ const BILLING_TAG: Record<string, string> = {
   asc: "Surgery center",
   unknown: "Billing not confirmed",
 };
+
+/** Says which sites the response holds: nearest to the person's point, or the best value overall (C2). */
+export function ScopeNote({ scope, count }: { scope: SiteScope; count: number }) {
+  const text =
+    scope.kind === "near"
+      ? t("list.scope_near", { n: count, label: scope.label })
+      : scope.kind === "overall"
+        ? t("list.scope_overall", { n: count })
+        : t("list.scope_fixture", { n: count });
+  return (
+    <p className="text-[11px] text-muted-foreground" data-testid="site-scope" data-scope={scope.kind}>
+      {text}
+    </p>
+  );
+}
+
+/** D27: a pediatric-only site. The server quotes one only when the request names it. */
+export function ChildrenOnlyBadge() {
+  return (
+    <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[11px] font-medium text-violet-900" data-testid="children-only">
+      {t("site.children_only")}
+    </span>
+  );
+}
 
 export function SiteCard({ v, selected, onOpen }: { v: SiteView; selected?: boolean; onOpen: () => void }) {
   const { site, receipt } = v.sq;
@@ -47,7 +71,13 @@ export function SiteCard({ v, selected, onOpen }: { v: SiteView; selected?: bool
             <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-800">Walk-in today</span>
           )}
           {site.hours_label === "may_close_early" && <span className="rounded-full bg-amber-50 px-2 py-0.5">May close early</span>}
+          {site.children_only && <ChildrenOnlyBadge />}
         </div>
+        {site.data_notices.map((n) => (
+          <p key={n.id} className="mt-1 text-[11px] text-warn" data-testid="data-notice">
+            {t(dataNoticeKey(n.kind))}
+          </p>
+        ))}
       </button>
       <div className="mt-2">
         <Booking site={site} compact />
@@ -63,6 +93,7 @@ export function SiteList({
   selectedId,
   onOpen,
   hasLocation,
+  scope,
 }: {
   views: SiteView[];
   sort: SortMode;
@@ -70,6 +101,7 @@ export function SiteList({
   selectedId: string | null;
   onOpen: (siteId: string) => void;
   hasLocation: boolean;
+  scope?: SiteScope | null;
 }) {
   const opts: { id: SortMode; label: string }[] = [
     { id: "price", label: "Price" },
@@ -78,6 +110,7 @@ export function SiteList({
   ];
   return (
     <div className="space-y-2" data-testid="site-list">
+      {scope && <ScopeNote scope={scope} count={views.length} />}
       <div className="flex items-center gap-1 text-xs" role="radiogroup" aria-label="Sort by">
         <span className="text-muted-foreground mr-1">Sort:</span>
         {opts.map((o) => (

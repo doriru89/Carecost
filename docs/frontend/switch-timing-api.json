@@ -3,32 +3,32 @@
   "width": 375,
   "switches": [
    {
-    "ms": 17.900000005960464,
-    "key": "cash|shoulder_chronic_clicking_v1|person"
+    "ms": 18.599999994039536,
+    "key": "cash|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 16.5,
-    "key": "medicare|shoulder_chronic_clicking_v1|person"
+    "ms": 18,
+    "key": "medicare|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 15,
-    "key": "masshealth|shoulder_chronic_clicking_v1|person"
+    "ms": 17.700000017881393,
+    "key": "masshealth|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 15.199999988079071,
-    "key": "BCBS_MA:PPO|shoulder_chronic_clicking_v1|person"
+    "ms": 19.900000005960464,
+    "key": "BCBS_MA:PPO|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 10.599999994039536,
-    "key": "AETNA:PPO|shoulder_chronic_clicking_v1|person"
+    "ms": 17,
+    "key": "AETNA:PPO|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 7.4000000059604645,
-    "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person"
+    "ms": 8.699999988079071,
+    "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 6.5999999940395355,
-    "key": "cash|shoulder_chronic_clicking_v1|person"
+    "ms": 7.399999976158142,
+    "key": "cash|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    }
   ]
  },
@@ -36,32 +36,32 @@
   "width": 1280,
   "switches": [
    {
-    "ms": 13.400000005960464,
-    "key": "cash|shoulder_chronic_clicking_v1|person"
+    "ms": 17.099999994039536,
+    "key": "cash|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 15.600000023841858,
-    "key": "medicare|shoulder_chronic_clicking_v1|person"
+    "ms": 18.599999994039536,
+    "key": "medicare|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 15.5,
-    "key": "masshealth|shoulder_chronic_clicking_v1|person"
+    "ms": 18.200000017881393,
+    "key": "masshealth|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 15,
-    "key": "BCBS_MA:PPO|shoulder_chronic_clicking_v1|person"
+    "ms": 19.599999994039536,
+    "key": "BCBS_MA:PPO|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 14.5,
-    "key": "AETNA:PPO|shoulder_chronic_clicking_v1|person"
+    "ms": 16.399999976158142,
+    "key": "AETNA:PPO|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 9.200000017881393,
-    "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person"
+    "ms": 10.599999994039536,
+    "key": "BCBS_MA:HMO|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    },
    {
-    "ms": 4.0999999940395355,
-    "key": "cash|shoulder_chronic_clicking_v1|person"
+    "ms": 10.099999994039536,
+    "key": "cash|shoulder_chronic_clicking_v1|person|42.377,-71.1256"
    }
   ]
  }

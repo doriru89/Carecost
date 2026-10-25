@@ -4,6 +4,13 @@ import { openStatus, type BostonNow, type OpenStatus } from "./hours";
 
 export type SortMode = "price" | "nearest" | "open_today";
 
+/**
+ * Which sites the response holds (C2). `near`: the max_sites closest to the person's point.
+ * `overall`: no location was sent, so the server returned the best-ranked sites (I7) of the whole
+ * registry; the list must not call them "nearest". `fixture`: mock mode's committed test data.
+ */
+export type SiteScope = { kind: "near"; label: string } | { kind: "overall" } | { kind: "fixture" };
+
 export interface SiteView {
   sq: SiteQuote;
   /** I7 rank from the engine (0 = best) */

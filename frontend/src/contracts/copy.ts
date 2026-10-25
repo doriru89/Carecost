@@ -10,7 +10,7 @@
  * person owes). The UI never shows the review flag; `copy.test.ts` lists them.
  */
 import type { AiPausedReply, CarePathsReply, LlmInvalidReply } from "@/generated/contracts/chat_api";
-import type { SourceKind } from "@/generated/contracts/quote_api";
+import type { ReceiptLine, SourceKind } from "@/generated/contracts/quote_api";
 import {
   COMPONENT_LABEL_KEY,
   EXCLUDED_REASON_KEY,
@@ -51,9 +51,20 @@ export type ContractCopyKey =
   | `tier.${keyof typeof TIER_ORDER}`
   | AiPausedReply["message_key"]
   | LlmInvalidReply["message_key"]
-  | CarePathsReply["copy_keys"][number];
+  | CarePathsReply["copy_keys"][number]
+  | ReceiptLine["price_notes"][number];
 
 export const CONTRACT_COPY = {
+  // ---- C2 price notes: how a line's number was made (ReceiptLine.price_notes)
+  "price.national_unadjusted": {
+    en: "Medicare's national rate, not adjusted for Boston",
+    review: true,
+  },
+  "price.anesthesia_base_units_only": {
+    en: "Anesthesia base units only. The time units depend on how long the case takes and are not in this number.",
+    review: true,
+  },
+
   // ---- Gap kinds (plan §2.5): one fixed sentence each, plus the line's own `what` / `ask`
   "gap.not_published": { en: "Not published. This kind of price file exists, but this place did not list this item." },
   "gap.not_loaded": { en: "Not loaded yet. The price file exists and we have not added it yet." },
@@ -210,7 +221,10 @@ export const APP_COPY = {
   "start.chat_placeholder": { en: "Describe what's going on, e.g. my shoulder has hurt for months and clicks" },
   "start.email": { en: "Email (needed to use the AI helper; we do not verify it)" },
   "start.skip_ai": { en: "Skip AI → Browse prices" },
-  "start.privacy": { en: "Your location never leaves this browser. Distances are computed on your device." },
+  "start.privacy": {
+    en: "If you add a ZIP or your location, we send that point (your location rounded to about half a mile) with the price request, only to pick the places nearest you. We do not store it. Distances are computed on your device.",
+    review: true,
+  },
 
   "receipt.total": { en: "Estimated total billed (you + your plan)" },
   "receipt.total_floor": { en: "At least this much: some likely items have no public price." },
@@ -228,6 +242,20 @@ export const APP_COPY = {
   "receipt.per_15_minutes": { en: "per 15 minutes" },
   "receipt.per_visit": { en: "per session; repeats are not in the total" },
   "receipt.not_offered": { en: "Not offered here" },
+  "receipt.availability_unknown": { en: "Not known whether this place offers it" },
+  "site.children_only": { en: "Children only" },
+  "list.scope_near": { en: "The {n} places nearest {label}" },
+  "list.scope_overall": {
+    en: "The {n} best-value places overall. Add a ZIP or use your location to see the places nearest you.",
+  },
+  "list.scope_fixture": { en: "Test data: a fixed sample of places, not the ones nearest you." },
+  // C2 data-quality notices (data/etl/data_quality_notices.yaml, written by people): one sentence per kind
+  "data_notice.content_changed_date_unchanged": {
+    en: "This place's price file changed, but the date on it did not. We keep using the file's own date, so its prices may be newer than that date says.",
+    review: true,
+  },
+  "data_notice.generic": { en: "We noticed something unusual about this place's price file.", review: true },
+  "data_notice.details": { en: "What we saw ({date})" },
   "receipt.at_your_primary_care": {
     en: "Happens at your own primary care office, not at this place. Not priced at this place.",
   },

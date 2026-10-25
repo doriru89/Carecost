@@ -3,7 +3,7 @@
  * Components render what these return; nothing here invents a number (every dollar comes from a
  * contract Money).
  */
-import { t } from "@/contracts/copy";
+import { hasCopy, t } from "@/contracts/copy";
 import { CELL_HAS_DOLLARS, TIER_ORDER } from "@/contracts/exhaustive";
 import type {
   CertaintyTier,
@@ -63,6 +63,15 @@ export function freshnessDetail(info: SourceInfo): string {
 export function noCashDiscount(line: ReceiptLine, payment: Payment): boolean {
   if (payment.kind !== "cash" || !line.list_price || line.cell?.kind !== "money") return false;
   return line.cell.low === line.list_price.low && line.cell.high === line.list_price.high;
+}
+
+/**
+ * C2 data-quality notice (data/etl/data_quality_notices.yaml) -> its copy key. A kind the copy file does
+ * not know yet falls back to the generic sentence, never to the raw kind.
+ */
+export function dataNoticeKey(kind: string): string {
+  const key = `data_notice.${kind}`;
+  return hasCopy(key) ? key : "data_notice.generic";
 }
 
 export function cellHasDollars(line: ReceiptLine): boolean {
