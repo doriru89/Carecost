@@ -66,6 +66,15 @@ How the reply kind is chosen (code):
 - **Money in words (review 2026-10-24):** dollar(s), buck(s), usd, cent(s), grand, 美元, 美金,
   块钱, 人民币, 元 (not 单元 / 公元 / 元素) are rejected with or without a number. LlmText already
   rejected symbols and number + unit.
+- **No digits (review round 2, Austin option A):** any ASCII or full-width digit (０-９) in model
+  text is rejected and retried ("The visit runs roughly 150"). Chinese number words stay allowed
+  unless a currency unit follows. Austin accepts the residual risk of crafted sentences without
+  digits or currency words ("a few hundred out of pocket", "a classic case of a pinched nerve")
+  and over-rejections of good sentences ("It could be helpful to know..."); he judges them from the
+  review log during local testing.
+- **Re-asking with paths shown:** when a clarify reply shows candidates and `understood` answers,
+  a lead_in that ends with a question mark is dropped (the chip already carries the question).
+  Proxy for "asks for an answer already understood" (live zh run: "请确认疼痛的具体部位？").
 - The model's message is checked even when the service decides not to show it.
 - Fixed copy: `copy.not_a_diagnosis` + `copy.when_to_see_a_doctor` on every reply with candidates
   (contract). Proposed wording in `data/chat/copy.yaml` (pending Austin + 1 reader, P10); the UI copy
@@ -119,6 +128,26 @@ unsure (enforced: the allowed set), two exchanges unless specific (enforced for 
   provider's `usageMetadata` (thinking tokens counted as output). An unsettled hold counts as spent.
   Check + insert in one `BEGIN IMMEDIATE` transaction: no double spend across threads or workers.
 - A provider error settles at $0, a timeout at the full hold (it may have been billed).
+
+## Review log (local testing only)
+
+Off by default. `CARECOST_CHAT_REVIEW_LOG=1` writes one JSON line per model attempt to
+`CARECOST_CHAT_REVIEW_LOG_PATH` (default `carecost_chat_review.jsonl` in Python's temp dir; set
+it explicitly when reviewing):
+`ts`, `conversation_hash` (HMAC of the conversation id), `turn`, `attempt`, `message` (the model's
+raw message), `outcome` (`shown` / `accepted_not_shown` / `rejected` / `provider_error`), `rule`
+(`parse`, `voice`, `digits`, `money`, `condition_shapes`, `diagnostic_cues`, `contract`, `build`),
+`reason`, `final_kind`. Never logged: the person's text, history, email, IP, chip answers, the
+prompt, or unparsed model output (it may quote the person); contract reasons keep pydantic's
+location + message, not the input value. A test dumps the whole log and checks the user text,
+email and IP are absent.
+
+Print the rejected lines:
+
+```bash
+jq -c 'select(.outcome == "rejected") | {ts, turn, attempt, rule, message, reason}' \
+  "$CARECOST_CHAT_REVIEW_LOG_PATH"
+```
 
 ## Env vars
 

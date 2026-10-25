@@ -17,6 +17,8 @@
 | ``CARECOST_CHAT_GLOBAL_DAILY_USD`` | ``5.0`` | all IPs together per provider day |
 | ``CARECOST_CHAT_IP_TURN_CAP`` | ``40`` | LLM turns per hashed IP per provider day |
 | ``CARECOST_CHAT_PRICE_IN_PER_MTOK`` / ``_OUT_PER_MTOK`` | the model's list price | override the price table |
+| ``CARECOST_CHAT_REVIEW_LOG`` | off | ``1`` / ``true`` writes one JSON line per model attempt (local review only) |
+| ``CARECOST_CHAT_REVIEW_LOG_PATH`` | ``<tmp>/carecost_chat_review.jsonl`` | where those lines go |
 """
 
 from __future__ import annotations
@@ -62,6 +64,8 @@ class ChatSettings:
     price_in_per_mtok: float | None = None
     price_out_per_mtok: float | None = None
     max_output_tokens: int = 1024
+    review_log: bool = False
+    review_log_path: Path = Path(tempfile.gettempdir()) / "carecost_chat_review.jsonl"
     timeout_s: float = 20.0
 
     @classmethod
@@ -94,4 +98,8 @@ class ChatSettings:
             price_out_per_mtok=_f("CARECOST_CHAT_PRICE_OUT_PER_MTOK", -1)
             if _s("CARECOST_CHAT_PRICE_OUT_PER_MTOK")
             else None,
+            review_log=(_s("CARECOST_CHAT_REVIEW_LOG", "") or "").lower() in ("1", "true", "yes"),
+            review_log_path=Path(
+                _s("CARECOST_CHAT_REVIEW_LOG_PATH", str(cls.review_log_path)) or cls.review_log_path
+            ),
         )

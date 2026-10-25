@@ -58,7 +58,8 @@ from app.chat.llm import (
     estimate_input_tokens,
     price_per_mtok,
 )
-from app.chat.netid import hash_email, hash_ip
+from app.chat.netid import hash_email, hash_ip, keyed_hash
+from app.chat.review_log import ReviewLog, safe_reason
 from app.chat.prompt import (
     DISPOSITIONS,
     LLM_OUTPUT_SCHEMA,
@@ -269,6 +270,7 @@ class ChatService:
             settings.ip_turn_cap,
         )  # fmt: skip
         self.ledger = Ledger(settings.ledger_path, self.caps, clock)
+        self.review = ReviewLog(settings.review_log_path) if settings.review_log else None
 
     @property
     def client(self) -> LlmClient | None:
@@ -380,7 +382,17 @@ class ChatService:
                 self._paused("ip_daily_cap", resets_at(self.clock())),
                 self.budget(usage, force_paused=True),
             )
-        return self._llm_turn(req, ctx, meter, client, price, ip_hash, email_hash, cid, turn, out)
+        trail: list[dict[str, Any]] = []
+        body = self._llm_turn(
+            req, ctx, meter, client, price, ip_hash, email_hash, cid, turn, out, trail
+        )
+        if self.review is not None:
+            conv = keyed_hash(secret, "conversation", cid)
+            for row in trail:
+                row["conversation_hash"] = conv
+                row["turn"] = turn
+            self.review.write(trail, json.loads(body)["reply"]["kind"], self.clock())
+        return body
 
     # ------------------------------------------------------------------ LLM turn
 
@@ -396,6 +408,7 @@ class ChatService:
         cid: str,
         turn: int,
         out: Callable[[dict, dict], str],
+        trail: list[dict[str, Any]],
     ) -> str:
         metered = MeteredClient(client, meter)
         payload = self._payload(req, turn)
@@ -423,6 +436,7 @@ class ChatService:
             try:
                 result = metered.complete(SYSTEM_PROMPT, prompt, LLM_OUTPUT_SCHEMA)
             except ProviderError as e:
+                trail.append(self._row(attempt, None, "provider_error", None, str(e)))
                 self.ledger.settle(res, hold if e.maybe_billed else 0.0)
                 log.warning("chat: provider error: %s", e)
                 usage = self.ledger.usage(ip_hash)
@@ -432,12 +446,48 @@ class ChatService:
             self.ledger.settle(res, price.cost(result.input_tokens, result.output_tokens))
             try:
                 llm = parse_llm_json(result.text)
+            except ValueError as e:
+                # the raw text is not logged: unparsed output may quote the person's words
+                trail.append(self._row(attempt, None, "rejected", "parse", safe_reason(e)))
+                error = str(e)
+                continue
+            try:
                 reply = self._build(llm, req, turn)
-                return out(reply, self.budget(self.ledger.usage(ip_hash)))
+                body = out(reply, self.budget(self.ledger.usage(ip_hash)))
+                msg = llm.message.strip()
+                shown = bool(msg) and msg in (reply.get("lead_in"), reply.get("text"))
+                trail.append(
+                    self._row(attempt, llm.message, "shown" if shown else "accepted_not_shown")
+                )
+                return body
             except (ValueError, ValidationError) as e:  # ValidationError is a ValueError too
+                rule = (
+                    getattr(e, "rule", "guard")
+                    if isinstance(e, guard.GuardError)
+                    else "contract"
+                    if isinstance(e, ValidationError)
+                    else "build"
+                )
+                trail.append(self._row(attempt, llm.message, "rejected", rule, safe_reason(e)))
                 error = str(e)
                 log.info("chat: LLM output rejected (attempt %d): %s", attempt + 1, error[:300])
         return out(self._invalid(), self.budget(self.ledger.usage(ip_hash)))
+
+    @staticmethod
+    def _row(
+        attempt: int,
+        message: str | None,
+        outcome: str,
+        rule: str | None = None,
+        reason: str | None = None,
+    ) -> dict[str, Any]:
+        return {
+            "attempt": attempt + 1,
+            "message": message,
+            "outcome": outcome,
+            "rule": rule,
+            "reason": reason,
+        }
 
     def _payload(self, req: ChatRequest, turn: int) -> dict[str, Any]:
         reg = self.content.registries
@@ -632,6 +682,10 @@ class ChatService:
         elif dist and not entry:
             ask = dist[0]  # the code's distinguishing question when the model's pick is not allowed
         lead_in = msg if (ask is not None and ask == pick) else None
+        if lead_in and cands and understood and lead_in.rstrip().endswith(("?", "？")):
+            # live zh run: paths already shown, yet the sentence re-asked what `understood` holds.
+            # The chip carries the question itself, so a question-shaped lead_in is dropped here.
+            lead_in = None
         copy = list(CARE_PATH_COPY_KEYS) if cands else []
 
         if ask is not None:
