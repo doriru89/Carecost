@@ -5,6 +5,8 @@
                                                    one pass per network (local copy or HTTP stream)
     tic verify   --network ID,.. --local-dir DIR   seek index + range reads == full stream
     tic normalize [--network ID,..|all]            re-cut rate_row with the current target list
+    tic extend   [--network ID,..|all] [--local-dir DIR]   read only the items of codes added to
+                                                   the list since the run (R9), then normalize
     tic report   [--out DIR]                       coverage: code x payer x TIN, Boston TINs, census
     tic release  --month YYYY-MM --out DIR [--previous DIR]   per-network assets + manifest
     tic probe    --network ID [--max-mb N]         download MB/s, inflate GB/s, peak RSS
@@ -26,6 +28,7 @@ from typing import Any
 
 from app.etl import fetch
 from app.etl.config import Paths
+from app.etl.refresh import RefreshRun, with_retry
 from app.etl.tic import release as release_mod
 from app.etl.tic import report as report_mod
 from app.etl.tic.discover import discover
@@ -158,15 +161,21 @@ def _one(
 
 
 def cmd_run(a: argparse.Namespace, paths: Paths) -> int:
+    """One pass per network, one retry each (P11). A network that still fails keeps its CURRENT
+    run (old fetched_at -> stale on our side), is recorded in the fetch manifest and
+    intermediate/refresh_status.json, and alerted (app.etl.alert); the command exits 1."""
     codes = target_codes()
     discovered = json.loads(Path(a.discovered).read_text()) if a.discovered else {}
     failed = 0
+    refresh = RefreshRun(paths, "insurer TiC files (tic run)")
     for net in _select(a.network):
-        try:
-            rr = _one(net, a, paths, codes, discovered)
-        except Exception as e:  # noqa: BLE001 - one network never blocks the others
+        rr, errs = with_retry(
+            lambda net=net: _one(net, a, paths, codes, discovered), net.source_id, log=_log
+        )
+        if rr is None:
             failed += 1
-            _log(f"FAIL   {net.source_id}: {type(e).__name__}: {e}")
+            e = refresh.failed(net.source_id, errs, _last_good_run(paths, net.source_id))
+            _log(f"FAIL   {net.source_id}: {e['reason']} -> {e['status']}")
             m = tic_root(paths) / "fetch_manifest.jsonl"
             m.parent.mkdir(parents=True, exist_ok=True)
             with m.open("a") as f:
@@ -176,7 +185,8 @@ def cmd_run(a: argparse.Namespace, paths: Paths) -> int:
                             "source_id": net.source_id,
                             "payer_id": net.payer_id,
                             "status": "failed",
-                            "error": f"{type(e).__name__}: {e}",
+                            "error": e["reason"],
+                            "attempts": e["attempts"],
                             "recorded_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
                         },
                         sort_keys=True,
@@ -186,6 +196,7 @@ def cmd_run(a: argparse.Namespace, paths: Paths) -> int:
             continue
         set_current(paths, net.source_id, rr.source_sha256)
         record_fetch(paths, rr, "ok")
+        refresh.ok(net.source_id, sha256=rr.source_sha256, fetched_at=rr.fetch.get("fetched_at"))
         n = rr.normalize
         _log(
             f"OK     {net.source_id}: {rr.comp_bytes / 1e9:.2f} GB -> {rr.raw_bytes / 1e9:.1f} GB raw in "
@@ -193,7 +204,20 @@ def cmd_run(a: argparse.Namespace, paths: Paths) -> int:
             f"{rr.target_items} target items, {rr.stage['price_rows']:,} prices, "
             f"{rr.stage['group_rows']:,} groups; rate_row {n['rate_rows']:,}; index {rr.index_bytes / 1e6:.1f} MB"
         )
+    if refresh.outcomes and not refresh.finish(log=_log):
+        failed = max(failed, 1)
     return 1 if failed else 0
+
+
+def _last_good_run(paths: Paths, source_id: str) -> dict[str, Any] | None:
+    d = current_dir(paths, source_id)
+    if d is None or not (d / "run.json").exists():
+        return None
+    run = json.loads((d / "run.json").read_text())
+    return {
+        "sha256": run.get("source_sha256"),
+        "fetched_at": (run.get("fetch") or {}).get("fetched_at"),
+    }
 
 
 def cmd_verify(a: argparse.Namespace, paths: Paths) -> int:
@@ -239,6 +263,46 @@ def cmd_normalize(a: argparse.Namespace, paths: Paths) -> int:
         run["normalize"] = st.__dict__
         atomic_write_text(d / "run.json", json.dumps(run, indent=1, sort_keys=True, default=str))
         _log(f"NORM   {net.source_id}: {st.rate_rows:,} rate rows, {st.matched_tins} TINs matched")
+    return 1 if bad else 0
+
+
+def cmd_extend(a: argparse.Namespace, paths: Paths) -> int:
+    from app.etl.config import load_codes
+    from app.etl.tic.extend import extend_network
+    from app.etl.tic.networks import load_visit_map
+
+    codes = target_codes()
+    hand = {c for dom in load_codes().domains.values() for c in dom} | load_visit_map().all_codes
+    targets = load_targets()
+    bad = 0
+    for net in _select(a.network):
+        d = current_dir(paths, net.source_id)
+        if d is None:
+            _log(f"SKIP   {net.source_id}: no current run")
+            continue
+        try:
+            local = None
+            if a.local_dir:
+                got = _local_copy(net, Path(a.local_dir))
+                local = got[0] if got else None
+            e = extend_network(
+                net, d, codes, legacy=hand, allowed=allowlist(), local_copy=local, log=_log
+            )
+            run = json.loads((d / "run.json").read_text())
+            st = normalize_network(d, net, run, targets)
+            run["normalize"] = st.__dict__
+            atomic_write_text(
+                d / "run.json", json.dumps(run, indent=1, sort_keys=True, default=str)
+            )
+        except Exception as ex:  # noqa: BLE001 - one network never blocks the others
+            bad += 1
+            _log(f"FAIL   {net.source_id}: {type(ex).__name__}: {ex}")
+            continue
+        _log(
+            f"EXTEND {net.source_id}: +{e['items']} items / +{e['price_rows']:,} prices for "
+            f"{len(e['codes_in_file'])} of {len(e['codes_added'])} added codes "
+            f"({e['how']}, {e['bytes'] / 1e6:.1f} MB, {e['seconds']}s); rate_row {st.rate_rows:,}"
+        )
     return 1 if bad else 0
 
 
@@ -313,6 +377,7 @@ def cmd_probe(a: argparse.Namespace, paths: Paths) -> int:
 
 COMMANDS = {
     "discover": cmd_discover, "run": cmd_run, "verify": cmd_verify, "normalize": cmd_normalize,
+    "extend": cmd_extend,
     "report": cmd_report, "release": cmd_release, "probe": cmd_probe,
 }  # fmt: skip
 
@@ -334,6 +399,9 @@ def add_parser(sub: Any) -> None:
     v.add_argument("--local-dir", required=True)
     n = ts.add_parser("normalize")
     n.add_argument("--network", default="all")
+    x = ts.add_parser("extend")
+    x.add_argument("--network", default="all")
+    x.add_argument("--local-dir", default=None)
     rp = ts.add_parser("report")
     rp.add_argument("--out", default=None)
     rl = ts.add_parser("release")

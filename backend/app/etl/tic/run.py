@@ -86,6 +86,7 @@ class RunResult:
     stage: dict[str, Any] = field(default_factory=dict)
     normalize: dict[str, Any] = field(default_factory=dict)
     out_dir: str = ""
+    target_codes: list[str] = field(default_factory=list)  # the code list this run was cut for (R9)
 
 
 class _Tee:
@@ -224,6 +225,7 @@ def run_pass(
         ),
         stage=json.loads(stats_json(st)),
         out_dir=str(out),
+        target_codes=sorted(codes),
     )
     atomic_write_text(work / "run.json", json.dumps(asdict(rr), indent=1, sort_keys=True))
     if out.exists():

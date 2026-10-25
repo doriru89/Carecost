@@ -1131,3 +1131,11 @@ GB0397,PM PEDIATRICS AT WOBURN,urgent_care,tin,821363644,org,clinic-census.csv t
 ,AFC Urgent Care franchisee,urgent_care,tin,454478857,research,clinic-census.md §0.3 AFC franchisee TINs
 ,AFC Urgent Care franchisee,urgent_care,tin,463251869,research,clinic-census.md §0.3 AFC franchisee TINs
 ,AFC Urgent Care franchisee,urgent_care,tin,813416211,research,clinic-census.md §0.3 AFC franchisee TINs
+,SOUTH SHORE RADIOLOGICAL ASSOCIATES,radiology_group,tin,042473747,org,radiology_groups.yaml readers at newton_wellesley
+,SCHATZKI ASSOCIATES INC,radiology_group,tin,042482067,org,radiology_groups.yaml readers at mtauburn
+,NEB RADIOLOGY PC,radiology_group,tin,043034933,org,radiology_groups.yaml readers at nebh
+,PRATT NEUROSURGICAL ASSOC,radiology_group,tin,043096445,org,radiology_groups.yaml readers at tufts
+,PRATT RADIOLOGY ASSOCIATES,radiology_group,tin,043148388,org,radiology_groups.yaml readers at tufts
+,MASS GENERAL BRIGHAM COMMUNITY,radiology_group,tin,043236175,org,radiology_groups.yaml readers at newton_wellesley
+,CHILDRENS HOSPITAL RADIOLOGY,radiology_group,tin,043259647,org,radiology_groups.yaml readers at childrens
+,TMC RADIOLOGY CRA LLC,radiology_group,tin,873928715,org,radiology_groups.yaml readers at tufts
