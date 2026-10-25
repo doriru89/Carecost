@@ -49,6 +49,7 @@ from __future__ import annotations
 
 import math
 import re
+import statistics
 from collections import defaultdict
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
@@ -263,6 +264,10 @@ class Engine:
         self._code_offer: dict[tuple[str, str], bool] = {}
         self._stats: dict[tuple, dict] = {}
         self._peer_cache: dict[tuple, tuple[list, str]] = {}
+        cl = REPO_ROOT / cfg["contract_levels_file"]
+        self.contract_levels: dict[str, dict[str, float]] = (
+            (yaml_load(cl) or {}).get("groups") or {} if cl.exists() else {}
+        )
         self._admitted_cache: dict[tuple, list[str]] = {}
         self._universe: dict[tuple, Json] = {}
         # fee schedules: every loaded file of a kind (Medicare PFS = RVU file + anesthesia file;
@@ -1438,6 +1443,15 @@ class Engine:
         for v, r in rows:
             got = median_for(self._net(r))
             if got and not lo_x * got[0] <= v <= hi_x * got[0]:
+                side = "high" if v > hi_x * got[0] else "low"
+                if self._contract_level(site, self._group(r), ln["codes"][0], q, side):
+                    # Austin 2026-10-25: a group consistently this far from its peers is its
+                    # contract, not a data error: summed, real price, with a note
+                    kept.append(r)
+                    note = f"price.group_consistently_{'higher' if side == 'high' else 'lower'}"
+                    if note not in ln["price_notes"]:
+                        ln["price_notes"].append(note)
+                    continue
                 out.append(r)
                 first = first or got
             else:
@@ -1453,6 +1467,41 @@ class Engine:
             "peer_median": first[0], "n_groups": first[1], "whole_line": False,
             "set_aside": [self._money(out, value, basis, method)],
         }  # fmt: skip
+
+    def contract_key(self, site: Site, group: str, q: Req) -> str:
+        return f"{site.id}|{group}|{q.kind}|{q.payer or ''}|{q.product}"
+
+    def contract_ratios(self, site: Site, group: str, q: Req) -> dict[str, float]:
+        """O ``contract_level`` (app/audit/causes.py), reimplemented on the engine's peer sets:
+        the group's lower-median price / its peer median (same network, same kind) for every
+        code-modifier-component the group prices at this site. Offline only (it prices every
+        code at every site): python -m app.quote.contract_levels writes the table."""
+        net = group.split("@", 1)[1] if "@" in group else "hospital_file"
+        ratios: dict[str, float] = {}
+        for c in sorted(self.store.codes):
+            per = self._line_stats(c, q).get(site.id, {})
+            for (comp, pmod), ents in per.items():
+                vals = sorted(v for v, g, _ in ents if g == group)
+                if not vals:
+                    continue
+                peers, _ = self._peers(site, c, comp, pmod, q, estimate=False, network=net)
+                if len(peers) < self.out_cfg["min_groups"]:
+                    continue
+                med = _lower_median([v for v, _ in peers])
+                if med > 0:
+                    ratios[f"{c}-{pmod}-{comp}"] = round(vals[(len(vals) - 1) // 2] / med, 4)
+        return ratios
+
+    def _contract_level(self, site: Site, group: str, code: str, q: Req, side: str) -> bool:
+        """Austin 2026-10-25: the same group sits at >= high x (<= low x) its peer median on
+        >= min_codes OTHER codes (median ratio), from data/quote/contract_levels.yaml."""
+        cfg = self.out_cfg["contract_level"]
+        ratios = self.contract_levels.get(self.contract_key(site, group, q)) or {}
+        others = [r for k, r in ratios.items() if not k.startswith(f"{code}-")]
+        if len(others) < int(cfg["min_codes"]):
+            return False
+        m = statistics.median(others)  # as O's causes.py
+        return m >= float(cfg["high"]) if side == "high" else m <= float(cfg["low"])
 
     def _estimate(self, site: Site, ln: Json, q: Req) -> None:
         """P5 (rung 6): a missing line of a step this site offers, from the same line's real

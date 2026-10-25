@@ -262,11 +262,16 @@ ExcludedReason = Literal[
 PriceNote = Literal[
     "price.national_unadjusted",
     "price.anesthesia_base_units_only",
+    "price.group_consistently_higher",
+    "price.group_consistently_lower",
 ]
 """Fixed explanation keys for how a line's number was made (copy lives with the glossary).
 national_unadjusted: a Medicare OPPS / ASC national rate; a Boston facility is paid this times a
 wage adjustment we have not loaded. anesthesia_base_units_only: the anesthesia fee's base units
-only; the time units depend on the case and are not included."""
+only; the time units depend on the case and are not included. group_consistently_higher /
+lower (Austin 2026-10-25, O contract_level): outside 1/3x-3x of its peers, but the same group is
+>= 2x (<= 0.5x) its peers on >= 5 other codes in the same network: its contract, summed, with
+"This group's prices are consistently higher (lower) than similar places here"."""
 
 SiteKind = Literal["urgent_care", "office", "hospital_outpatient", "ambulatory_surgery_center"]
 """X2: the kind of site a peer set is drawn from (engine.yaml: urgent care by site_type, else by

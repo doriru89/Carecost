@@ -85,6 +85,12 @@ outliers:
   low: 0.3333
   high: 3.0
   min_groups: 5
+  # Austin 2026-10-25 ("a 对 只要你回加着一句话就很好"): not gated when the cause is the group's
+  # contract level (O app/audit/causes.py contract_level): the same group (TIN, same payer
+  # network) is >= high x / <= low x its peer median, median over >= min_codes OTHER codes.
+  # Such a line is summed at its real price with price.group_consistently_higher / _lower.
+  contract_level: {min_codes: 5, high: 2.0, low: 0.5}
+contract_levels_file: data/quote/contract_levels.yaml  # python -m app.quote.contract_levels
 
 # R3: whose TIN bills which line. data/quote/tin_roles.yaml (python -m app.quote.tin_roles) lists
 # the role of each site's own TINs with its source; a TIN not listed takes its site's billing-type

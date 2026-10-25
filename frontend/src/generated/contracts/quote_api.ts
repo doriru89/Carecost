@@ -648,7 +648,7 @@ export interface ReceiptLine {
   /**
    * C2: fixed copy keys that explain how the line's number was made (e.g. a Medicare national rate not adjusted for Boston wages). Empty = nothing to add
    */
-  price_notes: ("price.national_unadjusted" | "price.anesthesia_base_units_only")[];
+  price_notes: ("price.national_unadjusted" | "price.anesthesia_base_units_only" | "price.group_consistently_higher" | "price.group_consistently_lower")[];
   /**
    * C3 (P5): the peer range behind an estimated cell (basis estimate); None otherwise
    */

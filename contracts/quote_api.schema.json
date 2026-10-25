@@ -2335,7 +2335,9 @@
           "items": {
             "enum": [
               "price.national_unadjusted",
-              "price.anesthesia_base_units_only"
+              "price.anesthesia_base_units_only",
+              "price.group_consistently_higher",
+              "price.group_consistently_lower"
             ],
             "type": "string"
           },

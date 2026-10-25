@@ -515,3 +515,69 @@ def test_o_anesthesia_per_unit_rate_is_multiplied_by_base_units(engine, store):
     other = [x for x in st.rows if x.tin == "999999992" and x.code == "00812"]
     rows, _, method = eng._anesthesia_units(other, "00812")
     assert rows == [] and method is None  # a non-anesthesia group's unit rate is not a fee
+
+
+# --------------------------------------------------------------------------- contract level
+
+
+def _cha_medicare(eng):
+    r = _q(eng, {"kind": "medicare"}, "colon_diagnostic_v1", site_ids=[CHA])
+    return _line(r, CHA, "colonoscopy_facility"), _site(r, CHA)
+
+
+def _with_level(engine, ratios, **outl):
+    eng = _engine_with(engine, outliers={**engine.out_cfg, **outl}) if outl else Engine(
+        engine.store, engine.reg)  # fmt: skip
+    q = eng._context(QuoteRequest.model_validate({
+        "payment": {"kind": "medicare"}, "care_path_id": "colon_diagnostic_v1", "answers": {},
+        "service_codes": [], "picked_by": "person", "site_ids": None}), AS_OF)  # fmt: skip
+    key = eng.contract_key(eng.reg.sites[CHA], "file:cha_mrf", q)
+    eng.contract_levels = {**eng.contract_levels, key: ratios}
+    return eng
+
+
+FIVE_LOW = {f"{c}--facility": 0.45 for c in ("99203", "73030", "88305", "45380", "45385")}
+
+
+def test_a_group_consistently_low_on_five_other_codes_is_summed_with_a_note(engine):
+    """Austin 2026-10-25: a line outside 1/3x-3x whose group sits <= 0.5x its peers on >= 5
+    other codes (O contract_level) is its contract: summed at its real price, not unusual, with
+    price.group_consistently_lower."""
+    ln, sq = _cha_medicare(_with_level(engine, FIVE_LOW))
+    assert ln.unusual is None and ln.in_total and ln.cell.low == 5.04
+    assert "price.group_consistently_lower" in ln.price_notes
+    assert "colonoscopy_facility" in sq.receipt.totals.likely.line_ids
+
+
+def test_a_single_extreme_line_in_a_normal_group_is_still_gated(engine):
+    """Same line, the group normal elsewhere (or too few codes, or the line's own code only)."""
+    for ratios in (
+        {f"{c}--facility": 1.0 for c in FIVE_LOW},  # normal elsewhere
+        dict(list(FIVE_LOW.items())[:4]),  # 4 other codes
+        {"45378--facility": 0.01, **dict(list(FIVE_LOW.items())[:4])},
+    ):  # own code
+        ln, _ = _cha_medicare(_with_level(engine, ratios))
+        assert ln.unusual is not None and ln.unusual.whole_line and not ln.in_total
+        assert not any(n.startswith("price.group_consistently") for n in ln.price_notes)
+    # the $14 Tufts row of an otherwise normal group stays set aside
+    r = _q(engine, TUFTS_HMO, "back_new_pain_v1", site_ids=[AFC_ARL])
+    assert _line(r, AFC_ARL, "visit").unusual is not None
+
+
+def test_contract_level_thresholds_are_the_rule(engine):
+    """Tightening engine.yaml (6 codes, or <= 0.4x) turns the same group back into a gate."""
+    for outl in (
+        {"contract_level": {"min_codes": 6, "high": 2.0, "low": 0.5}},
+        {"contract_level": {"min_codes": 5, "high": 2.0, "low": 0.4}},
+    ):
+        ln, _ = _cha_medicare(_with_level(engine, FIVE_LOW, **outl))
+        assert ln.unusual is not None and not ln.in_total
+
+
+def test_contract_levels_table_is_well_formed(engine):
+    """data/quote/contract_levels.yaml (python -m app.quote.contract_levels) on the A5 pack."""
+    assert len(engine.contract_levels) > 100
+    for key, ratios in list(engine.contract_levels.items())[:200]:
+        site, group, kind, _, _ = key.split("|")
+        assert site in engine.reg.sites and group.startswith(("tin:", "file:"))
+        assert kind in ("insurance", "cash", "medicare", "masshealth") and len(ratios) >= 3
