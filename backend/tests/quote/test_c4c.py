@@ -182,3 +182,52 @@ def test_surface_words_never_say_facility_or_professional_fee(engine, path):
                          getattr(ln.cell, "ask", "") or ""]  # fmt: skip
                 for w in words:
                     assert "facility fee" not in w.lower() and "professional fee" not in w.lower()
+
+
+# --------------------------------------------------------------------------- follow-ups A, B
+
+
+def test_a_step_with_an_unnumbered_doctor_bill_is_from_and_partial(engine):
+    """A (main: BCBS HMO colon at BMC Brighton, facility $851.82 summed, doctor not_published):
+    the step is 'from $X' (figure stays own, from_only) and the headline is partial with
+    doctor_bill_not_published, never the whole colonoscopy."""
+    seen = 0
+    for sq in _q(engine, near=NEAR).sites:
+        lines = {ln.line_id: ln for ln in sq.receipt.lines}
+        for st in sq.steps:
+            ls = [lines[i] for i in st.line_ids if lines[i].unit == "once"]
+            fac = [ln for ln in ls if ln.component == "facility"]
+            doc = [ln for ln in ls if ln.component == "professional"]
+            fac_ok = all(ln.cell.kind == "money" and ln.unusual is None for ln in fac)
+            doc_gap = all(
+                ln.cell.kind in ("not_published", "not_loaded", "no_source") for ln in doc
+            )
+            if fac and doc and fac_ok and doc_gap:
+                assert st.from_only and st.rank_value is None, (sq.site.site_id, st.key)
+                if st.key in (
+                    sq.headline_range.visit_step_keys + sq.headline_range.with_likely.step_keys
+                ):
+                    assert sq.headline_range.basis == "partial" and sq.headline_range.from_only
+                    assert sq.headline_range.note_keys
+                seen += 1
+    assert seen
+
+
+def test_a_hospitals_facility_rate_is_never_its_doctors_bill(engine, store, registry):
+    """B (Aetna PPO, Cambridge Health Alliance 45378): one EIN for the hospital and its doctors;
+    the file lists $625.04 as an institutional and as a professional row. The professional copy
+    is the facility rate: it never prices the doctor's line."""
+    from dataclasses import replace
+
+    from app.quote.engine import Engine
+    from app.quote.store import RateStore
+
+    prof = next(r for r in store.rows if r.source_kind == "insurer_tic"
+                and r.billing_class == "professional" and r.amount and r.code == "45378")  # fmt: skip
+    assert not engine._mirrors_facility(prof)
+    twin = replace(prof, billing_class="facility", row_id=prof.row_id.split(":")[0] + ":98765",
+                   stage_row=prof.stage_row + 10**7)  # fmt: skip
+    st = RateStore(rows=[*store.rows, twin], sources=store.sources, version=store.version,
+                   codes=store.codes, npi_sets=store.npi_sets, census_tins=store.census_tins,
+                   flags=store.flags)  # fmt: skip
+    assert Engine(st, registry)._mirrors_facility(prof)

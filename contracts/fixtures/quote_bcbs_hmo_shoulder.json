@@ -486,8 +486,8 @@
           "elsewhere": {
             "low": 228.78,
             "high": 345.34,
-            "median": 228.78,
-            "n_groups": 10,
+            "median": 325.78,
+            "n_groups": 9,
             "kind": null,
             "scope": "same_kind",
             "payer_id": "BCBS_MA"
@@ -1819,8 +1819,8 @@
           "elsewhere": {
             "low": 228.78,
             "high": 345.34,
-            "median": 228.78,
-            "n_groups": 10,
+            "median": 325.78,
+            "n_groups": 9,
             "kind": null,
             "scope": "same_kind",
             "payer_id": "BCBS_MA"
@@ -3380,8 +3380,8 @@
           "elsewhere": {
             "low": 228.78,
             "high": 345.34,
-            "median": 228.78,
-            "n_groups": 10,
+            "median": 325.78,
+            "n_groups": 9,
             "kind": null,
             "scope": "same_kind",
             "payer_id": "BCBS_MA"
@@ -4534,8 +4534,8 @@
           "elsewhere": {
             "low": 228.78,
             "high": 345.34,
-            "median": 228.78,
-            "n_groups": 10,
+            "median": 325.78,
+            "n_groups": 9,
             "kind": null,
             "scope": "same_kind",
             "payer_id": "BCBS_MA"
@@ -5864,8 +5864,8 @@
           "elsewhere": {
             "low": 228.78,
             "high": 345.34,
-            "median": 228.78,
-            "n_groups": 10,
+            "median": 325.78,
+            "n_groups": 9,
             "kind": null,
             "scope": "same_kind",
             "payer_id": "BCBS_MA"
@@ -8738,8 +8738,8 @@
           "elsewhere": {
             "low": 228.78,
             "high": 345.34,
-            "median": 228.78,
-            "n_groups": 10,
+            "median": 325.78,
+            "n_groups": 9,
             "kind": null,
             "scope": "same_kind",
             "payer_id": "BCBS_MA"
@@ -11564,8 +11564,8 @@
           "elsewhere": {
             "low": 228.78,
             "high": 345.34,
-            "median": 228.78,
-            "n_groups": 10,
+            "median": 325.78,
+            "n_groups": 9,
             "kind": null,
             "scope": "same_kind",
             "payer_id": "BCBS_MA"
@@ -24832,7 +24832,7 @@
                 "method": "estimate_peer_range",
                 "row_ref": "tic_bcbs_ma_nemc_si:ccefc7ab3ea3:5467",
                 "payer_id": "BCBS_MA",
-                "row_id": "c26a07d03125ca67:0"
+                "row_id": "50683e53563bdc15:0"
               }
             },
             "list_price": null,
@@ -24855,7 +24855,7 @@
               "low": 52.15,
               "high": 99.98,
               "median": 52.15,
-              "n_groups": 120,
+              "n_groups": 116,
               "kind": "hospital_outpatient",
               "scope": "same_kind",
               "payer_id": "BCBS_MA"

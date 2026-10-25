@@ -815,6 +815,8 @@ class Engine:
             got = self._group_rate(rows, code)
         if got is None:
             rows = self._site_tic(q, site, codes, mod, pos, "professional", any_pos=(mod == "26"))
+            if hospital_line:  # C4c B: never a hospital's own facility rate as the doctor's bill
+                rows = [r for r in rows if not self._mirrors_facility(r)]
             got = self._group_rate(rows, code)
         if got:
             return got[0], got[1], codes
@@ -847,6 +849,18 @@ class Engine:
                               "this insurer's rate for this doctor group and item",
                               "Ask the office which doctor group bills for it and what your "
                               "plan pays."), None, codes  # fmt: skip
+
+    def _mirrors_facility(self, r: Row) -> bool:
+        """C4c B (main 2026-10-25, Aetna PPO, Cambridge Health Alliance 45378): one EIN bills
+        both the hospital and its doctors, and the insurer file lists the same amount under the
+        same TIN, code and modifier as an institutional row and as a professional row ($625.04
+        both). That professional row is the hospital's own facility rate, not a doctor's bill."""
+        if r.source_kind != "insurer_tic" or r.amount is None or r.billing_class != "professional":
+            return False
+        return any(
+            x.billing_class == "facility" and x.amount == r.amount and x.modifiers == r.modifiers
+            for x in self.store.tic.get((r.source_id, r.tin, r.code), ())
+        )
 
     def _posted_cell(self, site: Site, meta: SourceMeta, code: str) -> Json:
         hits = [p for p in site.cash_prices if code in p.codes]
