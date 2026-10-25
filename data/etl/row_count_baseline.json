@@ -1,10 +1,29 @@
 {
  "_what": "Row-count baseline for `python -m app.etl build --baseline-manifest` in CI (GitHub runners have no data/build). Per source: the last good copy's sha256 (also the last-good fallback) and its counts. Regenerate from a good build's manifest.json when a hospital legitimately changes size.",
  "from_builds": {
-  "refresh": "20261024-10d8a893",
-  "franciscan_mrf": "20261024-1cb8089d (2026-05 import; the publisher's current file has the same sha256)"
+  "a3_refresh": "20261024-336340ed (all 17 hospital files downloaded 2026-10-25 UTC by A3, incl. Franciscan via the per-host CA and the 5 D29 hospitals)"
  },
  "sources": {
+  "bid_milton_mrf": {
+   "sha256": "e29c72cd96324d6c65204d0020bc45f630d5f6de32d94badadc39d7f3640e612",
+   "bytes": 16454531,
+   "rate_rows": 197,
+   "payer_rate_rows": 169,
+   "staged_rows": 65359,
+   "last_updated_on": "2026-04-01",
+   "fetched_at": "2026-10-25T02:55:53+00:00",
+   "fetch_method": "download"
+  },
+  "bid_needham_mrf": {
+   "sha256": "a13270bcc367cf57eb8188ab492d632c51162e35d1abc541b5c49d6dde8d4204",
+   "bytes": 15340209,
+   "rate_rows": 122,
+   "payer_rate_rows": 94,
+   "staged_rows": 53086,
+   "last_updated_on": "2026-04-01",
+   "fetched_at": "2026-10-25T02:55:48+00:00",
+   "fetch_method": "download"
+  },
   "bidmc_mrf": {
    "sha256": "7e4dd9074968e9bb6b0d9c961b8d8dd5ee94be2249496eadd5135404d2a24e23",
    "bytes": 28109168,
@@ -12,7 +31,7 @@
    "payer_rate_rows": 177,
    "staged_rows": 90199,
    "last_updated_on": "2026-04-01",
-   "fetched_at": "2026-10-24T23:14:57+00:00",
+   "fetched_at": "2026-10-25T02:54:50+00:00",
    "fetch_method": "download"
   },
   "bmc_brighton_mrf": {
@@ -22,7 +41,7 @@
    "payer_rate_rows": 1846,
    "staged_rows": 552814,
    "last_updated_on": "2026-03-13",
-   "fetched_at": "2026-10-24T23:14:10+00:00",
+   "fetched_at": "2026-10-25T02:54:33+00:00",
    "fetch_method": "download"
   },
   "bmc_mrf": {
@@ -32,7 +51,17 @@
    "payer_rate_rows": 4067,
    "staged_rows": 1329567,
    "last_updated_on": "2026-03-13",
-   "fetched_at": "2026-10-24T23:14:09+00:00",
+   "fetched_at": "2026-10-25T02:54:33+00:00",
+   "fetch_method": "download"
+  },
+  "bmc_south_mrf": {
+   "sha256": "1fe3320439664efb9fbece181db7fdaba8e29df00b3cb9d7e4aa7f99d703ce9b",
+   "bytes": 16951235,
+   "rate_rows": 2140,
+   "payer_rate_rows": 2140,
+   "staged_rows": 528089,
+   "last_updated_on": "2026-03-13",
+   "fetched_at": "2026-10-25T02:55:54+00:00",
    "fetch_method": "download"
   },
   "brigham_mrf": {
@@ -42,7 +71,7 @@
    "payer_rate_rows": 1160,
    "staged_rows": 109293,
    "last_updated_on": "2026-03-27",
-   "fetched_at": "2026-10-24T23:14:05+00:00",
+   "fetched_at": "2026-10-25T02:54:31+00:00",
    "fetch_method": "download"
   },
   "cha_mrf": {
@@ -52,7 +81,7 @@
    "payer_rate_rows": 4121,
    "staged_rows": 1022366,
    "last_updated_on": "2026-03-20",
-   "fetched_at": "2026-10-24T23:14:40+00:00",
+   "fetched_at": "2026-10-25T02:54:40+00:00",
    "fetch_method": "download"
   },
   "childrens_mrf": {
@@ -62,7 +91,7 @@
    "payer_rate_rows": 1723,
    "staged_rows": 465548,
    "last_updated_on": "2026-04-01",
-   "fetched_at": "2026-10-24T23:15:03+00:00",
+   "fetched_at": "2026-10-25T02:54:55+00:00",
    "fetch_method": "download"
   },
   "dana_farber_mrf": {
@@ -72,7 +101,7 @@
    "payer_rate_rows": 49,
    "staged_rows": 55667,
    "last_updated_on": "2026-04-01",
-   "fetched_at": "2026-10-24T23:15:05+00:00",
+   "fetched_at": "2026-10-25T02:54:55+00:00",
    "fetch_method": "download"
   },
   "faulkner_mrf": {
@@ -82,7 +111,7 @@
    "payer_rate_rows": 250,
    "staged_rows": 39202,
    "last_updated_on": "2026-03-27",
-   "fetched_at": "2026-10-24T23:14:05+00:00",
+   "fetched_at": "2026-10-25T02:54:31+00:00",
    "fetch_method": "download"
   },
   "franciscan_mrf": {
@@ -92,8 +121,8 @@
    "payer_rate_rows": 297,
    "staged_rows": 5085,
    "last_updated_on": "2026-04-01",
-   "fetched_at": "2026-10-24T21:13:51+00:00",
-   "fetch_method": "import"
+   "fetched_at": "2026-10-25T02:54:42+00:00",
+   "fetch_method": "download"
   },
   "mgh_mrf": {
    "sha256": "5be51f8464a8eb17831241d92daa2e81e6436d45868c3911dcd47a2d204762ba",
@@ -102,7 +131,7 @@
    "payer_rate_rows": 1516,
    "staged_rows": 159489,
    "last_updated_on": "2026-03-27",
-   "fetched_at": "2026-10-24T23:14:05+00:00",
+   "fetched_at": "2026-10-25T02:54:31+00:00",
    "fetch_method": "download"
   },
   "mtauburn_mrf": {
@@ -112,7 +141,27 @@
    "payer_rate_rows": 184,
    "staged_rows": 64504,
    "last_updated_on": "2026-04-01",
-   "fetched_at": "2026-10-24T23:15:11+00:00",
+   "fetched_at": "2026-10-25T02:54:59+00:00",
+   "fetch_method": "download"
+  },
+  "nebh_mrf": {
+   "sha256": "47ade3a708565ec0b128af079599243f6a9c4a9d0ad759e10e0e6ecce0c18e9d",
+   "bytes": 17872101,
+   "rate_rows": 276,
+   "payer_rate_rows": 210,
+   "staged_rows": 82533,
+   "last_updated_on": "2026-04-01",
+   "fetched_at": "2026-10-25T02:55:43+00:00",
+   "fetch_method": "download"
+  },
+  "newton_wellesley_mrf": {
+   "sha256": "aad204b63a2cc6ffac3a109da178a3b55b39daea078a88348692b9e361c042c5",
+   "bytes": 1034717,
+   "rate_rows": 302,
+   "payer_rate_rows": 302,
+   "staged_rows": 36240,
+   "last_updated_on": "2026-03-27",
+   "fetched_at": "2026-10-25T02:55:44+00:00",
    "fetch_method": "download"
   },
   "tufts_mrf": {
@@ -122,7 +171,7 @@
    "payer_rate_rows": 9207,
    "staged_rows": 5877884,
    "last_updated_on": "2026-04-01",
-   "fetched_at": "2026-10-24T23:14:47+00:00",
+   "fetched_at": "2026-10-25T02:54:42+00:00",
    "fetch_method": "download"
   }
  }

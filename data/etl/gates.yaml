@@ -27,14 +27,18 @@ anchors:
     amount: 115.17
     exact_sha256: 188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce
     tolerance_pct: 25
+  # D29 (2026-10-24): moved to the re-fetched file. The 2026-10 file re-cased the labels
+  # ("Bcbs"/"Hmo" -> "BCBS"/"HMO") and changed content (sha 738d6677 -> 7e4dd907) while its
+  # last_updated_on stayed 2026-04-01; see data/etl/data_quality_notices.yaml. Same $110.42,
+  # stage row 35603.
   - id: bidmc_73030_bcbs_hmo
     entity_id: bidmc
     code: "73030"
-    payer_raw: "Bcbs"
-    plan_raw: "Hmo"
+    payer_raw: "BCBS"
+    plan_raw: "HMO"
     rev_code: ""
     amount: 110.42
-    exact_sha256: 738d667752fb807cc8ea5019baf2c26319e68199e9dad8c7e8127a480804f278
+    exact_sha256: 7e4dd9074968e9bb6b0d9c961b8d8dd5ee94be2249496eadd5135404d2a24e23
     tolerance_pct: 25
 
 # Per-source rate_row count may not fall by more than this vs the baseline build (the LATEST

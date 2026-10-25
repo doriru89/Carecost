@@ -1,0 +1,21 @@
+# Data-quality notices: facts about a publisher's file that a user or a reviewer should know,
+# which are not gate failures. Each names the source, the evidence (shas, dates) and what we do.
+# Shown in docs/etl and available to the quote engine / /our-data page (stream C / D).
+
+version: 1
+notices:
+  - id: bidmc_content_changed_date_unchanged
+    source_id: bidmc_mrf
+    kind: content_changed_date_unchanged
+    observed: 2026-10-24
+    detail: >-
+      BIDMC's price file changed content between our 2026-05 copy (sha256 738d6677...) and the
+      2026-10-24 download (sha256 7e4dd907..., HTTP Last-Modified Thu, 09 Jul 2026 21:53:00 GMT),
+      but its own last_updated_on stayed 2026-04-01. Labels were re-cased ("Bcbs"/"Hmo" ->
+      "BCBS"/"HMO"); the anchor 73030 BCBS HMO rate is unchanged at $110.42.
+    old_sha256: 738d667752fb807cc8ea5019baf2c26319e68199e9dad8c7e8127a480804f278
+    new_sha256: 7e4dd9074968e9bb6b0d9c961b8d8dd5ee94be2249496eadd5135404d2a24e23
+    publisher_last_updated_on: 2026-04-01
+    effect: >-
+      Freshness uses the file's own date (2026-04-01), so the "late to refresh" clock is not
+      reset by a silent edit; we date our copy by fetched_at. The anchor moved to the new sha (D29).

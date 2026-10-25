@@ -184,3 +184,66 @@ hospitals:
     address_patterns: []
     source_name_aliases:
       tic: "Franciscan Childrens"
+
+  # D29 (A3, 2026-10-24): five Greater Boston candidates from docs/etl/hospital_candidates.csv.
+  # npi = the file's type_2_npi; lat/lng = US Census geocoder on the file's own hospital_address
+  # (census rows GB0254 / GB0187 / GB0182 / GB0180; BMC South geocoded 2026-10-24).
+  nebh:
+    name: "New England Baptist Hospital"
+    system: "Beth Israel Lahey Health"
+    state: "MA"
+    metro_area: "boston"
+    neighborhood: "Mission Hill"
+    lat: 42.3304
+    lng: -71.1080
+    npi: "1699767491"
+    address_patterns: ["125 PARKER HILL", "NEW ENGLAND BAPTIST"]
+    source_name_aliases: {}
+
+  newton_wellesley:
+    name: "Newton-Wellesley Hospital"
+    system: "Mass General Brigham"
+    state: "MA"
+    metro_area: "boston"
+    neighborhood: "Newton"
+    lat: 42.3307
+    lng: -71.2479
+    npi: "1992737761"
+    address_patterns: ["2014 WASHINGTON ST", "NEWTON WELLESLEY", "NEWTON-WELLESLEY"]
+    source_name_aliases: {}
+
+  bid_needham:
+    name: "Beth Israel Deaconess Hospital-Needham"
+    system: "Beth Israel Lahey Health"
+    state: "MA"
+    metro_area: "boston"
+    neighborhood: "Needham"
+    lat: 42.2775
+    lng: -71.2373
+    npi: "1205893450"
+    address_patterns: ["148 CHESTNUT ST", "BID NEEDHAM", "DEACONESS HOSPITAL - NEEDHAM", "DEACONESS HOSPITAL-NEEDHAM"]
+    source_name_aliases: {}
+
+  bid_milton:
+    name: "Beth Israel Deaconess Hospital-Milton"
+    system: "Beth Israel Lahey Health"
+    state: "MA"
+    metro_area: "boston"
+    neighborhood: "Milton"
+    lat: 42.2526
+    lng: -71.0755
+    npi: "1174618953"
+    address_patterns: ["199 REEDSDALE", "BID MILTON", "DEACONESS HOSPITAL-MILTON", "DEACONESS HOSPITAL - MILTON"]
+    source_name_aliases: {}
+
+  bmc_south:
+    name: "Boston Medical Center South"
+    system: "Boston Medical Center Health System"
+    state: "MA"
+    metro_area: "boston"
+    neighborhood: "Brockton"
+    lat: 42.0985
+    lng: -71.0660
+    npi: "1871329110"
+    address_patterns: ["235 NORTH PEARL", "235 N PEARL", "BMC SOUTH", "BOSTON MEDICAL CENTER SOUTH", "GOOD SAMARITAN"]
+    source_name_aliases: {}
