@@ -58,7 +58,20 @@
           "type": "number"
         },
         "prov": {
-          "$ref": "#/$defs/Provenance"
+          "$ref": "#/$defs/Provenance",
+          "description": "The row the low end comes from"
+        },
+        "prov_high": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Provenance"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The row the high end comes from. Required on a range (low < high), absent on a point, so both ends of every range are cited (P1 problem 2). May name another file of the same kind (BCBS publishes HMO Blue as a fully- and a self-insured file)."
         }
       },
       "required": [
@@ -225,6 +238,20 @@
           "default": null,
           "description": "Whose rate this is (payer_aliases.yaml id) for payer-specific rows (hospital MRF payer rows, TiC); None for fee schedules, cash and chargemaster prices. Lets the quote check that a BCBS receipt only sums BCBS rates.",
           "title": "Payer Id"
+        },
+        "row_id": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{16}:[0-9]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RateRow.row_id (<nk_hash>:<nk_ordinal>), unique per build. Required on insurer TiC numbers: one TiC price row (one row_ref) is shared by every provider group listed with it, so only row_id says which group's number this is (P1 problem 1).",
+          "title": "Row Id"
         },
         "row_ref": {
           "description": "<source_id>:<sha256[:12]>:<staged row ordinal>",

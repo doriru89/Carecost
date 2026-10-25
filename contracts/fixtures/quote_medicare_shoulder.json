@@ -14,7 +14,7 @@
   "picked_by": "person",
   "as_of": "2026-10-24",
   "data_version": {
-    "build_id": "20261024-1cb8089d",
+    "build_id": "20261024-10d8a893",
     "build_date": "2026-10-24",
     "tic_release": "tic-2026-10",
     "sites_version": 1,
@@ -43,7 +43,7 @@
         "expected_by": "2027-01-01",
         "late_to_refresh": false,
         "source_rule": "fee_schedule_annual",
-        "fetched_at": "2026-10-24",
+        "fetched_at": "2026-05-02",
         "our_refresh_due": null,
         "stale_on_our_side": false,
         "our_rule": "fee_schedule_per_release"
@@ -79,12 +79,12 @@
         "hours_label": "unknown",
         "price_label": "price_file",
         "price_source_id": "brigham_mrf",
+        "listing_status": "web_verified",
         "service_areas": [
           "ortho",
           "skin",
           "gi"
-        ],
-        "listing_status": "web_verified"
+        ]
       },
       "receipt": {
         "lines": [
@@ -97,22 +97,20 @@
               "99203"
             ],
             "modifier": null,
-            "plain_name": "Visit with a bone & joint doctor",
-            "technical_name": "New-patient orthopedic or sports-medicine visit",
+            "plain_name": "Visit with a bone & joint doctor: the hospital's fee",
+            "technical_name": "New-patient orthopedic or sports-medicine visit (facility fee)",
             "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
-            "glossary_keys": [],
+            "glossary_keys": [
+              "facility_fee"
+            ],
             "component": "facility",
-            "component_confirmed": false,
+            "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "not_published",
-              "what": "Brigham's Medicare facility rate for a new-patient visit",
-              "ask": "Ask Brigham billing what the hospital facility fee is.",
-              "searched": {
-                "source_id": "brigham_mrf",
-                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce"
-              }
+              "kind": "not_loaded",
+              "what": "Medicare's facility fee schedule for the hospital's clinic facility fee (HCPCS G0463 / revenue code 051x) (not loaded yet)",
+              "eta": null
             },
             "list_price": null,
             "tier_basis": "our_judgment",
@@ -120,7 +118,8 @@
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "at": "this_site"
           },
           {
             "line_id": "visit_doctor",
@@ -131,8 +130,8 @@
               "99203"
             ],
             "modifier": null,
-            "plain_name": "Doctor's fee for the visit",
-            "technical_name": "Professional fee, new-patient visit (hospital setting)",
+            "plain_name": "Visit with a bone & joint doctor: the doctor's fee",
+            "technical_name": "New-patient orthopedic or sports-medicine visit (professional fee)",
             "why": "The exam narrows down which part of the shoulder is the problem, and that decides which test, if any, comes next.",
             "glossary_keys": [],
             "component": "professional",
@@ -151,9 +150,11 @@
                 "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
                 "source_date": "2026-01-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:99203",
-                "payer_id": null
-              }
+                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:12907",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "our_judgment",
@@ -170,7 +171,8 @@
             "ai_suggested": false,
             "in_total": true,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "at": "this_site"
           },
           {
             "line_id": "xray_facility",
@@ -181,26 +183,40 @@
               "73030"
             ],
             "modifier": null,
-            "plain_name": "Quick picture of the shoulder bones",
-            "technical_name": "Shoulder X-ray",
-            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while.",
+            "plain_name": "Quick picture of the shoulder bones: the hospital's fee",
+            "technical_name": "Shoulder X-ray (facility fee)",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while. It shows arthritis, bone spurs and calcium in the tendons, which changes what comes next.",
             "glossary_keys": [
-              "xray"
+              "xray",
+              "facility_fee"
             ],
             "component": "facility",
-            "component_confirmed": false,
+            "component_confirmed": true,
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "not_published",
-              "what": "Brigham's Medicare facility rate for a shoulder X-ray",
-              "ask": "Ask Brigham billing for the outpatient X-ray price.",
-              "searched": {
-                "source_id": "brigham_mrf",
-                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce"
-              }
+              "kind": "not_loaded",
+              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
+              "eta": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 452.0,
+              "high": 452.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "brigham_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "brigham_mrf:188337340e25:109098",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
@@ -215,7 +231,8 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
-            ]
+            ],
+            "at": "this_site"
           },
           {
             "line_id": "xray_reading",
@@ -226,9 +243,9 @@
               "73030"
             ],
             "modifier": "26",
-            "plain_name": "A radiologist reads the X-ray",
-            "technical_name": "X-ray interpretation (professional)",
-            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while.",
+            "plain_name": "Quick picture of the shoulder bones: the doctor's reading",
+            "technical_name": "Shoulder X-ray (professional fee)",
+            "why": "Guidelines rate an X-ray as the first test for shoulder pain that has lasted a while. It shows arthritis, bone spurs and calcium in the tendons, which changes what comes next.",
             "glossary_keys": [
               "xray"
             ],
@@ -248,9 +265,11 @@
                 "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
                 "source_date": "2026-01-01",
                 "method": "computed_fee_schedule",
-                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:73030-26",
-                "payer_id": null
-              }
+                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8009",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -276,10 +295,113 @@
                 "label": "RadiologyInfo: bone X-ray",
                 "url": "https://www.radiologyinfo.org/en/info/bonerad"
               }
-            ]
+            ],
+            "at": "this_site"
           },
           {
-            "line_id": "steroid_injection",
+            "line_id": "physical_therapy_facility",
+            "tier": "not_in_public_data",
+            "likelihood": "likely",
+            "step_id": "physical_therapy",
+            "codes": [
+              "97161"
+            ],
+            "modifier": null,
+            "plain_name": "Guided exercise program for the shoulder: the hospital's fee",
+            "technical_name": "Physical therapy evaluation and visits (facility fee)",
+            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
+            "glossary_keys": [
+              "pt_evaluation",
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
+              "eta": null
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 625.0,
+              "high": 625.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "brigham_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "brigham_mrf:188337340e25:71727",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "physical_therapy_sessions_facility",
+            "tier": "not_in_public_data",
+            "likelihood": "likely",
+            "step_id": "physical_therapy",
+            "codes": [
+              "97110"
+            ],
+            "modifier": null,
+            "plain_name": "Later exercise sessions (each 15 minutes): the hospital's fee",
+            "technical_name": "Therapeutic exercise (facility fee)",
+            "why": "Exercise therapy helps many tendon problems, including some tears, and is usually tried before any detailed scan.",
+            "glossary_keys": [
+              "pt_evaluation",
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "per_15_minutes",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
+              "eta": null
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 228.0,
+              "high": 228.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "brigham_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "brigham_mrf:188337340e25:66491",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "steroid_injection_facility",
             "tier": "possible",
             "likelihood": "possible",
             "step_id": "steroid_injection",
@@ -287,12 +409,13 @@
               "20610"
             ],
             "modifier": null,
-            "plain_name": "Shot of anti-inflammatory and numbing medicine",
-            "technical_name": "Corticosteroid shoulder injection",
-            "why": "It can calm the pain for a while so you can do your exercises.",
+            "plain_name": "Shot of anti-inflammatory and numbing medicine: the hospital's fee",
+            "technical_name": "Corticosteroid shoulder injection (facility fee)",
+            "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
             "glossary_keys": [
               "steroid_injection",
-              "ultrasound"
+              "ultrasound",
+              "facility_fee"
             ],
             "component": "facility",
             "component_confirmed": true,
@@ -311,19 +434,39 @@
                 "source_date": "2026-03-27",
                 "method": "stated",
                 "row_ref": "brigham_mrf:188337340e25:4007",
-                "payer_id": "MEDICARE"
-              }
+                "payer_id": "MEDICARE",
+                "row_id": null
+              },
+              "prov_high": null
             },
-            "list_price": null,
+            "list_price": {
+              "kind": "money",
+              "low": 718.0,
+              "high": 718.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "brigham_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "brigham_mrf:188337340e25:4002",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
             "tier_basis": "guideline",
             "doctor_fee": null,
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "at": "this_site"
           },
           {
-            "line_id": "injection_doctor",
+            "line_id": "steroid_injection_doctor",
             "tier": "possible",
             "likelihood": "possible",
             "step_id": "steroid_injection",
@@ -331,9 +474,9 @@
               "20610"
             ],
             "modifier": null,
-            "plain_name": "Doctor's fee for the shot",
-            "technical_name": "Professional fee, joint injection",
-            "why": "It can calm the pain for a while so you can do your exercises.",
+            "plain_name": "Shot of anti-inflammatory and numbing medicine: the doctor's fee",
+            "technical_name": "Corticosteroid shoulder injection (professional fee)",
+            "why": "It can calm the pain for a while so you can do your exercises. Guidelines say a single shot can be considered for short-term relief.",
             "glossary_keys": [
               "steroid_injection",
               "ultrasound"
@@ -343,39 +486,22 @@
             "unit": "once",
             "availability": "offered",
             "cell": {
-              "kind": "conflict",
-              "a": {
-                "kind": "money",
-                "low": 350.52,
-                "high": 350.52,
-                "basis": "negotiated",
-                "prov": {
-                  "source_id": "brigham_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
-                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
-                  "source_date": "2026-03-27",
-                  "method": "stated",
-                  "row_ref": "brigham_mrf:188337340e25:4026",
-                  "payer_id": "MEDICARE"
-                }
+              "kind": "money",
+              "low": 42.2,
+              "high": 42.2,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26a",
+                "source_kind": "medicare_pfs",
+                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
+                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
+                "source_date": "2026-01-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:1671",
+                "payer_id": null,
+                "row_id": null
               },
-              "b": {
-                "kind": "money",
-                "low": 42.2,
-                "high": 42.2,
-                "basis": "fee_schedule",
-                "prov": {
-                  "source_id": "cms_pfs_rvu26a",
-                  "source_kind": "medicare_pfs",
-                  "source_file": "PPRRVU2026_Jan_nonQPP.csv",
-                  "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
-                  "source_date": "2026-01-01",
-                  "method": "computed_fee_schedule",
-                  "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:20610",
-                  "payer_id": null
-                }
-              }
+              "prov_high": null
             },
             "list_price": null,
             "tier_basis": "guideline",
@@ -392,7 +518,633 @@
             "ai_suggested": false,
             "in_total": false,
             "elsewhere": [],
-            "learn_more": []
+            "learn_more": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "steroid_injection_drug_ai",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "steroid_injection",
+            "codes": [
+              "J3301"
+            ],
+            "modifier": null,
+            "plain_name": "The medicine in the shot",
+            "technical_name": "Injected medicine (billed as a drug)",
+            "why": "The medicine in the shot may appear as its own line on the bill.",
+            "glossary_keys": [
+              "steroid_injection",
+              "ultrasound"
+            ],
+            "component": "drug",
+            "component_confirmed": false,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "the price of the medicine itself (we do not read drug codes from the price files yet)",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": true,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [],
+            "at": "this_site"
+          },
+          {
+            "line_id": "tendon_scan_ultrasound_facility",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_ultrasound",
+            "codes": [
+              "76881"
+            ],
+            "modifier": null,
+            "plain_name": "Live sound-wave picture of the tendons: the hospital's fee",
+            "technical_name": "Shoulder ultrasound (facility fee)",
+            "why": "If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear is.",
+            "glossary_keys": [
+              "ultrasound",
+              "xray",
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 126.27,
+              "high": 126.27,
+              "basis": "negotiated",
+              "prov": {
+                "source_id": "brigham_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "brigham_mrf:188337340e25:106257",
+                "payer_id": "MEDICARE",
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 836.0,
+              "high": 836.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "brigham_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "brigham_mrf:188337340e25:106257",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: Ultrasound",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=76881&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: musculoskeletal ultrasound",
+                "url": "https://www.radiologyinfo.org/en/info/genus"
+              }
+            ],
+            "at": "this_site"
+          },
+          {
+            "line_id": "tendon_scan_ultrasound_reading",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_ultrasound",
+            "codes": [
+              "76881"
+            ],
+            "modifier": "26",
+            "plain_name": "Live sound-wave picture of the tendons: the doctor's reading",
+            "technical_name": "Shoulder ultrasound (professional fee)",
+            "why": "If the X-ray looks normal and the pain continues, this shows whether a tendon is torn and how big the tear is.",
+            "glossary_keys": [
+              "ultrasound",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 46.14,
+              "high": 46.14,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26a",
+                "source_kind": "medicare_pfs",
+                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
+                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
+                "source_date": "2026-01-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8742",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": {
+              "rung": 5,
+              "explanation_key": "fee.rung_5_medicare",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: Ultrasound",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=76881&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: musculoskeletal ultrasound",
+                "url": "https://www.radiologyinfo.org/en/info/genus"
+              }
+            ],
+            "at": "this_site"
+          },
+          {
+            "line_id": "tendon_scan_mri_facility",
+            "tier": "not_in_public_data",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_mri",
+            "codes": [
+              "73221"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan of tendons & cartilage: the hospital's fee",
+            "technical_name": "Shoulder MRI (no contrast) (facility fee)",
+            "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
+            "glossary_keys": [
+              "mri",
+              "xray",
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
+              "eta": null
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 3595.0,
+              "high": 3595.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "brigham_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "brigham_mrf:188337340e25:62308",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73221&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: shoulder MRI",
+                "url": "https://www.radiologyinfo.org/en/info/shouldermr"
+              }
+            ],
+            "at": "this_site"
+          },
+          {
+            "line_id": "tendon_scan_mri_reading",
+            "tier": "possible",
+            "likelihood": "possible",
+            "step_id": "tendon_scan_mri",
+            "codes": [
+              "73221"
+            ],
+            "modifier": "26",
+            "plain_name": "Detailed scan of tendons & cartilage: the doctor's reading",
+            "technical_name": "Shoulder MRI (no contrast) (professional fee)",
+            "why": "If the X-ray looks normal and the pain continues, this shows tendon tears and cartilage damage in detail.",
+            "glossary_keys": [
+              "mri",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 67.92,
+              "high": 67.92,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26a",
+                "source_kind": "medicare_pfs",
+                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
+                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
+                "source_date": "2026-01-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8075",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": {
+              "rung": 5,
+              "explanation_key": "fee.rung_5_medicare",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73221&informationRecipient.languageCode.c=en"
+              },
+              {
+                "label": "RadiologyInfo: shoulder MRI",
+                "url": "https://www.radiologyinfo.org/en/info/shouldermr"
+              }
+            ],
+            "at": "this_site"
+          },
+          {
+            "line_id": "mr_arthrogram_facility",
+            "tier": "not_in_public_data",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "73222"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan with dye in the joint: the hospital's fee",
+            "technical_name": "Shoulder MR arthrogram (facility fee)",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray",
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
+              "eta": null
+            },
+            "list_price": {
+              "kind": "money",
+              "low": 3810.0,
+              "high": 3810.0,
+              "basis": "gross",
+              "prov": {
+                "source_id": "brigham_mrf",
+                "source_kind": "hospital_mrf",
+                "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                "source_date": "2026-03-27",
+                "method": "stated",
+                "row_ref": "brigham_mrf:188337340e25:62306",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ],
+            "at": "this_site"
+          },
+          {
+            "line_id": "mr_arthrogram_reading",
+            "tier": "possible",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "73222"
+            ],
+            "modifier": "26",
+            "plain_name": "Detailed scan with dye in the joint: the doctor's reading",
+            "technical_name": "Shoulder MR arthrogram (professional fee)",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 80.84,
+              "high": 80.84,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26a",
+                "source_kind": "medicare_pfs",
+                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
+                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
+                "source_date": "2026-01-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8078",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": {
+              "rung": 5,
+              "explanation_key": "fee.rung_5_medicare",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ],
+            "at": "this_site"
+          },
+          {
+            "line_id": "mr_arthrogram_23350_facility",
+            "tier": "not_in_public_data",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "23350"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan with dye in the joint: an extra part (Injection for shoulder arthrography): the hospital's fee",
+            "technical_name": "Injection for shoulder arthrography (facility fee)",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray",
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ],
+            "at": "this_site"
+          },
+          {
+            "line_id": "mr_arthrogram_23350_doctor",
+            "tier": "possible",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "23350"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan with dye in the joint: an extra part (Injection for shoulder arthrography): the doctor's fee",
+            "technical_name": "Injection for shoulder arthrography (professional fee)",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 44.33,
+              "high": 44.33,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26a",
+                "source_kind": "medicare_pfs",
+                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
+                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
+                "source_date": "2026-01-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:2092",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": {
+              "rung": 5,
+              "explanation_key": "fee.rung_5_medicare",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ],
+            "at": "this_site"
+          },
+          {
+            "line_id": "mr_arthrogram_77002_facility",
+            "tier": "not_in_public_data",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "77002"
+            ],
+            "modifier": null,
+            "plain_name": "Detailed scan with dye in the joint: an extra part (Fluoroscopic needle guidance): the hospital's fee",
+            "technical_name": "Fluoroscopic needle guidance (facility fee)",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray",
+              "facility_fee"
+            ],
+            "component": "facility",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "not_loaded",
+              "what": "Medicare's facility fee schedule for the facility's own fee for this item (not loaded yet)",
+              "eta": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": null,
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ],
+            "at": "this_site"
+          },
+          {
+            "line_id": "mr_arthrogram_77002_reading",
+            "tier": "possible",
+            "likelihood": "rare",
+            "step_id": "mr_arthrogram",
+            "codes": [
+              "77002"
+            ],
+            "modifier": "26",
+            "plain_name": "Detailed scan with dye in the joint: an extra part (Fluoroscopic needle guidance): the doctor's reading",
+            "technical_name": "Fluoroscopic needle guidance (professional fee)",
+            "why": "The dye seeps into small tears, so it shows damage to the cartilage rim around the socket (the labrum) better. It's used when clicking comes with catching or a slipping feeling.",
+            "glossary_keys": [
+              "mr_arthrogram",
+              "labrum",
+              "xray"
+            ],
+            "component": "professional",
+            "component_confirmed": true,
+            "unit": "once",
+            "availability": "offered",
+            "cell": {
+              "kind": "money",
+              "low": 29.29,
+              "high": 29.29,
+              "basis": "fee_schedule",
+              "prov": {
+                "source_id": "cms_pfs_rvu26a",
+                "source_kind": "medicare_pfs",
+                "source_file": "PPRRVU2026_Jan_nonQPP.csv",
+                "source_sha256": "9a15cb9cc117f079f5bbd41819bcad7c9ebf71fa8836ee186e079bc15b3269de",
+                "source_date": "2026-01-01",
+                "method": "computed_fee_schedule",
+                "row_ref": "cms_pfs_rvu26a:9a15cb9cc117:8829",
+                "payer_id": null,
+                "row_id": null
+              },
+              "prov_high": null
+            },
+            "list_price": null,
+            "tier_basis": "guideline",
+            "doctor_fee": {
+              "rung": 5,
+              "explanation_key": "fee.rung_5_medicare",
+              "group_name": null,
+              "group_tin": null,
+              "npi_count": null,
+              "multiple": null,
+              "chia_badge": null,
+              "by_npi": null
+            },
+            "ai_suggested": false,
+            "in_total": false,
+            "elsewhere": [],
+            "learn_more": [
+              {
+                "label": "MedlinePlus: MRI Scans",
+                "url": "https://connect.medlineplus.gov/application?mainSearchCriteria.v.cs=2.16.840.1.113883.6.12&mainSearchCriteria.v.c=73222&informationRecipient.languageCode.c=en"
+              }
+            ],
+            "at": "this_site"
           }
         ],
         "totals": {
@@ -408,7 +1160,7 @@
             "includes_stale_source": false
           },
           "complete": false,
-          "missing": 2,
+          "missing": 4,
           "excluded": [
             {
               "line_id": "visit_facility",
@@ -419,27 +1171,818 @@
               "reason": "no_dollar_amount"
             },
             {
-              "line_id": "steroid_injection",
+              "line_id": "physical_therapy_facility",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "physical_therapy_sessions_facility",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "steroid_injection_facility",
               "reason": "possible_tier"
             },
             {
-              "line_id": "injection_doctor",
-              "reason": "conflict"
+              "line_id": "steroid_injection_doctor",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "steroid_injection_drug_ai",
+              "reason": "ai_suggested"
+            },
+            {
+              "line_id": "tendon_scan_ultrasound_facility",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "tendon_scan_ultrasound_reading",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "tendon_scan_mri_facility",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "tendon_scan_mri_reading",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "mr_arthrogram_facility",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "mr_arthrogram_reading",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "mr_arthrogram_23350_facility",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "mr_arthrogram_23350_doctor",
+              "reason": "possible_tier"
+            },
+            {
+              "line_id": "mr_arthrogram_77002_facility",
+              "reason": "no_dollar_amount"
+            },
+            {
+              "line_id": "mr_arthrogram_77002_reading",
+              "reason": "possible_tier"
             }
           ],
           "you_pay": {
             "kind": "medicare_20_percent",
             "note_key": "youpay.medicare_20_percent",
-            "portal_label": "Check what you've paid toward your deductible at Medicare.gov",
-            "portal_url": "https://www.medicare.gov/account/login"
+            "portal_label": null,
+            "portal_url": null
           }
         }
       },
-      "other_payers": []
+      "other_payers": [
+        {
+          "line_id": "visit_facility",
+          "code": "99203",
+          "points": [
+            {
+              "payer_id": "CIGNA",
+              "label": "Cigna",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 140.15,
+                "high": 393.53,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:66049",
+                  "payer_id": "CIGNA",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:80528",
+                  "payer_id": "CIGNA",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "TRICARE",
+              "label": "TRICARE",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 145.39,
+                "high": 145.39,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:65985",
+                  "payer_id": "TRICARE",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "MGB_HP",
+              "label": "Mass General Brigham Health Plan (formerly AllWays)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 153.45,
+                "high": 189.59,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:65982",
+                  "payer_id": "MGB_HP",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:65984",
+                  "payer_id": "MGB_HP",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 212.36,
+                "high": 404.51,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:65986",
+                  "payer_id": "UHC",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:65988",
+                  "payer_id": "UHC",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "HARVARD_PILGRIM",
+              "label": "Harvard Pilgrim (Point32Health)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 247.5,
+                "high": 259.88,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:80537",
+                  "payer_id": "HARVARD_PILGRIM",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:80538",
+                  "payer_id": "HARVARD_PILGRIM",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "AETNA",
+              "label": "Aetna",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 276.71,
+                "high": 397.98,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:65978",
+                  "payer_id": "AETNA",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:65977",
+                  "payer_id": "AETNA",
+                  "row_id": null
+                }
+              }
+            }
+          ],
+          "cash": {
+            "kind": "money",
+            "low": 308.25,
+            "high": 371.25,
+            "basis": "discounted_cash",
+            "prov": {
+              "source_id": "brigham_mrf",
+              "source_kind": "hospital_mrf",
+              "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+              "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+              "source_date": "2026-03-27",
+              "method": "stated",
+              "row_ref": "brigham_mrf:188337340e25:66049",
+              "payer_id": null,
+              "row_id": null
+            },
+            "prov_high": {
+              "source_id": "brigham_mrf",
+              "source_kind": "hospital_mrf",
+              "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+              "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+              "source_date": "2026-03-27",
+              "method": "stated",
+              "row_ref": "brigham_mrf:188337340e25:65976",
+              "payer_id": null,
+              "row_id": null
+            }
+          },
+          "yours": "not_in_points"
+        },
+        {
+          "line_id": "xray_facility",
+          "code": "73030",
+          "points": [
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 102.46,
+                "high": 369.37,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:109099",
+                  "payer_id": "UHC",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:109101",
+                  "payer_id": "UHC",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "AETNA",
+              "label": "Aetna",
+              "product": "HMO",
+              "money": {
+                "kind": "money",
+                "low": 315.5,
+                "high": 315.5,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:109100",
+                  "payer_id": "AETNA",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "CIGNA",
+              "label": "Cigna",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 359.34,
+                "high": 359.34,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:109098",
+                  "payer_id": "CIGNA",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            }
+          ],
+          "cash": {
+            "kind": "money",
+            "low": 339.0,
+            "high": 339.0,
+            "basis": "discounted_cash",
+            "prov": {
+              "source_id": "brigham_mrf",
+              "source_kind": "hospital_mrf",
+              "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+              "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+              "source_date": "2026-03-27",
+              "method": "stated",
+              "row_ref": "brigham_mrf:188337340e25:109098",
+              "payer_id": null,
+              "row_id": null
+            },
+            "prov_high": null
+          },
+          "yours": "not_in_points"
+        },
+        {
+          "line_id": "physical_therapy_facility",
+          "code": "97161",
+          "points": [
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 107.02,
+                "high": 510.75,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:71736",
+                  "payer_id": "UHC",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:71743",
+                  "payer_id": "UHC",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "MGB_HP",
+              "label": "Mass General Brigham Health Plan (formerly AllWays)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 193.75,
+                "high": 239.38,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:71730",
+                  "payer_id": "MGB_HP",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:71732",
+                  "payer_id": "MGB_HP",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "CIGNA",
+              "label": "Cigna",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 333.13,
+                "high": 496.88,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:71728",
+                  "payer_id": "CIGNA",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:71727",
+                  "payer_id": "CIGNA",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "AETNA",
+              "label": "Aetna",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 349.38,
+                "high": 502.5,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:71740",
+                  "payer_id": "AETNA",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:71739",
+                  "payer_id": "AETNA",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "WELLPOINT",
+              "label": "Wellpoint / Unicare (GIC)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 461.13,
+                "high": 461.13,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:71737",
+                  "payer_id": "WELLPOINT",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "HNE",
+              "label": "Health New England",
+              "product": "PPO",
+              "money": {
+                "kind": "money",
+                "low": 481.25,
+                "high": 481.25,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:71729",
+                  "payer_id": "HNE",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            },
+            {
+              "payer_id": "TRICARE",
+              "label": "TRICARE",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 593.75,
+                "high": 593.75,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:71734",
+                  "payer_id": "TRICARE",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            }
+          ],
+          "cash": {
+            "kind": "money",
+            "low": 468.75,
+            "high": 468.75,
+            "basis": "discounted_cash",
+            "prov": {
+              "source_id": "brigham_mrf",
+              "source_kind": "hospital_mrf",
+              "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+              "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+              "source_date": "2026-03-27",
+              "method": "stated",
+              "row_ref": "brigham_mrf:188337340e25:71727",
+              "payer_id": null,
+              "row_id": null
+            },
+            "prov_high": null
+          },
+          "yours": "not_in_points"
+        },
+        {
+          "line_id": "physical_therapy_sessions_facility",
+          "code": "97110",
+          "points": [
+            {
+              "payer_id": "UHC",
+              "label": "UnitedHealthcare",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 31.47,
+                "high": 186.32,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:66499",
+                  "payer_id": "UHC",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:66505",
+                  "payer_id": "UHC",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "MGB_HP",
+              "label": "Mass General Brigham Health Plan (formerly AllWays)",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 70.68,
+                "high": 87.32,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:66493",
+                  "payer_id": "MGB_HP",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:66495",
+                  "payer_id": "MGB_HP",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "CIGNA",
+              "label": "Cigna",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 121.52,
+                "high": 181.26,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:66492",
+                  "payer_id": "CIGNA",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:66491",
+                  "payer_id": "CIGNA",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "AETNA",
+              "label": "Aetna",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 127.45,
+                "high": 183.31,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:66502",
+                  "payer_id": "AETNA",
+                  "row_id": null
+                },
+                "prov_high": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:66501",
+                  "payer_id": "AETNA",
+                  "row_id": null
+                }
+              }
+            },
+            {
+              "payer_id": "TRICARE",
+              "label": "TRICARE",
+              "product": null,
+              "money": {
+                "kind": "money",
+                "low": 216.6,
+                "high": 216.6,
+                "basis": "negotiated",
+                "prov": {
+                  "source_id": "brigham_mrf",
+                  "source_kind": "hospital_mrf",
+                  "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+                  "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+                  "source_date": "2026-03-27",
+                  "method": "stated",
+                  "row_ref": "brigham_mrf:188337340e25:66497",
+                  "payer_id": "TRICARE",
+                  "row_id": null
+                },
+                "prov_high": null
+              }
+            }
+          ],
+          "cash": {
+            "kind": "money",
+            "low": 171.0,
+            "high": 171.0,
+            "basis": "discounted_cash",
+            "prov": {
+              "source_id": "brigham_mrf",
+              "source_kind": "hospital_mrf",
+              "source_file": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce.zip",
+              "source_sha256": "188337340e253f44f42ded9c15b7e1a957e167e35c2a6a88c21bc63ac1c769ce",
+              "source_date": "2026-03-27",
+              "method": "stated",
+              "row_ref": "brigham_mrf:188337340e25:66491",
+              "payer_id": null,
+              "row_id": null
+            },
+            "prov_high": null
+          },
+          "yours": "not_in_points"
+        }
+      ]
     }
   ],
   "sites_without_service": [],
+  "copy_keys": [
+    "copy.not_a_diagnosis",
+    "copy.when_to_see_a_doctor"
+  ],
   "notices": [
-    "care_path_draft"
+    "care_path_draft",
+    "medicare_advantage_is_insurance"
   ]
 }

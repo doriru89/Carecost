@@ -376,6 +376,7 @@ def _rung6(site: _Site) -> dict:
     pfs = copy.deepcopy(_line(_bcbs_site(0)["receipt"], "visit_doctor")["cell"])  # PFS 99203
     pfs.update(low=90.66, high=135.97, basis="estimate")
     pfs["prov"]["method"] = "estimate_medicare_multiple"
+    pfs["prov_high"] = pfs["prov"]  # both ends: the same Medicare row x the multiple's ends
     ln["cell"] = pfs
     ln["doctor_fee"] = {
         **ln["doctor_fee"],
@@ -401,6 +402,7 @@ def test_rung_6_money_must_be_marked_estimate():
     site = _bcbs_site(1)
     ln = _rung6(site)
     ln["cell"]["prov"]["method"] = "computed_fee_schedule"
+    ln["cell"]["prov_high"] = ln["cell"]["prov"]
     with pytest.raises(ValidationError, match="basis estimate <=> estimate_medicare_multiple"):
         _check(site)
     # a plain negotiated rate labelled rung 6 (the old TiC cell) is not an estimate

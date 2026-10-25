@@ -82,6 +82,7 @@ def test_assistant_picks_are_all_labelled_ai_suggested():
     doc["picked_by"] = "assistant"
     _bad(doc, "never a care path")
     doc["care_path"] = None
+    doc["copy_keys"] = []
     _bad(doc, "every line the assistant picked is ai_suggested")
 
 

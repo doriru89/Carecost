@@ -184,6 +184,13 @@ class Provenance(BaseModel):
         "MRF payer rows, TiC); None for fee schedules, cash and chargemaster prices. Lets the quote "
         "check that a BCBS receipt only sums BCBS rates.",
     )
+    row_id: str | None = Field(
+        default=None,
+        pattern=r"^[0-9a-f]{16}:[0-9]+$",
+        description="RateRow.row_id (<nk_hash>:<nk_ordinal>), unique per build. Required on insurer "
+        "TiC numbers: one TiC price row (one row_ref) is shared by every provider group listed "
+        "with it, so only row_id says which group's number this is (P1 problem 1).",
+    )
 
     @field_validator("source_file")
     @classmethod
@@ -200,6 +207,8 @@ class Provenance(BaseModel):
         prefix = f"{self.source_id}:{self.source_sha256[:12]}:"
         if not self.row_ref.startswith(prefix) or len(self.row_ref) == len(prefix):
             raise ValueError(f"row_ref {self.row_ref!r} must start with {prefix!r}")
+        if self.source_kind == SourceKind.insurer_tic and self.row_id is None:
+            raise ValueError(f"{self.row_ref}: a TiC number needs row_id (row_ref is shared by groups)")
         return self
 
 
@@ -210,13 +219,31 @@ class Money(BaseModel):
     low: float = Field(ge=0)
     high: float = Field(ge=0)
     basis: PriceBasis
-    prov: Provenance
+    prov: Provenance = Field(description="The row the low end comes from")
+    prov_high: Provenance | None = Field(
+        default=None,
+        description="The row the high end comes from. Required on a range (low < high), absent on "
+        "a point, so both ends of every range are cited (P1 problem 2). May name another file of "
+        "the same kind (BCBS publishes HMO Blue as a fully- and a self-insured file).",
+    )
 
     @model_validator(mode="after")
     def _low_le_high(self) -> Money:
         if self.low > self.high:
             raise ValueError("Money.low must be <= Money.high")
+        if (self.low < self.high) != (self.prov_high is not None):
+            raise ValueError("a range (low < high) needs prov_high, and a point has none")
+        if self.prov_high is not None:
+            hi = self.prov_high
+            if hi.source_kind != self.prov.source_kind:
+                raise ValueError("prov_high must be the same source kind as prov")
+            if hi.payer_id != self.prov.payer_id:
+                raise ValueError("both ends of a range must be the same payer's")
         return self
+
+    def provs(self) -> tuple[Provenance, ...]:
+        """Every row this Money cites (low end, then high end)."""
+        return (self.prov,) if self.prov_high is None else (self.prov, self.prov_high)
 
     @classmethod
     def point(cls, amount: float, *, basis: PriceBasis | str, prov: Provenance) -> Money:
@@ -428,7 +455,10 @@ class RateRow(BaseModel):
             raise ValueError(f"{self.row_ref}: tic_* fields are only for insurer_tic rows")
         return self
 
-    def provenance(self) -> Provenance:
+    def provenance(self, basis: PriceBasis = PriceBasis.negotiated) -> Provenance:
+        """``basis`` is what the number read from this row is. Only a negotiated rate belongs to
+        the row's payer: a cash price or gross charge read from a payer row has no payer (P1
+        problem 8; tall CSVs repeat the hospital-wide cash price on every payer row)."""
         method = (
             Method.derived_pct_x_gross
             if self.amount_method == AmountMethod.derived_pct_x_gross
@@ -442,7 +472,12 @@ class RateRow(BaseModel):
             source_date=self.source_date,
             method=method,
             row_ref=self.row_ref,
-            payer_id=self.payer_id if self.row_kind == "payer_rate" else None,
+            payer_id=(
+                self.payer_id
+                if self.row_kind == "payer_rate" and basis == PriceBasis.negotiated
+                else None
+            ),
+            row_id=self.row_id if self.source_kind == SourceKind.insurer_tic else None,
         )
 
     def to_cell(self) -> Money | NotPublished | PercentOnly:
@@ -450,11 +485,11 @@ class RateRow(BaseModel):
         searched = Searched(source_id=self.source_id, source_sha256=self.source_sha256)
         if self.row_kind == "chargemaster":
             if self.discounted_cash is not None:
-                return Money.point(
-                    self.discounted_cash, basis=PriceBasis.discounted_cash, prov=self.provenance()
-                )
+                cash = PriceBasis.discounted_cash
+                return Money.point(self.discounted_cash, basis=cash, prov=self.provenance(cash))
             if self.gross is not None:
-                return Money.point(self.gross, basis=PriceBasis.gross, prov=self.provenance())
+                gross = PriceBasis.gross
+                return Money.point(self.gross, basis=gross, prov=self.provenance(gross))
             return NotPublished(
                 what="a self-pay price for this line",
                 ask="Ask the hospital for its discounted cash price or a Good Faith Estimate.",

@@ -1,79 +1,94 @@
-"""P1 minimal API: ``POST /api/quote`` on a fresh FastAPI app (the legacy ``app.main`` is untouched).
+"""Quote + catalog routes (``app.server`` mounts this router at ``/api``).
 
-    cd backend
-    # real data (needs pyarrow for the TiC parquet: the etl extra)
-    CARECOST_HOSPITAL_BUILD=/path/to/data/build/20261024-10d8a893 \\
-    CARECOST_TIC_ROOT=/path/to/data/intermediate/tic \\
-      uv run --frozen --extra etl uvicorn app.quote.api:app --host 127.0.0.1 --port 8100
-    # or the committed extract (no env vars)
-      uv run --frozen uvicorn app.quote.api:app --host 127.0.0.1 --port 8100
-
-Rate rows are loaded once at startup into in-memory dicts (no database per request). The response
-is validated once by ``QuoteResponse`` inside the engine and returned as its JSON; the route does
-not declare ``response_model`` (FastAPI would validate and serialize it a second time).
+* ``POST /api/quote``: QuoteRequest -> QuoteResponse. The response is validated once by
+  ``QuoteResponse`` inside the engine and returned as its JSON; the route declares no
+  ``response_model`` (FastAPI would validate and serialize it a second time).
+* ``GET /api/catalog``: D3 "Skip AI -> browse prices": every care path and every service.
+  ``GET /api/catalog/paths`` and ``GET /api/catalog/paths/{path_id}/services`` are the two
+  picker steps; the chosen service is then quoted with ``POST /api/quote`` and
+  ``service_codes``.
+* ``GET /api/our-data``: every loaded source with both freshness sides (D18), so "we are behind"
+  (stale_on_our_side) is visible apart from "the publisher is late".
+* ``GET /api/health``.
 """
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from contextlib import asynccontextmanager
-from datetime import date
-
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.gzip import GZipMiddleware
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import Response
 from pydantic import ValidationError
 
-from app.quote.contracts import QuoteRequest
+from app.quote.contracts import OurDataResponse, QuoteRequest
 from app.quote.engine import Engine
-from app.quote.slice_data import SliceData, load_from_env
 
-PAGE_ORIGINS = ["http://127.0.0.1:5180", "http://localhost:5180"]
+router = APIRouter()
 
 
-def create_app(
-    data: SliceData | Callable[[], SliceData] = load_from_env,
-    today: Callable[[], date] = date.today,
-) -> FastAPI:
-    """``data``: a loaded SliceData, or a loader called once at startup. ``today``: the as_of
-    day freshness is computed for (per request, D18); tests pin it."""
+def _engine(request: Request) -> Engine:
+    return request.app.state.engine
 
-    @asynccontextmanager
-    async def lifespan(app: FastAPI):
-        loaded = data() if callable(data) else data
-        app.state.engine = Engine(loaded)
-        app.state.today = today
-        yield
 
-    app = FastAPI(title="CareCost quote (P1 slice)", lifespan=lifespan)
-    app.add_middleware(GZipMiddleware, minimum_size=1000)
-    app.add_middleware(
-        CORSMiddleware, allow_origins=PAGE_ORIGINS, allow_methods=["POST", "GET"],
-        allow_headers=["content-type"],
-    )  # fmt: skip
+def _json(body: str) -> Response:
+    return Response(body, media_type="application/json")
 
-    @app.get("/api/health")
-    def health(request: Request) -> dict:
-        eng: Engine = request.app.state.engine
-        return {
-            "rows": eng.data.counts(),
-            "build_id": eng.data.version.build_id,
-            "tic_release": eng.data.version.tic_release,
+
+@router.post("/quote")
+def quote(req: QuoteRequest, request: Request) -> Response:
+    eng = _engine(request)
+    try:
+        resp = eng.quote(req, request.app.state.today())
+    except ValidationError:
+        raise  # the engine broke a contract rule: our bug, a 500, never a quote
+    except ValueError as e:  # unknown payer / path / site, or a network that is not loaded
+        raise HTTPException(status_code=422, detail=str(e)) from e
+    return _json(resp.model_dump_json())
+
+
+@router.get("/catalog")
+def catalog(request: Request) -> Response:
+    return _json(request.app.state.catalog_json)
+
+
+@router.get("/catalog/paths")
+def catalog_paths(request: Request) -> list[dict]:
+    return [p.model_dump(mode="json") for p in request.app.state.catalog.care_paths]
+
+
+@router.get("/catalog/paths/{path_id}/services")
+def catalog_path_services(path_id: str, request: Request) -> list[dict]:
+    cat = request.app.state.catalog
+    if path_id not in {p.id for p in cat.care_paths}:
+        raise HTTPException(status_code=404, detail=f"unknown care path {path_id}")
+    return [s.model_dump(mode="json") for s in cat.services if path_id in s.care_paths]
+
+
+@router.get("/our-data")
+def our_data(request: Request) -> Response:
+    eng = _engine(request)
+    as_of = request.app.state.today()
+    metas = {**eng.store.sources, **eng.posted_by_source}
+    sources = {
+        sid: {
+            "source_kind": m.source_kind,
+            "publisher": m.publisher,
+            "freshness": eng.freshness(m, as_of).model_dump(mode="json"),
         }
-
-    @app.post("/api/quote")
-    def quote(req: QuoteRequest, request: Request) -> Response:
-        eng: Engine = request.app.state.engine
-        try:
-            resp = eng.quote(req, request.app.state.today())
-        except ValidationError:
-            raise  # the engine broke a contract rule: our bug, a 500, never a quote
-        except ValueError as e:  # outside the P1 slice (other payer, manual codes, other site)
-            raise HTTPException(status_code=422, detail=str(e)) from e
-        return Response(resp.model_dump_json(), media_type="application/json")
-
-    return app
+        for sid, m in sorted(metas.items())
+    }
+    body = OurDataResponse.model_validate({"as_of": as_of.isoformat(), "sources": sources})
+    return _json(body.model_dump_json())
 
 
-app = create_app()
+@router.get("/health")
+def health(request: Request) -> dict:
+    eng = _engine(request)
+    return {
+        "ok": True,
+        "rows": len(eng.store.rows),
+        "rows_by_source": eng.store.counts(),
+        "build_id": eng.store.version.build_id,
+        "tic_release": eng.store.version.tic_release,
+        "sites": len(eng.reg.sites),
+        "sites_version": eng.reg.sites_version,
+        "care_paths": len(eng.reg.paths),
+    }

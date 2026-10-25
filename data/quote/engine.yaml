@@ -1,0 +1,73 @@
+# Quote engine rules (backend/app/quote/engine.py). Everything here is a pricing rule we chose,
+# so it lives in one reviewed file instead of in code. Replaces the P1 slice config.
+version: 1
+
+# A TiC professional row prices a line only when its place-of-service list (CMS POS codes)
+# includes how the site bills. hospital_outpatient: 22 on campus, 19 off campus. office_visit:
+# 11 office, 20 urgent care facility. asc: 24. When a hospital line finds rows that also list
+# office POS 11 next to rows that do not, it keeps only the facility ones (Harvard Pilgrim lists
+# its non-facility rate under almost every POS; tic_visit_codes.yaml pos_buckets).
+place_of_service:
+  hospital_outpatient: ["22", "19"]
+  office_visit: ["11", "20"]
+  asc: ["24"]
+  unknown: ["11", "20"]
+
+# Medicare PFS / MassHealth rate per billing type (facility vs non-facility practice expense).
+fee_schedule_setting:
+  hospital_outpatient: facility
+  asc: facility
+  office_visit: non_facility
+  unknown: non_facility
+
+# Codes billed by the hospital on its own claim: no separate doctor's fee at a hospital.
+facility_only_codes: ["97161", "97162", "97163", "97110"]
+
+# Add-on codes that repeat, priced per unit and never summed.
+per_15_minutes: ["97110"]
+
+# Billing modifiers that do not change the price (33 = preventive service, e.g. a screening
+# colonoscopy): the line shows the modifier, the lookup uses the rows without one.
+pricing_neutral_modifiers: ["33"]
+
+# A hospital clinic visit's facility fee: the E/M code on revenue code 051x, or HCPCS G0463
+# (OPPS). Looked up on the visit code and on these codes; P9.
+hospital_visit_facility_codes: ["G0463"]
+
+# D20: two dollar amounts for the same line (a stated dollar and a %-of-charges amount, or the
+# hospital file and the insurer's TiC file) whose ranges do not overlap and are more than this
+# far apart are a `conflict` (both shown, neither summed). Otherwise the dollar / hospital file wins.
+conflict_threshold: 0.10
+
+# Doctor-fee ladder (plan §2.4, D5, D6).
+ladder:
+  rung6_min_codes: 5        # a group's typical multiple of Medicare needs >= 5 codes with real prices
+  max_by_npi: 20            # D6: list by doctor only when at most this many NPIs are involved
+
+# "Available elsewhere" on a line with no number here: the cheapest other sites in the quote.
+elsewhere_max: 3
+
+# Care path scope.area -> sites.yaml service_areas that can do it (a site outside is listed in
+# sites_without_service). Manual picks use the codes.yaml domain of each code.
+areas:
+  msk_shoulder: [ortho, urgent_care]
+  msk_knee: [ortho, urgent_care]
+  msk_back: [ortho, urgent_care]
+  msk_ankle: [ortho, urgent_care]
+  skin: [skin]
+  gi_lower: [gi]
+  gi_upper: [gi]
+code_domains:
+  ortho: [ortho, urgent_care]
+  derm: [skin]
+  gi: [gi]
+  urgent_care: [urgent_care, ortho]
+
+# P11 you-pay per payer (insurance). Payers not listed use `default`.
+you_pay:
+  default:
+    kind: deductible_then_coinsurance
+  BCBS_MA:
+    kind: copay_or_deductible
+    portal_label: Check my deductible at MyBlue
+    portal_url: https://www.bluecrossma.org/myblue

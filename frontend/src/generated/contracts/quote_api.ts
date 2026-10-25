@@ -248,7 +248,14 @@ export interface Money {
   low: number;
   high: number;
   basis: PriceBasis;
+  /**
+   * The row the low end comes from
+   */
   prov: Provenance;
+  /**
+   * The row the high end comes from. Required on a range (low < high), absent on a point, so both ends of every range are cited (P1 problem 2). May name another file of the same kind (BCBS publishes HMO Blue as a fully- and a self-insured file).
+   */
+  prov_high: Provenance | null;
 }
 
 /**
@@ -396,6 +403,10 @@ export interface Provenance {
    * Whose rate this is (payer_aliases.yaml id) for payer-specific rows (hospital MRF payer rows, TiC); None for fee schedules, cash and chargemaster prices. Lets the quote check that a BCBS receipt only sums BCBS rates.
    */
   payer_id: string | null;
+  /**
+   * RateRow.row_id (<nk_hash>:<nk_ordinal>), unique per build. Required on insurer TiC numbers: one TiC price row (one row_ref) is shared by every provider group listed with it, so only row_id says which group's number this is (P1 problem 1).
+   */
+  row_id: string | null;
 }
 
 export interface QuoteRequest {
@@ -438,6 +449,10 @@ export interface QuoteResponse {
    * Sites filtered out because they offer none of it
    */
   sites_without_service: string[];
+  /**
+   * D33: a quote reached from a care path carries both fixed lines (common causes, not a diagnosis; when to see a doctor); a manual pick carries none (P1 problem 13)
+   */
+  copy_keys: ("copy.not_a_diagnosis" | "copy.when_to_see_a_doctor")[];
   notices: ("care_path_draft" | "tic_not_loaded" | "late_to_refresh_sources" | "stale_on_our_side_sources" | "masshealth_aco_may_differ" | "medicare_advantage_is_insurance")[];
 }
 
@@ -496,6 +511,10 @@ export interface ReceiptLine {
    */
   elsewhere: ElsewhereOption[];
   learn_more: LearnMore[];
+  /**
+   * Where this part of the care happens. your_primary_care: an HMO referral visit happens at the person's own primary care office, not at this site; the price is a range over the primary care groups we have, never this site's (P1 problem 15)
+   */
+  at: "this_site" | "your_primary_care";
 }
 
 /**
@@ -528,9 +547,9 @@ export interface SiteSummary {
   hours_label: "live_by_operator" | "posted_hours" | "may_close_early" | "unknown";
   price_label: "price_file" | "posted_price" | "price_on_request" | "mixed";
   /**
-   * The site's own price source (its hospital MRF or posted page); its freshness is QuoteResponse.sources[price_source_id]
+   * The site's own price source (its hospital MRF or posted page); its freshness is QuoteResponse.sources[price_source_id]. None = the site has its own price source but we do not read it yet (e.g. a clinic's self-pay page): its lines are not_loaded (P1 problem 9)
    */
-  price_source_id: string;
+  price_source_id: string | null;
   /**
    * registry_only sites are never quoted (to-verify queue, D27)
    */
