@@ -35,6 +35,10 @@ NEW_FORMATS: dict[str, dict] = {
         "discovery": "https://transparency-in-coverage.bluecrossma.com/index.json",
     },
 }
+# Government fee schedules (A3): the real entries of sources.d/government.yaml, one per format.
+_GOV = yaml.safe_load((CONFIG_DIR / "sources.d" / "government.yaml").read_text())["sources"]
+for _e in _GOV:
+    NEW_FORMATS.setdefault(_e["format"], _e)
 
 
 def _cfg(tmp_path: Path, sources: list[dict], domains: list[str] | None = None) -> Path:

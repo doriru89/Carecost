@@ -1,0 +1,55 @@
+name: ETL (government fee schedules)
+
+# python -m app.etl gov fetch|build: Medicare PFS + anesthesia, OPPS, ASC (CMS) and the MassHealth
+# physician pricing regulations (EOHHS). Quarterly, after CMS's quarterly files. Artifacts only;
+# nothing is committed, published or deployed.
+#
+# * cms.gov sources download directly. A new quarter has a new URL: a person updates
+#   data/etl/sources.d/government.yaml (source_id, url, effective_date, next_release); the anchor
+#   gate (data/etl/gov_anchors.yaml) checks the new file.
+# * OPPS Addendum B is behind the AMA CPT license click-through: access manual. CI cannot accept a
+#   license, so the OPPS source FAILS here until a person downloads the file; that failure is
+#   expected and loud, never worked around.
+# * MassHealth (mass.gov) uses the plain headed browser (D28) under xvfb; 403 / captcha stops it.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 8 10 1,4,7,10 *"  # 08:23 UTC on Jan / Apr / Jul / Oct 10
+
+env:
+  RUN: uv run --frozen --extra etl
+
+jobs:
+  gov:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install browser, xvfb, poppler
+        run: |
+          $RUN python -m playwright install --with-deps chromium
+          sudo apt-get install -y xvfb poppler-utils
+      - name: Fetch
+        id: fetch
+        continue-on-error: true
+        run: xvfb-run -a $RUN python -m app.etl gov fetch
+      - name: Build (anchor gate per source)
+        run: $RUN python -m app.etl gov build
+      - name: Upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gov-fee-schedules
+          path: |
+            data/intermediate/gov/
+            data/raw/store/fetch_manifest.jsonl
+      - name: Fail if a fetch failed
+        if: steps.fetch.outcome == 'failure'
+        run: |
+          echo "::error::a fee-schedule fetch failed (OPPS needs a manual download; see docs/etl/gov_fee_schedules.md)"
+          exit 1

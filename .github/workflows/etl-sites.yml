@@ -1,0 +1,73 @@
+name: ETL (site registry monthly check)
+
+# P12 / clinic-census.md §8. Same commands as a local run (uv, the etl extra). Nothing is
+# committed, published or deployed from here: the job uploads the regenerated files + the check
+# report, and a person reviews the diff before data/sites/*.yaml changes ("approved rows only").
+#
+# DPH (D28): mass.gov answers scripted HTTP with 403, so `app.sites.dph fetch` clicks the
+# download links in a plain *headed* Chromium (under xvfb on the runner): real user agent, no
+# fingerprint changes, no stealth plugins. If it gets a 403 or a captcha it stops and this job
+# fails loudly; the files are then downloaded by hand (data/raw/manual/dph/), never escalated.
+#
+# Not automated (docs/etl/sites.md): the NPPES bulk / CMS DAC / HPC RPO / TiC-provider-ref
+# re-harvest that produced the census itself.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "41 7 5 * *"  # monthly, 07:41 UTC on the 5th (DPH posts its lists early in the month)
+
+env:
+  RUN: uv run --frozen --extra etl
+
+jobs:
+  sites:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install browser + xvfb
+        run: |
+          $RUN python -m playwright install --with-deps chromium
+          sudo apt-get install -y xvfb
+      - name: DPH lists (plain headed browser)
+        id: dph_fetch
+        continue-on-error: true
+        run: xvfb-run -a $RUN python -m app.sites.dph fetch
+      - name: DPH check (counts within 15%, anchor 2ED8, new / gone facility ids)
+        id: dph_check
+        continue-on-error: true
+        run: $RUN python -m app.sites.dph check
+      - name: NPPES + TIN anchors
+        id: anchors
+        continue-on-error: true
+        run: $RUN python -m app.sites.anchors
+      - name: Rebuild sites.yaml / to_verify.yaml
+        run: $RUN python -m app.sites.build
+      - name: Site contract tests
+        run: uv run --frozen --extra dev pytest -q -p no:cacheprovider tests/sites
+      - name: Diff for review
+        if: always()
+        run: git diff -- ../data/sites > ../data/sites/census-diff.txt || true
+      - name: Upload
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sites-check
+          path: |
+            data/sites/sites.yaml
+            data/sites/to_verify.yaml
+            data/sites/build_report.json
+            data/sites/dph_check.json
+            data/sites/dph_services.yaml
+            data/sites/census-diff.txt
+            data/raw/dph/manifest.jsonl
+      - name: Fail loudly
+        if: steps.dph_fetch.outcome == 'failure' || steps.dph_check.outcome == 'failure' || steps.anchors.outcome == 'failure'
+        run: |
+          echo "::error::a DPH fetch, DPH check or anchor failed (blocked -> download by hand; see docs/etl/sites.md)"
+          exit 1

@@ -1,0 +1,82 @@
+# Known fee-schedule prices, checked by `python -m app.etl gov build` (a source that loses an
+# anchor fails; nothing is written for it). On the exact file the anchor was read from
+# (exact_sha256) the amount must match to the cent; on a newer release it may drift by
+# tolerance_pct (fee schedules move every year), beyond that the build fails.
+#
+# 99213 Boston, hand-computed 2026-10-24 from RVU26D (PPRRVU2026_Oct_nonQPP.csv line 13015,
+# GPCI2026.csv line 62, CF 33.4009):
+#   (1.30*1.041 + 1.46*1.194 + 0.09*0.890) * 33.4009 = 3.17664 * 33.4009 = 106.1026 -> $106.10
+version: 1
+anchors:
+  - id: pfs_99213_boston_office
+    format: cms_pfs_rvu_zip
+    entity_id: medicare_ma_01
+    code: "99213"
+    modifiers: ""
+    plan_raw: non_facility
+    amount: 106.10
+    exact_sha256: 521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6
+    tolerance_pct: 15
+  - id: pfs_99203_boston_facility
+    format: cms_pfs_rvu_zip
+    entity_id: medicare_ma_01
+    code: "99203"
+    modifiers: ""
+    plan_raw: facility
+    amount: 75.54
+    exact_sha256: 521ff0f4ecbf13b5d99dc1dc04d9f82e5361e55c6b4b6b3033043598bf8406e6
+    tolerance_pct: 15
+  - id: opps_g0463
+    format: cms_opps_addendum_b_zip
+    entity_id: medicare_national
+    code: G0463
+    modifiers: ""
+    plan_raw: opps
+    amount: 136.02
+    exact_sha256: 2fc507a1fa6715eb2c702049a18912a33017003606550f61345ae1b48b00bf5b
+    tolerance_pct: 15
+  - id: asc_45378
+    format: cms_asc_addenda_zip
+    entity_id: medicare_national
+    code: "45378"
+    modifiers: ""
+    plan_raw: asc
+    amount: 510.49
+    exact_sha256: 476285fa325f29dbac2f193f3a37a5bf5f3d286fb5cdb04dcfd4f9dc455f10a8
+    tolerance_pct: 15
+  - id: masshealth_99203_office
+    format: masshealth_regulation_pdf
+    entity_id: masshealth
+    code: "99203"
+    modifiers: ""
+    plan_raw: non_facility
+    amount: 84.36
+    exact_sha256: c2f42966300df40ab167721381813e7a7b25f6bbf3de5645c5716d499f7fc428
+    tolerance_pct: 15
+  - id: masshealth_73030_global
+    format: masshealth_regulation_pdf
+    entity_id: masshealth
+    code: "73030"
+    modifiers: ""
+    plan_raw: global
+    amount: 27.31
+    exact_sha256: 25dae5fffe70bd9078414395aea120f9aaa58401c5adc1abc317440efd91e7a5
+    tolerance_pct: 15
+  - id: masshealth_20610_office
+    format: masshealth_regulation_pdf
+    entity_id: masshealth
+    code: "20610"
+    modifiers: ""
+    plan_raw: non_facility
+    amount: 49.06
+    exact_sha256: 10d41619694e49c618a50bedf83e1ff3732ef9cc8d73ab0babdcf0ebad2929bc
+    tolerance_pct: 15
+  - id: anes_00811_boston
+    format: cms_anes_base_units_zip
+    entity_id: medicare_ma_01
+    code: "00811"
+    modifiers: ""
+    plan_raw: anesthesia_base
+    amount: 86.36  # 4 base units * $21.59 (ANES2026.csv, MA locality 01, non-QP)
+    exact_sha256: 3fbb43abb6ef2f4ba7680995c94572d7cc69f503a1c123264565223b2e2502d1
+    tolerance_pct: 15

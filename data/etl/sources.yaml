@@ -174,3 +174,55 @@ sources:
     url: https://mountauburnhospital.org/042103606_mount-auburn-hospital_standardcharges.json
     discovery: https://mountauburnhospital.org/cms-hpt.txt
     legacy_filename: mtauburn_standardcharges.json
+
+  # D29: five Greater Boston hospitals added by A3 (2026-10-24) from docs/etl/hospital_candidates.csv
+  # (priority 1). URLs re-read from each cms-hpt.txt; npis are the files' own type_2_npi.
+  - source_id: nebh_mrf
+    kind: hospital_mrf
+    entity_id: nebh
+    format: cms_v3_json
+    container: plain
+    encoding: utf-8-sig
+    npis: ["1699767491"]
+    url: https://nebh.org/042103612_new-england-baptist-hospital_standardcharges.json
+    discovery: https://nebh.org/cms-hpt.txt
+
+  - source_id: newton_wellesley_mrf
+    kind: hospital_mrf
+    entity_id: newton_wellesley
+    format: cms_v3_csv_tall
+    container: zip
+    encoding: latin-1
+    npis: ["1992737761"]
+    url: https://www.massgeneralbrigham.org/price-transparency/042103611_Newton-Wellesley-Hospital_StandardCharges.zip
+    discovery: https://www.massgeneralbrigham.org/cms-hpt.txt
+
+  - source_id: bid_needham_mrf
+    kind: hospital_mrf
+    entity_id: bid_needham
+    format: cms_v3_json
+    container: plain
+    encoding: utf-8-sig
+    npis: ["1205893450"]
+    url: https://bidneedham.org/043229679_beth-israel-deaconess-hospital---needham_standardcharges.json
+    discovery: https://bidneedham.org/cms-hpt.txt
+
+  - source_id: bid_milton_mrf
+    kind: hospital_mrf
+    entity_id: bid_milton
+    format: cms_v3_json
+    container: plain
+    encoding: utf-8-sig
+    npis: ["1174618953"]
+    url: https://bidmilton.org/042103604_beth-israel-deaconess-hospital-milton-inc_standardcharges.json
+    discovery: https://bidmilton.org/cms-hpt.txt
+
+  - source_id: bmc_south_mrf
+    kind: hospital_mrf
+    entity_id: bmc_south
+    format: cms_v3_csv_tall
+    container: zip
+    encoding: utf-8
+    npis: ["1871329110"]
+    url: https://www.bmchealthsystem.org/wp-content/uploads/272473728_BostonMedicalCenterSouth_standardcharges.csv.zip
+    discovery: https://www.bmchealthsystem.org/cms-hpt.txt

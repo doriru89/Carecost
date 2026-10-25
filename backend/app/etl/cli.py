@@ -7,6 +7,7 @@
                                                                 [--baseline-manifest PATH | --first-build]
     python -m app.etl ...                             report    [--build ID] [--out DIR]
     python -m app.etl ...                             tic       discover|run|verify|normalize|report|release|probe
+    python -m app.etl ...                             gov       fetch|build|show   (fee schedules)
 
 Every subcommand exits non-zero when anything failed, after finishing the other sources.
 """
@@ -27,6 +28,7 @@ from app.etl import report as report_mod
 from app.etl import stage as stage_mod
 from app.etl.config import Paths, SourcesFile, SourceSpec, load_codes, load_sources, load_yaml
 from app.etl.payers import PayerResolver
+from app.etl.gov import cli as gov_cli
 from app.etl.tic import cli as tic_cli
 
 
@@ -258,6 +260,7 @@ def parser() -> argparse.ArgumentParser:
     r.add_argument("--build", default=None)
     r.add_argument("--out", default=None)
     tic_cli.add_parser(sub)
+    gov_cli.add_parser(sub)
     return p
 
 
@@ -268,6 +271,7 @@ COMMANDS = {
     "build": cmd_build,
     "report": cmd_report,
     "tic": tic_cli.cmd,
+    "gov": gov_cli.cmd,
 }
 
 

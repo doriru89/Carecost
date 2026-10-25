@@ -1,70 +1,70 @@
-# Coverage report: build `20261024-10d8a893`
+# Coverage report: build `20261024-336340ed`
 
-Build date 2026-10-24 · gates: **FAIL** (1 fail, 11 warn) · source: hospital MRFs only (11/12 files). Usable rate = payer-specific line, not excluded, with a dollar amount (stated, or % x the line's gross charge).
+Build date 2026-10-24 · gates: **PASS** (0 fail, 17 warn) · source: hospital MRFs only (17/17 files). Usable rate = payer-specific line, not excluded, with a dollar amount (stated, or % x the line's gross charge).
 
 ## Headline: old DB vs new rate_row
 
 | measure | old (DB / audit) | new | denominator |
 |---|---|---|---|
 | target codes with any hospital payer rate | 13 | 42 | 48 codes |
-| code x hospital cells with a payer rate | 84 | 387 | 48 x 12 = 576 |
-| hospitals with MRF payer rates | 7 | 11 | 12 |
-| MRF payer-rate rows, target codes | 902 (DB) | 13622 usable | — |
-| target payer-$ rows in raw files (audit census) | 23581 | 23277 stated-$ rows kept (+32 derived from %) | — |
-| rows with a mapped payer | 4822 (4 payers) | 9680 (18 payers) | 13622 usable |
-| distinct rates thrown away by coarse dedup | 3,613 | 0 (never collapsed; 66 rows flagged ambiguous) | — |
+| code x hospital cells with a payer rate | 84 | 584 | 48 x 17 = 816 |
+| hospitals with MRF payer rates | 7 | 17 | 17 |
+| MRF payer-rate rows, target codes | 902 (DB) | 16396 usable | — |
+| target payer-$ rows in raw files (audit census) | 23581 | 26441 stated-$ rows kept (+32 derived from %) | — |
+| rows with a mapped payer | 4822 (4 payers) | 12182 (18 payers) | 16396 usable |
+| distinct rates thrown away by coarse dedup | 3,613 | 0 (never collapsed; 90 rows flagged ambiguous) | — |
 
-Also: 0 placeholder rows ($0 / $0.01 / $1) dropped and counted; 1457 usable rows above gross (flagged); components of usable rows: facility 11941, professional 787, unknown 894; excluded payer rows: workers_comp 4844, catch_all 1500, dental 939, retired_contract 823, out_of_state 702, behavioral_carveout 567, transplant 365, international 255, vision 60.
+Also: 0 placeholder rows ($0 / $0.01 / $1) dropped and counted; 1721 usable rows above gross (flagged); components of usable rows: facility 14443, professional 826, unknown 1127; excluded payer rows: workers_comp 4844, catch_all 1500, retired_contract 1015, dental 987, out_of_state 766, behavioral_carveout 649, transplant 365, international 266, vision 60.
 
 ## Per code
 
 | domain | code | what | hospitals w/ rate (old DB → new) /12 | files w/ payer $ (audit) | usable rows (old DB MRF rows → new) | %-only, no gross | algorithm-only |
 |---|---|---|---|---|---|---|---|
-| derm | 11102 | Tangential (shave) skin biopsy, single lesion | 6 → **10** | 10 | 71 → **333** | 0 | 15 |
-| derm | 11104 | Punch skin biopsy, single lesion | 7 → **11** | 11 | 83 → **366** | 0 | 15 |
-| derm | 11300 | Shave removal, trunk/arms/legs, 0.5 cm or less | 6 → **9** | 9 | 41 → **181** | 0 | 12 |
-| derm | 11301 | Shave removal, trunk/arms/legs, 0.6-1.0 cm | 0 → **8** | 8 | 0 → **155** | 0 | 12 |
-| derm | 11302 | Shave removal, trunk/arms/legs, 1.1-2.0 cm | 0 → **7** | 7 | 0 → **153** | 0 | 12 |
-| derm | 11303 | Shave removal, trunk/arms/legs, over 2.0 cm | 0 → **7** | 7 | 0 → **137** | 0 | 12 |
-| derm | 11305 | Shave removal, scalp/neck/hands/feet/genitalia, 0.5 cm or less | 6 → **9** | 9 | 35 → **164** | 0 | 12 |
-| derm | 11306 | Shave removal, scalp/neck/hands/feet/genitalia, 0.6-1.0 cm | 0 → **9** | 9 | 0 → **179** | 0 | 12 |
-| derm | 11307 | Shave removal, scalp/neck/hands/feet/genitalia, 1.1-2.0 cm | 0 → **7** | 7 | 0 → **139** | 0 | 12 |
-| derm | 11308 | Shave removal, scalp/neck/hands/feet/genitalia, over 2.0 cm | 0 → **6** | 6 | 0 → **133** | 0 | 12 |
-| derm | 11310 | Shave removal, face/ears/eyelids/nose/lips, 0.5 cm or less | 0 → **9** | 9 | 0 → **191** | 0 | 12 |
-| derm | 11311 | Shave removal, face/ears/eyelids/nose/lips, 0.6-1.0 cm | 0 → **10** | 10 | 0 → **216** | 0 | 15 |
-| derm | 11312 | Shave removal, face/ears/eyelids/nose/lips, 1.1-2.0 cm | 0 → **7** | 7 | 0 → **142** | 0 | 12 |
-| derm | 11313 | Shave removal, face/ears/eyelids/nose/lips, over 2.0 cm | 0 → **6** | 6 | 0 → **134** | 0 | 12 |
-| derm | 17000 | Destruction of premalignant lesion, first | 6 → **9** | 9 | 63 → **267** | 0 | 12 |
-| derm | 17110 | Destruction of benign lesions, up to 14 | 6 → **10** | 10 | 75 → **372** | 0 | 15 |
-| derm/gi | 88305 | Surgical pathology, level IV (tissue exam) | 7 → **11** | 11 | 63 → **466** | 0 | 10 |
+| derm | 11102 | Tangential (shave) skin biopsy, single lesion | 6 → **14** | 10 | 71 → **381** | 0 | 15 |
+| derm | 11104 | Punch skin biopsy, single lesion | 7 → **16** | 11 | 83 → **430** | 0 | 15 |
+| derm | 11300 | Shave removal, trunk/arms/legs, 0.5 cm or less | 6 → **13** | 9 | 41 → **231** | 0 | 12 |
+| derm | 11301 | Shave removal, trunk/arms/legs, 0.6-1.0 cm | 0 → **12** | 8 | 0 → **205** | 0 | 12 |
+| derm | 11302 | Shave removal, trunk/arms/legs, 1.1-2.0 cm | 0 → **11** | 7 | 0 → **203** | 0 | 12 |
+| derm | 11303 | Shave removal, trunk/arms/legs, over 2.0 cm | 0 → **11** | 7 | 0 → **187** | 0 | 12 |
+| derm | 11305 | Shave removal, scalp/neck/hands/feet/genitalia, 0.5 cm or less | 6 → **13** | 9 | 35 → **214** | 0 | 12 |
+| derm | 11306 | Shave removal, scalp/neck/hands/feet/genitalia, 0.6-1.0 cm | 0 → **13** | 9 | 0 → **229** | 0 | 12 |
+| derm | 11307 | Shave removal, scalp/neck/hands/feet/genitalia, 1.1-2.0 cm | 0 → **11** | 7 | 0 → **189** | 0 | 12 |
+| derm | 11308 | Shave removal, scalp/neck/hands/feet/genitalia, over 2.0 cm | 0 → **10** | 6 | 0 → **183** | 0 | 12 |
+| derm | 11310 | Shave removal, face/ears/eyelids/nose/lips, 0.5 cm or less | 0 → **13** | 9 | 0 → **241** | 0 | 12 |
+| derm | 11311 | Shave removal, face/ears/eyelids/nose/lips, 0.6-1.0 cm | 0 → **14** | 10 | 0 → **266** | 0 | 15 |
+| derm | 11312 | Shave removal, face/ears/eyelids/nose/lips, 1.1-2.0 cm | 0 → **11** | 7 | 0 → **192** | 0 | 12 |
+| derm | 11313 | Shave removal, face/ears/eyelids/nose/lips, over 2.0 cm | 0 → **10** | 6 | 0 → **184** | 0 | 12 |
+| derm | 17000 | Destruction of premalignant lesion, first | 6 → **13** | 9 | 63 → **317** | 0 | 12 |
+| derm | 17110 | Destruction of benign lesions, up to 14 | 6 → **14** | 10 | 75 → **422** | 0 | 15 |
+| derm/gi | 88305 | Surgical pathology, level IV (tissue exam) | 7 → **16** | 11 | 63 → **564** | 0 | 10 |
 | gi | 00811 | Anesthesia, lower GI endoscopy | 0 → **0** | 0 | 0 → **0** | 0 | 0 |
 | gi | 00812 | Anesthesia, screening colonoscopy | 0 → **0** | 0 | 0 → **0** | 0 | 0 |
 | gi | 00813 | Anesthesia, combined upper and lower GI endoscopy | 0 → **0** | 0 | 0 → **0** | 0 | 0 |
-| gi | 43239 | Upper endoscopy (EGD) with biopsy | 7 → **11** | 11 | 95 → **400** | 0 | 39 |
-| gi | 45378 | Colonoscopy, diagnostic | 7 → **10** | 10 | 92 → **683** | 0 | 41 |
-| gi | 45380 | Colonoscopy with biopsy | 7 → **10** | 10 | 87 → **367** | 0 | 44 |
-| gi | 45385 | Colonoscopy with polyp removal (snare) | 7 → **10** | 10 | 82 → **451** | 0 | 41 |
-| ortho | 20610 | Joint injection/aspiration, major joint | 0 → **11** | 11 | 0 → **520** | 0 | 27 |
-| ortho | 20611 | Joint injection/aspiration, major joint, with ultrasound guidance | 0 → **11** | 11 | 0 → **428** | 0 | 15 |
-| ortho | 29826 | Shoulder arthroscopy, subacromial decompression (add-on) | 0 → **3** | 3 | 0 → **8** | 0 | 0 |
-| ortho | 29827 | Shoulder arthroscopy, rotator cuff repair | 0 → **6** | 6 | 0 → **64** | 0 | 14 |
-| ortho | 73030 | X-ray shoulder, 2+ views | 0 → **11** | 11 | 0 → **422** | 0 | 5 |
-| ortho | 73221 | MRI shoulder (joint) without contrast | 0 → **11** | 11 | 0 → **387** | 0 | 6 |
-| ortho | 73222 | MRI shoulder (joint) with contrast | 0 → **10** | 10 | 0 → **235** | 0 | 9 |
-| ortho | 76881 | Ultrasound joint, complete | 0 → **10** | 10 | 0 → **411** | 0 | 5 |
-| ortho | 76882 | Ultrasound joint, limited | 0 → **11** | 11 | 0 → **427** | 0 | 5 |
-| ortho | 97110 | Therapeutic exercise, each 15 min | 0 → **11** | 12 | 0 → **422** | 0 | 12 |
-| ortho | 97161 | Physical therapy evaluation, low complexity | 0 → **11** | 12 | 0 → **300** | 0 | 9 |
-| ortho | 97162 | Physical therapy evaluation, moderate complexity | 0 → **11** | 12 | 0 → **286** | 0 | 9 |
-| ortho | 97163 | Physical therapy evaluation, high complexity | 0 → **11** | 12 | 0 → **245** | 0 | 7 |
-| ortho | 99202 | New patient office visit, level 2 | 0 → **9** | 10 | 0 → **235** | 0 | 12 |
-| ortho | 99203 | New patient office visit, level 3 | 0 → **9** | 11 | 0 → **368** | 0 | 12 |
-| ortho | 99204 | New patient office visit, level 4 | 0 → **9** | 11 | 0 → **326** | 0 | 12 |
-| ortho | 99205 | New patient office visit, level 5 | 0 → **9** | 11 | 0 → **363** | 0 | 12 |
-| ortho | 99212 | Established patient office visit, level 2 | 0 → **9** | 10 | 0 → **588** | 0 | 18 |
-| ortho | 99213 | Established patient office visit, level 3 | 6 → **9** | 11 | 64 → **674** | 0 | 17 |
-| ortho | 99214 | Established patient office visit, level 4 | 6 → **9** | 11 | 51 → **592** | 0 | 18 |
-| ortho | 99215 | Established patient office visit, level 5 | 0 → **10** | 12 | 0 → **692** | 0 | 20 |
+| gi | 43239 | Upper endoscopy (EGD) with biopsy | 7 → **16** | 11 | 95 → **472** | 0 | 43 |
+| gi | 45378 | Colonoscopy, diagnostic | 7 → **15** | 10 | 92 → **846** | 0 | 49 |
+| gi | 45380 | Colonoscopy with biopsy | 7 → **15** | 10 | 87 → **438** | 0 | 48 |
+| gi | 45385 | Colonoscopy with polyp removal (snare) | 7 → **15** | 10 | 82 → **536** | 0 | 47 |
+| ortho | 20610 | Joint injection/aspiration, major joint | 0 → **16** | 11 | 0 → **620** | 0 | 29 |
+| ortho | 20611 | Joint injection/aspiration, major joint, with ultrasound guidance | 0 → **16** | 11 | 0 → **487** | 0 | 17 |
+| ortho | 29826 | Shoulder arthroscopy, subacromial decompression (add-on) | 0 → **6** | 3 | 0 → **20** | 0 | 0 |
+| ortho | 29827 | Shoulder arthroscopy, rotator cuff repair | 0 → **9** | 6 | 0 → **78** | 0 | 14 |
+| ortho | 73030 | X-ray shoulder, 2+ views | 0 → **16** | 11 | 0 → **475** | 0 | 5 |
+| ortho | 73221 | MRI shoulder (joint) without contrast | 0 → **16** | 11 | 0 → **477** | 0 | 7 |
+| ortho | 73222 | MRI shoulder (joint) with contrast | 0 → **15** | 10 | 0 → **286** | 0 | 9 |
+| ortho | 76881 | Ultrasound joint, complete | 0 → **15** | 10 | 0 → **500** | 0 | 5 |
+| ortho | 76882 | Ultrasound joint, limited | 0 → **16** | 11 | 0 → **519** | 0 | 5 |
+| ortho | 97110 | Therapeutic exercise, each 15 min | 0 → **17** | 12 | 0 → **505** | 2 | 12 |
+| ortho | 97161 | Physical therapy evaluation, low complexity | 0 → **17** | 12 | 0 → **366** | 2 | 9 |
+| ortho | 97162 | Physical therapy evaluation, moderate complexity | 0 → **17** | 12 | 0 → **350** | 2 | 9 |
+| ortho | 97163 | Physical therapy evaluation, high complexity | 0 → **17** | 12 | 0 → **308** | 2 | 7 |
+| ortho | 99202 | New patient office visit, level 2 | 0 → **13** | 10 | 0 → **281** | 0 | 12 |
+| ortho | 99203 | New patient office visit, level 3 | 0 → **15** | 11 | 0 → **449** | 0 | 12 |
+| ortho | 99204 | New patient office visit, level 4 | 0 → **14** | 11 | 0 → **399** | 0 | 12 |
+| ortho | 99205 | New patient office visit, level 5 | 0 → **15** | 11 | 0 → **444** | 0 | 12 |
+| ortho | 99212 | Established patient office visit, level 2 | 0 → **13** | 10 | 0 → **672** | 0 | 18 |
+| ortho | 99213 | Established patient office visit, level 3 | 6 → **15** | 11 | 64 → **774** | 2 | 17 |
+| ortho | 99214 | Established patient office visit, level 4 | 6 → **14** | 11 | 51 → **666** | 2 | 18 |
+| ortho | 99215 | Established patient office visit, level 5 | 0 → **16** | 12 | 0 → **790** | 2 | 20 |
 | urgent_care | 99051 | After-hours / evening / weekend service add-on | 0 → **0** | 0 | 0 → **0** | 0 | 0 |
 | urgent_care | S9083 | Urgent care center global fee | 0 → **0** | 0 | 0 → **0** | 0 | 0 |
 | urgent_care | S9088 | Services provided in an urgent care center | 0 → **0** | 0 | 0 → **0** | 0 | 0 |
@@ -75,18 +75,23 @@ Two dates, never mixed (D18): the publisher's own `last_updated_on` from the fil
 
 | hospital | publisher last_updated_on | our fetched_at (method) | staged rows (= independent count) | rate rows | usable payer rates | payers | target codes /48 | placeholders dropped |
 |---|---|---|---|---|---|---|---|---|---|
-| mgh | 2026-03-27 | 2026-10-24 (download) | 159,489 (= 159,489) | 1,516 | 1,228 | 16 | 36 | 0 |
-| brigham | 2026-03-27 | 2026-10-24 (download) | 109,293 (= 109,293) | 1,160 | 1,014 | 15 | 39 | 0 |
-| faulkner | 2026-03-27 | 2026-10-24 (download) | 39,202 (= 39,202) | 250 | 215 | 15 | 16 | 0 |
-| bmc | 2026-03-13 | 2026-10-24 (download) | 1,329,567 (= 1,329,567) | 4,067 | 3,113 | 15 | 41 | 0 |
-| bmc_brighton | 2026-03-13 | 2026-10-24 (download) | 552,814 (= 552,814) | 1,846 | 1,543 | 14 | 33 | 0 |
-| cha | 2026-03-20 | 2026-10-24 (download) | 1,022,366 (= 1,022,366) | 4,121 | 894 | 16 | 41 | 0 |
-| tufts | 2026-04-01 | 2026-10-24 (download) | 5,877,884 (= 5,877,884) | 9,207 | 3,978 | 16 | 40 | 0 |
-| franciscan | — | — | not built | — | — | — | — | — | — |
-| bidmc | 2026-04-01 | 2026-10-24 (download) | 90,199 (= 90,199) | 217 | 177 | 5 | 42 | 0 |
-| childrens | 2026-04-01 | 2026-10-24 (download) | 465,548 (= 465,548) | 1,723 | 1,235 | 11 | 28 | 0 |
-| dana_farber | 2026-04-01 | 2026-10-24 (download) | 55,667 (= 55,667) | 286 | 41 | 2 | 29 | 0 |
-| mtauburn | 2026-04-01 | 2026-10-24 (download) | 64,504 (= 64,504) | 212 | 184 | 4 | 42 | 0 |
+| mgh | 2026-03-27 | 2026-10-25 (download) | 159,489 (= 159,489) | 1,516 | 1,228 | 16 | 36 | 0 |
+| brigham | 2026-03-27 | 2026-10-25 (download) | 109,293 (= 109,293) | 1,160 | 1,014 | 15 | 39 | 0 |
+| faulkner | 2026-03-27 | 2026-10-25 (download) | 39,202 (= 39,202) | 250 | 215 | 15 | 16 | 0 |
+| bmc | 2026-03-13 | 2026-10-25 (download) | 1,329,567 (= 1,329,567) | 4,067 | 3,113 | 15 | 41 | 0 |
+| bmc_brighton | 2026-03-13 | 2026-10-25 (download) | 552,814 (= 552,814) | 1,846 | 1,543 | 14 | 33 | 0 |
+| cha | 2026-03-20 | 2026-10-25 (download) | 1,022,366 (= 1,022,366) | 4,121 | 894 | 16 | 41 | 0 |
+| tufts | 2026-04-01 | 2026-10-25 (download) | 5,877,884 (= 5,877,884) | 9,207 | 3,978 | 16 | 40 | 0 |
+| franciscan | 2026-04-01 | 2026-10-25 (download) | 5,085 (= 5,085) | 297 | 233 | 12 | 10 | 0 |
+| bidmc | 2026-04-01 | 2026-10-25 (download) | 90,199 (= 90,199) | 217 | 177 | 5 | 42 | 0 |
+| childrens | 2026-04-01 | 2026-10-25 (download) | 465,548 (= 465,548) | 1,723 | 1,235 | 11 | 28 | 0 |
+| dana_farber | 2026-04-01 | 2026-10-25 (download) | 55,667 (= 55,667) | 286 | 41 | 2 | 29 | 0 |
+| mtauburn | 2026-04-01 | 2026-10-25 (download) | 64,504 (= 64,504) | 212 | 184 | 5 | 42 | 0 |
+| nebh | 2026-04-01 | 2026-10-25 (download) | 82,533 (= 82,533) | 276 | 210 | 6 | 42 | 0 |
+| newton_wellesley | 2026-03-27 | 2026-10-25 (download) | 36,240 (= 36,240) | 302 | 264 | 14 | 21 | 0 |
+| bid_needham | 2026-04-01 | 2026-10-25 (download) | 53,086 (= 53,086) | 122 | 94 | 3 | 42 | 0 |
+| bid_milton | 2026-04-01 | 2026-10-25 (download) | 65,359 (= 65,359) | 197 | 169 | 5 | 42 | 0 |
+| bmc_south | 2026-03-13 | 2026-10-25 (download) | 528,089 (= 528,089) | 2,140 | 1,804 | 14 | 40 | 0 |
 
 ## Hospital x payer: target codes with a usable rate
 
@@ -99,11 +104,16 @@ Two dates, never mixed (D18): the publisher's own `last_updated_on` from the fil
 | bmc_brighton | 33 | 33 | 33 | 33 | 33 | 33 | 0 | 33 | 33 | 33 | 33 | 0 |
 | cha | 41 | 19 | 23 | 41 | 33 | 20 | 0 | 36 | 1 | 6 | 1 | 1 |
 | tufts | 37 | 38 | 40 | 17 | 40 | 34 | 0 | 40 | 40 | 18 | 17 | 40 |
-| franciscan | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| franciscan | 9 | 10 | 10 | 10 | 10 | 10 | 0 | 10 | 10 | 10 | 0 | 10 |
 | bidmc | 42 | 29 | 0 | 0 | 0 | 0 | 0 | 4 | 0 | 0 | 0 | 8 |
 | childrens | 28 | 28 | 28 | 28 | 28 | 28 | 0 | 28 | 0 | 28 | 0 | 0 |
 | dana_farber | 0 | 29 | 0 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
-| mtauburn | 42 | 29 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 8 |
+| mtauburn | 42 | 29 | 0 | 0 | 0 | 33 | 0 | 0 | 0 | 0 | 0 | 8 |
+| nebh | 42 | 29 | 0 | 0 | 0 | 30 | 0 | 26 | 0 | 0 | 0 | 8 |
+| newton_wellesley | 8 | 6 | 6 | 4 | 17 | 17 | 9 | 13 | 0 | 1 | 10 | 0 |
+| bid_needham | 42 | 29 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| bid_milton | 42 | 42 | 0 | 0 | 0 | 25 | 0 | 26 | 0 | 0 | 0 | 0 |
+| bmc_south | 40 | 40 | 40 | 40 | 40 | 40 | 0 | 40 | 40 | 40 | 40 | 0 |
 
 ## Gates
 
@@ -111,17 +121,22 @@ Two dates, never mixed (D18): the publisher's own `last_updated_on` from the fil
 |---|---|---|---|
 | anchor | brigham_11102_aetna_hmo_facility | pass | exact match required on the anchor file: want 417.4, got [417.4] |
 | anchor | brigham_11102_aetna_hmo_professional | pass | exact match required on the anchor file: want 115.17, got [115.17] |
-| source_present | franciscan_mrf | fail | nothing fetched and no pinned / last-good copy |
-| anchor | bidmc_73030_bcbs_hmo | pass | newer file: want 110.42 +/-25%, got [110.42] |
-| staleness | bidmc_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-24 |
-| staleness | bmc_brighton_mrf | warn | last_updated_on 2026-03-13 (225 days); fetched_at 2026-10-24 |
-| staleness | bmc_mrf | warn | last_updated_on 2026-03-13 (225 days); fetched_at 2026-10-24 |
-| staleness | brigham_mrf | warn | last_updated_on 2026-03-27 (211 days); fetched_at 2026-10-24 |
-| staleness | cha_mrf | warn | last_updated_on 2026-03-20 (218 days); fetched_at 2026-10-24 |
-| staleness | childrens_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-24 |
-| staleness | dana_farber_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-24 |
-| staleness | faulkner_mrf | warn | last_updated_on 2026-03-27 (211 days); fetched_at 2026-10-24 |
-| staleness | mgh_mrf | warn | last_updated_on 2026-03-27 (211 days); fetched_at 2026-10-24 |
-| staleness | mtauburn_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-24 |
-| staleness | tufts_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-24 |
+| anchor | bidmc_73030_bcbs_hmo | pass | exact match required on the anchor file: want 110.42, got [110.42] |
+| staleness | bid_milton_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-25 |
+| staleness | bid_needham_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-25 |
+| staleness | bidmc_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-25 |
+| staleness | bmc_brighton_mrf | warn | last_updated_on 2026-03-13 (225 days); fetched_at 2026-10-25 |
+| staleness | bmc_mrf | warn | last_updated_on 2026-03-13 (225 days); fetched_at 2026-10-25 |
+| staleness | bmc_south_mrf | warn | last_updated_on 2026-03-13 (225 days); fetched_at 2026-10-25 |
+| staleness | brigham_mrf | warn | last_updated_on 2026-03-27 (211 days); fetched_at 2026-10-25 |
+| staleness | cha_mrf | warn | last_updated_on 2026-03-20 (218 days); fetched_at 2026-10-25 |
+| staleness | childrens_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-25 |
+| staleness | dana_farber_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-25 |
+| staleness | faulkner_mrf | warn | last_updated_on 2026-03-27 (211 days); fetched_at 2026-10-25 |
+| staleness | franciscan_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-25 |
+| staleness | mgh_mrf | warn | last_updated_on 2026-03-27 (211 days); fetched_at 2026-10-25 |
+| staleness | mtauburn_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-25 |
+| staleness | nebh_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-25 |
+| staleness | newton_wellesley_mrf | warn | last_updated_on 2026-03-27 (211 days); fetched_at 2026-10-25 |
+| staleness | tufts_mrf | warn | last_updated_on 2026-04-01 (206 days); fetched_at 2026-10-25 |
 
