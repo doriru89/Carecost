@@ -904,3 +904,133 @@ sources:
     checked_at: '2026-10-24'
     recheck_after_days: 365
     excerpts: []
+  medlineplus_suicide:
+    title: 'MedlinePlus: Suicide'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2026
+    url: https://medlineplus.gov/suicide.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: ff52dc33f0d28679e8604239de9b5f745758a8a71d33dbb6426c6cf282ef3eb3
+    excerpts:
+    - Talking about wanting to die or wanting to kill oneself
+    - Calling or texting the 988 Suicide & Crisis Lifeline at 988.
+  nimh_suicide_prevention:
+    title: 'NIMH: Suicide Prevention'
+    publisher: National Institute of Mental Health
+    year: 2026
+    url: https://www.nimh.nih.gov/health/topics/suicide-prevention
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: c266bc5841b087c750a6673f3db5b11d67bf4474be121c9b2dc07f687efc4e2e
+    excerpts:
+    - In life-threatening situations, call 911.
+  medlineplus_stroke:
+    title: 'MedlinePlus: Stroke'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2026
+    url: https://medlineplus.gov/stroke.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: c0e87439225fdf78944a648adc7640dc13d09e40553ad3a9de3dc7683f587e6d
+    excerpts:
+    - If you think that you or someone else is having a stroke, call 911 right away.
+    - Sudden numbness or weakness of the face, arm, or leg
+  nhs_stroke_symptoms:
+    title: 'NHS: Stroke symptoms'
+    publisher: NHS website (England)
+    year: 2024
+    url: https://www.nhs.uk/conditions/stroke/symptoms/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: f5d87e7d9f5ecb387721416a5d3f82e0ca4ad5a69c9adedf0ce51ee24f90b8f3
+    excerpts:
+    - face, arms, speech and time to call 999
+    - you may slur your words or sound confused
+  nhs_headaches:
+    title: 'NHS: Headaches'
+    publisher: NHS website (England)
+    year: 2024
+    url: https://www.nhs.uk/conditions/headaches/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: fac0acc3eb3f678dd40e5b2b8b28638d52a7f95d2d95f871033778b491b3c7ae
+    excerpts:
+    - it started suddenly and is extremely painful
+  nhs_subarachnoid_haemorrhage:
+    title: 'NHS: Subarachnoid haemorrhage'
+    publisher: NHS website (England)
+    year: 2025
+    url: https://www.nhs.uk/conditions/subarachnoid-haemorrhage/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 305d8408e9fd29799addd5166b5753d1cd91fbea97e732856adba1494c602abf
+    excerpts:
+    - gets a sudden headache that is extremely painful and does not go away
+  nhs_shortness_of_breath:
+    title: 'NHS: Shortness of breath'
+    publisher: NHS website (England)
+    year: 2024
+    url: https://www.nhs.uk/symptoms/shortness-of-breath/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 2f7875c0cb43b1f0db3d71822a8bd10361564af36bbc0dc0e8ff00721fe1f5b9
+    excerpts:
+    - you're gasping, choking or not able to get words out
+  medlineplus_seizures:
+    title: 'MedlinePlus: Seizures'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2026
+    url: https://medlineplus.gov/seizures.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 7c753bbfb58d9d2507d1ef3a1ad9a499b936f7896794f12cedba8708518b02f4
+    excerpts:
+    - it is a medical emergency if seizures last longer than 5 minutes
+  medlineplus_poisoning:
+    title: 'MedlinePlus: Poisoning'
+    publisher: MedlinePlus, National Library of Medicine
+    year: 2026
+    url: https://medlineplus.gov/poisoning.html
+    tier: government
+    license: public_domain_us_gov
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 67fa20c596e6187bb6c30f3e89b05e9612c4768cdbd7e83f6ddc6d952488051e
+    excerpts:
+    - Overdoses of illegal drugs
+    - call your local poison control center at 1-800-222-1222 right away
+  nhs_fainting:
+    title: 'NHS: Fainting'
+    publisher: NHS website (England)
+    year: 2026
+    url: https://www.nhs.uk/conditions/fainting/
+    tier: government
+    license: uk_open_government_licence_v3
+    jurisdiction: UK
+    checked_at: '2026-10-24'
+    recheck_after_days: 365
+    fetched_text_sha256: 3368e66bdb63978955f0ba93793c05bb1703258044d4307cce9327edf0119ee7
+    excerpts:
+    - is not breathing
+    - cannot be woken up within 1 minute
