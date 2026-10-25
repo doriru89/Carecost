@@ -272,3 +272,12 @@ sites:
     tuftsmedicine.org/cms-hpt.txt)
   listing_status: web_verified
   listing_checked_at: '2026-10-24'
+- match_census_id: GB0005
+  # A6 (S0 finding): the census lists it as asc_endo (GI), but the operator's own announcement
+  # says orthopedic. nebh.org 2023-06-28 news story (fetched 2026-10-25, sha256 09949990df99...):
+  # "New England Baptist Surgery Center, LLC, will focus on all outpatient orthopedic surgical
+  # subspecialties"; "Located at 40 Allied Drive, Suite 200".
+  service_areas:
+  - ortho
+  notes: 'service_areas: orthopedic ASC per https://nebh.org/news-stories/all-news-stories/news/2023/06/nebh-partners-convert-an-outpatient-surgery-department-new-ambulatory-surgery-center-in-dedham
+    ("will focus on all outpatient orthopedic surgical subspecialties"); census category asc_endo overridden (A6)'

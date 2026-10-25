@@ -3114,7 +3114,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -3613,7 +3613,7 @@
               "money": {
                 "kind": "money",
                 "low": 743.77,
-                "high": 1339.0,
+                "high": 743.77,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -3626,17 +3626,7 @@
                   "payer_id": "CIGNA",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:23118",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -3698,7 +3688,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:23118",
+              "row_ref": "cha_mrf:2efdf1cef584:23119",
               "payer_id": null,
               "row_id": null
             },
@@ -3944,7 +3934,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -4443,7 +4433,7 @@
               "money": {
                 "kind": "money",
                 "low": 743.77,
-                "high": 1339.0,
+                "high": 743.77,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -4456,17 +4446,7 @@
                   "payer_id": "CIGNA",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:23118",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -4528,7 +4508,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:23118",
+              "row_ref": "cha_mrf:2efdf1cef584:23119",
               "payer_id": null,
               "row_id": null
             },
@@ -4772,7 +4752,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -5271,7 +5251,7 @@
               "money": {
                 "kind": "money",
                 "low": 743.77,
-                "high": 1339.0,
+                "high": 743.77,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -5284,17 +5264,7 @@
                   "payer_id": "CIGNA",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:23118",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -5356,7 +5326,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:23118",
+              "row_ref": "cha_mrf:2efdf1cef584:23119",
               "payer_id": null,
               "row_id": null
             },
@@ -5602,7 +5572,7 @@
                 "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
                 "source_date": "2026-03-20",
                 "method": "stated",
-                "row_ref": "cha_mrf:2efdf1cef584:23118",
+                "row_ref": "cha_mrf:2efdf1cef584:23119",
                 "payer_id": null,
                 "row_id": null
               },
@@ -6101,7 +6071,7 @@
               "money": {
                 "kind": "money",
                 "low": 743.77,
-                "high": 1339.0,
+                "high": 743.77,
                 "basis": "negotiated",
                 "prov": {
                   "source_id": "cha_mrf",
@@ -6114,17 +6084,7 @@
                   "payer_id": "CIGNA",
                   "row_id": null
                 },
-                "prov_high": {
-                  "source_id": "cha_mrf",
-                  "source_kind": "hospital_mrf",
-                  "source_file": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233.csv",
-                  "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
-                  "source_date": "2026-03-20",
-                  "method": "stated",
-                  "row_ref": "cha_mrf:2efdf1cef584:23118",
-                  "payer_id": "CIGNA",
-                  "row_id": null
-                }
+                "prov_high": null
               }
             },
             {
@@ -6186,7 +6146,7 @@
               "source_sha256": "2efdf1cef58444fbf7dfd435a04da4917f7ee618946d3c57d778ccde5fa73233",
               "source_date": "2026-03-20",
               "method": "stated",
-              "row_ref": "cha_mrf:2efdf1cef584:23118",
+              "row_ref": "cha_mrf:2efdf1cef584:23119",
               "payer_id": null,
               "row_id": null
             },
@@ -6669,9 +6629,11 @@
     "atrius_health_inc_wellesley",
     "atrius_health_inc_weymouth_gb0139",
     "barry_s_paul_m_d_arlington",
+    "boston_dermatology_and_laser_center_llc_boston",
     "boston_endoscopy_center_wellesley_hills",
     "boston_food_allergy_center_llc_bi_network_boston_gb0098",
     "boston_food_allergy_center_llc_bi_network_boston_gb0099",
+    "brigham_and_womens_faulkner_gastroenterology_clinic_jama",
     "brigham_and_womens_gastroenterology_clinic_boston",
     "brigham_dermatology_associates_chestnut_hill",
     "cambridge_public_health_commission_somerville_gb0067",
@@ -6695,7 +6657,9 @@
     "hallmark_health_medical_associates_inc_stoneham",
     "harbor_medical_associates_inc_south_weymouth",
     "id_of_quincy_llc_quincy",
+    "integrated_dermatology_of_brookline_llc_brookline",
     "krauss_dermatology_pc_wellesley",
+    "lexington_waltham_dermatology_group_inc_lexington",
     "maritime_mohs_pc_wellesley_hills",
     "mass_eye_and_ear_dermatology_clinic_boston",
     "mass_general_brigham_endoscopy_clinic_braintree",
@@ -6704,13 +6668,14 @@
     "massachusetts_general_dermatology_clinic_boston",
     "massachusetts_general_physicians_organization_inc_chelse",
     "mystic_valley_dermatology_associates_pc_somerville",
+    "mystic_valley_dermatology_associates_pc_stoneham",
     "mystic_valley_dermatology_associates_pc_winchester",
     "needham_gastroenterology_associates_pc_needham",
-    "new_england_baptist_surgery_center_llc_dedham",
     "newton_watertown_dermatology_assoc_pc_brighton",
     "newton_wellesley_outpatient_surgery_center_wellesley",
     "northeast_ambulatory_center_inc_stoneham",
     "northeast_dermatology_associates_pc_brookline",
+    "pratt_med_surg_dermatology_associates_inc_boston",
     "premier_dermatology_pllc_wellesley",
     "robert_j_obrien_jr_md_and_assoc_pc_winchester",
     "skincare_physicians_inc_chestnut_hill",

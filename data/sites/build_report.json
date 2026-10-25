@@ -78,12 +78,12 @@
   "GB0338"
  ],
  "offered_by_evidence": {
-  "census_category": 191,
+  "census_category": 190,
   "dph_license": 79,
   "posted_price": 1
  },
  "offered_by_service": {
-  "endoscopy": 6,
+  "endoscopy": 5,
   "imaging": 33,
   "lab": 33,
   "mri": 3,

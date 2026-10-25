@@ -891,7 +891,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - skin
-  - ortho
   tins:
   - '043335166'
   - '043354353'
@@ -992,7 +991,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - skin
-  - gi
   tins:
   - '611404248'
   - '043166166'
@@ -2637,8 +2635,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - ortho
-  - skin
-  - gi
   type_2_npis:
   - '1144418328'
   - '1215124904'
@@ -2672,8 +2668,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - ortho
-  - skin
-  - gi
   type_2_npis:
   - '1700899929'
   - '1912917840'
@@ -2743,8 +2737,6 @@ sites:
     geocoded_at: '2026-10-24'
   service_areas:
   - ortho
-  - skin
-  - gi
   type_2_npis:
   - '1548746092'
   - '1659192797'

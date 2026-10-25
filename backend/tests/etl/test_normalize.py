@@ -108,8 +108,12 @@ def test_cha_catch_all_flagged_and_component_unknown(tmp_path):
     assert all(
         r.component == "unknown" and r.component_rule == "none" for r in rows
     )  # CHA has no RC
-    medicaid = [r for r in rows if r.payer_id == "MASSHEALTH" and not r.excluded]
+    medicaid = [r for r in rows if r.payer_id == "MASSHEALTH"]
     assert medicaid, "MassHealth rows must be imported (D4)"
+    # A6 (O audit): the fixture's one MassHealth row is $4.44 on a $3,510.55 gross, the row O
+    # traced as `not_dollars` (CHA line 187058): imported, but never a price
+    std = [r for r in medicaid if r.plan_raw == "CHA HB MEDICAID-STANDARD"]
+    assert std and all(r.excluded and r.exclude_reason == "not_dollars" for r in std)
 
 
 # Golden 6 -- row conservation through normalize: every target leaf is a row or a counted drop.
