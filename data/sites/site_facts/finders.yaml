@@ -1,0 +1,64 @@
+# Operators' own location finders, read through their public sitemaps (robots.txt allows them;
+# fetched politely by `python -m app.site_facts discover`). A site uses a finder when one of
+# `operators` matches its operator / name / system_id / id. `url_pattern` keeps only location
+# pages. Match = town in the URL path (2 points) + each distinctive name word (1 point); the best
+# URL is taken only when it is unique and scores >= min_score, otherwise candidates are listed.
+version: 1
+finders:
+- id: mgb
+  sitemaps: [https://www.massgeneralbrigham.org/en/sitemap.xml]
+  url_pattern: ^https://www\.massgeneralbrigham\.org/en/locations/[a-z-]+-ma/[a-z0-9-]+$
+  operators: ['\bmgb\b', 'Mass General Brigham', 'MGH', 'BWH', 'Brigham', 'Newton-Wellesley']
+- id: bilh
+  sitemaps: [https://bilh.org/sitemap.xml]
+  url_pattern: ^https://bilh\.org/locations/[a-z0-9-]+$
+  operators: ['\bbilh\b', 'Beth Israel Lahey']
+- id: bidmc
+  sitemaps: [https://www.bidmc.org/sitemap.xml]
+  url_pattern: ^https://bidmc\.org/locations/[a-z0-9/-]+$
+  operators: ['BIDMC', 'Beth Israel Deaconess', 'harvard_medical_faculty_phys']
+  town_required: false
+  min_score: 2
+- id: lahey
+  sitemaps: [https://www.lahey.org/sitemap.xml]
+  url_pattern: ^https://www\.lahey\.org/locations/[a-z0-9/-]+$
+  operators: ['Lahey']
+  town_required: false
+  min_score: 2
+- id: mount_auburn
+  sitemaps: [https://www.mountauburnhospital.org/sitemap.xml]
+  url_pattern: ^https://mountauburnhospital\.org/locations/[a-z0-9/-]+$
+  operators: ['Mount Auburn']
+  town_required: false
+  min_score: 1
+- id: nebh
+  sitemaps: [https://www.nebh.org/sitemap.xml]
+  url_pattern: ^https://nebh\.org/locations/[a-z0-9/-]+$
+  operators: ['NEBH', 'New England Baptist']
+  town_required: false
+  min_score: 2
+- id: winchester
+  sitemaps: [https://www.winchesterhospital.org/sitemap.xml]
+  url_pattern: ^https://winchesterhospital\.org/locations/[a-z0-9/-]+$
+  operators: ['Winchester Hospital']
+  town_required: false
+  min_score: 1
+- id: atrius
+  sitemaps: [https://www.atriushealth.org/sitemap.xml]
+  url_pattern: ^https://www\.atriushealth\.org/locations/[a-z-]+$
+  operators: ['Atrius']
+  min_score: 2
+- id: cha
+  sitemaps: [https://www.challiance.org/pagesitemap.xml]
+  url_pattern: ^https://www\.challiance\.org/locations/[a-z-]+/[a-z0-9-]+$
+  operators: ['\bcha\b', 'Cambridge Health Alliance', 'cambridge_public_health_commission']
+- id: pm_pediatrics
+  sitemaps: [https://pmpediatriccare.com/store_pages-sitemap.xml]
+  url_pattern: ^https://pmpediatriccare\.com/location/[a-z0-9-]+/$
+  operators: ['PM Pediatric']
+  min_score: 2
+- id: convenientmd
+  sitemaps: [https://convenientmd.com/locations-sitemap.xml]
+  url_pattern: ^https://convenientmd\.com/locations/[a-z0-9-]+/$
+  operators: ['ConvenientMD']
+  min_score: 2

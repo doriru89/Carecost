@@ -477,6 +477,18 @@ class Site(_Strict):
         return self
 
 
+class BillingToVerify(_Strict):
+    """A quotable site whose billing type public structure could not settle (R7): a person
+    checks it; meanwhile the engine prices it as hospital outpatient + a facility-fee gap (P9)."""
+
+    site_id: str = Field(pattern=ID_RE)
+    census_id: str = Field(pattern=CENSUS_ID_RE)
+    name: str
+    system_id: str | None = None
+    reason: str
+    evidence_seen: list[str] = Field(default_factory=list)
+
+
 class SitesFile(_Strict):
     """``data/sites/sites.yaml``."""
 
@@ -491,3 +503,10 @@ class SitesFile(_Strict):
         if dup:
             raise ValueError(f"duplicate site id(s) {sorted(dup)}")
         return v
+
+
+class ToVerifyFile(SitesFile):
+    """``data/sites/to_verify.yaml``: listings not confirmed (``sites``) + quotable sites whose
+    billing type public structure could not settle (``billing_to_verify``, R7)."""
+
+    billing_to_verify: list[BillingToVerify] = Field(default_factory=list)

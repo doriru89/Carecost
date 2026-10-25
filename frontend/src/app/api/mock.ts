@@ -107,7 +107,7 @@ export function mockApi(): CareCostApi {
       if (!load)
         throw new NoMockData(
           req.care_path_id
-            ? `No fixture for ${req.care_path_id} with ${mockQuoteKey(req)}. Mock fixtures cover chronic shoulder pain with BCBS MA HMO, cash and Medicare.`
+            ? `No fixture for ${req.care_path_id} with ${mockQuoteKey(req)}. Mock fixtures cover chronic shoulder pain with BCBS MA HMO, self-pay (no insurance) and Medicare.`
             : `No fixture for ${manualKey(req)}. The only manual-pick fixture is shoulder X-ray + MRI (73030, 73221) with MassHealth.`,
         );
       return strip<QuoteResponse>(await load());

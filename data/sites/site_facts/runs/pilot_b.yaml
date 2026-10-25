@@ -1,0 +1,128 @@
+version: 1
+run_id: pilot_b
+extracted_by: "fresh sonnet subagent; did not see any other run"
+extracted_at: '2026-10-25'
+sites:
+  afc_watertown:
+    pages_read:
+    - https://www.afcurgentcare.com/watertown/
+    - https://www.afcurgentcare.com/watertown/patient-services/
+    - https://www.afcurgentcare.com/watertown/patient-services/telemedicine-urgent-care/
+    - https://www.afcurgentcare.com/watertown/patient-services/walk-in-care-no-referral-needed/
+    official_name:
+      value: AFC Urgent Care Watertown
+      evidence:
+      - {url: "https://www.afcurgentcare.com/watertown/", quote: "Here at AFC Urgent Care Watertown", fetched_at: '2026-10-25T13:35:03+00:00', page_sha256: 008d3f5725f9e5217b44e5da21ccc7f10ce9859b2d2db148ac67390b1cb9329c}
+    phone:
+      value: (617) 923-2273
+      evidence:
+      - {url: "https://www.afcurgentcare.com/watertown/", quote: "CALL (617) 923-2273", fetched_at: '2026-10-25T13:35:03+00:00', page_sha256: 008d3f5725f9e5217b44e5da21ccc7f10ce9859b2d2db148ac67390b1cb9329c}
+    hours:
+      value:
+      - {days: [mon, tue, wed, thu, fri], open: '08:00', close: '20:00'}
+      - {days: [sat, sun], open: '08:00', close: '17:00'}
+      evidence:
+      - {url: "https://www.afcurgentcare.com/watertown/", quote: "Monday - Friday: 8:00 AM - 8:00 PM", fetched_at: '2026-10-25T13:35:03+00:00', page_sha256: 008d3f5725f9e5217b44e5da21ccc7f10ce9859b2d2db148ac67390b1cb9329c}
+      - {url: "https://www.afcurgentcare.com/watertown/", quote: "Saturday - Sunday: 8:00 AM - 5:00 PM", fetched_at: '2026-10-25T13:35:03+00:00', page_sha256: 008d3f5725f9e5217b44e5da21ccc7f10ce9859b2d2db148ac67390b1cb9329c}
+    capabilities:
+      walk_in_visit:
+        value: offered
+        evidence:
+        - {url: "https://www.afcurgentcare.com/watertown/patient-services/walk-in-care-no-referral-needed/", quote: "walk-ins are always welcome and no referral is ever needed", fetched_at: '2026-10-25T13:35:06+00:00', page_sha256: 5804ad9b53e5c605755541520f8832171a33b229e7ae3b322a46cab945a0f43c}
+      blood_tests:
+        value: offered
+        evidence:
+        - {url: "https://www.afcurgentcare.com/watertown/", quote: "Send-Out Labs: STD panels, blood chemistry, CBC", fetched_at: '2026-10-25T13:35:03+00:00', page_sha256: 008d3f5725f9e5217b44e5da21ccc7f10ce9859b2d2db148ac67390b1cb9329c}
+      xray: {value: unknown}
+    note: "xray left unknown: every page carries the banner 'X-ray not always available, please call to confirm. We will provide an outside referral if needed.' although the walk-in page also says 'We also offer onsite x-ray and lab services' and the patient-services page lists 'Onsite Xrays'. Conflicting/conditional, so a person should decide. Not claimed (ambiguous): joint_injection ('Joint Injections' appears in a list of what they treat on the walk-in page); primary_care_visit (page header says 'Primary Care Services' but also 'Or a primary care referral' not needed, it is urgent care)."
+  newton_wellesley_hospital:
+    pages_read:
+    - https://www.massgeneralbrigham.org/en/locations/newton-ma/newtonwellesley-hospital-loc0000246998
+    official_name:
+      value: Newton-Wellesley Hospital
+      evidence:
+      - {url: "https://www.massgeneralbrigham.org/en/locations/newton-ma/newtonwellesley-hospital-loc0000246998", quote: "Newton-Wellesley Hospital Location Type Hospital", fetched_at: '2026-10-25T13:38:49+00:00', page_sha256: 51d4d5401763f41d9d99b4d5274b0224fc5782c2f6310af8cf9e19158fa9c186}
+    phone:
+      value: 617-243-6000
+      evidence:
+      - {url: "https://www.massgeneralbrigham.org/en/locations/newton-ma/newtonwellesley-hospital-loc0000246998", quote: "2014 Washington Street Newton, MA 02462 617-243-6000", fetched_at: '2026-10-25T13:38:49+00:00', page_sha256: 51d4d5401763f41d9d99b4d5274b0224fc5782c2f6310af8cf9e19158fa9c186}
+    note: "Hours omitted: the page shows 00:00-24:00 every day but its own note says 'Hours vary by clinic. Please call your provider's office for more information.' and the only amenity listed is 'Emergency department', so the 24h block is emergency-department hours. No services listed on the page beyond the emergency department, so no capabilities claimed."
+  harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0182:
+    pages_read:
+    - https://bidneedham.org/contact
+    - https://bidneedham.org/patients-visitors/billing-financial-services
+    - https://bidneedham.org/patients-visitors/billing-financial-services/bill-pay
+    - https://bidneedham.org/services
+    - https://bidneedham.org/services/orthopedics
+    official_name:
+      value: Beth Israel Deaconess Hospital–Needham
+      evidence:
+      - {url: "https://bidneedham.org/contact", quote: "Contact Beth Israel Deaconess Hospital–Needham", fetched_at: '2026-10-25T13:38:46+00:00', page_sha256: 5ba5407ed827d552afb388d5919aae51f10c528349cea82a784ed1b59c7be30b}
+    phone:
+      value: 781-453-3000
+      evidence:
+      - {url: "https://bidneedham.org/contact", quote: "Main: 781-453-3000", fetched_at: '2026-10-25T13:38:46+00:00', page_sha256: 5ba5407ed827d552afb388d5919aae51f10c528349cea82a784ed1b59c7be30b}
+    capabilities:
+      orthopedic_visit:
+        value: offered
+        evidence:
+        - {url: "https://bidneedham.org/services/orthopedics", quote: "At BID Needham, our world-class orthopedic specialists offer care", fetched_at: '2026-10-25T13:38:45+00:00', page_sha256: c5bba136a44ece9fe3d113250d20c93cafdd5e74bad0f580d68bf51c47dd1a23}
+      physical_therapy:
+        value: offered
+        evidence:
+        - {url: "https://bidneedham.org/services/orthopedics", quote: "Our physical therapy, imaging and orthopedic specialists are located on the same floor.", fetched_at: '2026-10-25T13:38:45+00:00', page_sha256: c5bba136a44ece9fe3d113250d20c93cafdd5e74bad0f580d68bf51c47dd1a23}
+      gi_visit:
+        value: offered
+        evidence:
+        - {url: "https://bidneedham.org/services", quote: "Digestive Care Also known as Gastroenterology", fetched_at: '2026-10-25T13:38:48+00:00', page_sha256: 4ff95c343ea60dd0dfcaf4513e4537edf4f6eb5ba284873480c2ed5db630efe7}
+      dermatology_visit:
+        value: offered
+        evidence:
+        - {url: "https://bidneedham.org/services", quote: "Dermatology Also known as Skin, Hair & Nail Care", fetched_at: '2026-10-25T13:38:48+00:00', page_sha256: 4ff95c343ea60dd0dfcaf4513e4537edf4f6eb5ba284873480c2ed5db630efe7}
+      pathology:
+        value: offered
+        evidence:
+        - {url: "https://bidneedham.org/services", quote: "Laboratory Also known as Pathology", fetched_at: '2026-10-25T13:38:48+00:00', page_sha256: 4ff95c343ea60dd0dfcaf4513e4537edf4f6eb5ba284873480c2ed5db630efe7}
+    note: "The pages are the BID Needham hospital site; I assumed this site id (a Harvard Medical Faculty Physicians record) is served by it, since show gave only these pages. Hours omitted: only 'Open 24 Hours' for Emergency Care; Primary Care and Specialty Care say 'Vary by location'. Not claimed: primary_care_visit (services page lists Primary Care with 'Vary by location'), xray/mri/ct (page only says 'Radiology & Imaging' / 'imaging' without naming modality)."
+  mass_general_brigham_endoscopy_clinic_braintree:
+    pages_read:
+    - https://www.massgeneralbrigham.org/en/locations/braintree-ma/mass-general-brigham-endoscopy-clinic-loc0000280988
+    official_name:
+      value: Mass General Brigham Endoscopy Clinic
+      evidence:
+      - {url: "https://www.massgeneralbrigham.org/en/locations/braintree-ma/mass-general-brigham-endoscopy-clinic-loc0000280988", quote: "Mass General Brigham Endoscopy Clinic 659 Washington Street", fetched_at: '2026-10-25T13:38:31+00:00', page_sha256: f3fcfa9c07748a1c5ba096b28bcbf6fb1da2fa3241f33b87c3c783e4e9928243}
+    phone:
+      value: 781-849-9577
+      evidence:
+      - {url: "https://www.massgeneralbrigham.org/en/locations/braintree-ma/mass-general-brigham-endoscopy-clinic-loc0000280988", quote: "Braintree, MA 02184 781-849-9577", fetched_at: '2026-10-25T13:38:31+00:00', page_sha256: f3fcfa9c07748a1c5ba096b28bcbf6fb1da2fa3241f33b87c3c783e4e9928243}
+    note: "No hours on page. Page says only 'provides specialized gastrointestinal procedures'; colonoscopy / upper endoscopy / sedation are not named, so not claimed (would be inference from the clinic's name)."
+  krauss_dermatology_pc_wellesley:
+    pages_read:
+    - https://www.kraussdermatology.com/conditions/
+    - https://www.kraussdermatology.com/conditions/acne/
+    - https://www.kraussdermatology.com/our-practice/contact-us/
+    - https://www.kraussdermatology.com/our-practice/office-policies/
+    - https://www.kraussdermatology.com/our-practice/our-location/
+    official_name:
+      value: Krauss Dermatology
+      evidence:
+      - {url: "https://www.kraussdermatology.com/our-practice/contact-us/", quote: "Contact Krauss Dermatology", fetched_at: '2026-10-25T13:38:35+00:00', page_sha256: 4cf26d3fae4173b2a92e227e8b6c27fff6983ee6f23cb888f80ede4df9bc5e4a}
+    phone:
+      value: 781-416-3500
+      evidence:
+      - {url: "https://www.kraussdermatology.com/our-practice/contact-us/", quote: "Phone: 781-416-3500", fetched_at: '2026-10-25T13:38:35+00:00', page_sha256: 4cf26d3fae4173b2a92e227e8b6c27fff6983ee6f23cb888f80ede4df9bc5e4a}
+    hours:
+      value:
+      - {days: [mon, tue, wed, thu, fri], open: '07:00', close: '17:00'}
+      evidence:
+      - {url: "https://www.kraussdermatology.com/our-practice/contact-us/", quote: "Monday through Friday: 7:00am-5:00pm", fetched_at: '2026-10-25T13:38:35+00:00', page_sha256: 4cf26d3fae4173b2a92e227e8b6c27fff6983ee6f23cb888f80ede4df9bc5e4a}
+    capabilities:
+      dermatology_visit:
+        value: offered
+        evidence:
+        - {url: "https://www.kraussdermatology.com/our-practice/contact-us/", quote: "Urgent Derm Needs? We Can See You Quickly", fetched_at: '2026-10-25T13:38:35+00:00', page_sha256: 4cf26d3fae4173b2a92e227e8b6c27fff6983ee6f23cb888f80ede4df9bc5e4a}
+      skin_biopsy:
+        value: offered
+        evidence:
+        - {url: "https://www.kraussdermatology.com/our-practice/contact-us/", quote: "Skin Checks and Biopsies", fetched_at: '2026-10-25T13:38:35+00:00', page_sha256: 4cf26d3fae4173b2a92e227e8b6c27fff6983ee6f23cb888f80ede4df9bc5e4a}
+    note: "Not claimed: skin_excision (menu lists 'Mohs Micrographic Surgery' but no page text says lesion removal/excision for moles); pathology (not mentioned)."

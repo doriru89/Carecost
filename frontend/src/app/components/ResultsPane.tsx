@@ -2,7 +2,10 @@ import { lazy, Suspense, useMemo, useState } from "react";
 import { LocateFixed } from "lucide-react";
 import type { Catalog, CatalogPath, CatalogService } from "@/generated/contracts/catalog";
 import type { Payment, QuoteResponse } from "@/generated/contracts/quote_api";
+import { t } from "@/contracts/copy";
 import { cn } from "@/lib/utils";
+import { mapService } from "../lib/mapPrice";
+import { paymentLabel } from "../lib/payments";
 import { zipToLocation, type UserLocation } from "../lib/geo";
 import { bostonNow } from "../lib/hours";
 import { siteViews, sortSites, type SiteScope, type SortMode } from "../lib/sites";
@@ -13,10 +16,18 @@ import { ScopeNote, SiteList } from "./SiteList";
 // MapLibre is ~1 MB: loaded only when the Map tab opens
 const SiteMap = lazy(() => import("./SiteMap").then((m) => ({ default: m.SiteMap })));
 
+export interface QuoteOk {
+  status: "ok";
+  key: string;
+  quote: QuoteResponse;
+  scope: SiteScope;
+}
+
 export type QuoteState =
   | { status: "idle" }
-  | { status: "loading"; key: string }
-  | { status: "ok"; key: string; quote: QuoteResponse; scope: SiteScope }
+  /** `prev`: the last receipt, kept on screen dimmed and labelled "updating" (R15), never as current */
+  | { status: "loading"; key: string; prev?: QuoteOk }
+  | QuoteOk
   | { status: "nomock" | "error"; key: string; message: string };
 
 /** The person's sort and chosen site; owned by CareApp so it survives a remount of this pane. */
@@ -62,8 +73,12 @@ export function ResultsPane({
   const { sort, selected } = pick;
   const setSort = (s: SortMode) => onPick({ ...pick, sort: s });
   const setSelected = (id: string | null) => onPick({ ...pick, selected: id });
-  const quote = state.status === "ok" ? state.quote : null;
-  const scope = state.status === "ok" ? state.scope : null;
+  // R15: while a new quote loads, the last one may stay on screen, dimmed and labelled, never as current
+  const shown = state.status === "ok" ? state : state.status === "loading" ? (state.prev ?? null) : null;
+  const updating = state.status === "loading" && shown != null;
+  const quote = shown?.quote ?? null;
+  const scope = shown?.scope ?? null;
+  const priced = useMemo(() => (quote ? mapService(quote, catalog) : null), [quote, catalog]);
   const now = useMemo(() => bostonNow(), [quote]); // eslint-disable-line react-hooks/exhaustive-deps
   const views = useMemo(() => (quote ? siteViews(quote.sites, location, now) : []), [quote, location, now]);
   const sorted = useMemo(() => sortSites(views, sort), [views, sort]);
@@ -117,7 +132,14 @@ export function ResultsPane({
           <p className="mt-1 text-muted-foreground">{state.message}</p>
         </div>
       ) : quote && current ? (
-        view === "receipt" ? (
+        <div className="relative space-y-2" data-testid="quote-body" data-updating={updating || undefined} aria-busy={updating || undefined}>
+        {updating && (
+          <p role="status" className="rounded-lg border border-ink/20 bg-card px-3 py-2 text-xs font-medium shadow-sm animate-pulse" data-testid="quote-updating">
+            {t("quote.updating", { payment: paymentLabel(payment) })}
+          </p>
+        )}
+        <div className={cn(updating && "pointer-events-none select-none opacity-40")}>
+        {view === "receipt" ? (
           <div className="space-y-2">
             {scope && <ScopeNote scope={scope} count={sorted.length} />}
             {sorted.length > 1 && (
@@ -142,10 +164,17 @@ export function ResultsPane({
         ) : view === "list" ? (
           <SiteList views={sorted} sort={sort} onSort={setSort} selectedId={current.sq.site.site_id} onOpen={open} hasLocation={!!location} scope={scope} />
         ) : (
-          <Suspense fallback={<p className="p-6 text-center text-sm text-muted-foreground">Loading map…</p>}>
-            <SiteMap views={sorted} selectedId={current.sq.site.site_id} onOpen={open} location={location} />
-          </Suspense>
-        )
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground" data-testid="map-price-note">
+              {priced ? t("map.price_for", { service: priced.plain_name }) : t("map.places_only")}
+            </p>
+            <Suspense fallback={<p className="p-6 text-center text-sm text-muted-foreground">Loading map…</p>}>
+              <SiteMap views={sorted} selectedId={current.sq.site.site_id} onOpen={open} location={location} showPrice={priced != null} />
+            </Suspense>
+          </div>
+        )}
+        </div>
+        </div>
       ) : (
         <p className="p-6 text-center text-sm text-muted-foreground">No place in our data offers this yet.</p>
       )}

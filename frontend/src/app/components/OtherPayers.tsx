@@ -6,7 +6,7 @@ import { InfoTip } from "./InfoTip";
 import { MoneyWithChip } from "./CellView";
 
 /**
- * Range bar for the same item at the same site across every payer the engine found, plus cash, and a
+ * Range bar for the same item at the same site across every payer the engine found, plus self-pay, and a
  * popup listing each point with its chip (§4.2, v2; reuses PriceRangeBar.tsx).
  * Which lines of business belong on it (P1 problem 18) is the engine's call: we show every point it
  * sends and mark the person's own payer.
@@ -37,7 +37,7 @@ export function OtherPayers({
         trigger={
           <div className="w-full">
             <PriceRangeBar
-              label={`${t("receipt.other_payers")} (${r.points.length} plans${r.cash ? " + cash" : ""})`}
+              label={`${t("receipt.other_payers")} (${r.points.length} plans${r.cash ? ` + ${t("payment.self_pay")}` : ""})`}
               min={min}
               max={max}
               scaleMin={min}
@@ -61,7 +61,7 @@ export function OtherPayers({
           ))}
           {r.cash && (
             <li className="flex items-start justify-between gap-2 border-t pt-1">
-              <span>Cash</span>
+              <span>{t("payment.self_pay")}</span>
               {r.cash.kind === "money" ? <MoneyWithChip m={r.cash} sources={sources} /> : <span>{r.cash.kind}</span>}
             </li>
           )}

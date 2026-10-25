@@ -1,0 +1,26 @@
+<!doctype html><html lang=en><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width, initial-scale=1"><title>Site facts review</title>
+<style>
+:root{--bg:#fff;--fg:#1d1d1f;--mut:#6e6e73;--line:#d2d2d7;--rej:#fff1f0;--none:#f5f5f7}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161617;--fg:#f5f5f7;--mut:#a1a1a6;--line:#3a3a3c;--rej:#3b1d1d;--none:#232325}}
+:root[data-theme="dark"]{--bg:#161617;--fg:#f5f5f7;--mut:#a1a1a6;--line:#3a3a3c;--rej:#3b1d1d;--none:#232325}
+body{background:var(--bg);color:var(--fg);font:14px/1.45 -apple-system,system-ui,sans-serif;margin:0 16px 40px}
+table{border-collapse:collapse;width:100%} td,th{border-bottom:1px solid var(--line);padding:8px;vertical-align:top;text-align:left}
+td.rej{background:var(--rej)} td.none{background:var(--none);color:var(--mut)} q{font-style:italic}
+.v{font-weight:600} pre{white-space:pre-wrap;font-size:12px} a{color:inherit;word-break:break-all}
+.wrap{overflow-x:auto} td code,pre{word-break:break-all} td{width:25%}
+</style></head><body>
+<h1>Site facts: disagreements to review</h1>
+<p>Runs <code>pilot_a</code> vs <code>pilot_b</code>. 19 claims agreed, 0 already decided by you,
+<b>2 to review</b>. For each row, copy the YAML on the right into
+<code>data/sites/site_facts/reviews.yaml</code> under <code>decisions:</code>, set the value you accept, and re-run the merge.
+A decision is applied only when its value matches a verified quote from one of the runs.</p>
+
+<div class=wrap><table><tr><th>Site / field</th><th>pilot_a</th><th>pilot_b</th><th>Decision to copy</th></tr>
+<tr><td><b>HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC</b><br><code>harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0182</code><br><code>capabilities.dermatology_visit</code></td><td class=none><b>pilot_a</b>: no claim</td><td><b>pilot_b</b>: <span class=v>offered</span><ul><li><q>Dermatology Also known as Skin, Hair &amp; Nail Care</q><br><a href="https://bidneedham.org/services">https://bidneedham.org/services</a></li></ul></td><td><pre>- site_id: harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0182
+  field: capabilities.dermatology_visit
+  value: offered
+  note: &#x27;&#x27;</pre></td></tr><tr><td><b>HARVARD MEDICAL FACULTY PHYS AT BETH ISRAEL DEACONESS MED CTR INC</b><br><code>harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0182</code><br><code>capabilities.pathology</code></td><td class=none><b>pilot_a</b>: no claim</td><td><b>pilot_b</b>: <span class=v>offered</span><ul><li><q>Laboratory Also known as Pathology</q><br><a href="https://bidneedham.org/services">https://bidneedham.org/services</a></li></ul></td><td><pre>- site_id: harvard_medical_faculty_phys_at_beth_israel_deaconess_me_gb0182
+  field: capabilities.pathology
+  value: offered
+  note: &#x27;&#x27;</pre></td></tr></table></div></body></html>

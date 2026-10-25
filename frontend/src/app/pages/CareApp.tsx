@@ -14,10 +14,13 @@ import { ResultsPane, type QuoteState, type ResultsView, type SitePick } from ".
 import type { SiteScope } from "../lib/sites";
 import { SplitView, type SplitState } from "../components/SplitView";
 import type { UserLocation } from "../lib/geo";
+import { serviceCodes } from "../lib/mapPrice";
 import { paymentId } from "../lib/payments";
 import { RedFlagPage } from "./StopPages";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+/** R15: a quote that has not answered after this long is given up on and the person is told so. */
+export const QUOTE_TIMEOUT_MS = 10_000;
 const MAX_HISTORY = 6;
 
 type Query = Pick<QuoteRequest, "care_path_id" | "service_codes" | "picked_by">;
@@ -91,23 +94,36 @@ export default function CareApp() {
       return;
     }
     let live = true;
-    setQuoteState((s) => (s.status === "ok" ? s : { status: "loading", key }));
+    let timedOut = false;
+    const ctl = new AbortController();
+    const timer = setTimeout(() => {
+      timedOut = true;
+      ctl.abort();
+    }, QUOTE_TIMEOUT_MS);
+    // R15: the last receipt may stay on screen while this one loads, but only as `prev` of a loading
+    // state: ResultsPane dims it and says it is updating. A quote is never shown as current unless its
+    // key is this request's key.
+    setQuoteState((s) => ({ status: "loading", key, prev: s.status === "ok" ? s : s.status === "loading" ? s.prev : undefined }));
     api
-      .quote({ payment, ...query, answers, site_ids: null }, { location })
+      .quote({ payment, ...query, answers, site_ids: null }, { location, signal: ctl.signal })
       .then((quote) => {
         const st: QuoteState = { status: "ok", key, quote, scope: siteScope(api.mode, location) };
         cache.current.set(key, st);
         if (live) setQuoteState(st);
       })
       .catch((e: unknown) => {
+        if (!live) return;
         const st: QuoteState =
           e instanceof NoMockData
             ? { status: "nomock", key, message: e.message }
-            : { status: "error", key, message: e instanceof Error ? e.message : String(e) };
-        if (live) setQuoteState(st);
-      });
+            : { status: "error", key, message: timedOut ? t("quote.timeout") : e instanceof Error ? e.message : String(e) };
+        setQuoteState(st);
+      })
+      .finally(() => clearTimeout(timer));
     return () => {
       live = false;
+      clearTimeout(timer);
+      ctl.abort();
     };
   }, [api, payment, query, location]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -206,8 +222,7 @@ export default function CareApp() {
     setPhoneTab("prices");
   };
   const pickService = (s: CatalogService, by: "person" | "assistant" = "person") => {
-    const primary = s.codes.filter((c) => c.role === "primary").map((c) => c.code);
-    setQuery({ care_path_id: null, service_codes: primary.length ? primary : s.codes.map((c) => c.code).slice(0, 1), picked_by: by });
+    setQuery({ care_path_id: null, service_codes: serviceCodes(s), picked_by: by });
     setView("receipt");
     setPhoneTab("prices");
   };
@@ -305,9 +320,10 @@ export default function CareApp() {
   }
 
   return (
-    <main className="min-h-screen bg-background" data-testid="workspace">
+    // --header-h: the sticky header's height (h-11 + 1px border); the phone tabs stick right under it
+    <main className="min-h-screen bg-background [--header-h:calc(2.75rem+1px)]" data-testid="workspace">
       <header className="sticky top-0 z-30 border-b border-border bg-card/90 backdrop-blur">
-        <div className="flex items-center justify-between px-4 py-2">
+        <div className="flex h-11 items-center justify-between px-4">
           <Link to="/">
             <CareCostLogo compact />
           </Link>
