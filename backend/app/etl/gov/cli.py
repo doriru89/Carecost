@@ -27,6 +27,7 @@ from typing import Any
 from app.etl import fetch as fetch_mod
 from app.etl.config import Paths, SourcesFile, SourceSpec, load_sources
 from app.etl.gov import masshealth, opps_asc, pfs
+from app.etl.refresh import RefreshRun, with_retry
 from app.etl.gov.common import GovReadError, ReadResult, finish, write_json, write_parquet
 from app.sites.contracts import Freshness
 
@@ -92,17 +93,32 @@ def fetch_one(
 
 
 def cmd_fetch(a: argparse.Namespace, paths: Paths) -> int:
+    """One retry per source (P11); a source that still fails keeps its last stored copy (LATEST
+    keeps pointing at it), goes to intermediate/refresh_status.json and is alerted."""
     sources = load_sources(a.config_dir)
     errors = 0
+    run = RefreshRun(paths, "fee schedules (gov fetch)")
     for spec in gov_specs(sources, a.source):
-        try:
-            rec = fetch_one(spec, sources, paths, a.headless)
-            _log(
-                f"{rec.status.upper():6} {spec.source_id}: {rec.sha256[:12]} {rec.bytes:,} bytes ({rec.method})"
+        rec, errs = with_retry(
+            lambda spec=spec: fetch_one(spec, sources, paths, a.headless), spec.source_id, log=_log
+        )
+        if rec is None:
+            prev = fetch_mod.current(paths, spec.source_id)
+            lg = (
+                {"sha256": prev.sha256, "fetched_at": prev.fetched_at or prev.imported_at}
+                if prev is not None and prev.path.exists()
+                else None
             )
-        except fetch_mod.FetchError as e:
-            _log(f"FAIL   {e}")
+            e = run.failed(spec.source_id, errs, lg)
+            _log(f"FAIL   {spec.source_id}: {e['reason']} -> {e['status']}")
             errors += 1
+            continue
+        run.ok(spec.source_id, sha256=rec.sha256, fetched_at=rec.fetched_at)
+        _log(
+            f"{rec.status.upper():6} {spec.source_id}: {rec.sha256[:12]} {rec.bytes:,} bytes ({rec.method})"
+        )
+    if run.outcomes and not run.finish(log=_log):
+        errors = max(errors, 1)
     return 1 if errors else 0
 
 
