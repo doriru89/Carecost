@@ -180,10 +180,22 @@ class RedFlagReply(_Strict):
 
     kind: Literal["red_flag"]
     disposition: Disposition
-    flag_ids: list[str] = Field(min_length=1, description="redflags.json flag ids (rf_*)")
+    flag_ids: list[str] = Field(
+        default_factory=list,
+        description="redflags.json flag ids (rf_*); empty only when the LLM raised it",
+    )
+    escalated_by_llm: bool = Field(
+        False, description="redflags.combine(): the LLM raised the disposition (one way only)"
+    )
     headline: Title
     text: Title
     prices_withheld: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _flags_or_llm(self) -> RedFlagReply:
+        if not self.flag_ids and not self.escalated_by_llm:
+            raise ValueError("a code-decided red flag names its flags")
+        return self
 
 
 class ChipAnswer(_Strict):
@@ -597,8 +609,11 @@ class ChatResponse(_Strict):
                 f"past {MAX_TURNS_PER_CONVERSATION} turns the reply is conversation_cap"
             )
         _check_reply(self.reply, ctx)
-        if self.reply.kind in ("red_flag", "ai_paused") and self.llm_called:
+        escalated = self.reply.kind == "red_flag" and self.reply.escalated_by_llm
+        if self.reply.kind in ("red_flag", "ai_paused") and self.llm_called and not escalated:
             raise ValueError(f"{self.reply.kind} replies are decided before any LLM call")
+        if escalated and not self.llm_called:
+            raise ValueError("escalated_by_llm needs an LLM call")
         if (
             self.reply.kind == "ai_paused"
             and self.budget.state != "paused"

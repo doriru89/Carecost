@@ -120,6 +120,22 @@ def test_red_flag_copy_is_verbatim_and_flags_exist():
     _bad(doc, "unknown red flags")
 
 
+def test_a_code_red_flag_names_its_flags():
+    doc = _fx("chat_red_flag")
+    doc["reply"]["flag_ids"] = []
+    _bad(doc, "names its flags")
+
+
+def test_only_an_llm_escalation_may_follow_an_llm_call():
+    """redflags.combine(): the LLM may raise a disposition after its call; the code gate may not."""
+    doc = {**_fx("chat_red_flag"), "llm_called": True}
+    _bad(doc, "before any LLM call", calls=1)
+    doc["reply"] = {**doc["reply"], "escalated_by_llm": True, "flag_ids": []}
+    _ok(doc, calls=1)
+    doc = {**doc, "llm_called": False}
+    _bad(doc, "escalated_by_llm needs an LLM call", calls=0)
+
+
 def test_disposition_must_be_in_redflags_json():
     """Membership is read from redflags.json, not from the Disposition literal."""
     doc = _fx("chat_red_flag")

@@ -829,12 +829,17 @@
           "title": "Disposition",
           "type": "string"
         },
+        "escalated_by_llm": {
+          "default": false,
+          "description": "redflags.combine(): the LLM raised the disposition (one way only)",
+          "title": "Escalated By Llm",
+          "type": "boolean"
+        },
         "flag_ids": {
-          "description": "redflags.json flag ids (rf_*)",
+          "description": "redflags.json flag ids (rf_*); empty only when the LLM raised it",
           "items": {
             "type": "string"
           },
-          "minItems": 1,
           "title": "Flag Ids",
           "type": "array"
         },
@@ -860,6 +865,7 @@
         "kind",
         "disposition",
         "flag_ids",
+        "escalated_by_llm",
         "headline",
         "text",
         "prices_withheld"

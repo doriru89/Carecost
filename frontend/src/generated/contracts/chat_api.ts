@@ -225,9 +225,13 @@ export interface RedFlagReply {
   kind: "red_flag";
   disposition: "call_911" | "crisis_988" | "er_today" | "seen_today" | "routine";
   /**
-   * redflags.json flag ids (rf_*)
+   * redflags.json flag ids (rf_*); empty only when the LLM raised it
    */
   flag_ids: string[];
+  /**
+   * redflags.combine(): the LLM raised the disposition (one way only)
+   */
+  escalated_by_llm: boolean;
   headline: Title;
   text: Title;
   prices_withheld: true;

@@ -175,6 +175,7 @@ export const PAUSE_REASON_KEY = {
 
 export const DISPOSITION_RANK = {
   call_911: 4,
+  crisis_988: 4, // same rank as 911; ties go to 911 (redflags.json order, D31)
   er_today: 3,
   seen_today: 2,
   routine: 1,
