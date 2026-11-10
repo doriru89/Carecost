@@ -5,6 +5,7 @@ import CareCostLogo from "@/components/CareCostLogo";
 import { t } from "@/contracts/copy";
 import { CHAT_REPLY_FULL_PAGE } from "@/contracts/exhaustive";
 import type { Catalog, CatalogPath, CatalogService } from "@/generated/contracts/catalog";
+import { DEFAULT_BROWSE_SERVICE, type BrowseValue } from "../lib/browse";
 import type { CandidatePath, ChatRequest, RedFlagReply, ServiceRef } from "@/generated/contracts/chat_api";
 import type { Payment, QuoteRequest, QuoteResponse } from "@/generated/contracts/quote_api";
 import { ApiError, getApi, nearFor, NoMockData } from "../api/client";
@@ -21,8 +22,12 @@ import type { OrderBy } from "../components/Overview";
 import { RedFlagPage } from "./StopPages";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-/** R15: a quote that has not answered after this long is given up on and the person is told so. */
-export const QUOTE_TIMEOUT_MS = 10_000;
+/**
+ * R15: a quote that has not answered after this long is given up on and the person is told so. The server
+ * scales to zero (Cloud Run), and a cold start loads the price data first (about 30 s), so this covers one;
+ * past 3 s the pane says the server is starting (ResultsPane WAKING_AFTER_MS). Cloud Run's own limit is 60 s.
+ */
+export const QUOTE_TIMEOUT_MS = 55_000;
 const MAX_HISTORY = 6;
 
 type Query = Pick<QuoteRequest, "care_path_id" | "service_codes" | "picked_by">;
@@ -93,7 +98,23 @@ export default function CareApp() {
     api.catalog().then(setCatalog, () => setCatalog(null));
     api.catalogPaths().then(setPaths, () => setPaths([]));
   }, [api]);
-  const loadServices = useCallback((id: string) => api.pathServices(id), [api]);
+
+  // Browse: a dropdown pick sets the query and stays on Browse (the map is where the person is looking)
+  const browsePick = useCallback(
+    (v: BrowseValue) => {
+      if (v.startsWith("path:")) {
+        setQuery({ care_path_id: v.slice(5), service_codes: [], picked_by: "person" });
+        return;
+      }
+      const svc = catalog?.services.find((x) => x.service_id === v.slice(4));
+      if (svc) setQuery({ care_path_id: null, service_codes: serviceCodes(svc), picked_by: "person" });
+    },
+    [catalog],
+  );
+  // Browse opens on a priced map, never an empty one: with nothing chosen yet, a new-patient visit
+  useEffect(() => {
+    if (view === "browse" && !query && catalog) browsePick(`svc:${DEFAULT_BROWSE_SERVICE}`);
+  }, [view, query, catalog, browsePick]);
 
   // ---- quotes: one request per (payment, query); cached so switching back is instant
   useEffect(() => {
@@ -252,11 +273,6 @@ export default function CareApp() {
     },
   };
 
-  const pickPath = (id: string) => {
-    setQuery({ care_path_id: id, service_codes: [], picked_by: "person" });
-    setView("pick");
-    setPhoneTab("prices");
-  };
   const pickService = (s: CatalogService, by: "person" | "assistant" = "person") => {
     setQuery({ care_path_id: null, service_codes: serviceCodes(s), picked_by: by });
     setView("receipt");
@@ -432,9 +448,7 @@ export default function CareApp() {
             onView={setView}
             catalog={catalog}
             paths={paths}
-            loadServices={loadServices}
-            onPickPath={pickPath}
-            onPickService={(s) => pickService(s)}
+            onBrowse={browsePick}
             location={location}
             onLocation={setLocation}
             pick={pick}

@@ -341,7 +341,30 @@ export const APP_COPY = {
   "payment.self_pay": { en: "Self-pay (no insurance)", zh: "自费（无保险）", review: true },
   // R15: a new quote is loading; the receipt below is the previous one, dimmed
   "quote.updating": { en: "Updating prices for {payment}… The prices below are from your previous choice and are not current." },
-  "quote.timeout": { en: "The price server did not answer within 10 seconds. Try again in a moment." },
+  "quote.timeout": { en: "The price server did not answer within a minute. Try again in a moment." },
+  // Cloud Run scales to zero: the first request after a quiet spell waits while the server loads the price data
+  "quote.waking": { en: "Starting the price server. After a quiet spell this takes up to 40 seconds; after that, prices load in under a second." },
+  // Browse (Austin 2026-11-09): pick a service or CPT code from dropdowns, filter places, see them on the map
+  "browse.area": { en: "Body area" },
+  "browse.area_all": { en: "All areas" },
+  "browse.service": { en: "Service or CPT code" },
+  "browse.code_search": { en: "Type a code or name" },
+  "browse.group_paths": { en: "Whole visit, step by step" },
+  "browse.group_visit": { en: "Visits" },
+  "browse.group_imaging": { en: "Imaging" },
+  "browse.group_procedure": { en: "Procedures" },
+  "browse.group_lab": { en: "Lab tests" },
+  "browse.group_other": { en: "Other" },
+  "browse.place_kind": { en: "Place type" },
+  "browse.kind_all": { en: "All places" },
+  "browse.show": { en: "Show" },
+  "browse.show_offered": { en: "Every place that offers it" },
+  "browse.show_priced": { en: "Only places with a price" },
+  "browse.map": { en: "Map" },
+  "browse.list": { en: "List" },
+  "browse.count": { en: "{shown} of {total} places · {priced} with a price" },
+  "browse.none": { en: "No place matches these filters. Try another place type, or show every place." },
+  "browse.no_code": { en: "No service matches that code or name." },
   // P3: the map shows a price only for one selected service
   "map.places_only": {
     en: "Places only. The map shows the price of one step at a time: pick a step above, or a single service under Browse. The List shows the full total.",

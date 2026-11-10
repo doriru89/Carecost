@@ -83,9 +83,7 @@ function pane(state: QuoteState, view: "receipt" | "map" = "receipt", payment = 
         onView={() => {}}
         catalog={CATALOG}
         paths={[]}
-        loadServices={async () => []}
-        onPickPath={() => {}}
-        onPickService={() => {}}
+        onBrowse={() => {}}
         location={null}
         onLocation={() => {}}
         pick={{ sort: "price", selected: null }}

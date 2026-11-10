@@ -17,6 +17,8 @@ Only the TiC rows of billing TINs the site registry links are kept in memory.
 from __future__ import annotations
 
 import os
+import sys
+import time
 from collections.abc import Callable
 from contextlib import asynccontextmanager
 from datetime import date
@@ -49,9 +51,20 @@ def create_app(
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
+        # R11: startup phases are logged so a slow cold start says which phase was slow
+        t0 = time.perf_counter()
         reg = registry() if callable(registry) else registry
+        t1 = time.perf_counter()
         data = store(tins=reg.tins, census_ids=reg.census_ids) if callable(store) else store
+        t2 = time.perf_counter()
         app.state.engine = Engine(data, reg)
+        t3 = time.perf_counter()
+        print(
+            f"carecost startup: registry {t1 - t0:.1f}s, rate rows {t2 - t1:.1f}s "
+            f"({len(data.rows)} rows), engine {t3 - t2:.1f}s",
+            file=sys.stderr,
+            flush=True,
+        )
         app.state.test_extract = callable(store) and not os.environ.get("CARECOST_QUOTE_PACK")
         app.state.catalog = build_catalog(reg)
         app.state.catalog_json = app.state.catalog.model_dump_json()

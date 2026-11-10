@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { LocateFixed } from "lucide-react";
-import type { Catalog, CatalogPath, CatalogService } from "@/generated/contracts/catalog";
+import type { Catalog, CatalogPath } from "@/generated/contracts/catalog";
 import type { Payment, QuoteResponse, SiteQuote } from "@/generated/contracts/quote_api";
 import { t } from "@/contracts/copy";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,8 @@ import { byOption } from "../lib/headline";
 import { onlyStepOf, priceChoices } from "../lib/priceChoices";
 import { StepChips } from "./StepChips";
 import { Overview, type OrderBy } from "./Overview";
-import { BrowsePicker } from "./BrowsePicker";
+import { BrowseBar } from "./BrowseBar";
+import { browseValueOf, filterViews, pricedCount, type BrowseValue, type KindFilter, type ShowFilter } from "../lib/browse";
 import { PaymentSelect } from "./PaymentSelect";
 import { Receipt } from "./Receipt";
 import { ScopeNote, SiteList } from "./SiteList";
@@ -52,9 +53,7 @@ export function ResultsPane({
   onView,
   catalog,
   paths,
-  loadServices,
-  onPickPath,
-  onPickService,
+  onBrowse,
   location,
   onLocation,
   pick,
@@ -73,9 +72,8 @@ export function ResultsPane({
   onView: (v: ResultsView) => void;
   catalog: Catalog | null;
   paths: CatalogPath[] | null;
-  loadServices: (pathId: string) => Promise<CatalogService[]>;
-  onPickPath: (id: string) => void;
-  onPickService: (s: CatalogService) => void;
+  /** Browse: the person picked a service or a care path from the dropdown (the view stays Browse) */
+  onBrowse: (v: BrowseValue) => void;
   location: UserLocation | null;
   onLocation: (l: UserLocation | null) => void;
   /** Kept by the parent so a layout change (SplitView re-parents this pane across 768 px) keeps the pick. */
@@ -129,6 +127,15 @@ export function ResultsPane({
   const chosen = choices.find((c) => c.id === pickedStep) ?? (onlyStep ? choices.find((c) => c.id === onlyStep) : undefined) ?? null;
   const step = chosen?.id ?? null;
   const showChips = chipsHere && choices.length > (onlyStep ? 1 : 0);
+
+  // Browse: the map prices something from the first screen (a care path: its whole-visit figure), never places only
+  const [kindFilter, setKindFilter] = useState<KindFilter>("all");
+  const [showFilter, setShowFilter] = useState<ShowFilter>("offered");
+  const [browseMode, setBrowseMode] = useState<"map" | "list">("map");
+  const browseChosen = chosen ?? choices[0] ?? null;
+  const browseItem = browseChosen?.item ?? null;
+  const browseViews = useMemo(() => filterViews(sorted, browseItem, kindFilter, showFilter), [sorted, browseItem, kindFilter, showFilter]);
+  const browsePriced = useMemo(() => pricedCount(filterViews(sorted, browseItem, kindFilter, "offered"), browseItem), [sorted, browseItem, kindFilter]);
 
   // C3 item 9: fetch the opened site's receipt when the list carries only its summary
   const [fetched, setFetched] = useState<Record<string, { status: "loading" } | { status: "error" } | { status: "ok"; quote: QuoteResponse }>>({});
@@ -190,18 +197,66 @@ export function ResultsPane({
       </div>
 
       {view === "browse" ? (
-        <BrowsePicker catalog={catalog} paths={paths} loadServices={loadServices} onPickPath={onPickPath} onPickService={onPickService} />
+        <div className="space-y-2" data-testid="browse">
+          <BrowseBar
+            catalog={catalog}
+            paths={paths}
+            value={browseValueOf(quote, catalog)}
+            onPick={onBrowse}
+            kind={kindFilter}
+            onKind={setKindFilter}
+            show={showFilter}
+            onShow={setShowFilter}
+            mode={browseMode}
+            onMode={setBrowseMode}
+          />
+          {state.status === "loading" && !quote ? (
+            <Pricing />
+          ) : state.status === "nomock" || state.status === "error" ? (
+            <QuoteUnavailable state={state} />
+          ) : quote ? (
+            <div className="relative space-y-2" data-testid="browse-body" aria-busy={updating || undefined}>
+              {updating && <Pricing compact />}
+              <div className={cn("space-y-2", updating && "pointer-events-none select-none opacity-40")}>
+                {choices.length > 1 && (
+                  <StepChips choices={choices} step={browseChosen?.id ?? null} onStep={(id) => onStep(id)} label={t("map.pick_step")} testId="browse-steps" allowNone={false} />
+                )}
+                <p className="text-xs text-muted-foreground" data-testid="browse-count">
+                  {t("browse.count", { shown: browseViews.length, total: sorted.length, priced: browsePriced })}
+                  {scope?.kind === "near" ? ` · ${t("list.scope_near", { n: sorted.length, label: scope.label })}` : ""}
+                </p>
+                {browseViews.length === 0 ? (
+                  <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">{t("browse.none")}</p>
+                ) : browseMode === "map" ? (
+                  <Suspense fallback={<p className="p-6 text-center text-sm text-muted-foreground">Loading map…</p>}>
+                    <SiteMap views={browseViews} selectedId={selected} onOpen={open} location={location} item={browseItem} />
+                  </Suspense>
+                ) : (
+                  <SiteList
+                    views={browseViews}
+                    sort={sort}
+                    onSort={setSort}
+                    selectedId={selected}
+                    onOpen={open}
+                    hasLocation={!!location}
+                    ordering={quote.ordering}
+                    labels={labels}
+                    options={quote.options}
+                    item={browseItem?.kind === "step" ? browseItem : null}
+                  />
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
       ) : state.status === "idle" ? (
         <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
           Describe what's going on in the chat, or pick a problem under Browse, and prices show here.
         </p>
       ) : state.status === "loading" && !quote ? (
-        <p className="p-6 text-center text-sm text-muted-foreground animate-pulse">Pricing…</p>
+        <Pricing />
       ) : state.status === "nomock" || state.status === "error" ? (
-        <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm" data-testid="quote-unavailable">
-          <p className="font-semibold">{state.status === "nomock" ? "No test data for this choice yet" : "Could not load prices"}</p>
-          <p className="mt-1 text-muted-foreground">{state.message}</p>
-        </div>
+        <QuoteUnavailable state={state} />
       ) : quote && current ? (
         <div className="relative space-y-2" data-testid="quote-body" data-updating={updating || undefined} aria-busy={updating || undefined}>
         {updating && (
@@ -295,6 +350,37 @@ export function ResultsPane({
     </div>
   );
 }
+
+function QuoteUnavailable({ state }: { state: { status: "nomock" | "error"; message: string } }) {
+  return (
+    <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm" data-testid="quote-unavailable">
+      <p className="font-semibold">{state.status === "nomock" ? "No test data for this choice yet" : "Could not load prices"}</p>
+      <p className="mt-1 text-muted-foreground">{state.message}</p>
+    </div>
+  );
+}
+
+/** "Pricing…"; past a few seconds it says the server is starting (Cloud Run scales to zero), so a cold start reads as one. */
+function Pricing({ compact = false }: { compact?: boolean }) {
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const id = setTimeout(() => setSlow(true), WAKING_AFTER_MS);
+    return () => clearTimeout(id);
+  }, []);
+  return (
+    <div role="status" className={cn("text-center text-sm text-muted-foreground", compact ? "rounded-lg border border-ink/20 bg-card px-3 py-2 text-xs shadow-sm" : "p-6")} data-testid="pricing">
+      <p className="animate-pulse">Pricing…</p>
+      {slow && (
+        <p className="mt-1 text-xs" data-testid="quote-waking">
+          {t("quote.waking")}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** A warm server answers in under half a second; past this the wait is a cold start. */
+export const WAKING_AFTER_MS = 3_000;
 
 function LocationInput({ location, onLocation }: { location: UserLocation | null; onLocation: (l: UserLocation | null) => void }) {
   // starts from the location the parent holds, so a remounted pane still shows the typed ZIP
