@@ -19,7 +19,7 @@ import { Workspace, type Section } from "../components/Workspace";
 import { priceChoices } from "../lib/priceChoices";
 import type { UserLocation } from "../lib/geo";
 import { serviceCodes } from "../lib/mapPrice";
-import { paymentId } from "../lib/payments";
+import { paymentId, paymentLabel } from "../lib/payments";
 import type { OrderBy } from "../components/Overview";
 import { RedFlagPage } from "./StopPages";
 
@@ -80,7 +80,9 @@ export default function CareApp() {
   const switchStart = useRef<{ t: number; key: string } | null>(null);
 
   // Austin 2026-11-09: the map is the main canvas; the other views are sidebar sections, several open at once
-  const [open, setOpen] = useState<Record<string, boolean>>({ ai: true, browse: false, pick: true, list: false, receipt: false });
+  // Austin 2026-11-09: sections in the order a person goes (ask -> narrow down -> where to go -> every place ->
+  // one place's breakdown); the AI helper is folded unless the person started by asking it something
+  const [open, setOpen] = useState<Record<string, boolean>>({ ai: false, browse: true, pick: true, list: false, receipt: false });
   const [focus, setFocus] = useState<{ id: string; n: number } | null>(null);
   /** open a section and scroll to it (a pin or card opens Breakdown; "See all" opens List) */
   const show = useCallback((v: ResultsView) => {
@@ -327,6 +329,7 @@ export default function CareApp() {
               e.preventDefault();
               if (!canChat) return;
               setPhase("work");
+              setOpen({ ai: true, browse: false, pick: true, list: false, receipt: false });
               void sendChat(draft.trim());
               setDraft("");
             }}
@@ -459,9 +462,20 @@ export default function CareApp() {
       id: "browse",
       title: t("tab.browse"),
       icon: SlidersHorizontal,
-      summary: browseLabel,
+      summary: [paymentLabel(payment), browseLabel].filter(Boolean).join(" · "),
       content: (
-        <BrowseBar
+        <div className="space-y-2">
+          {/* how the person pays and where they are narrow the prices like any other filter */}
+          <div className="flex flex-wrap items-center gap-2">
+            <PaymentSelect
+              id="payment-switch"
+              value={payment}
+              onChange={changePayment}
+              className="min-w-0 flex-1 rounded-lg border border-border bg-card px-2 py-1.5 text-sm font-medium"
+            />
+            <LocationInput location={location} onLocation={setLocation} />
+          </div>
+          <BrowseBar
           catalog={catalog}
           paths={paths}
           value={browseValueOf(quoteNow, catalog)}
@@ -471,6 +485,7 @@ export default function CareApp() {
           show={showFilter}
           onShow={setShowFilter}
         />
+        </div>
       ),
     },
     { id: "pick", title: t("tab.pick"), icon: MapPin, content: pane("pick") },
@@ -494,17 +509,6 @@ export default function CareApp() {
         </div>
       </header>
       <Workspace
-        head={
-          <div className="flex flex-wrap items-center gap-2">
-            <PaymentSelect
-              id="payment-switch"
-              value={payment}
-              onChange={changePayment}
-              className="min-w-0 flex-1 rounded-lg border border-border bg-card px-2 py-1.5 text-sm font-medium"
-            />
-            <LocationInput location={location} onLocation={setLocation} />
-          </div>
-        }
         sections={sections}
         open={open}
         onToggle={(id, o) => setOpen((x) => ({ ...x, [id]: o }))}

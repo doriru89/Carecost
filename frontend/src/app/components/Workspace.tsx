@@ -29,8 +29,8 @@ export function Workspace({
   onCollapsed,
   focus,
 }: {
-  /** above the sections: the controls every section shares (payment, ZIP) */
-  head: ReactNode;
+  /** optional controls above the sections */
+  head?: ReactNode;
   sections: Section[];
   open: Record<string, boolean>;
   onToggle: (id: string, open: boolean) => void;
@@ -129,7 +129,7 @@ export function Workspace({
         ) : (
           <div className="flex h-full flex-col gap-2 overflow-y-auto pr-1">
             <div className="flex items-start gap-2">
-              <div className="min-w-0 flex-1">{head}</div>
+              <div className="min-w-0 flex-1">{head ?? <span className="text-xs font-medium text-muted-foreground">{sections.length} panels</span>}</div>
               <button type="button" onClick={() => onCollapsed(true)} title="Hide the sidebar" aria-label="Hide the sidebar" className="rounded-md p-1.5 text-muted-foreground hover:bg-muted" data-testid="sidebar-collapse">
                 <PanelLeftClose className="h-4 w-4" />
               </button>
