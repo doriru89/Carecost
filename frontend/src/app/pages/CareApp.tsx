@@ -517,7 +517,7 @@ export default function CareApp() {
   );
 }
 
-const COLLAPSED_KEY = "carecost.chatCollapsed";
+const COLLAPSED_KEY = "carecost.sidebarCollapsed";
 /** A per-viewer convenience: storage may be missing or throw (private window), so it never matters. */
 function readCollapsed(): boolean {
   try {
