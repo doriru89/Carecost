@@ -1,0 +1,9 @@
+{
+  "status": "unknown",
+  "backendCoveragePct": null,
+  "frontendCoveragePct": null,
+  "failingTests": [],
+  "sha": "",
+  "generatedAt": "",
+  "source": "frontend/public/quality-status.json"
+}
