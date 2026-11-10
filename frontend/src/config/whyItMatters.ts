@@ -17,7 +17,7 @@
  * If WHY_IT_MATTERS_VIDEO_SRC is set, it wins and the embed URL is ignored.
  */
 export const WHY_IT_MATTERS_VIDEO_SRC: string | null =
-  '/videos/copy_8DD6E460-0EC2-4387-AB76-64D5E133283B.MOV';
+  import.meta.env.BASE_URL + 'videos/copy_8DD6E460-0EC2-4387-AB76-64D5E133283B.MOV';
 
 /** Optional iframe embed; used only when WHY_IT_MATTERS_VIDEO_SRC is null. */
 export const WHY_IT_MATTERS_VIDEO_EMBED_URL: string | null = null;

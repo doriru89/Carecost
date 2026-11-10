@@ -202,11 +202,14 @@ export default function CareApp() {
         const r = res.reply;
         if ((r.kind === "clarify" || r.kind === "care_paths") && r.candidates.length > 0) {
           // Prices from turn one; later questions only refine (§4.1). An entry-matched path follows from the
-          // person's own answers (deterministic); an AI-ranked one is the assistant's pick, which the
-          // contract never sums (picked_by: assistant).
+          // person's own answers (deterministic), so it is quoted at once. An AI-ranked one is only offered:
+          // the quote contract refuses a care-path quote picked by the assistant (422), so the person taps
+          // "See prices" on the card (pickPath, picked_by: person).
           const top = r.candidates[0];
-          setQuery({ care_path_id: top.path_id, service_codes: [], picked_by: top.match === "entry_matched" ? "person" : "assistant" });
-          setView("pick");
+          if (top.match === "entry_matched") {
+            setQuery({ care_path_id: top.path_id, service_codes: [], picked_by: "person" });
+            setView("pick");
+          }
         }
       } catch (e) {
         // The server could not answer at all (no reply to render): say so plainly, keep browsing open.

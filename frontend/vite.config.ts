@@ -5,6 +5,8 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  // GitHub Pages serves the site under /<repo>/; VITE_BASE sets it at build time (default "/").
+  base: process.env.VITE_BASE || "/",
   server: {
     // Stream D runs on 5180 (8080 is the legacy dev server). VITE_PORT overrides.
     host: "127.0.0.1",

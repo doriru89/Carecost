@@ -1,0 +1,21 @@
+# Cloud Run source upload (gcloud run deploy --source .). Without this file gcloud falls back to
+# .gitignore, which drops data/build/ and with it the quote pack the image must bake in.
+.git
+.github
+.gcloudignore
+frontend/
+node_modules
+backend/.venv
+backend/.mypy_cache
+backend/.pytest_cache
+backend/.ruff_cache
+**/__pycache__
+*.pyc
+.DS_Store
+.env
+.env.*
+data/raw
+data/intermediate
+data/build/*
+!data/build/quote_pack.sqlite
+docs/

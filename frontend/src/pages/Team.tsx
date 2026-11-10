@@ -8,7 +8,7 @@ import Footer from '@/components/layout/Footer';
  */
 const TEAM = [
   {
-    photo: '/team/kenza-moussaoui.png',
+    photo: import.meta.env.BASE_URL + 'team/kenza-moussaoui.png',
     initials: 'KM',
     name: 'Kenza Moussaoui Rahali, M.D.',
     school: 'Yale School of Management',
@@ -16,7 +16,7 @@ const TEAM = [
     bio: `I am a physician, and my training has shaped how I see care: every patient deserves clarity, dignity, and a fair shot at getting help without financial ruin. I am at Yale SOM because I want to bridge clinical reality with better systems. My mission is to advance health equity, strengthen patient care, and push for a healthcare system that is genuinely equitable. I bring that commitment to this team every day.`,
   },
   {
-    photo: '/team/Austin-Zheng.png',
+    photo: import.meta.env.BASE_URL + 'team/Austin-Zheng.png',
     initials: 'AZ',
     name: 'Austin Zheng',
     school: 'Yale School of Management',
@@ -24,7 +24,7 @@ const TEAM = [
     bio: `I come from China and studied at Yale SOM. Product management is how I turn ambiguity into something people can actually use. I am putting that craft toward a simple goal: work on products that matter, that improve real lives, and that leave the world a little better than we found it. This project is exactly that kind of bet.`,
   },
   {
-    photo: '/team/davis-schmidt.jpeg',
+    photo: import.meta.env.BASE_URL + 'team/davis-schmidt.jpeg',
     initials: 'DS',
     name: 'David Schmidt',
     school: 'Yale School of Management',

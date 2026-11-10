@@ -138,6 +138,9 @@ describe("R15 · the previous payment's receipt is never shown as current", () =
     fireEvent.change(screen.getByTestId("email"), { target: { value: "a@b.co" } });
     fireEvent.change(screen.getByTestId("start-chat"), { target: { value: "my shoulder clicks" } });
     fireEvent.click(screen.getByRole("button", { name: "Send" }));
+    // An AI-ranked path is only offered (the quote contract refuses an assistant-picked care path):
+    // the person taps "See prices" on the card.
+    fireEvent.click((await screen.findAllByRole("button", { name: "See prices" }))[0]);
     // D6 (D-UI-1): a care path's quote opens on the first screen (options, cheapest, alternates)
     await waitFor(() => expect(screen.getByTestId("overview")).toBeTruthy());
     expect(screen.queryByTestId("quote-updating")).toBeNull();
