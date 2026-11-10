@@ -48,8 +48,9 @@ export function BrowseBar({
   onKind: (k: KindFilter) => void;
   show: ShowFilter;
   onShow: (s: ShowFilter) => void;
-  mode: "map" | "list";
-  onMode: (m: "map" | "list") => void;
+  /** the Map / List switch; left out in the Workspace sidebar, where the map is always the main canvas */
+  mode?: "map" | "list";
+  onMode?: (m: "map" | "list") => void;
 }) {
   const [area, setArea] = useState("all");
   const [q, setQ] = useState("");
@@ -67,8 +68,8 @@ export function BrowseBar({
   }, [value, catalog, paths, options, pathOptions]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="space-y-2 rounded-xl border border-border bg-card/60 p-3" data-testid="browse-bar">
-      <div className="grid gap-2 sm:grid-cols-[9rem_8rem_minmax(0,1fr)]">
+    <div className={cn("space-y-2", onMode && "rounded-xl border border-border bg-card/60 p-3")} data-testid="browse-bar">
+      <div className={cn("grid gap-2", onMode ? "sm:grid-cols-[9rem_8rem_minmax(0,1fr)]" : "grid-cols-2")}>
         <label className="space-y-0.5">
           <span className={caption}>{t("browse.area")}</span>
           <select value={area} onChange={(e) => setArea(e.target.value)} className={field} data-testid="browse-area">
@@ -95,7 +96,7 @@ export function BrowseBar({
             data-testid="browse-code"
           />
         </label>
-        <label className="min-w-0 space-y-0.5">
+        <label className={cn("min-w-0 space-y-0.5", !onMode && "col-span-2")}>
           <span className={caption}>{t("browse.service")}</span>
           <select
             value={value}
@@ -149,6 +150,7 @@ export function BrowseBar({
             <option value="priced">{t("browse.show_priced")}</option>
           </select>
         </label>
+        {onMode && (
         <div className="ml-auto flex gap-1 rounded-lg bg-muted p-0.5 text-xs" role="radiogroup" aria-label="Show as">
           {(["map", "list"] as const).map((m) => (
             <button
@@ -164,6 +166,7 @@ export function BrowseBar({
             </button>
           ))}
         </div>
+        )}
       </div>
     </div>
   );

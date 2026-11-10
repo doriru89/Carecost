@@ -15,8 +15,17 @@ or from the small committed extract (``contracts/fixtures/rate_row_extract.csv``
 
 Why SQLite and not JSON / parquet: one stdlib reader for every source kind, a few hundred MB
 of rows stream in without a JSON parse of the whole file, and ``sqlite3`` can filter rows at load
-time (only the codes we price, only the TINs the site registry links). Rows are still copied into
-dicts at startup (P1 design, metrics F1): no query runs per request.
+time (only the codes we price, only the TINs the site registry links).
+
+Two ways to hold the rows (same indexes, same order, same answers):
+
+* **eager** (``load_pack(lazy=False)``, the extract, offline tools): every row is copied into the
+  dicts at load time;
+* **lazy, partitioned by code** (``load_pack(lazy=True)``, the server; Austin 2026-11-09): startup
+  reads only the small tables, and the first lookup of a code reads all of that code's rows (one
+  indexed query on ``rows_code``) and indexes them. Every index key carries the code, so the code
+  is the natural partition. On Cloud Run the cold start was ~50 s, 41 s of it turning 1.55 M rows
+  into Python objects.
 
 Indexes (what a quote looks up):
 
@@ -51,6 +60,7 @@ import json
 import os
 import sqlite3
 import sys
+import threading
 from collections import defaultdict
 from collections.abc import Iterable
 from dataclasses import dataclass, field, fields
@@ -184,6 +194,69 @@ class Recorder:
         self.refs.update(r.uid for r in rows)
 
 
+def _row_order(r: Row) -> tuple[str, int, str]:
+    return (r.source_id, r.stage_row, r.row_id)
+
+
+def _build_indexes(rows: list[Row]) -> tuple[dict, dict, dict, dict]:
+    """by_code, hospital, cash, tic over ``rows`` (already in ``_row_order``)."""
+    by_code: dict[tuple[str, str], list[Row]] = defaultdict(list)
+    hosp: dict[tuple[str, str, str], list[Row]] = defaultdict(list)
+    cash_best: dict[tuple, Row] = {}
+    tic: dict[tuple[str, str, str], list[Row]] = defaultdict(list)
+    for r in rows:
+        if r.source_kind == "insurer_tic":
+            tic[(r.source_id, r.tin, r.code)].append(r)
+            continue
+        by_code[(r.source_id, r.code)].append(r)
+        if r.source_kind == "hospital_mrf":
+            hosp[(r.source_id, r.code, r.payer_id or "")].append(r)
+            if r.discounted_cash is not None:
+                k = (r.source_id, r.code, r.modifiers, r.component, r.setting,
+                     r.discounted_cash, r.gross)  # fmt: skip
+                cash_best.setdefault(k, r)  # rows are sorted: first = lowest stage_row
+    cash: dict[tuple[str, str], list[Row]] = defaultdict(list)
+    for k, r in cash_best.items():
+        cash[(k[0], k[1])].append(r)
+    return dict(by_code), dict(hosp), dict(cash), dict(tic)
+
+
+class _LazyRows(list):
+    """A lazy store has no all-rows list: anything that walks every row fails loudly instead of
+    seeing none (offline tools use ``load_pack(lazy=False)``)."""
+
+    def _refuse(self, *_: Any) -> Any:
+        raise RuntimeError(
+            "this RateStore loads rows per code (lazy pack); use load_pack(lazy=False)"
+        )
+
+    __iter__ = __len__ = __getitem__ = __contains__ = _refuse  # type: ignore[assignment]
+
+
+class _LazyIndex:
+    """One index of a lazy store: a lookup first loads the code's partition (``code_pos``: where the
+    code sits in the key). No ``items()``: a walk over every key would load every code."""
+
+    def __init__(self, store: RateStore, data: dict, code_pos: int) -> None:
+        self._store, self._data, self._pos = store, data, code_pos
+
+    def get(self, key: tuple, default: Any = None) -> Any:
+        self._store.ensure_code(key[self._pos])
+        return self._data.get(key, default)
+
+    def __getitem__(self, key: tuple) -> Any:
+        self._store.ensure_code(key[self._pos])
+        return self._data[key]
+
+    def __contains__(self, key: object) -> bool:
+        assert isinstance(key, tuple)
+        self._store.ensure_code(key[self._pos])
+        return key in self._data
+
+    def items(self) -> Any:
+        raise RuntimeError("a lazy index cannot be walked; use RateStore.tic_items(codes)")
+
+
 @dataclass
 class RateStore:
     rows: list[Row]
@@ -202,31 +275,53 @@ class RateStore:
     """C4b item 4: A6's TiC row flags (``flags.parquet``, joined on row_id at pack time) by
     ``Row.uid``: same_npi_pos_multi_rate, anesthesia_per_unit, institutional_on_physician_npi."""
 
-    def __post_init__(self) -> None:
-        self._index()
+    partitions: PackPartitions | None = field(default=None, repr=False, compare=False)
+    """Lazy mode: the pack's rows by code, read on first lookup (``rows`` is then not a list)."""
 
-    def _index(self) -> None:
-        by_code: dict[tuple[str, str], list[Row]] = defaultdict(list)
-        hosp: dict[tuple[str, str, str], list[Row]] = defaultdict(list)
-        cash_best: dict[tuple, Row] = {}
-        tic: dict[tuple[str, str, str], list[Row]] = defaultdict(list)
-        self.rows.sort(key=lambda r: (r.source_id, r.stage_row, r.row_id))
-        for r in self.rows:
-            if r.source_kind == "insurer_tic":
-                tic[(r.source_id, r.tin, r.code)].append(r)
-                continue
-            by_code[(r.source_id, r.code)].append(r)
-            if r.source_kind == "hospital_mrf":
-                hosp[(r.source_id, r.code, r.payer_id or "")].append(r)
-                if r.discounted_cash is not None:
-                    k = (r.source_id, r.code, r.modifiers, r.component, r.setting,
-                         r.discounted_cash, r.gross)  # fmt: skip
-                    cash_best.setdefault(k, r)  # rows are sorted: first = lowest stage_row
-        cash: dict[tuple[str, str], list[Row]] = defaultdict(list)
-        for k, r in cash_best.items():
-            cash[(k[0], k[1])].append(r)
-        self.by_code, self.hospital = dict(by_code), dict(hosp)
-        self.cash, self.tic = dict(cash), dict(tic)
+    def __post_init__(self) -> None:
+        self._lock = threading.Lock()
+        self._loaded: set[str] = set()
+        if self.partitions is None:
+            self.rows.sort(key=_row_order)
+            self.by_code, self.hospital, self.cash, self.tic = _build_indexes(self.rows)
+            return
+        self.rows = _LazyRows()
+        self._ix: dict[str, dict] = {"by_code": {}, "hospital": {}, "cash": {}, "tic": {}}
+        self.by_code = _LazyIndex(self, self._ix["by_code"], 1)  # type: ignore[assignment]
+        self.hospital = _LazyIndex(self, self._ix["hospital"], 1)  # type: ignore[assignment]
+        self.cash = _LazyIndex(self, self._ix["cash"], 1)  # type: ignore[assignment]
+        self.tic = _LazyIndex(self, self._ix["tic"], 2)  # type: ignore[assignment]
+
+    def ensure_code(self, code: str) -> None:
+        """Lazy mode: read and index every row of ``code`` once. Thread-safe (FastAPI runs sync
+        routes in a thread pool): one lock, checked again inside. Eager mode: nothing to do."""
+        if self.partitions is None or code in self._loaded:
+            return
+        with self._lock:
+            if code in self._loaded:
+                return
+            rows = self.partitions.load(code)
+            rows.sort(key=_row_order)
+            for name, part in zip(("by_code", "hospital", "cash", "tic"), _build_indexes(rows)):
+                self._ix[name].update(part)
+            self._loaded.add(code)  # only after every index holds the code's rows
+
+    def tic_items(self, codes: Iterable[str]) -> list[tuple[tuple[str, str, str], list[Row]]]:
+        """``tic.items()`` for these codes only, in the eager order (the order in which each key's
+        first row appears in the sorted rows), so a lazy store answers exactly like an eager one."""
+        want = set(codes)
+        if self.partitions is None:
+            return [(k, v) for k, v in self.tic.items() if k[2] in want]
+        for c in sorted(want):
+            self.ensure_code(c)
+        with self._lock:  # no other code is indexed while the dict is copied
+            items = [(k, v) for k, v in self._ix["tic"].items() if k[2] in want]
+        items.sort(key=lambda kv: _row_order(kv[1][0]))
+        return items
+
+    def total_rows(self) -> int:
+        """Rows held (eager) or in the pack under the load filter (lazy, one SQL count)."""
+        return self.partitions.total() if self.partitions is not None else len(self.rows)
 
     def get(self, index: str, key: tuple) -> list[Row]:
         rows = getattr(self, index).get(key, [])
@@ -241,7 +336,7 @@ class RateStore:
         return self.npi_sets.get(r.npi_set, ()) if r.npi_set else ()
 
     def by_uid(self) -> dict[str, Row]:
-        """uid -> Row (the fixture generator only; the server never builds it)."""
+        """uid -> Row (the fixture generator only, eager; the server never builds it)."""
         return {r.uid: r for r in self.rows}
 
     def has_kind(self, kind: str) -> bool:
@@ -251,6 +346,8 @@ class RateStore:
         return sorted(s for s, m in self.sources.items() if m.source_kind == kind)
 
     def counts(self) -> dict[str, int]:
+        if self.partitions is not None:
+            return self.partitions.counts()
         out: dict[str, int] = defaultdict(int)
         for r in self.rows:
             out[r.source_id] += 1
@@ -492,19 +589,71 @@ def write_pack(
         ],
     )
     db.execute("create index rows_tin on rows (tin)")
+    db.execute("create index rows_code on rows (code)")  # lazy load: one code per query
     db.commit()
     db.close()
     os.replace(tmp, path)
     return n
 
 
+class PackPartitions:
+    """The pack's rows, read one code at a time (lazy RateStore). Holds one read-only connection;
+    RateStore serialises calls with its lock. The filter is load_pack's: every non-TiC row, TiC rows
+    of the wanted TINs only, and anesthesia (008xx / 01xxx) rows of every group."""
+
+    def __init__(self, db: sqlite3.Connection, strings: dict[int, str], where: str) -> None:
+        self.db, self.strings, self.where = db, strings, where
+        self.inv = {v: k for k, v in strings.items()}
+        self.coded = [c in STRING_COLUMNS for c in ROW_COLUMNS]
+        self.ip = ROW_COLUMNS.index("payer_id")
+        self.sql = f"select {', '.join(ROW_COLUMNS)} from rows where code = ?" + (
+            f" and ({where})" if where else ""
+        )
+        self._counts: dict[str, int] | None = None
+
+    def load(self, code: str) -> list[Row]:
+        cid = self.inv.get(code)
+        if cid is None:
+            return []
+        strings, out = self.strings, []
+        for rec in self.db.execute(self.sql, (cid,)):
+            vals: list[Any] = [
+                strings.get(v, "") if c and v is not None else v for c, v in zip(self.coded, rec)
+            ]
+            if vals[self.ip] in ("", None):
+                vals[self.ip] = None
+            out.append(Row(*vals))
+        return out
+
+    def counts(self) -> dict[str, int]:
+        """Rows per source under the filter, counted once (the first /api/health), never loaded."""
+        if self._counts is None:
+            sql = "select source_id, count(*) from rows" + (
+                f" where {self.where}" if self.where else ""
+            )
+            got = {
+                self.strings.get(i, ""): n for i, n in self.db.execute(sql + " group by source_id")
+            }
+            self._counts = dict(sorted(got.items()))
+        return self._counts
+
+    def total(self) -> int:
+        return sum(self.counts().values())
+
+
 def load_pack(
-    path: Path, *, tins: Iterable[str] | None = None, census_ids: Iterable[str] = ()
+    path: Path,
+    *,
+    tins: Iterable[str] | None = None,
+    census_ids: Iterable[str] = (),
+    lazy: bool = False,
 ) -> RateStore:
-    """Load the pack into memory. ``tins``: keep only TiC rows of these billing TINs / NPIs (the
-    site registry's) plus the TINs the TiC matcher linked to ``census_ids``, so a registry of 6
-    sites does not hold 1.5 million TiC rows. None = all."""
-    db = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+    """Load the pack. ``tins``: keep only TiC rows of these billing TINs / NPIs (the site
+    registry's) plus the TINs the TiC matcher linked to ``census_ids``, so a registry of 6 sites
+    does not hold 1.5 million TiC rows. None = all. ``lazy``: read the small tables now and each
+    code's rows on its first lookup (the server); eager copies every row now (tests, offline
+    tools)."""
+    db = sqlite3.connect(f"file:{path}?mode=ro", uri=True, check_same_thread=not lazy)
     db.row_factory = sqlite3.Row
     meta = {k: v for k, v in db.execute("select key, value from meta")}
     if int(meta["pack_version"]) != PACK_VERSION:
@@ -514,12 +663,10 @@ def load_pack(
         for rec in db.execute("select * from sources")
     }
     strings = {i: sys.intern(v) for i, v in db.execute("select id, s from strings")}
-    coded = [c in STRING_COLUMNS for c in ROW_COLUMNS]
-    sql = f"select {', '.join(ROW_COLUMNS)} from rows"
-    args: list[Any] = []
     census: dict[str, set[str]] = defaultdict(set)
     for c, t in db.execute("select census_id, tin from census_tins"):
         census[c].add(t)
+    where = ""
     if tins is not None:
         cids = set(census_ids)
         tins = set(tins) | {t for c in cids for t in census.get(c, ())}
@@ -535,20 +682,8 @@ def load_pack(
             i for v, i in inv.items() if len(v) == 5 and v.isdigit() and v[:2] in ("00", "01")
         )
         anes_in = ",".join(str(i) for i in anes) or "-1"
-        sql += (
-            f" where source_kind != {tic} or tin in (select tin from temp.want)"
-            f" or code in ({anes_in})"
-        )
+        where = f"source_kind != {tic} or tin in (select tin from temp.want) or code in ({anes_in})"
     db.row_factory = None
-    rows: list[Row] = []
-    ip = ROW_COLUMNS.index("payer_id")
-    for rec in db.execute(sql, args):
-        vals = [strings.get(v, "") if c and v is not None else v for c, v in zip(coded, rec)]
-        if vals[ip] in ("", None):
-            vals[ip] = None
-        rows.append(Row(*vals))
-    used = {r.npi_set for r in rows if r.npi_set}
-    npis: dict[int, list[str]] = defaultdict(list)
     flags: dict[str, frozenset[str]] = {}
     has_flags = db.execute(
         "select 1 from sqlite_master where type = 'table' and name = 'row_flags'"
@@ -556,25 +691,52 @@ def load_pack(
     if has_flags:  # packs built before C4b have no flags table
         for src, rid, fl in db.execute("select source_id, row_id, flags from row_flags"):
             flags[f"{src}:{rid}"] = frozenset(fl.split("|"))
-    for i, npi in db.execute("select id, npi from npi_sets order by id, npi"):
-        if i in used and valid_npi(npi):  # packs built before the pack-side filter carry "0"
-            npis[i].append(sys.intern(npi))
-    db.close()
     version = DataVersionInfo(
         build_id=meta["build_id"],
         build_date=meta["build_date"],
         tic_release=meta["tic_release"] or None,
     )
-    return RateStore(
-        rows=rows,
+    common = dict(
         sources=sources,
         version=version,
         codes=frozenset(json.loads(meta["codes"])),
-        npi_sets={k: tuple(v) for k, v in npis.items()},
         census_tins={c: frozenset(v) for c, v in census.items()},
         refresh_status=json.loads(meta.get("refresh_status") or "{}"),
         flags=flags,
     )
+    if lazy:
+        has_index = db.execute(
+            "select 1 from sqlite_master where type = 'index' and name = 'rows_code'"
+        ).fetchone()
+        if not has_index:  # a pack written before the index: still right, each code a full scan
+            print(f"warning: {path} has no rows_code index; each code reads the whole table "
+                  "(rebuild the pack with python -m app.quote.pack)", file=sys.stderr)  # fmt: skip
+        npis: dict[int, list[str]] = defaultdict(list)
+        for i, npi in db.execute("select id, npi from npi_sets order by id, npi"):
+            if valid_npi(npi):  # packs built before the pack-side filter carry "0"
+                npis[i].append(sys.intern(npi))
+        return RateStore(
+            rows=[],
+            npi_sets={k: tuple(v) for k, v in npis.items()},
+            partitions=PackPartitions(db, strings, where),
+            **common,  # type: ignore[arg-type]
+        )
+    coded = [c in STRING_COLUMNS for c in ROW_COLUMNS]
+    sql = f"select {', '.join(ROW_COLUMNS)} from rows" + (f" where {where}" if where else "")
+    rows: list[Row] = []
+    ip = ROW_COLUMNS.index("payer_id")
+    for rec in db.execute(sql):
+        vals = [strings.get(v, "") if c and v is not None else v for c, v in zip(coded, rec)]
+        if vals[ip] in ("", None):
+            vals[ip] = None
+        rows.append(Row(*vals))
+    used = {r.npi_set for r in rows if r.npi_set}
+    npis = defaultdict(list)
+    for i, npi in db.execute("select id, npi from npi_sets order by id, npi"):
+        if i in used and valid_npi(npi):  # packs built before the pack-side filter carry "0"
+            npis[i].append(sys.intern(npi))
+    db.close()
+    return RateStore(rows=rows, npi_sets={k: tuple(v) for k, v in npis.items()}, **common)  # type: ignore[arg-type]
 
 
 # --------------------------------------------------------------------------- committed extract
@@ -693,7 +855,7 @@ def load_from_env(tins: Iterable[str] | None = None, census_ids: Iterable[str] =
         p = Path(pack)
         if not p.exists():
             raise ExtractRefused(f"CARECOST_QUOTE_PACK={pack} does not exist")
-        return load_pack(p, tins=tins, census_ids=census_ids)
+        return load_pack(p, tins=tins, census_ids=census_ids, lazy=True)
     if os.environ.get("CARECOST_ALLOW_EXTRACT") != "1":
         raise ExtractRefused(
             "no CARECOST_QUOTE_PACK: refusing to serve the test extract (set "

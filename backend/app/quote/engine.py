@@ -1719,9 +1719,8 @@ class Engine:
         """network file -> anesthesia group TIN -> its per-unit rows (A6 flag anesthesia_per_unit,
         an anesthesia group by name, as the per-unit rule reads them)."""
         out: dict[str, dict[str, list[Row]]] = defaultdict(lambda: defaultdict(list))
-        for (sid, tin, code), rows in self.store.tic.items():
-            if code not in self.anes_base:
-                continue
+        # only the anesthesia codes' partitions (a lazy store never walks every code)
+        for (sid, tin, code), rows in self.store.tic_items(self.anes_base):
             for r in rows:
                 if (r.amount and "anesthesia_per_unit" in self.store.row_flags(r)
                         and "ANESTH" in r.business_name.upper()):  # fmt: skip

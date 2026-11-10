@@ -26,6 +26,7 @@ export function SiteMap({
   onOpen,
   location,
   item,
+  className,
 }: {
   views: SiteView[];
   selectedId: string | null;
@@ -36,6 +37,8 @@ export function SiteMap({
    * Never a mix.
    */
   item: MapItem | null;
+  /** height classes; default: 420 px on a phone, the window height minus the header on a laptop */
+  className?: string;
 }) {
   const el = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
@@ -122,5 +125,5 @@ export function SiteMap({
     if (!bounds.isEmpty()) m.fitBounds(bounds, { padding: 60, maxZoom: 13, duration: 0 });
   }, [views, selectedId, location, item]);
 
-  return <div ref={el} className="h-[420px] md:h-[calc(100vh-15rem)] min-h-[320px] w-full rounded-xl overflow-hidden border border-border" data-testid="site-map" />;
+  return <div ref={el} className={`${className ?? "h-[420px] md:h-[calc(100vh-15rem)]"} min-h-[320px] w-full rounded-xl overflow-hidden border border-border`} data-testid="site-map" />;
 }

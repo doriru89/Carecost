@@ -64,6 +64,10 @@ export function ResultsPane({
   step: stepProp,
   onStep: onStepProp,
   chipsHere = true,
+  chrome = true,
+  kind: kindProp,
+  show: showProp,
+  mapClassName,
 }: {
   payment: Payment;
   onPayment: (p: Payment) => void;
@@ -76,7 +80,7 @@ export function ResultsPane({
   onBrowse: (v: BrowseValue) => void;
   location: UserLocation | null;
   onLocation: (l: UserLocation | null) => void;
-  /** Kept by the parent so a layout change (SplitView re-parents this pane across 768 px) keeps the pick. */
+  /** Kept by the parent: the Workspace shows several panes (sections + map) that share one pick. */
   pick: SitePick;
   onPick: (p: SitePick) => void;
   /**
@@ -92,6 +96,16 @@ export function ResultsPane({
   onStep?: (id: string | null) => void;
   /** false: the chips are in the chat (next to the care path card), not above the map and list */
   chipsHere?: boolean;
+  /**
+   * false: inside a sidebar section or the main map (Workspace): no payment row, no tab bar, and the
+   * loading state is one quiet line except on the map.
+   */
+  chrome?: boolean;
+  /** The Browse filters, shared by the map and the List (owned by CareApp); standalone, "all" / "offered" */
+  kind?: KindFilter;
+  show?: ShowFilter;
+  /** the map's height (the Workspace map fills the window) */
+  mapClassName?: string;
 }) {
   const { sort, selected } = pick;
   const setSort = (s: SortMode) => onPick({ ...pick, sort: s });
@@ -124,17 +138,22 @@ export function ResultsPane({
   const pickedStep = controlled ? (stepProp ?? null) : ownStep;
   const onStep = controlled ? onStepProp : setOwnStep;
   const onlyStep = quote ? onlyStepOf(quote) : null;
-  const chosen = choices.find((c) => c.id === pickedStep) ?? (onlyStep ? choices.find((c) => c.id === onlyStep) : undefined) ?? null;
+  // Austin 2026-11-09: the map always prices something: with nothing picked, the first item (a care path's
+  // whole visit, or the one service picked)
+  const chosen = choices.find((c) => c.id === pickedStep) ?? (onlyStep ? choices.find((c) => c.id === onlyStep) : undefined) ?? choices[0] ?? null;
   const step = chosen?.id ?? null;
   const showChips = chipsHere && choices.length > (onlyStep ? 1 : 0);
 
   // Browse: the map prices something from the first screen (a care path: its whole-visit figure), never places only
-  const [kindFilter, setKindFilter] = useState<KindFilter>("all");
-  const [showFilter, setShowFilter] = useState<ShowFilter>("offered");
+  const [ownKind, setKindFilter] = useState<KindFilter>("all");
+  const [ownShow, setShowFilter] = useState<ShowFilter>("offered");
+  const kindFilter = kindProp ?? ownKind;
+  const showFilter = showProp ?? ownShow;
   const [browseMode, setBrowseMode] = useState<"map" | "list">("map");
-  const browseChosen = chosen ?? choices[0] ?? null;
+  const browseChosen = chosen;
   const browseItem = browseChosen?.item ?? null;
   const browseViews = useMemo(() => filterViews(sorted, browseItem, kindFilter, showFilter), [sorted, browseItem, kindFilter, showFilter]);
+  const shownViews = browseViews;
   const browsePriced = useMemo(() => pricedCount(filterViews(sorted, browseItem, kindFilter, "offered"), browseItem), [sorted, browseItem, kindFilter]);
 
   // C3 item 9: fetch the opened site's receipt when the list carries only its summary
@@ -169,6 +188,8 @@ export function ResultsPane({
 
   return (
     <div className="space-y-3" data-testid="results-pane" data-quote-key={state.status === "ok" ? state.key : ""}>
+      {chrome && (
+      <>
       <div className="flex flex-wrap items-center gap-2">
         <label htmlFor="payment-switch" className="text-xs font-medium text-muted-foreground">
           Paying with
@@ -195,6 +216,8 @@ export function ResultsPane({
           </button>
         ))}
       </div>
+      </>
+      )}
 
       {view === "browse" ? (
         <div className="space-y-2" data-testid="browse">
@@ -219,7 +242,7 @@ export function ResultsPane({
               {updating && <Pricing compact />}
               <div className={cn("space-y-2", updating && "pointer-events-none select-none opacity-40")}>
                 {choices.length > 1 && (
-                  <StepChips choices={choices} step={browseChosen?.id ?? null} onStep={(id) => onStep(id)} label={t("map.pick_step")} testId="browse-steps" allowNone={false} />
+                  <StepChips choices={choices} step={browseChosen?.id ?? null} onStep={(id) => onStep(id)} label={t("map.pick_step")} testId="browse-steps" />
                 )}
                 <p className="text-xs text-muted-foreground" data-testid="browse-count">
                   {t("browse.count", { shown: browseViews.length, total: sorted.length, priced: browsePriced })}
@@ -250,11 +273,11 @@ export function ResultsPane({
           ) : null}
         </div>
       ) : state.status === "idle" ? (
-        <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-          Describe what's going on in the chat, or pick a problem under Browse, and prices show here.
+        <p className={cn("rounded-xl border border-dashed border-border text-center text-sm text-muted-foreground", chrome || view === "map" ? "p-6" : "p-3")}>
+          Describe what's going on in the chat, or pick a service under Browse, and prices show here.
         </p>
       ) : state.status === "loading" && !quote ? (
-        <Pricing />
+        chrome || view === "map" ? <Pricing /> : <p className="animate-pulse text-sm text-muted-foreground">Pricing…</p>
       ) : state.status === "nomock" || state.status === "error" ? (
         <QuoteUnavailable state={state} />
       ) : quote && current ? (
@@ -312,7 +335,7 @@ export function ResultsPane({
           <div className="space-y-2">
           {showChips && <StepChips choices={choices} step={step} onStep={onStep} testId="list-steps" />}
           <SiteList
-            views={sorted}
+            views={shownViews}
             sort={sort}
             onSort={setSort}
             selectedId={current.sq.site.site_id}
@@ -337,9 +360,13 @@ export function ResultsPane({
                   ? t("map.places_only")
                   : t("map.places_only_chat")}
             </p>
-            <Suspense fallback={<p className="p-6 text-center text-sm text-muted-foreground">Loading map…</p>}>
-              <SiteMap views={sorted} selectedId={current.sq.site.site_id} onOpen={open} location={location} item={chosen?.item ?? null} />
-            </Suspense>
+            {shownViews.length === 0 ? (
+              <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">{t("browse.none")}</p>
+            ) : (
+              <Suspense fallback={<p className="p-6 text-center text-sm text-muted-foreground">Loading map…</p>}>
+                <SiteMap views={shownViews} selectedId={current.sq.site.site_id} onOpen={open} location={location} item={chosen?.item ?? null} className={mapClassName} />
+              </Suspense>
+            )}
           </div>
         )}
         </div>
@@ -382,7 +409,7 @@ function Pricing({ compact = false }: { compact?: boolean }) {
 /** A warm server answers in under half a second; past this the wait is a cold start. */
 export const WAKING_AFTER_MS = 3_000;
 
-function LocationInput({ location, onLocation }: { location: UserLocation | null; onLocation: (l: UserLocation | null) => void }) {
+export function LocationInput({ location, onLocation }: { location: UserLocation | null; onLocation: (l: UserLocation | null) => void }) {
   // starts from the location the parent holds, so a remounted pane still shows the typed ZIP
   const [zip, setZip] = useState(location?.kind === "zip" ? location.label.replace(/^ZIP /, "") : "");
   const [err, setErr] = useState<string | null>(null);

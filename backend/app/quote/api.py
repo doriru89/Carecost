@@ -99,7 +99,7 @@ def health(request: Request) -> dict:
         and not any(
             (v or {}).get("status") not in (None, "ok") for v in eng.store.refresh_status.values()
         ),
-        "rows": len(eng.store.rows),
+        "rows": eng.store.total_rows(),
         "rows_by_source": eng.store.counts(),
         "rows_by_kind": dict(sorted(by_kind.items())),
         "build_id": eng.store.version.build_id,

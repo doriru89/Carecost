@@ -19,11 +19,15 @@ import { ChatPane, type ChatActions } from "../components/ChatPane";
 import { PaymentSelect } from "../components/PaymentSelect";
 import { Receipt } from "../components/Receipt";
 import { ResultsPane, type QuoteState } from "../components/ResultsPane";
-import { SplitView } from "../components/SplitView";
+import { Workspace } from "../components/Workspace";
+import { priceChoices } from "../lib/priceChoices";
 import { mapService, serviceCodes } from "../lib/mapPrice";
 import { PAYMENT_CHOICES } from "../lib/payments";
 import CareApp, { QUOTE_TIMEOUT_MS } from "../pages/CareApp";
 import { BCBS, CASH, MASSHEALTH } from "./fixtures";
+
+// jsdom has no WebGL: MapLibre cannot draw here; the map pins are tested through lib/steps and lib/browse
+vi.mock("../components/SiteMap", () => ({ SiteMap: () => <div data-testid="site-map" /> }));
 
 const CATALOG = catalogJson as unknown as Catalog;
 const closed = { known: true, openNow: false, openToday: false, text: "Closed" };
@@ -143,16 +147,18 @@ describe("R15 · the previous payment's receipt is never shown as current", () =
     await waitFor(() => expect(screen.getByTestId("overview")).toBeTruthy());
     expect(screen.queryByTestId("quote-updating")).toBeNull();
 
-    const results = screen.getByTestId("results-pane");
-    fireEvent.change(within(results).getByTestId("payment-select"), { target: { value: "cash" } });
-    await waitFor(() => expect(screen.getByTestId("quote-updating").textContent).toContain("Self-pay (no insurance)"));
-    expect(screen.getByTestId("quote-body").dataset.updating).toBe("true");
+    // the Where to go section (the sidebar holds several result panes; the payment switch is shared above them)
+    const pickSection = () => within(document.querySelector('[data-section="pick"]') as HTMLElement);
+    const results = pickSection().getByTestId("results-pane");
+    fireEvent.change(screen.getByTestId("payment-select"), { target: { value: "cash" } });
+    await waitFor(() => expect(pickSection().getByTestId("quote-updating").textContent).toContain("Self-pay (no insurance)"));
+    expect(pickSection().getByTestId("quote-body").dataset.updating).toBe("true");
     expect(results.dataset.quoteKey).toBe("");
 
     await act(async () => {
       vi.advanceTimersByTime(QUOTE_TIMEOUT_MS + 10);
     });
-    await waitFor(() => expect(screen.getByTestId("quote-unavailable").textContent).toContain(t("quote.timeout")));
+    await waitFor(() => expect(pickSection().getByTestId("quote-unavailable").textContent).toContain(t("quote.timeout")));
     expect(screen.queryByTestId("overview")).toBeNull();
     expect(screen.queryByTestId("receipt")).toBeNull();
     expect(spy.mock.calls[1][1]?.signal?.aborted).toBe(true);
@@ -212,34 +218,42 @@ describe("P3 · the map shows a price only for one selected service", () => {
     expect(mapService(one, null)).toBeNull();
   });
 
-  it("the map note says places only for a care path", () => {
+  it("Austin 2026-11-09: a care path's map prices its first item (the whole visit) with nothing picked, never places only", () => {
     render(pane({ status: "ok", key: "k", quote: BCBS, scope: { kind: "fixture" } }, "map", BCBS.payment));
-    expect(screen.getByTestId("map-price-note").textContent).toBe(t("map.places_only"));
+    const first = priceChoices(BCBS)[0];
+    expect(first.item.kind).toBe("headline");
+    expect(screen.getByTestId("map-price-note").textContent).toBe(t("map.headline_for", { option: first.label }));
   });
 });
 
-describe("phones · the Chat tab keeps the prices pane mounted", () => {
-  it("switching tabs hides a pane without unmounting it, and puts the prices scroll back", () => {
-    const mm = vi.spyOn(window, "matchMedia").mockImplementation(
-      (q: string) =>
-        ({ matches: true, media: q, addEventListener: () => {}, removeEventListener: () => {}, onchange: null, dispatchEvent: () => false, addListener: () => {}, removeListener: () => {} }) as MediaQueryList,
+describe("Workspace · the map is the main canvas, the views are sidebar sections", () => {
+  const Icon = () => null;
+  const sections = [
+    { id: "ai", title: "AI helper", icon: Icon as never, content: <p data-testid="ai-content">chat</p> },
+    { id: "receipt", title: "Breakdown", icon: Icon as never, summary: "MGH", content: <p>receipt</p> },
+  ];
+  it("several sections open at once; a closed one stays mounted and shows its summary", () => {
+    const toggles: [string, boolean][] = [];
+    const ws = (open: Record<string, boolean>) => (
+      <Workspace head={<p>head</p>} sections={sections} open={open} onToggle={(id, o) => toggles.push([id, o])} map={<p data-testid="the-map">map</p>} collapsed={false} onCollapsed={() => {}} />
     );
-    const scrollTo = vi.spyOn(window, "scrollTo").mockImplementation(() => {});
-    const Prices = () => <p data-testid="prices-content">prices</p>;
-    const split = { orientation: "side" as const, swapped: false };
-    const view = (tab: "chat" | "prices") => <SplitView state={split} onState={() => {}} phoneTab={tab} onPhoneTab={() => {}} chat={<p>chat</p>} prices={<Prices />} />;
-    const { rerender } = render(view("prices"));
-    expect(mm).toHaveBeenCalled();
-    const first = screen.getByTestId("prices-content");
-    Object.defineProperty(window, "scrollY", { configurable: true, value: 640 });
-    fireEvent.scroll(window);
-    rerender(view("chat"));
-    expect(screen.getByTestId("prices-content")).toBe(first); // same node: not unmounted
-    expect((first.closest("[data-pane]") as HTMLElement).hidden).toBe(true);
-    expect(scrollTo).toHaveBeenLastCalledWith(0, 0);
-    rerender(view("prices"));
-    expect(screen.getByTestId("prices-content")).toBe(first);
-    expect((first.closest("[data-pane]") as HTMLElement).hidden).toBe(false);
-    expect(scrollTo).toHaveBeenLastCalledWith(0, 640);
+    const { rerender } = render(ws({ ai: true, receipt: true }));
+    expect(screen.getByTestId("the-map")).toBeTruthy();
+    const ai = screen.getByTestId("ai-content");
+    expect((ai.parentElement as HTMLElement).hidden).toBe(false);
+    rerender(ws({ ai: false, receipt: true }));
+    expect(screen.getByTestId("ai-content")).toBe(ai); // same node: not unmounted
+    expect((ai.parentElement as HTMLElement).hidden).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: /AI helper/ }));
+    expect(toggles).toEqual([["ai", true]]);
+  });
+  it("folded, the sidebar is a rail of section buttons; one opens the sidebar and that section", () => {
+    const calls: string[] = [];
+    render(
+      <Workspace head={<p>head</p>} sections={sections} open={{}} onToggle={(id, o) => calls.push(`${id}:${o}`)} map={<p>map</p>} collapsed onCollapsed={(c) => calls.push(`collapsed:${c}`)} />,
+    );
+    expect(screen.queryByTestId("sidebar-sections")).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Breakdown" }));
+    expect(calls).toEqual(["collapsed:false", "receipt:true"]);
   });
 });

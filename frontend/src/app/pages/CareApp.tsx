@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Send } from "lucide-react";
+import { Bot, ListOrdered, MapPin, Receipt as ReceiptIcon, Send, SlidersHorizontal } from "lucide-react";
 import CareCostLogo from "@/components/CareCostLogo";
 import { t } from "@/contracts/copy";
 import { CHAT_REPLY_FULL_PAGE } from "@/contracts/exhaustive";
 import type { Catalog, CatalogPath, CatalogService } from "@/generated/contracts/catalog";
-import { DEFAULT_BROWSE_SERVICE, type BrowseValue } from "../lib/browse";
+import { browseValueOf, DEFAULT_BROWSE_SERVICE, type BrowseValue, type KindFilter, type ShowFilter } from "../lib/browse";
 import type { CandidatePath, ChatRequest, RedFlagReply, ServiceRef } from "@/generated/contracts/chat_api";
 import type { Payment, QuoteRequest, QuoteResponse } from "@/generated/contracts/quote_api";
 import { ApiError, getApi, nearFor, NoMockData } from "../api/client";
@@ -13,7 +13,9 @@ import { ChatPane, type ChatTurn } from "../components/ChatPane";
 import { PaymentSelect } from "../components/PaymentSelect";
 import { ResultsPane, type QuoteState, type ResultsView, type SitePick } from "../components/ResultsPane";
 import type { SiteScope } from "../lib/sites";
-import { SplitView, useIsPhone, type SplitState } from "../components/SplitView";
+import { LocationInput } from "../components/ResultsPane";
+import { BrowseBar } from "../components/BrowseBar";
+import { Workspace, type Section } from "../components/Workspace";
 import { priceChoices } from "../lib/priceChoices";
 import type { UserLocation } from "../lib/geo";
 import { serviceCodes } from "../lib/mapPrice";
@@ -77,20 +79,28 @@ export default function CareApp() {
   const cache = useRef(new Map<string, QuoteState>());
   const switchStart = useRef<{ t: number; key: string } | null>(null);
 
-  const [view, setView] = useState<ResultsView>("pick");
+  // Austin 2026-11-09: the map is the main canvas; the other views are sidebar sections, several open at once
+  const [open, setOpen] = useState<Record<string, boolean>>({ ai: true, browse: false, pick: true, list: false, receipt: false });
+  const [focus, setFocus] = useState<{ id: string; n: number } | null>(null);
+  /** open a section and scroll to it (a pin or card opens Breakdown; "See all" opens List) */
+  const show = useCallback((v: ResultsView) => {
+    if (v === "map") return;
+    setOpen((o) => ({ ...o, [v]: true }));
+    setFocus((f) => ({ id: v, n: (f?.n ?? 0) + 1 }));
+  }, []);
+  const [kindFilter, setKindFilter] = useState<KindFilter>("all");
+  const [showFilter, setShowFilter] = useState<ShowFilter>("offered");
   const [orderBy, setOrderBy] = useState<OrderBy>("distance");
   const [location, setLocation] = useState<UserLocation | null>(null);
   const [pick, setPick] = useState<SitePick>({ sort: "price", selected: null });
-  const [split, setSplit] = useState<SplitState>(() => ({ orientation: "side", swapped: false, chatCollapsed: readCollapsed() }));
-  useEffect(() => writeCollapsed(!!split.chatCollapsed), [split.chatCollapsed]);
-  const phone = useIsPhone();
+  const [collapsed, setCollapsed] = useState(readCollapsed);
+  useEffect(() => writeCollapsed(collapsed), [collapsed]);
   // P3: the price item the map pins and the list's step line show; reset when a different quote arrives
   const [priceStep, setPriceStep] = useState<string | null>(null);
   const shownQuote = quoteState.status === "ok" ? quoteState : quoteState.status === "loading" ? (quoteState.prev ?? null) : null;
   const shownQuoteKey = shownQuote?.key ?? "";
   useEffect(() => setPriceStep(null), [shownQuoteKey]);
   const choices = useMemo(() => (shownQuote ? priceChoices(shownQuote.quote) : []), [shownQuote]);
-  const [phoneTab, setPhoneTab] = useState<"chat" | "prices">("chat");
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [paths, setPaths] = useState<CatalogPath[] | null>(null);
 
@@ -111,10 +121,12 @@ export default function CareApp() {
     },
     [catalog],
   );
-  // Browse opens on a priced map, never an empty one: with nothing chosen yet, a new-patient visit
+  // Browse never opens on an empty map: with nothing chosen yet, a new-patient visit. Not while the person is
+  // asking the AI (office-visit prices next to a shoulder question would read as the answer).
+  const browseOpen = !!open.browse;
   useEffect(() => {
-    if (view === "browse" && !query && catalog) browsePick(`svc:${DEFAULT_BROWSE_SERVICE}`);
-  }, [view, query, catalog, browsePick]);
+    if (phase === "work" && payment && browseOpen && !query && catalog) browsePick(`svc:${DEFAULT_BROWSE_SERVICE}`);
+  }, [phase, payment, browseOpen, query, catalog, browsePick]);
 
   // ---- quotes: one request per (payment, query); cached so switching back is instant
   useEffect(() => {
@@ -238,7 +250,7 @@ export default function CareApp() {
           const top = r.candidates[0];
           if (top.match === "entry_matched") {
             setQuery({ care_path_id: top.path_id, service_codes: [], picked_by: "person" });
-            setView("pick");
+            show("pick");
           }
         }
       } catch (e) {
@@ -248,7 +260,7 @@ export default function CareApp() {
         setChatBusy(false);
       }
     },
-    [api, answers, conversationId, email, history, payment],
+    [api, answers, conversationId, email, history, payment, show],
   );
 
   const actions = {
@@ -260,23 +272,18 @@ export default function CareApp() {
     },
     pickPath: (c: CandidatePath) => {
       setQuery({ care_path_id: c.path_id, service_codes: [], picked_by: "person" });
-      setView("pick");
-      setPhoneTab("prices");
+      show("pick");
     },
     pickService: (s: ServiceRef) => {
       const svc = catalog?.services.find((x) => x.service_id === s.service_id);
       if (svc) pickService(svc, "assistant");
     },
-    browse: () => {
-      setView("browse");
-      setPhoneTab("prices");
-    },
+    browse: () => show("browse"),
   };
 
   const pickService = (s: CatalogService, by: "person" | "assistant" = "person") => {
     setQuery({ care_path_id: null, service_codes: serviceCodes(s), picked_by: by });
-    setView("receipt");
-    setPhoneTab("prices");
+    show("pick");
   };
 
   const resetAll = () => {
@@ -357,8 +364,7 @@ export default function CareApp() {
             disabled={!payment}
             onClick={() => {
               setPhase("work");
-              setView("browse");
-              setPhoneTab("prices");
+              setOpen({ ai: false, browse: true, pick: true, list: false, receipt: false });
             }}
             className="w-full rounded-xl border-2 border-ink px-4 py-3 text-sm font-semibold text-ink disabled:opacity-40"
             data-testid="skip-ai"
@@ -371,8 +377,7 @@ export default function CareApp() {
     );
   }
 
-  // Chips go in the chat when the chat is on screen next to the prices and holds the card being priced;
-  // otherwise (phone tabs, folded chat, a pick from Browse) they stay above the map and list.
+  // Chips go in the chat when the AI helper is open and holds the card being priced; otherwise they sit above the map.
   const pathInChat =
     query?.care_path_id != null &&
     turns.some(
@@ -381,11 +386,100 @@ export default function CareApp() {
         (tn.res.reply.kind === "clarify" || tn.res.reply.kind === "care_paths") &&
         tn.res.reply.candidates.some((c) => c.path_id === query.care_path_id),
     );
-  const chipsInChat = !phone && !split.chatCollapsed && pathInChat && choices.length > 0;
+  const chipsInChat = !!open.ai && !collapsed && pathInChat && choices.length > 0;
+  // the map prices one item; with nothing picked, the first (ResultsPane does the same)
+  const effStep = choices.find((c) => c.id === priceStep)?.id ?? choices[0]?.id ?? null;
+
+  const pane = (v: ResultsView, extra: Partial<Parameters<typeof ResultsPane>[0]> = {}) => (
+    <ResultsPane
+      payment={payment}
+      onPayment={changePayment}
+      state={quoteState}
+      view={v}
+      onView={show}
+      catalog={catalog}
+      paths={paths}
+      onBrowse={browsePick}
+      location={location}
+      onLocation={setLocation}
+      pick={pick}
+      onPick={setPick}
+      loadSite={loadSite}
+      orderBy={orderBy}
+      onOrderBy={api.mode === "api" ? setOrderBy : undefined}
+      step={priceStep}
+      onStep={setPriceStep}
+      chipsHere={!chipsInChat}
+      chrome={false}
+      kind={kindFilter}
+      show={showFilter}
+      {...extra}
+    />
+  );
+  const quoteNow = shownQuote?.quote ?? null;
+  const browseLabel = (() => {
+    const v = browseValueOf(quoteNow, catalog);
+    if (v.startsWith("path:")) return quoteNow?.care_path?.title ?? null;
+    const svc = catalog?.services.find((x) => `svc:${x.service_id}` === v);
+    return svc ? `${serviceCodes(svc).join(" / ")} · ${svc.plain_name}` : null;
+  })();
+  const selectedName = quoteNow?.sites.find((x) => x.site.site_id === pick.selected)?.site.name ?? null;
+
+  const sections: Section[] = [
+    {
+      id: "ai",
+      title: t("chat.helper"),
+      icon: Bot,
+      summary: turns.length ? `${turns.filter((x) => x.role === "user").length} question(s)` : null,
+      content: (
+        <div className="flex h-[26rem] flex-col gap-2">
+          {!EMAIL_RE.test(email) && (
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t("start.email")}
+              aria-label={t("start.email")}
+              className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs"
+            />
+          )}
+          <ChatPane
+            turns={turns}
+            busy={chatBusy}
+            error={chatError}
+            answers={answers}
+            actions={actions}
+            activePathId={query?.care_path_id ?? null}
+            stepChips={chipsInChat ? { choices, step: effStep, onStep: setPriceStep } : null}
+          />
+        </div>
+      ),
+    },
+    {
+      id: "browse",
+      title: t("tab.browse"),
+      icon: SlidersHorizontal,
+      summary: browseLabel,
+      content: (
+        <BrowseBar
+          catalog={catalog}
+          paths={paths}
+          value={browseValueOf(quoteNow, catalog)}
+          onPick={browsePick}
+          kind={kindFilter}
+          onKind={setKindFilter}
+          show={showFilter}
+          onShow={setShowFilter}
+        />
+      ),
+    },
+    { id: "pick", title: t("tab.pick"), icon: MapPin, content: pane("pick") },
+    { id: "list", title: t("tab.list"), icon: ListOrdered, content: pane("list") },
+    { id: "receipt", title: t("tab.receipt"), icon: ReceiptIcon, summary: selectedName, content: pane("receipt") },
+  ];
 
   return (
-    // --header-h: the sticky header's height (h-11 + 1px border); the phone tabs stick right under it
-    <main className="min-h-screen bg-background [--header-h:calc(2.75rem+1px)]" data-testid="workspace">
+    <main className="min-h-screen bg-background" data-testid="workspace">
       <header className="sticky top-0 z-30 border-b border-border bg-card/90 backdrop-blur">
         <div className="flex h-11 items-center justify-between px-4">
           <Link to="/">
@@ -399,68 +493,25 @@ export default function CareApp() {
           </div>
         </div>
       </header>
-      <SplitView
-        state={split}
-        onState={setSplit}
-        phoneTab={phoneTab}
-        onPhoneTab={setPhoneTab}
-        chat={
-          <div className="flex h-full flex-col gap-2">
-            {!EMAIL_RE.test(email) && (
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("start.email")}
-                aria-label={t("start.email")}
-                className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs"
-              />
-            )}
-            <ChatPane
-              turns={turns}
-              busy={chatBusy}
-              error={chatError}
-              answers={answers}
-              actions={actions}
-              activePathId={query?.care_path_id ?? null}
-              stepChips={
-                chipsInChat
-                  ? {
-                      choices,
-                      step: priceStep,
-                      onStep: (id) => {
-                        setPriceStep(id);
-                        // "Where to go" keeps the whole-visit total; a step shows on the List (and Map)
-                        if (id != null && view !== "list" && view !== "map") setView("list");
-                      },
-                    }
-                  : null
-              }
+      <Workspace
+        head={
+          <div className="flex flex-wrap items-center gap-2">
+            <PaymentSelect
+              id="payment-switch"
+              value={payment}
+              onChange={changePayment}
+              className="min-w-0 flex-1 rounded-lg border border-border bg-card px-2 py-1.5 text-sm font-medium"
             />
+            <LocationInput location={location} onLocation={setLocation} />
           </div>
         }
-        prices={
-          <ResultsPane
-            payment={payment}
-            onPayment={changePayment}
-            state={quoteState}
-            view={view}
-            onView={setView}
-            catalog={catalog}
-            paths={paths}
-            onBrowse={browsePick}
-            location={location}
-            onLocation={setLocation}
-            pick={pick}
-            onPick={setPick}
-            loadSite={loadSite}
-            orderBy={orderBy}
-            onOrderBy={api.mode === "api" ? setOrderBy : undefined}
-            step={priceStep}
-            onStep={setPriceStep}
-            chipsHere={!chipsInChat}
-          />
-        }
+        sections={sections}
+        open={open}
+        onToggle={(id, o) => setOpen((x) => ({ ...x, [id]: o }))}
+        collapsed={collapsed}
+        onCollapsed={setCollapsed}
+        focus={focus}
+        map={pane("map", { mapClassName: "h-[55vh] md:h-[calc(100vh-8.5rem)]" })}
       />
     </main>
   );

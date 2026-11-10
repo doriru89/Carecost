@@ -22,6 +22,9 @@ import { kindGroups, siteViews, sortWithinKinds } from "../lib/sites";
 import { mapStepKeys, stepLabels, stepOf, stepPin } from "../lib/steps";
 import { BCBS, CASH, MASSHEALTH, MEDICARE } from "./fixtures";
 
+// jsdom has no WebGL: MapLibre cannot draw here; the map pins are tested through lib/steps and lib/browse
+vi.mock("../components/SiteMap", () => ({ SiteMap: () => <div data-testid="site-map" /> }));
+
 const CATALOG = catalogJson as unknown as Catalog;
 const closed = { known: true, openNow: false, openToday: false, text: "Closed" };
 const now = { day: "sat" as const, minutes: 600 };
@@ -214,15 +217,15 @@ describe("P3 · the map prices one selected step, from SiteQuote.steps", () => {
     expect(stepPin(st)).toEqual({ kind: "no_price", unusual: true });
   });
 
-  it("the step chips leave out steps nobody prices; no step selected = places only", () => {
+  it("the step chips leave out steps nobody prices; with none picked the first item (whole visit) is priced", () => {
     const keys = mapStepKeys(BCBS);
     expect(keys).not.toContain("referral"); // happens at your own primary care office: no site prices it
     expect(keys).toEqual(expect.arrayContaining(["visit", "xray", "physical_therapy"]));
     render(pane({ status: "ok", key: "m", quote: BCBS, scope: { kind: "fixture" } }, "map"));
-    expect(screen.getByTestId("map-price-note").textContent).toBe(t("map.places_only"));
     const chips = within(screen.getByTestId("map-steps")).getAllByRole("radio");
-    expect(chips[0].textContent).toBe(t("map.no_step"));
+    expect(chips.map((c) => c.textContent)).not.toContain(t("map.no_step"));
     expect(chips[0].getAttribute("aria-checked")).toBe("true");
+    expect(screen.getByTestId("map-price-note").textContent).toBe(t("map.headline_for", { option: chips[0].textContent ?? "" }));
     const pt = "Guided exercise program for the shoulder"; // physical_therapy, named from the receipts' lines
     fireEvent.click(chips.find((c) => c.textContent === pt)!);
     expect(screen.getByTestId("map-price-note").textContent).toBe(t("map.step_price_for", { step: pt }));

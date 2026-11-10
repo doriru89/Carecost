@@ -61,7 +61,8 @@ def create_app(
         t3 = time.perf_counter()
         print(
             f"carecost startup: registry {t1 - t0:.1f}s, rate rows {t2 - t1:.1f}s "
-            f"({len(data.rows)} rows), engine {t3 - t2:.1f}s",
+            f"({'lazy, per code' if data.partitions is not None else f'{len(data.rows)} rows'}), "
+            f"engine {t3 - t2:.1f}s",
             file=sys.stderr,
             flush=True,
         )
