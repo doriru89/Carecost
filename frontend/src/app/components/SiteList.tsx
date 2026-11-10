@@ -7,7 +7,7 @@ import { milesText } from "../lib/geo";
 import { dataNoticeKey, totalText } from "../lib/receipt";
 import { kindGroups, optionRuns, type SiteScope, type SiteView, type SortMode } from "../lib/sites";
 import { HeadlineFigure } from "./Headline";
-import { elsewhereSteps, isExpected } from "../lib/steps";
+import { elsewhereSteps, isExpected, stepOf, stepPin } from "../lib/steps";
 import { Booking } from "./Booking";
 
 const BILLING_TAG: Record<string, string> = {
@@ -46,12 +46,15 @@ export function SiteCard({
   selected,
   onOpen,
   labels = {},
+  item = null,
 }: {
   v: SiteView;
   selected?: boolean;
   onOpen: () => void;
   /** step key -> readable name (lib/steps.ts stepLabels) */
   labels?: Record<string, string>;
+  /** The step the person picked (chips in the chat or above the list): its price at this place, one line. */
+  item?: { kind: "step"; key: string } | null;
 }) {
   const { site, headline } = v.sq;
   const hr = v.sq.headline_range;
@@ -116,6 +119,7 @@ export function SiteCard({
             )}
           </div>
         )}
+        {item && <StepLine v={v} stepKey={item.key} label={labels[item.key] ?? item.key} />}
         <div className="mt-1.5 flex flex-wrap gap-1 text-[11px]">
           <span className="rounded-full bg-muted px-2 py-0.5">{BILLING_TAG[site.billing_type]}</span>
           {site.booking.some((b) => b.kind === "walk_in") && (
@@ -137,6 +141,25 @@ export function SiteCard({
   );
 }
 
+/** One step's price at one place, the same rule as the map pin (P3, P6): only where the place says it offers it. */
+function StepLine({ v, stepKey, label }: { v: SiteView; stepKey: string; label: string }) {
+  const pin = stepPin(stepOf(v.sq, stepKey));
+  return (
+    <p className="mt-1.5 rounded-md bg-muted/60 px-2 py-1 text-xs" data-testid="card-step" data-step={stepKey}>
+      {pin == null ? (
+        <span className="text-muted-foreground">{t("list.step_not_listed", { step: label })}</span>
+      ) : pin.kind === "no_price" ? (
+        <span className="text-warn">{t("list.step_no_price", { step: label })}</span>
+      ) : (
+        <span className="font-medium text-ink">
+          {t("list.step_line", { step: label, price: pin.text })}
+          {pin.estimated && <span className="ml-1 font-normal text-amber-900">· {t("list.step_estimate")}</span>}
+        </span>
+      )}
+    </p>
+  );
+}
+
 export function SiteList({
   views,
   sort,
@@ -148,6 +171,7 @@ export function SiteList({
   ordering = "rank",
   labels,
   options = [],
+  item = null,
 }: {
   views: SiteView[];
   sort: SortMode;
@@ -160,6 +184,7 @@ export function SiteList({
   ordering?: QuoteResponse["ordering"];
   labels?: Record<string, string>;
   options?: QuoteOption[];
+  item?: { kind: "step"; key: string } | null;
 }) {
   const byKind = ordering === "kind_then_distance";
   const byOption = ORDERING_BY_OPTION[ordering];
@@ -170,7 +195,7 @@ export function SiteList({
     { id: "open_today", label: "Open today" },
   ];
   const card = (v: SiteView) => (
-    <SiteCard key={v.sq.site.site_id} v={v} labels={labels} selected={v.sq.site.site_id === selectedId} onOpen={() => onOpen(v.sq.site.site_id)} />
+    <SiteCard key={v.sq.site.site_id} v={v} labels={labels} item={item} selected={v.sq.site.site_id === selectedId} onOpen={() => onOpen(v.sq.site.site_id)} />
   );
   return (
     <div className="space-y-2" data-testid="site-list">

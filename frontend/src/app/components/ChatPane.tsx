@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import cardsJson from "../content/cards.json";
 import questionsJson from "../content/questions.json";
 import { GlossaryChips } from "./Glossary";
+import type { MapChoice } from "../lib/headline";
+import { StepChips } from "./StepChips";
 
 const CARDS = (cardsJson as { cards: Record<string, { title: string; text: string }> }).cards;
 const QUESTIONS = (questionsJson as { questions: Record<string, { text: string; answers: Record<string, string> }> }).questions;
@@ -31,6 +33,7 @@ export function ChatPane({
   answers,
   actions,
   activePathId,
+  stepChips = null,
 }: {
   turns: ChatTurn[];
   busy: boolean;
@@ -38,6 +41,11 @@ export function ChatPane({
   answers: Record<string, string[]>;
   actions: ChatActions;
   activePathId: string | null;
+  /**
+   * Austin 2026-11-09: the step chips (what the map and list price) belong to the care path the person
+   * asked about, so they sit under its card in the chat, not stacked above the map.
+   */
+  stepChips?: { choices: MapChoice[]; step: string | null; onStep: (id: string | null) => void } | null;
 }) {
   const [draft, setDraft] = useState("");
   const end = useRef<HTMLDivElement>(null);
@@ -51,6 +59,19 @@ export function ChatPane({
     (at, turn, i) => (turn.role === "assistant" && !AI_ONLY_KINDS.has(turn.res.reply.kind) ? i : at),
     -1,
   );
+
+  // the newest turn whose card is the path being priced carries the chips
+  const chipsAt = stepChips
+    ? turns.reduce(
+        (at, turn, i) =>
+          turn.role === "assistant" &&
+          (turn.res.reply.kind === "clarify" || turn.res.reply.kind === "care_paths") &&
+          turn.res.reply.candidates.some((c) => c.path_id === activePathId)
+            ? i
+            : at,
+        -1,
+      )
+    : -1;
 
   const submit = () => {
     const text = draft.trim();
@@ -68,14 +89,14 @@ export function ChatPane({
               {turn.text}
             </div>
           ) : (
-            <AssistantTurn
-              key={i}
-              res={turn.res}
-              answers={answers}
-              actions={actions}
-              latest={i === chipTurn}
-              activePathId={activePathId}
-            />
+            <div key={i} className="space-y-2">
+              <AssistantTurn res={turn.res} answers={answers} actions={actions} latest={i === chipTurn} activePathId={activePathId} />
+              {i === chipsAt && stepChips && (
+                <div className="max-w-[95%] rounded-xl border border-ink/30 bg-card p-2" data-testid="chat-step-chips">
+                  <StepChips choices={stepChips.choices} step={stepChips.step} onStep={stepChips.onStep} label={t("steps.pick_in_chat")} />
+                </div>
+              )}
+            </div>
           ),
         )}
         {busy && <p className="text-xs text-muted-foreground animate-pulse">Thinking…</p>}

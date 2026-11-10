@@ -427,6 +427,19 @@ export const APP_COPY = {
   // P3: on the map, one step's price at a time
   "map.pick_step": { en: "Show the price of one step on the map:" },
   "map.no_step": { en: "Places only" },
+  // Austin 2026-11-09: the step chips sit in the chat, next to the care path they belong to
+  "steps.pick": { en: "Price one step on the map and list:" },
+  "steps.pick_in_chat": { en: "Price one step:" },
+  "map.places_only_chat": {
+    en: "Places only. Pick a step under the care path in the chat to see its price on each pin. The List shows the full total.",
+  },
+  "list.step_line": { en: "{step}: {price}" },
+  "list.step_estimate": { en: "estimate" },
+  "list.step_no_price": { en: "{step}: offered, no price found" },
+  "list.step_not_listed": { en: "{step}: not listed as offered here" },
+  "chat.helper": { en: "AI helper" },
+  "chat.collapse": { en: "Hide the AI helper" },
+  "chat.expand": { en: "Show the AI helper" },
   "map.step_price_for": {
     en: "Prices on the map: {step}. Places that don't say they offer it have no pin.",
     review: true,

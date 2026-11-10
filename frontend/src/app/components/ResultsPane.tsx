@@ -9,8 +9,10 @@ import { paymentLabel } from "../lib/payments";
 import { zipToLocation, type UserLocation } from "../lib/geo";
 import { bostonNow } from "../lib/hours";
 import { siteViews, sortSites, sortWithinKinds, sortWithinOptions, type SiteScope, type SortMode } from "../lib/sites";
-import { mapStepKeys, stepLabels } from "../lib/steps";
-import { byOption, headlineMapChoices, type MapChoice } from "../lib/headline";
+import { stepLabels } from "../lib/steps";
+import { byOption } from "../lib/headline";
+import { onlyStepOf, priceChoices } from "../lib/priceChoices";
+import { StepChips } from "./StepChips";
 import { Overview, type OrderBy } from "./Overview";
 import { BrowsePicker } from "./BrowsePicker";
 import { PaymentSelect } from "./PaymentSelect";
@@ -60,6 +62,9 @@ export function ResultsPane({
   loadSite,
   orderBy = "distance",
   onOrderBy,
+  step: stepProp,
+  onStep: onStepProp,
+  chipsHere = true,
 }: {
   payment: Payment;
   onPayment: (p: Payment) => void;
@@ -84,6 +89,11 @@ export function ResultsPane({
   /** C4b (D-UI-1): distance (default) or price; a change re-asks the server with `order_by` */
   orderBy?: OrderBy;
   onOrderBy?: (o: OrderBy) => void;
+  /** The chosen price item (P3): owned by CareApp, so the chips can sit in the chat. */
+  step?: string | null;
+  onStep?: (id: string | null) => void;
+  /** false: the chips are in the chat (next to the care path card), not above the map and list */
+  chipsHere?: boolean;
 }) {
   const { sort, selected } = pick;
   const setSort = (s: SortMode) => onPick({ ...pick, sort: s });
@@ -107,18 +117,18 @@ export function ResultsPane({
 
   // P3 / D-UI-3: the map prices one item at a time: an option's headline per site, or one step. A manual
   // pick of one service has one step: it is selected.
-  const stepChoices = useMemo(() => (quote ? mapStepKeys(quote) : []), [quote]);
-  const headlineChoices = useMemo(() => (quote ? headlineMapChoices(quote) : []), [quote]);
-  const choices = useMemo<MapChoice[]>(
-    () => [...headlineChoices, ...stepChoices.map((k) => ({ id: k, label: labels[k] ?? k, item: { kind: "step" as const, key: k } }))],
-    [headlineChoices, stepChoices, labels],
-  );
-  const [mapStep, setMapStep] = useState<string | null>(null);
+  const choices = useMemo(() => (quote ? priceChoices(quote) : []), [quote]);
   const shownKey = shown?.key ?? "";
-  useEffect(() => setMapStep(null), [shownKey]);
-  const onlyStep = quote && !quote.care_path && stepChoices.length === 1 ? stepChoices[0] : null;
-  const chosen = choices.find((c) => c.id === mapStep) ?? (onlyStep ? choices.find((c) => c.id === onlyStep) : undefined) ?? null;
+  // controlled by CareApp (chips may sit in the chat); standalone, the pane keeps its own pick
+  const [ownStep, setOwnStep] = useState<string | null>(null);
+  useEffect(() => setOwnStep(null), [shownKey]);
+  const controlled = onStepProp !== undefined;
+  const pickedStep = controlled ? (stepProp ?? null) : ownStep;
+  const onStep = controlled ? onStepProp : setOwnStep;
+  const onlyStep = quote ? onlyStepOf(quote) : null;
+  const chosen = choices.find((c) => c.id === pickedStep) ?? (onlyStep ? choices.find((c) => c.id === onlyStep) : undefined) ?? null;
   const step = chosen?.id ?? null;
+  const showChips = chipsHere && choices.length > (onlyStep ? 1 : 0);
 
   // C3 item 9: fetch the opened site's receipt when the list carries only its summary
   const [fetched, setFetched] = useState<Record<string, { status: "loading" } | { status: "error" } | { status: "ok"; quote: QuoteResponse }>>({});
@@ -244,6 +254,8 @@ export function ResultsPane({
             })()}
           </div>
         ) : view === "list" ? (
+          <div className="space-y-2">
+          {showChips && <StepChips choices={choices} step={step} onStep={onStep} testId="list-steps" />}
           <SiteList
             views={sorted}
             sort={sort}
@@ -255,33 +267,20 @@ export function ResultsPane({
             ordering={quote.ordering}
             labels={labels}
             options={quote.options}
+            item={chosen?.item.kind === "step" ? chosen.item : null}
           />
+          </div>
         ) : (
           <div className="space-y-2">
-            {choices.length > (onlyStep ? 1 : 0) && (
-              <div className="flex flex-wrap items-center gap-1 text-xs" role="radiogroup" aria-label={t("map.pick_step")} data-testid="map-steps">
-                <span className="mr-1 text-muted-foreground">{t("map.pick_step")}</span>
-                {[null, ...choices].map((c) => (
-                  <button
-                    key={c?.id ?? "none"}
-                    type="button"
-                    role="radio"
-                    aria-checked={step === (c?.id ?? null)}
-                    onClick={() => setMapStep(c?.id ?? null)}
-                    data-item={c?.item.kind ?? "none"}
-                    className={cn("rounded-full border px-2.5 py-1", step === (c?.id ?? null) ? "border-ink bg-ink text-white" : "border-border bg-card")}
-                  >
-                    {c == null ? t("map.no_step") : c.label}
-                  </button>
-                ))}
-              </div>
-            )}
+            {showChips && <StepChips choices={choices} step={step} onStep={onStep} label={t("map.pick_step")} />}
             <p className="text-xs text-muted-foreground" data-testid="map-price-note">
               {chosen
                 ? chosen.item.kind === "headline"
                   ? t("map.headline_for", { option: chosen.label })
                   : t("map.step_price_for", { step: (onlyStep && priced ? priced.plain_name : labels[chosen.item.key]) ?? chosen.item.key })
-                : t("map.places_only")}
+                : chipsHere
+                  ? t("map.places_only")
+                  : t("map.places_only_chat")}
             </p>
             <Suspense fallback={<p className="p-6 text-center text-sm text-muted-foreground">Loading map…</p>}>
               <SiteMap views={sorted} selectedId={current.sq.site.site_id} onOpen={open} location={location} item={chosen?.item ?? null} />

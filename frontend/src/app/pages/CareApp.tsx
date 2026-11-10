@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Send } from "lucide-react";
 import CareCostLogo from "@/components/CareCostLogo";
@@ -12,7 +12,8 @@ import { ChatPane, type ChatTurn } from "../components/ChatPane";
 import { PaymentSelect } from "../components/PaymentSelect";
 import { ResultsPane, type QuoteState, type ResultsView, type SitePick } from "../components/ResultsPane";
 import type { SiteScope } from "../lib/sites";
-import { SplitView, type SplitState } from "../components/SplitView";
+import { SplitView, useIsPhone, type SplitState } from "../components/SplitView";
+import { priceChoices } from "../lib/priceChoices";
 import type { UserLocation } from "../lib/geo";
 import { serviceCodes } from "../lib/mapPrice";
 import { paymentId } from "../lib/payments";
@@ -75,7 +76,15 @@ export default function CareApp() {
   const [orderBy, setOrderBy] = useState<OrderBy>("distance");
   const [location, setLocation] = useState<UserLocation | null>(null);
   const [pick, setPick] = useState<SitePick>({ sort: "price", selected: null });
-  const [split, setSplit] = useState<SplitState>({ orientation: "side", swapped: false });
+  const [split, setSplit] = useState<SplitState>(() => ({ orientation: "side", swapped: false, chatCollapsed: readCollapsed() }));
+  useEffect(() => writeCollapsed(!!split.chatCollapsed), [split.chatCollapsed]);
+  const phone = useIsPhone();
+  // P3: the price item the map pins and the list's step line show; reset when a different quote arrives
+  const [priceStep, setPriceStep] = useState<string | null>(null);
+  const shownQuote = quoteState.status === "ok" ? quoteState : quoteState.status === "loading" ? (quoteState.prev ?? null) : null;
+  const shownQuoteKey = shownQuote?.key ?? "";
+  useEffect(() => setPriceStep(null), [shownQuoteKey]);
+  const choices = useMemo(() => (shownQuote ? priceChoices(shownQuote.quote) : []), [shownQuote]);
   const [phoneTab, setPhoneTab] = useState<"chat" | "prices">("chat");
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [paths, setPaths] = useState<CatalogPath[] | null>(null);
@@ -346,6 +355,18 @@ export default function CareApp() {
     );
   }
 
+  // Chips go in the chat when the chat is on screen next to the prices and holds the card being priced;
+  // otherwise (phone tabs, folded chat, a pick from Browse) they stay above the map and list.
+  const pathInChat =
+    query?.care_path_id != null &&
+    turns.some(
+      (tn) =>
+        tn.role === "assistant" &&
+        (tn.res.reply.kind === "clarify" || tn.res.reply.kind === "care_paths") &&
+        tn.res.reply.candidates.some((c) => c.path_id === query.care_path_id),
+    );
+  const chipsInChat = !phone && !split.chatCollapsed && pathInChat && choices.length > 0;
+
   return (
     // --header-h: the sticky header's height (h-11 + 1px border); the phone tabs stick right under it
     <main className="min-h-screen bg-background [--header-h:calc(2.75rem+1px)]" data-testid="workspace">
@@ -386,6 +407,19 @@ export default function CareApp() {
               answers={answers}
               actions={actions}
               activePathId={query?.care_path_id ?? null}
+              stepChips={
+                chipsInChat
+                  ? {
+                      choices,
+                      step: priceStep,
+                      onStep: (id) => {
+                        setPriceStep(id);
+                        // "Where to go" keeps the whole-visit total; a step shows on the List (and Map)
+                        if (id != null && view !== "list" && view !== "map") setView("list");
+                      },
+                    }
+                  : null
+              }
             />
           </div>
         }
@@ -408,9 +442,29 @@ export default function CareApp() {
             loadSite={loadSite}
             orderBy={orderBy}
             onOrderBy={api.mode === "api" ? setOrderBy : undefined}
+            step={priceStep}
+            onStep={setPriceStep}
+            chipsHere={!chipsInChat}
           />
         }
       />
     </main>
   );
+}
+
+const COLLAPSED_KEY = "carecost.chatCollapsed";
+/** A per-viewer convenience: storage may be missing or throw (private window), so it never matters. */
+function readCollapsed(): boolean {
+  try {
+    return localStorage.getItem(COLLAPSED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+function writeCollapsed(v: boolean) {
+  try {
+    localStorage.setItem(COLLAPSED_KEY, v ? "1" : "0");
+  } catch {
+    /* ignore */
+  }
 }

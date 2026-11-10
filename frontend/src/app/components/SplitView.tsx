@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowLeftRight, Columns2, Rows2 } from "lucide-react";
+import { ArrowLeftRight, Bot, Columns2, PanelLeftClose, PanelLeftOpen, Rows2 } from "lucide-react";
+import { t } from "@/contracts/copy";
 import { cn } from "@/lib/utils";
 
 export type Orientation = "side" | "stack";
@@ -8,9 +9,11 @@ export interface SplitState {
   orientation: Orientation;
   /** false: chat first (left / top); true: prices first */
   swapped: boolean;
+  /** Austin 2026-11-09: the AI helper folds to a thin strip so the prices get the width */
+  chatCollapsed?: boolean;
 }
 
-function useIsPhone(): boolean {
+export function useIsPhone(): boolean {
   const q = "(max-width: 767px)";
   const [phone, setPhone] = useState(() => typeof window !== "undefined" && window.matchMedia(q).matches);
   useEffect(() => {
@@ -99,8 +102,48 @@ export function SplitView({
     );
   }
 
-  const panes = state.swapped ? [prices, chat] : [chat, prices];
   const side = state.orientation === "side";
+  const collapsed = !!state.chatCollapsed;
+  const setCollapsed = (c: boolean) => onState({ ...state, chatCollapsed: c });
+  const chatBody = collapsed ? (
+    <button
+      type="button"
+      onClick={() => setCollapsed(false)}
+      title={t("chat.expand")}
+      aria-label={t("chat.expand")}
+      data-testid="chat-expand"
+      className={cn(
+        "flex items-center gap-2 rounded-xl text-xs font-medium text-ink hover:bg-muted",
+        side ? "h-full w-full flex-col justify-start py-2" : "w-full px-2 py-1.5",
+      )}
+    >
+      <PanelLeftOpen className={cn("h-4 w-4 shrink-0", !side && "rotate-90")} />
+      <Bot className="h-4 w-4 shrink-0" />
+      <span className={cn(side && "[writing-mode:vertical-rl]")}>{t("chat.helper")}</span>
+    </button>
+  ) : (
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="mb-2 flex items-center justify-between text-xs">
+        <span className="inline-flex items-center gap-1 font-medium text-muted-foreground">
+          <Bot className="h-3.5 w-3.5" />
+          {t("chat.helper")}
+        </span>
+        <button
+          type="button"
+          onClick={() => setCollapsed(true)}
+          title={t("chat.collapse")}
+          aria-label={t("chat.collapse")}
+          data-testid="chat-collapse"
+          className="rounded-md p-1 text-muted-foreground hover:bg-muted hover:text-ink"
+        >
+          <PanelLeftClose className={cn("h-4 w-4", !side && "rotate-90", side && state.swapped && "rotate-180")} />
+        </button>
+      </div>
+      <div className="min-h-0 flex-1">{chat}</div>
+    </div>
+  );
+  const panes = state.swapped ? [prices, chatBody] : [chatBody, prices];
+  const chatCol = collapsed ? "2.75rem" : "minmax(0,1fr)";
   return (
     <div data-testid="split-view" data-layout={state.orientation} data-swapped={state.swapped}>
       <div className="flex items-center justify-end gap-1 px-4 pt-2 text-xs" aria-label="Layout">
@@ -118,8 +161,9 @@ export function SplitView({
       <div
         className={cn(
           "grid gap-4 px-4 py-3",
-          side ? (state.swapped ? "grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]" : "grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)]") : "grid-cols-1",
+          !side && "grid-cols-1",
         )}
+        style={side ? { gridTemplateColumns: state.swapped ? `minmax(0,1.5fr) ${chatCol}` : `${chatCol} minmax(0,1.5fr)` } : undefined}
       >
         {panes.map((p, i) => {
           const isChat = state.swapped ? i === 1 : i === 0;
@@ -130,7 +174,8 @@ export function SplitView({
               className={cn(
                 "min-w-0 rounded-2xl border border-border bg-background/60 p-3",
                 isChat && side && "sticky top-20 h-[calc(100vh-7.5rem)]",
-                isChat && !side && "h-[26rem]",
+                isChat && !side && !collapsed && "h-[26rem]",
+                isChat && collapsed && "p-1",
               )}
             >
               {p}
