@@ -28,10 +28,10 @@ from typing import Any
 
 from app.quote.store import RateStore, Row
 
-A3 = Path("/Users/austin/carecost-wt/a3-gov-sites/data")
+A3 = Path("/Users/austin/carecost-data/a7r")
 DEFAULT_RAW = A3 / "raw" / "store"
 DEFAULT_STAGING = A3 / "intermediate" / "staging"
-DEFAULT_TIC = Path("/Users/austin/carecost-wt/a2-tic/data/intermediate/tic")
+DEFAULT_TIC = Path("/Users/austin/carecost-data/a7r/intermediate/tic")
 CSV_HEADER_LINES = 3
 
 
