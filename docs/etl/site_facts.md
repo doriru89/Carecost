@@ -64,7 +64,10 @@ section; do not read other docs for instructions.
    `manifest.yaml` and `capabilities.yaml`). Work only there.
 2. **The page cache is not in git.** Copy the one shared cache into your worktree, read-only in
    spirit, before anything else:
-   `cp -R /Users/austin/carecost-wt/s0b-site-facts/data/sites/site_facts/cache <your worktree>/data/sites/site_facts/`
+   `cp -R <the S0b worktree>/data/sites/site_facts/cache <your worktree>/data/sites/site_facts/`
+   (The 2026-10-25 cache was lost when the wave2 worktrees were removed on 2026-11-11. The
+   committed `manifest.yaml` still records each page's URL, sha and `fetched_at`; a new run needs
+   a fresh `fetch`, which gives new shas, so plan it as a new run, not a re-check of S1/S2.)
    Both runs must read the same cache, because every quote is checked against it by URL, sha and
    `fetched_at`. **Never run `fetch` or `discover`**, never fetch a page another way, and never use
    the web: a re-fetched page gets a new sha and your evidence would stop matching the manifest.

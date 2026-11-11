@@ -26,12 +26,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from app.etl.config import Paths
 from app.quote.store import RateStore, Row
 
-A3 = Path("/Users/austin/carecost-data/a7r")
-DEFAULT_RAW = A3 / "raw" / "store"
-DEFAULT_STAGING = A3 / "intermediate" / "staging"
-DEFAULT_TIC = Path("/Users/austin/carecost-data/a7r/intermediate/tic")
+# Same data root rule as the ETL: $CARECOST_DATA_DIR, else <repo>/data.
+_DATA = Paths.resolve().data
+DEFAULT_RAW = _DATA / "raw" / "store"
+DEFAULT_STAGING = _DATA / "intermediate" / "staging"
+DEFAULT_TIC = _DATA / "intermediate" / "tic"
 CSV_HEADER_LINES = 3
 
 

@@ -15,11 +15,11 @@ uv run --frozen --extra dev pytest -q -p no:cacheprovider
 # 2. the app on the committed extract (7,791 real rows, no env vars)
 uv run --frozen uvicorn app.server:app --host 127.0.0.1 --port 8100
 
-# 3. a real pack (hospital build + TiC + A3's fee schedules), then the app on it
+# 3. a real pack (hospital build + TiC + fee schedules; CARECOST_DATA_DIR = the data root), then the app on it
 uv run --frozen --extra etl python -m app.quote.pack \
-  --hospital-build /Users/austin/carecost-data/a7r/build/20261024-336340ed \
-  --tic-root /Users/austin/carecost-data/a7r/intermediate/tic \
-  --gov-root /Users/austin/carecost-data/a7r/intermediate/gov \
+  --hospital-build "$CARECOST_DATA_DIR"/build/20261024-336340ed \
+  --tic-root "$CARECOST_DATA_DIR"/intermediate/tic \
+  --gov-root "$CARECOST_DATA_DIR"/intermediate/gov \
   --out ../data/build/quote_pack.sqlite
 CARECOST_QUOTE_PACK=../data/build/quote_pack.sqlite \
   uv run --frozen uvicorn app.server:app --host 127.0.0.1 --port 8100
